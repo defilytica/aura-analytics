@@ -1,0 +1,5 @@
+{
+  "possibleTypes": {
+    "RewardData": ["AuraLockerRewardData", "PoolRewardData"]
+  }
+}
