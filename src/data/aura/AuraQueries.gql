@@ -1,0 +1,23 @@
+# TODO
+
+query GetAuraLockers($first: Int, $orderBy: AuraLocker_orderBy, $block: Block_height) {
+  _meta {
+    deployment
+  }
+  auraLockers(first: $first, orderBy: $orderBy, block: $block) {
+    accounts {
+      account {
+        id
+      }
+      balanceLocked
+      balance
+      id
+      userData {
+        id
+      }
+    }
+    address
+    id
+    totalSupply
+  }
+}
