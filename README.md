@@ -27,6 +27,16 @@ yarn install
 yarn start
 ```
 
+### Autogenerate apollo types
+
+Simply define Balancertypes.gql and AuraTypes.gql and execute
+
+```bash
+yarn generate
+```
+
+to auto generate all needed queries and classes
+
 ## Dependencies
 - Apollo
 - Emotion
