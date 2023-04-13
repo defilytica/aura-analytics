@@ -22,6 +22,7 @@ import StyledExternalLink from "../../StyledExternalLink";
 import {useActiveNetworkVersion} from "../../../state/application/hooks";
 import {useNavigate} from "react-router-dom";
 import {getEtherscanLink} from "../../../utils";
+import {formatNumber} from "../../../utils/numbers";
 
 const config = {
     apiKey: process.env.REACT_APP_ALCHEMY_KEY,
@@ -235,7 +236,7 @@ export default function LockerTable({
                                             >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {Math.round(Number(row.balanceLocked) / 10 ** 18)}
+                                                        {formatNumber(Number(row.balanceLocked) / 10 ** 18)}
                                                     </Box>
                                                     <Box mr={1}>
                                                         <CurrencyLogo
