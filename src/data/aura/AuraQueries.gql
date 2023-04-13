@@ -1,22 +1,16 @@
-# TODO: Refactor! Get Aura Locker metrics
-query GetAuraLockers($first: Int, $orderBy: AuraLocker_orderBy, $auraBlock: Block_height) {
-  _meta {
-    deployment
-  }
-  auraLockers(first: $first, orderBy: $orderBy, block: $auraBlock) {
-    accounts {
-      account {
-        id
-      }
-      balanceLocked
-      balance
+query LockerLeaderboard {
+  auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+    accounts(
+      first: 1000
+      where: {balance_gt: 1000000000000000000}
+      orderBy: balanceLocked
+      orderDirection: desc
+    ) {
       id
-      userData {
-        id
-      }
+      balanceLocked
+      __typename
     }
-    address
-    id
-    totalSupply
+    lockedSupply
+    __typename
   }
 }

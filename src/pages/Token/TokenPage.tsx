@@ -52,7 +52,7 @@ export default function TokenPage() {
 
 
     //Ideas to show richer data:
-    // Biggest swaps token, bigges fees token? Show Pool routes from swap data?
+    // Biggest swaps token, biggest fees token? Show Pool routes from swap data?
     return (
         tokenData ?
             <Box sx={{ flexGrow: 2 }}>
