@@ -204,6 +204,7 @@ export type AmpUpdate_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -1594,6 +1595,7 @@ export type GradualWeightUpdate_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -1776,6 +1778,7 @@ export type JoinExit_OrderBy =
   | "pool__isInRecoveryMode"
   | "pool__isPaused"
   | "pool__lambda"
+  | "pool__lastPostJoinExitInvariant"
   | "pool__lowerTarget"
   | "pool__mainIndex"
   | "pool__managementFee"
@@ -1927,6 +1930,7 @@ export type LatestPrice_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -2058,6 +2062,7 @@ export type ManagementOperation_OrderBy =
   | "poolTokenId__isExemptFromYieldProtocolFee"
   | "poolTokenId__managedBalance"
   | "poolTokenId__name"
+  | "poolTokenId__oldPriceRate"
   | "poolTokenId__priceRate"
   | "poolTokenId__symbol"
   | "poolTokenId__weight"
@@ -2590,6 +2595,7 @@ export interface Pool {
   isInRecoveryMode?: Maybe<Scalars["Boolean"]>;
   isPaused?: Maybe<Scalars["Boolean"]>;
   lambda?: Maybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant?: Maybe<Scalars["BigDecimal"]>;
   lowerTarget?: Maybe<Scalars["BigDecimal"]>;
   /**
    * LP Token refers to:
@@ -2609,6 +2615,7 @@ export interface Pool {
   principalToken?: Maybe<Scalars["Bytes"]>;
   protocolAumFeeCache?: Maybe<Scalars["BigDecimal"]>;
   protocolId?: Maybe<Scalars["Int"]>;
+  protocolIdData?: Maybe<ProtocolIdData>;
   protocolSwapFeeCache?: Maybe<Scalars["BigDecimal"]>;
   protocolYieldFeeCache?: Maybe<Scalars["BigDecimal"]>;
   /**
@@ -3015,6 +3022,7 @@ export type PoolContract_OrderBy =
   | "pool__isInRecoveryMode"
   | "pool__isPaused"
   | "pool__lambda"
+  | "pool__lastPostJoinExitInvariant"
   | "pool__lowerTarget"
   | "pool__mainIndex"
   | "pool__managementFee"
@@ -3165,6 +3173,7 @@ export type PoolHistoricalLiquidity_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -3414,6 +3423,7 @@ export type PoolShare_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -3591,6 +3601,7 @@ export type PoolSnapshot_OrderBy =
   | "pool__isInRecoveryMode"
   | "pool__isPaused"
   | "pool__lambda"
+  | "pool__lastPostJoinExitInvariant"
   | "pool__lowerTarget"
   | "pool__mainIndex"
   | "pool__managementFee"
@@ -3649,6 +3660,7 @@ export interface PoolToken {
   managedBalance: Scalars["BigDecimal"];
   managements?: Maybe<Array<ManagementOperation>>;
   name: Scalars["String"];
+  oldPriceRate?: Maybe<Scalars["BigDecimal"]>;
   poolId?: Maybe<Pool>;
   priceRate: Scalars["BigDecimal"];
   symbol: Scalars["String"];
@@ -3771,6 +3783,14 @@ export interface PoolToken_Filter {
   name_not_starts_with_nocase?: InputMaybe<Scalars["String"]>;
   name_starts_with?: InputMaybe<Scalars["String"]>;
   name_starts_with_nocase?: InputMaybe<Scalars["String"]>;
+  oldPriceRate?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_gt?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_gte?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
+  oldPriceRate_lt?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_lte?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_not?: InputMaybe<Scalars["BigDecimal"]>;
+  oldPriceRate_not_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
   or?: InputMaybe<Array<InputMaybe<PoolToken_Filter>>>;
   poolId?: InputMaybe<Scalars["String"]>;
   poolId_?: InputMaybe<Pool_Filter>;
@@ -3864,6 +3884,7 @@ export type PoolToken_OrderBy =
   | "managedBalance"
   | "managements"
   | "name"
+  | "oldPriceRate"
   | "poolId"
   | "poolId__address"
   | "poolId__alpha"
@@ -3882,6 +3903,7 @@ export type PoolToken_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -3929,6 +3951,7 @@ export type PoolToken_OrderBy =
   | "token__id"
   | "token__latestFXPrice"
   | "token__latestUSDPrice"
+  | "token__latestUSDPriceTimestamp"
   | "token__name"
   | "token__symbol"
   | "token__totalBalanceNotional"
@@ -4145,6 +4168,14 @@ export interface Pool_Filter {
   lambda_lte?: InputMaybe<Scalars["BigDecimal"]>;
   lambda_not?: InputMaybe<Scalars["BigDecimal"]>;
   lambda_not_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
+  lastPostJoinExitInvariant?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_gt?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_gte?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
+  lastPostJoinExitInvariant_lt?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_lte?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_not?: InputMaybe<Scalars["BigDecimal"]>;
+  lastPostJoinExitInvariant_not_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
   lowerTarget?: InputMaybe<Scalars["BigDecimal"]>;
   lowerTarget_gt?: InputMaybe<Scalars["BigDecimal"]>;
   lowerTarget_gte?: InputMaybe<Scalars["BigDecimal"]>;
@@ -4273,6 +4304,27 @@ export interface Pool_Filter {
   protocolAumFeeCache_not?: InputMaybe<Scalars["BigDecimal"]>;
   protocolAumFeeCache_not_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
   protocolId?: InputMaybe<Scalars["Int"]>;
+  protocolIdData?: InputMaybe<Scalars["String"]>;
+  protocolIdData_?: InputMaybe<ProtocolIdData_Filter>;
+  protocolIdData_contains?: InputMaybe<Scalars["String"]>;
+  protocolIdData_contains_nocase?: InputMaybe<Scalars["String"]>;
+  protocolIdData_ends_with?: InputMaybe<Scalars["String"]>;
+  protocolIdData_ends_with_nocase?: InputMaybe<Scalars["String"]>;
+  protocolIdData_gt?: InputMaybe<Scalars["String"]>;
+  protocolIdData_gte?: InputMaybe<Scalars["String"]>;
+  protocolIdData_in?: InputMaybe<Array<Scalars["String"]>>;
+  protocolIdData_lt?: InputMaybe<Scalars["String"]>;
+  protocolIdData_lte?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_contains?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_contains_nocase?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_ends_with?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_ends_with_nocase?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_in?: InputMaybe<Array<Scalars["String"]>>;
+  protocolIdData_not_starts_with?: InputMaybe<Scalars["String"]>;
+  protocolIdData_not_starts_with_nocase?: InputMaybe<Scalars["String"]>;
+  protocolIdData_starts_with?: InputMaybe<Scalars["String"]>;
+  protocolIdData_starts_with_nocase?: InputMaybe<Scalars["String"]>;
   protocolId_gt?: InputMaybe<Scalars["Int"]>;
   protocolId_gte?: InputMaybe<Scalars["Int"]>;
   protocolId_in?: InputMaybe<Array<Scalars["Int"]>>;
@@ -4603,6 +4655,7 @@ export type Pool_OrderBy =
   | "isInRecoveryMode"
   | "isPaused"
   | "lambda"
+  | "lastPostJoinExitInvariant"
   | "lowerTarget"
   | "lpToken"
   | "mainIndex"
@@ -4616,6 +4669,9 @@ export type Pool_OrderBy =
   | "principalToken"
   | "protocolAumFeeCache"
   | "protocolId"
+  | "protocolIdData"
+  | "protocolIdData__id"
+  | "protocolIdData__name"
   | "protocolSwapFeeCache"
   | "protocolYieldFeeCache"
   | "rewardData"
@@ -4798,6 +4854,7 @@ export type PriceRateProvider_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -4849,9 +4906,53 @@ export type PriceRateProvider_OrderBy =
   | "token__isExemptFromYieldProtocolFee"
   | "token__managedBalance"
   | "token__name"
+  | "token__oldPriceRate"
   | "token__priceRate"
   | "token__symbol"
   | "token__weight";
+
+export interface ProtocolIdData {
+  __typename: "ProtocolIdData";
+  id: Scalars["ID"];
+  name: Scalars["String"];
+}
+
+export interface ProtocolIdData_Filter {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<ProtocolIdData_Filter>>>;
+  id?: InputMaybe<Scalars["ID"]>;
+  id_gt?: InputMaybe<Scalars["ID"]>;
+  id_gte?: InputMaybe<Scalars["ID"]>;
+  id_in?: InputMaybe<Array<Scalars["ID"]>>;
+  id_lt?: InputMaybe<Scalars["ID"]>;
+  id_lte?: InputMaybe<Scalars["ID"]>;
+  id_not?: InputMaybe<Scalars["ID"]>;
+  id_not_in?: InputMaybe<Array<Scalars["ID"]>>;
+  name?: InputMaybe<Scalars["String"]>;
+  name_contains?: InputMaybe<Scalars["String"]>;
+  name_contains_nocase?: InputMaybe<Scalars["String"]>;
+  name_ends_with?: InputMaybe<Scalars["String"]>;
+  name_ends_with_nocase?: InputMaybe<Scalars["String"]>;
+  name_gt?: InputMaybe<Scalars["String"]>;
+  name_gte?: InputMaybe<Scalars["String"]>;
+  name_in?: InputMaybe<Array<Scalars["String"]>>;
+  name_lt?: InputMaybe<Scalars["String"]>;
+  name_lte?: InputMaybe<Scalars["String"]>;
+  name_not?: InputMaybe<Scalars["String"]>;
+  name_not_contains?: InputMaybe<Scalars["String"]>;
+  name_not_contains_nocase?: InputMaybe<Scalars["String"]>;
+  name_not_ends_with?: InputMaybe<Scalars["String"]>;
+  name_not_ends_with_nocase?: InputMaybe<Scalars["String"]>;
+  name_not_in?: InputMaybe<Array<Scalars["String"]>>;
+  name_not_starts_with?: InputMaybe<Scalars["String"]>;
+  name_not_starts_with_nocase?: InputMaybe<Scalars["String"]>;
+  name_starts_with?: InputMaybe<Scalars["String"]>;
+  name_starts_with_nocase?: InputMaybe<Scalars["String"]>;
+  or?: InputMaybe<Array<InputMaybe<ProtocolIdData_Filter>>>;
+}
+
+export type ProtocolIdData_OrderBy = "id" | "name";
 
 export interface Query {
   __typename: "Query";
@@ -4920,6 +5021,8 @@ export interface Query {
   pools: Array<Pool>;
   priceRateProvider?: Maybe<PriceRateProvider>;
   priceRateProviders: Array<PriceRateProvider>;
+  protocolIdData?: Maybe<ProtocolIdData>;
+  protocolIdDatas: Array<ProtocolIdData>;
   rewardData?: Maybe<RewardData>;
   rewardDatas: Array<RewardData>;
   swap?: Maybe<Swap>;
@@ -5452,6 +5555,22 @@ export interface QueryPriceRateProvidersArgs {
   where?: InputMaybe<PriceRateProvider_Filter>;
 }
 
+export interface QueryProtocolIdDataArgs {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface QueryProtocolIdDatasArgs {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]>;
+  orderBy?: InputMaybe<ProtocolIdData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProtocolIdData_Filter>;
+}
+
 export interface QueryRewardDataArgs {
   block?: InputMaybe<Block_Height>;
   id: Scalars["ID"];
@@ -5768,6 +5887,8 @@ export interface Subscription {
   pools: Array<Pool>;
   priceRateProvider?: Maybe<PriceRateProvider>;
   priceRateProviders: Array<PriceRateProvider>;
+  protocolIdData?: Maybe<ProtocolIdData>;
+  protocolIdDatas: Array<ProtocolIdData>;
   rewardData?: Maybe<RewardData>;
   rewardDatas: Array<RewardData>;
   swap?: Maybe<Swap>;
@@ -6300,6 +6421,22 @@ export interface SubscriptionPriceRateProvidersArgs {
   where?: InputMaybe<PriceRateProvider_Filter>;
 }
 
+export interface SubscriptionProtocolIdDataArgs {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface SubscriptionProtocolIdDatasArgs {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]>;
+  orderBy?: InputMaybe<ProtocolIdData_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ProtocolIdData_Filter>;
+}
+
 export interface SubscriptionRewardDataArgs {
   block?: InputMaybe<Block_Height>;
   id: Scalars["ID"];
@@ -6586,6 +6723,7 @@ export type SwapFeeUpdate_OrderBy =
   | "pool__isInRecoveryMode"
   | "pool__isPaused"
   | "pool__lambda"
+  | "pool__lastPostJoinExitInvariant"
   | "pool__lowerTarget"
   | "pool__mainIndex"
   | "pool__managementFee"
@@ -6819,6 +6957,7 @@ export type Swap_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -6882,6 +7021,7 @@ export interface Token {
   latestFXPrice?: Maybe<Scalars["BigDecimal"]>;
   latestPrice?: Maybe<LatestPrice>;
   latestUSDPrice?: Maybe<Scalars["BigDecimal"]>;
+  latestUSDPriceTimestamp?: Maybe<Scalars["BigInt"]>;
   name: Scalars["String"];
   pool?: Maybe<Pool>;
   symbol: Scalars["String"];
@@ -7015,6 +7155,7 @@ export type TokenPrice_OrderBy =
   | "poolId__isInRecoveryMode"
   | "poolId__isPaused"
   | "poolId__lambda"
+  | "poolId__lastPostJoinExitInvariant"
   | "poolId__lowerTarget"
   | "poolId__mainIndex"
   | "poolId__managementFee"
@@ -7163,6 +7304,7 @@ export type TokenSnapshot_OrderBy =
   | "token__id"
   | "token__latestFXPrice"
   | "token__latestUSDPrice"
+  | "token__latestUSDPriceTimestamp"
   | "token__name"
   | "token__symbol"
   | "token__totalBalanceNotional"
@@ -7246,6 +7388,14 @@ export interface Token_Filter {
   latestPrice_starts_with?: InputMaybe<Scalars["String"]>;
   latestPrice_starts_with_nocase?: InputMaybe<Scalars["String"]>;
   latestUSDPrice?: InputMaybe<Scalars["BigDecimal"]>;
+  latestUSDPriceTimestamp?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_gt?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_gte?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_in?: InputMaybe<Array<Scalars["BigInt"]>>;
+  latestUSDPriceTimestamp_lt?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_lte?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_not?: InputMaybe<Scalars["BigInt"]>;
+  latestUSDPriceTimestamp_not_in?: InputMaybe<Array<Scalars["BigInt"]>>;
   latestUSDPrice_gt?: InputMaybe<Scalars["BigDecimal"]>;
   latestUSDPrice_gte?: InputMaybe<Scalars["BigDecimal"]>;
   latestUSDPrice_in?: InputMaybe<Array<Scalars["BigDecimal"]>>;
@@ -7369,6 +7519,7 @@ export type Token_OrderBy =
   | "latestPrice__price"
   | "latestPrice__pricingAsset"
   | "latestUSDPrice"
+  | "latestUSDPriceTimestamp"
   | "name"
   | "pool"
   | "pool__address"
@@ -7388,6 +7539,7 @@ export type Token_OrderBy =
   | "pool__isInRecoveryMode"
   | "pool__isPaused"
   | "pool__lambda"
+  | "pool__lastPostJoinExitInvariant"
   | "pool__lowerTarget"
   | "pool__mainIndex"
   | "pool__managementFee"
@@ -7604,6 +7756,7 @@ export type TradePair_OrderBy =
   | "token0__id"
   | "token0__latestFXPrice"
   | "token0__latestUSDPrice"
+  | "token0__latestUSDPriceTimestamp"
   | "token0__name"
   | "token0__symbol"
   | "token0__totalBalanceNotional"
@@ -7617,6 +7770,7 @@ export type TradePair_OrderBy =
   | "token1__id"
   | "token1__latestFXPrice"
   | "token1__latestUSDPrice"
+  | "token1__latestUSDPriceTimestamp"
   | "token1__name"
   | "token1__symbol"
   | "token1__totalBalanceNotional"
@@ -7785,29 +7939,19 @@ export type _SubgraphErrorPolicy_ =
   /** If the subgraph has indexing errors, data will be omitted. The default. */
   | "deny";
 
-export type GetAuraLockersQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  orderBy?: InputMaybe<AuraLocker_OrderBy>;
-  block?: InputMaybe<Block_Height>;
-}>;
+export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetAuraLockersQuery = {
+export type LockerLeaderboardQuery = {
   __typename: "Query";
-  _meta?: { __typename: "_Meta_"; deployment: string } | null;
-  auraLockers: Array<{
+  auraLockerLeaderboard?: {
     __typename: "AuraLocker";
-    address: string;
-    id: string;
-    totalSupply: string;
+    lockedSupply: string;
     accounts: Array<{
       __typename: "AuraLockerAccount";
-      balanceLocked: string;
-      balance: string;
       id: string;
-      account: { __typename: "Account"; id: string };
-      userData: Array<{ __typename: "AuraLockerUserData"; id: string }>;
+      balanceLocked: string;
     }>;
-  }>;
+  } | null;
 };
 
 export type GetProtocolDataQueryVariables = Exact<{
@@ -9204,85 +9348,73 @@ export const BalancerSnapshotFragmentDoc = gql`
     totalSwapFee
   }
 `;
-export const GetAuraLockersDocument = gql`
-  query GetAuraLockers(
-    $first: Int
-    $orderBy: AuraLocker_orderBy
-    $block: Block_height
-  ) {
-    _meta {
-      deployment
-    }
-    auraLockers(first: $first, orderBy: $orderBy, block: $block) {
-      accounts {
-        account {
-          id
-        }
-        balanceLocked
-        balance
+export const LockerLeaderboardDocument = gql`
+  query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+      accounts(
+        first: 1000
+        where: { balance_gt: 1000000000000000000 }
+        orderBy: balanceLocked
+        orderDirection: desc
+      ) {
         id
-        userData {
-          id
-        }
+        balanceLocked
+        __typename
       }
-      address
-      id
-      totalSupply
+      lockedSupply
+      __typename
     }
   }
 `;
 
 /**
- * __useGetAuraLockersQuery__
+ * __useLockerLeaderboardQuery__
  *
- * To run a query within a React component, call `useGetAuraLockersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAuraLockersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAuraLockersQuery({
+ * const { data, loading, error } = useLockerLeaderboardQuery({
  *   variables: {
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      block: // value for 'block'
  *   },
  * });
  */
-export function useGetAuraLockersQuery(
+export function useLockerLeaderboardQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    GetAuraLockersQuery,
-    GetAuraLockersQueryVariables
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAuraLockersQuery, GetAuraLockersQueryVariables>(
-    GetAuraLockersDocument,
-    options
-  );
+  return Apollo.useQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
 }
-export function useGetAuraLockersLazyQuery(
+export function useLockerLeaderboardLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAuraLockersQuery,
-    GetAuraLockersQueryVariables
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAuraLockersQuery, GetAuraLockersQueryVariables>(
-    GetAuraLockersDocument,
-    options
-  );
+  return Apollo.useLazyQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
 }
-export type GetAuraLockersQueryHookResult = ReturnType<
-  typeof useGetAuraLockersQuery
+export type LockerLeaderboardQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardQuery
 >;
-export type GetAuraLockersLazyQueryHookResult = ReturnType<
-  typeof useGetAuraLockersLazyQuery
+export type LockerLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardLazyQuery
 >;
-export type GetAuraLockersQueryResult = Apollo.QueryResult<
-  GetAuraLockersQuery,
-  GetAuraLockersQueryVariables
+export type LockerLeaderboardQueryResult = Apollo.QueryResult<
+  LockerLeaderboardQuery,
+  LockerLeaderboardQueryVariables
 >;
 export const GetProtocolDataDocument = gql`
   query GetProtocolData(

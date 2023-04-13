@@ -187,30 +187,21 @@ export const BalancerSnapshot = gql`
     totalSwapFee
   }
 `;
-export const GetAuraLockers = gql`
-  query GetAuraLockers(
-    $first: Int
-    $orderBy: AuraLocker_orderBy
-    $block: Block_height
-  ) {
-    _meta {
-      deployment
-    }
-    auraLockers(first: $first, orderBy: $orderBy, block: $block) {
-      accounts {
-        account {
-          id
-        }
-        balanceLocked
-        balance
+export const LockerLeaderboard = gql`
+  query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+      accounts(
+        first: 1000
+        where: { balance_gt: 1000000000000000000 }
+        orderBy: balanceLocked
+        orderDirection: desc
+      ) {
         id
-        userData {
-          id
-        }
+        balanceLocked
+        __typename
       }
-      address
-      id
-      totalSupply
+      lockedSupply
+      __typename
     }
   }
 `;
