@@ -1,10 +1,11 @@
 import Box from '@mui/material/Box';
-import {Grid, Typography, List, ListItem} from '@mui/material';
+import {Grid, Typography, List, ListItem, CircularProgress} from '@mui/material';
 import {useParams} from "react-router-dom";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import {useGetLeadingLockers} from "../../data/aura/useLockers";
 import LockerTable from "../../components/Tables/LockerTable";
 import LockedAuraCard from "../../components/Cards/LockedAuraCard";
+import TopLockerCard from "../../components/Cards/TopLockerCard";
 
 
 export default function AuraLocks() {
@@ -26,11 +27,24 @@ export default function AuraLocks() {
                     <Grid item xs={11} mt={1}>
                         <Typography variant="h5" mb={1}>Top Lockers</Typography>
                     </Grid>
-                    <Grid item mb={5} mt={2} xs={11} sm={4} md={4}>
-                        <LockedAuraCard totalLockedAmount={totalLockedAmount}/>
+                    <Grid item xs={11}>
+                        <Grid
+                            container
+                            columns={{xs: 4, sm: 8, md: 12}}
+                            sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                        >
+                            <Box m={1}>
+                                <LockedAuraCard totalLockedAmount={totalLockedAmount}/>
+                            </Box>
+                            <Box m={1}>
+                                {topLockers.length > 0 ?
+                                    <TopLockerCard address={topLockers[0].id} lockedAmount={topLockers[0].balanceLocked}
+                                                   place={"First"}/> : <CircularProgress/>}
+                            </Box>
+                        </Grid>
                     </Grid>
                     <LockerTable lockerAccounts={topLockers}
-                                totalAmountLocked={totalLockedAmount}/>
+                                 totalAmountLocked={totalLockedAmount}/>
                 </Grid>
             </Grid>
         </Box>
