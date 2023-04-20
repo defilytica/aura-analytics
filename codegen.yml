@@ -2,6 +2,8 @@ schema:
   - 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks'
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2'
+  - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
+  - 'https://cache.aura.finance/graphql'
 documents:
   - 'src/**/*.gql'
 hooks:

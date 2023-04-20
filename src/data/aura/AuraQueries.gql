@@ -1,5 +1,4 @@
-# TODO
-
+# TODO: Refactor! Get Aura Locker metrics
 query GetAuraLockers($first: Int, $orderBy: AuraLocker_orderBy, $block: Block_height) {
   _meta {
     deployment
