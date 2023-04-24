@@ -1,4 +1,85 @@
 import gql from "graphql-tag";
+export const AuraBlock = gql`
+  fragment AuraBlock on Query {
+    _meta {
+      block {
+        number
+      }
+    }
+  }
+`;
+export const AllToken = gql`
+  fragment AllToken on Token {
+    id
+    decimals
+    symbol
+    name
+  }
+`;
+export const AllPool = gql`
+  fragment AllPool on Pool {
+    id
+    depositToken {
+      ...AllToken
+    }
+    lpToken {
+      ...AllToken
+    }
+    isFactoryPool
+    factoryPoolData {
+      id
+      addedAt
+      isShutdown
+      stash
+      gauge
+    }
+    gauge {
+      id
+      balance
+      totalSupply
+      workingSupply
+    }
+    rewardPool
+    totalSupply
+    totalStaked
+    __typename
+  }
+  ${AllToken}
+`;
+export const AllPoolRewardData = gql`
+  fragment AllPoolRewardData on PoolRewardData {
+    id
+    token {
+      ...AllToken
+    }
+    periodFinish
+    lastUpdateTime
+    rewardPerTokenStored
+    rewardRate
+  }
+  ${AllToken}
+`;
+export const AllPoolAccountRewards = gql`
+  fragment AllPoolAccountRewards on PoolAccountRewards {
+    id
+    rewards
+    rewardPerTokenPaid
+    rewardToken {
+      ...AllToken
+    }
+  }
+  ${AllToken}
+`;
+export const AllPoolAccount = gql`
+  fragment AllPoolAccount on PoolAccount {
+    id
+    staked
+    rewards {
+      ...AllPoolAccountRewards
+    }
+  }
+  ${AllPoolAccountRewards}
+`;
 export const TokenSnapshot = gql`
   fragment TokenSnapshot on TokenSnapshot {
     id
@@ -191,12 +272,12 @@ export const GetAuraLockers = gql`
   query GetAuraLockers(
     $first: Int
     $orderBy: AuraLocker_orderBy
-    $block: Block_height
+    $auraBlock: Block_height
   ) {
     _meta {
       deployment
     }
-    auraLockers(first: $first, orderBy: $orderBy, block: $block) {
+    auraLockers(first: $first, orderBy: $orderBy, block: $auraBlock) {
       accounts {
         account {
           id
@@ -213,6 +294,189 @@ export const GetAuraLockers = gql`
       totalSupply
     }
   }
+`;
+export const AuraGlobalStats = gql`
+  query AuraGlobalStats {
+    global(id: "global") {
+      id
+      aura
+      auraTotalSupply
+      auraBalTotalSupply
+      auraMaxSupply
+      auraReductionPerCliff
+      auraTotalCliffs
+    }
+    masterChefs {
+      id
+      endBlock
+      startBlock
+      totalAllocPoint
+      rewardPerBlock
+    }
+    tokens(first: 1000) {
+      ...AllToken
+    }
+  }
+  ${AllToken}
+`;
+export const AuraBalMintTransactions = gql`
+  query AuraBalMintTransactions($startTimestamp: Int!) {
+    auraBalMintTransactions(
+      where: { timestamp_gt: $startTimestamp }
+      first: 800
+      orderBy: timestamp
+      orderDirection: asc
+    ) {
+      timestamp
+      amount
+    }
+  }
+`;
+export const AuraBalTransactions = gql`
+  query AuraBalTransactions {
+    auraBalMintTransactions(
+      where: { amount_gte: "100000000000000000000" }
+      first: 100
+      orderBy: timestamp
+      orderDirection: desc
+    ) {
+      timestamp
+      amount
+      hash
+      account {
+        id
+      }
+    }
+    vaultHarvestTransactions(
+      first: 50
+      orderBy: timestamp
+      orderDirection: desc
+    ) {
+      timestamp
+      harvested
+      hash
+      sender
+    }
+    vaultDepositTransactions(
+      first: 250
+      orderBy: timestamp
+      orderDirection: desc
+    ) {
+      timestamp
+      assets
+      shares
+      hash
+      vaultAccount {
+        account {
+          id
+        }
+      }
+    }
+  }
+`;
+export const PoolLeaderboard = gql`
+  query PoolLeaderboard($poolId: ID!) {
+    leaderboard: pool(id: $poolId) {
+      accounts(
+        first: 1000
+        where: { staked_gt: 1000000000000000000 }
+        orderBy: staked
+        orderDirection: desc
+      ) {
+        staked
+        account {
+          id
+        }
+      }
+      totalStaked
+    }
+  }
+`;
+export const VaultLeaderboard = gql`
+  query VaultLeaderboard($vaultId: ID!) {
+    leaderboard: vault(id: $vaultId) {
+      accounts(
+        first: 1000
+        where: { shares_gt: 1000000000000000000 }
+        orderBy: shares
+        orderDirection: desc
+      ) {
+        shares
+        account {
+          id
+        }
+      }
+      totalSupply
+    }
+  }
+`;
+export const Aura = gql`
+  query Aura($accountId: String = "", $hasAccount: Boolean = false) {
+    ...AuraBlock
+    auraBal: pool(id: "auraBal") {
+      ...AllPool
+      rewardData {
+        ...AllPoolRewardData
+        queuedRewards
+      }
+      accounts(where: { account: $accountId }) @include(if: $hasAccount) {
+        ...AllPoolAccount
+      }
+    }
+    factoryPools: pools(where: { isFactoryPool: true }) {
+      ...AllPool
+      rewardData {
+        ...AllPoolRewardData
+        queuedRewards
+      }
+      accounts(where: { account: $accountId }) @include(if: $hasAccount) {
+        ...AllPoolAccount
+      }
+    }
+    vault(id: "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6") {
+      id
+      decimals
+      name
+      symbol
+      strategy
+      totalSupply
+      totalUnderlying
+      underlying {
+        ...AllToken
+      }
+      asset {
+        ...AllToken
+      }
+      rewardData {
+        id
+        token {
+          ...AllToken
+        }
+        periodFinish
+        lastUpdateTime
+        rewardPerTokenStored
+        rewardRate
+        queuedRewards
+      }
+      accounts(where: { account: $accountId }) @include(if: $hasAccount) {
+        id
+        shares
+        rewards {
+          id
+          rewardToken {
+            ...AllToken
+          }
+          rewardPerTokenPaid
+          rewards
+        }
+      }
+    }
+  }
+  ${AuraBlock}
+  ${AllPool}
+  ${AllPoolRewardData}
+  ${AllPoolAccount}
+  ${AllToken}
 `;
 export const GetProtocolData = gql`
   query GetProtocolData(

@@ -1,9 +1,9 @@
 # TODO: Refactor! Get Aura Locker metrics
-query GetAuraLockers($first: Int, $orderBy: AuraLocker_orderBy, $block: Block_height) {
+query GetAuraLockers($first: Int, $orderBy: AuraLocker_orderBy, $auraBlock: Block_height) {
   _meta {
     deployment
   }
-  auraLockers(first: $first, orderBy: $orderBy, block: $block) {
+  auraLockers(first: $first, orderBy: $orderBy, block: $auraBlock) {
     accounts {
       account {
         id

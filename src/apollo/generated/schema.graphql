@@ -14,6 +14,13 @@ Defined a Subgraph ID for an object type
 directive @subgraphId(id: String!) on OBJECT
 
 type Account {
+  auraBalMintTransactions(
+    first: Int = 100
+    orderBy: AuraBalMintTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: AuraBalMintTransaction_filter
+  ): [AuraBalMintTransaction!]!
   auraLockerAccount: AuraLockerAccount
 
   """
@@ -34,6 +41,13 @@ type Account {
     skip: Int = 0
     where: PoolAccount_filter
   ): [PoolAccount!]!
+  vaultAccounts(
+    first: Int = 100
+    orderBy: VaultAccount_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultAccount_filter
+  ): [VaultAccount!]!
 }
 
 input Account_filter {
@@ -41,6 +55,7 @@ input Account_filter {
   Filter for the block changed event.
   """
   _change_block: BlockChangedFilter
+  auraBalMintTransactions_: AuraBalMintTransaction_filter
   auraLockerAccount: String
   auraLockerAccount_: AuraLockerAccount_filter
   auraLockerAccount_contains: String
@@ -72,13 +87,16 @@ input Account_filter {
   id_not_in: [ID!]
   merkleDropClaims_: MerkleDropClaim_filter
   poolAccounts_: PoolAccount_filter
+  vaultAccounts_: VaultAccount_filter
 }
 
 enum Account_orderBy {
+  auraBalMintTransactions
   auraLockerAccount
   id
   merkleDropClaims
   poolAccounts
+  vaultAccounts
 }
 
 type AmpUpdate {
@@ -191,6 +209,7 @@ enum AmpUpdate_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -235,6 +254,80 @@ enum AmpUpdate_orderBy {
   startTimestamp
 }
 
+type AuraBalMintTransaction {
+  account: Account!
+  amount: BigInt!
+  hash: Bytes!
+  id: ID!
+  timestamp: Int!
+}
+
+input AuraBalMintTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  account: String
+  account_: Account_filter
+  account_contains: String
+  account_contains_nocase: String
+  account_ends_with: String
+  account_ends_with_nocase: String
+  account_gt: String
+  account_gte: String
+  account_in: [String!]
+  account_lt: String
+  account_lte: String
+  account_not: String
+  account_not_contains: String
+  account_not_contains_nocase: String
+  account_not_ends_with: String
+  account_not_ends_with_nocase: String
+  account_not_in: [String!]
+  account_not_starts_with: String
+  account_not_starts_with_nocase: String
+  account_starts_with: String
+  account_starts_with_nocase: String
+  amount: BigInt
+  amount_gt: BigInt
+  amount_gte: BigInt
+  amount_in: [BigInt!]
+  amount_lt: BigInt
+  amount_lte: BigInt
+  amount_not: BigInt
+  amount_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum AuraBalMintTransaction_orderBy {
+  account
+  amount
+  hash
+  id
+  timestamp
+}
+
 type AuraLocker {
   accounts(
     first: Int = 100
@@ -244,11 +337,26 @@ type AuraLocker {
     where: AuraLockerAccount_filter
   ): [AuraLockerAccount!]!
   address: Bytes!
+  delegateChangedTransactions(
+    first: Int = 100
+    orderBy: LockerDelegateChangedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerDelegateChangedTransaction_filter
+  ): [LockerDelegateChangedTransaction!]!
 
   """
   Singleton: "AuraLocker"
   """
   id: ID!
+  isShutdown: Boolean!
+  kickRewardTransactions(
+    first: Int = 100
+    orderBy: LockerKickRewardTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerKickRewardTransaction_filter
+  ): [LockerKickRewardTransaction!]!
   lockedSupply: BigInt!
   rewardData(
     first: Int = 100
@@ -257,7 +365,28 @@ type AuraLocker {
     skip: Int = 0
     where: AuraLockerRewardData_filter
   ): [AuraLockerRewardData!]!
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: LockerRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerRewardPaidTransaction_filter
+  ): [LockerRewardPaidTransaction!]!
+  stakedTransactions(
+    first: Int = 100
+    orderBy: LockerStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerStakedTransaction_filter
+  ): [LockerStakedTransaction!]!
   totalSupply: BigInt!
+  withdrawnTransactions(
+    first: Int = 100
+    orderBy: LockerWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerWithdrawnTransaction_filter
+  ): [LockerWithdrawnTransaction!]!
 }
 
 type AuraLockerAccount {
@@ -275,6 +404,13 @@ type AuraLockerAccount {
   Either self-delegated (in which case delegate => this, or another account); or not set
   """
   delegate: AuraLockerAccount
+  delegateChangedTransactions(
+    first: Int = 100
+    orderBy: LockerDelegateChangedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerDelegateChangedTransaction_filter
+  ): [LockerDelegateChangedTransaction!]!
 
   """
   Timestamp at which `delegate` was updated
@@ -296,6 +432,27 @@ type AuraLockerAccount {
   {Account.id}
   """
   id: ID!
+  kickRewardTransactions(
+    first: Int = 100
+    orderBy: LockerKickRewardTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerKickRewardTransaction_filter
+  ): [LockerKickRewardTransaction!]!
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: LockerRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerRewardPaidTransaction_filter
+  ): [LockerRewardPaidTransaction!]!
+  stakedTransactions(
+    first: Int = 100
+    orderBy: LockerStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerStakedTransaction_filter
+  ): [LockerStakedTransaction!]!
 
   """
   AuraLocker.userData(account)
@@ -319,6 +476,13 @@ type AuraLockerAccount {
     where: AuraLockerUserLock_filter
   ): [AuraLockerUserLock!]!
   userLocksLength: Int!
+  withdrawnTransactions(
+    first: Int = 100
+    orderBy: LockerWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: LockerWithdrawnTransaction_filter
+  ): [LockerWithdrawnTransaction!]!
 }
 
 input AuraLockerAccount_filter {
@@ -393,6 +557,7 @@ input AuraLockerAccount_filter {
   balance_not: BigInt
   balance_not_in: [BigInt!]
   delegate: String
+  delegateChangedTransactions_: LockerDelegateChangedTransaction_filter
   delegateUpdatedAt: Int
   delegateUpdatedAt_gt: Int
   delegateUpdatedAt_gte: Int
@@ -430,6 +595,9 @@ input AuraLockerAccount_filter {
   id_lte: ID
   id_not: ID
   id_not_in: [ID!]
+  kickRewardTransactions_: LockerKickRewardTransaction_filter
+  rewardPaidTransactions_: LockerRewardPaidTransaction_filter
+  stakedTransactions_: LockerStakedTransaction_filter
   userData_: AuraLockerUserData_filter
   userLocksLength: Int
   userLocksLength_gt: Int
@@ -440,6 +608,7 @@ input AuraLockerAccount_filter {
   userLocksLength_not: Int
   userLocksLength_not_in: [Int!]
   userLocks_: AuraLockerUserLock_filter
+  withdrawnTransactions_: LockerWithdrawnTransaction_filter
 }
 
 enum AuraLockerAccount_orderBy {
@@ -449,12 +618,17 @@ enum AuraLockerAccount_orderBy {
   balanceLocked
   balanceNextUnlockIndex
   delegate
+  delegateChangedTransactions
   delegateUpdatedAt
   delegators
   id
+  kickRewardTransactions
+  rewardPaidTransactions
+  stakedTransactions
   userData
   userLocks
   userLocksLength
+  withdrawnTransactions
 }
 
 type AuraLockerRewardData implements RewardData {
@@ -745,6 +919,7 @@ input AuraLocker_filter {
   address_not: Bytes
   address_not_contains: Bytes
   address_not_in: [Bytes!]
+  delegateChangedTransactions_: LockerDelegateChangedTransaction_filter
   id: ID
   id_gt: ID
   id_gte: ID
@@ -753,6 +928,11 @@ input AuraLocker_filter {
   id_lte: ID
   id_not: ID
   id_not_in: [ID!]
+  isShutdown: Boolean
+  isShutdown_in: [Boolean!]
+  isShutdown_not: Boolean
+  isShutdown_not_in: [Boolean!]
+  kickRewardTransactions_: LockerKickRewardTransaction_filter
   lockedSupply: BigInt
   lockedSupply_gt: BigInt
   lockedSupply_gte: BigInt
@@ -762,6 +942,8 @@ input AuraLocker_filter {
   lockedSupply_not: BigInt
   lockedSupply_not_in: [BigInt!]
   rewardData_: AuraLockerRewardData_filter
+  rewardPaidTransactions_: LockerRewardPaidTransaction_filter
+  stakedTransactions_: LockerStakedTransaction_filter
   totalSupply: BigInt
   totalSupply_gt: BigInt
   totalSupply_gte: BigInt
@@ -770,15 +952,22 @@ input AuraLocker_filter {
   totalSupply_lte: BigInt
   totalSupply_not: BigInt
   totalSupply_not_in: [BigInt!]
+  withdrawnTransactions_: LockerWithdrawnTransaction_filter
 }
 
 enum AuraLocker_orderBy {
   accounts
   address
+  delegateChangedTransactions
   id
+  isShutdown
+  kickRewardTransactions
   lockedSupply
   rewardData
+  rewardPaidTransactions
+  stakedTransactions
   totalSupply
+  withdrawnTransactions
 }
 
 type Balancer {
@@ -1400,17 +1589,24 @@ enum Gauge_orderBy {
 
 type Global {
   aura: Bytes!
+  auraBalTotalSupply: BigInt!
   auraMaxSupply: BigInt!
   auraMinter: Bytes!
   auraMinterMinted: BigInt!
   auraReductionPerCliff: BigInt!
   auraTotalCliffs: BigInt!
   auraTotalSupply: BigInt!
+  booster: Bytes!
+  earmarkIncentive: BigInt!
 
   """
   Singleton: "global"
   """
   id: ID!
+  lockIncentive: BigInt!
+  platformFee: BigInt!
+  stakerIncentive: BigInt!
+  voteDelegate: Bytes!
 }
 
 input Global_filter {
@@ -1419,6 +1615,14 @@ input Global_filter {
   """
   _change_block: BlockChangedFilter
   aura: Bytes
+  auraBalTotalSupply: BigInt
+  auraBalTotalSupply_gt: BigInt
+  auraBalTotalSupply_gte: BigInt
+  auraBalTotalSupply_in: [BigInt!]
+  auraBalTotalSupply_lt: BigInt
+  auraBalTotalSupply_lte: BigInt
+  auraBalTotalSupply_not: BigInt
+  auraBalTotalSupply_not_in: [BigInt!]
   auraMaxSupply: BigInt
   auraMaxSupply_gt: BigInt
   auraMaxSupply_gte: BigInt
@@ -1470,6 +1674,20 @@ input Global_filter {
   aura_not: Bytes
   aura_not_contains: Bytes
   aura_not_in: [Bytes!]
+  booster: Bytes
+  booster_contains: Bytes
+  booster_in: [Bytes!]
+  booster_not: Bytes
+  booster_not_contains: Bytes
+  booster_not_in: [Bytes!]
+  earmarkIncentive: BigInt
+  earmarkIncentive_gt: BigInt
+  earmarkIncentive_gte: BigInt
+  earmarkIncentive_in: [BigInt!]
+  earmarkIncentive_lt: BigInt
+  earmarkIncentive_lte: BigInt
+  earmarkIncentive_not: BigInt
+  earmarkIncentive_not_in: [BigInt!]
   id: ID
   id_gt: ID
   id_gte: ID
@@ -1478,17 +1696,54 @@ input Global_filter {
   id_lte: ID
   id_not: ID
   id_not_in: [ID!]
+  lockIncentive: BigInt
+  lockIncentive_gt: BigInt
+  lockIncentive_gte: BigInt
+  lockIncentive_in: [BigInt!]
+  lockIncentive_lt: BigInt
+  lockIncentive_lte: BigInt
+  lockIncentive_not: BigInt
+  lockIncentive_not_in: [BigInt!]
+  platformFee: BigInt
+  platformFee_gt: BigInt
+  platformFee_gte: BigInt
+  platformFee_in: [BigInt!]
+  platformFee_lt: BigInt
+  platformFee_lte: BigInt
+  platformFee_not: BigInt
+  platformFee_not_in: [BigInt!]
+  stakerIncentive: BigInt
+  stakerIncentive_gt: BigInt
+  stakerIncentive_gte: BigInt
+  stakerIncentive_in: [BigInt!]
+  stakerIncentive_lt: BigInt
+  stakerIncentive_lte: BigInt
+  stakerIncentive_not: BigInt
+  stakerIncentive_not_in: [BigInt!]
+  voteDelegate: Bytes
+  voteDelegate_contains: Bytes
+  voteDelegate_in: [Bytes!]
+  voteDelegate_not: Bytes
+  voteDelegate_not_contains: Bytes
+  voteDelegate_not_in: [Bytes!]
 }
 
 enum Global_orderBy {
   aura
+  auraBalTotalSupply
   auraMaxSupply
   auraMinter
   auraMinterMinted
   auraReductionPerCliff
   auraTotalCliffs
   auraTotalSupply
+  booster
+  earmarkIncentive
   id
+  lockIncentive
+  platformFee
+  stakerIncentive
+  voteDelegate
 }
 
 type GradualWeightUpdate {
@@ -1597,6 +1852,7 @@ enum GradualWeightUpdate_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -1784,6 +2040,7 @@ enum JoinExit_orderBy {
   pool__isInRecoveryMode
   pool__isPaused
   pool__lambda
+  pool__lastPostJoinExitInvariant
   pool__lowerTarget
   pool__mainIndex
   pool__managementFee
@@ -1937,6 +2194,7 @@ enum LatestPrice_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -1978,6 +2236,631 @@ enum LatestPrice_orderBy {
   poolId__z
   price
   pricingAsset
+}
+
+type LockerDelegateChangedTransaction implements LockerTransaction {
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  fromDelegate: Bytes!
+  hash: Bytes!
+  id: ID!
+  timestamp: Int!
+  toDelegate: Bytes!
+}
+
+input LockerDelegateChangedTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  fromDelegate: Bytes
+  fromDelegate_contains: Bytes
+  fromDelegate_in: [Bytes!]
+  fromDelegate_not: Bytes
+  fromDelegate_not_contains: Bytes
+  fromDelegate_not_in: [Bytes!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  toDelegate: Bytes
+  toDelegate_contains: Bytes
+  toDelegate_in: [Bytes!]
+  toDelegate_not: Bytes
+  toDelegate_not_contains: Bytes
+  toDelegate_not_in: [Bytes!]
+}
+
+enum LockerDelegateChangedTransaction_orderBy {
+  auraLocker
+  auraLockerAccount
+  fromDelegate
+  hash
+  id
+  timestamp
+  toDelegate
+}
+
+type LockerKickRewardTransaction implements LockerTransaction {
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  hash: Bytes!
+  id: ID!
+  kicked: Bytes!
+  reward: BigInt!
+  timestamp: Int!
+}
+
+input LockerKickRewardTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  kicked: Bytes
+  kicked_contains: Bytes
+  kicked_in: [Bytes!]
+  kicked_not: Bytes
+  kicked_not_contains: Bytes
+  kicked_not_in: [Bytes!]
+  reward: BigInt
+  reward_gt: BigInt
+  reward_gte: BigInt
+  reward_in: [BigInt!]
+  reward_lt: BigInt
+  reward_lte: BigInt
+  reward_not: BigInt
+  reward_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum LockerKickRewardTransaction_orderBy {
+  auraLocker
+  auraLockerAccount
+  hash
+  id
+  kicked
+  reward
+  timestamp
+}
+
+type LockerRewardPaidTransaction implements LockerTransaction {
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  hash: Bytes!
+  id: ID!
+  reward: BigInt!
+  rewardToken: Token!
+  timestamp: Int!
+}
+
+input LockerRewardPaidTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  reward: BigInt
+  rewardToken: String
+  rewardToken_: Token_filter
+  rewardToken_contains: String
+  rewardToken_contains_nocase: String
+  rewardToken_ends_with: String
+  rewardToken_ends_with_nocase: String
+  rewardToken_gt: String
+  rewardToken_gte: String
+  rewardToken_in: [String!]
+  rewardToken_lt: String
+  rewardToken_lte: String
+  rewardToken_not: String
+  rewardToken_not_contains: String
+  rewardToken_not_contains_nocase: String
+  rewardToken_not_ends_with: String
+  rewardToken_not_ends_with_nocase: String
+  rewardToken_not_in: [String!]
+  rewardToken_not_starts_with: String
+  rewardToken_not_starts_with_nocase: String
+  rewardToken_starts_with: String
+  rewardToken_starts_with_nocase: String
+  reward_gt: BigInt
+  reward_gte: BigInt
+  reward_in: [BigInt!]
+  reward_lt: BigInt
+  reward_lte: BigInt
+  reward_not: BigInt
+  reward_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum LockerRewardPaidTransaction_orderBy {
+  auraLocker
+  auraLockerAccount
+  hash
+  id
+  reward
+  rewardToken
+  timestamp
+}
+
+type LockerStakedTransaction implements LockerTransaction {
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  hash: Bytes!
+  id: ID!
+  lockedAmount: BigInt!
+  paidAmount: BigInt!
+  timestamp: Int!
+}
+
+input LockerStakedTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  lockedAmount: BigInt
+  lockedAmount_gt: BigInt
+  lockedAmount_gte: BigInt
+  lockedAmount_in: [BigInt!]
+  lockedAmount_lt: BigInt
+  lockedAmount_lte: BigInt
+  lockedAmount_not: BigInt
+  lockedAmount_not_in: [BigInt!]
+  paidAmount: BigInt
+  paidAmount_gt: BigInt
+  paidAmount_gte: BigInt
+  paidAmount_in: [BigInt!]
+  paidAmount_lt: BigInt
+  paidAmount_lte: BigInt
+  paidAmount_not: BigInt
+  paidAmount_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum LockerStakedTransaction_orderBy {
+  auraLocker
+  auraLockerAccount
+  hash
+  id
+  lockedAmount
+  paidAmount
+  timestamp
+}
+
+interface LockerTransaction {
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  hash: Bytes!
+  id: ID!
+  timestamp: Int!
+}
+
+input LockerTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum LockerTransaction_orderBy {
+  auraLocker
+  auraLockerAccount
+  hash
+  id
+  timestamp
+}
+
+type LockerWithdrawnTransaction implements LockerTransaction {
+  amount: BigInt!
+  auraLocker: AuraLocker!
+  auraLockerAccount: AuraLockerAccount!
+  hash: Bytes!
+  id: ID!
+  relocked: Boolean!
+  timestamp: Int!
+}
+
+input LockerWithdrawnTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  amount: BigInt
+  amount_gt: BigInt
+  amount_gte: BigInt
+  amount_in: [BigInt!]
+  amount_lt: BigInt
+  amount_lte: BigInt
+  amount_not: BigInt
+  amount_not_in: [BigInt!]
+  auraLocker: String
+  auraLockerAccount: String
+  auraLockerAccount_: AuraLockerAccount_filter
+  auraLockerAccount_contains: String
+  auraLockerAccount_contains_nocase: String
+  auraLockerAccount_ends_with: String
+  auraLockerAccount_ends_with_nocase: String
+  auraLockerAccount_gt: String
+  auraLockerAccount_gte: String
+  auraLockerAccount_in: [String!]
+  auraLockerAccount_lt: String
+  auraLockerAccount_lte: String
+  auraLockerAccount_not: String
+  auraLockerAccount_not_contains: String
+  auraLockerAccount_not_contains_nocase: String
+  auraLockerAccount_not_ends_with: String
+  auraLockerAccount_not_ends_with_nocase: String
+  auraLockerAccount_not_in: [String!]
+  auraLockerAccount_not_starts_with: String
+  auraLockerAccount_not_starts_with_nocase: String
+  auraLockerAccount_starts_with: String
+  auraLockerAccount_starts_with_nocase: String
+  auraLocker_: AuraLocker_filter
+  auraLocker_contains: String
+  auraLocker_contains_nocase: String
+  auraLocker_ends_with: String
+  auraLocker_ends_with_nocase: String
+  auraLocker_gt: String
+  auraLocker_gte: String
+  auraLocker_in: [String!]
+  auraLocker_lt: String
+  auraLocker_lte: String
+  auraLocker_not: String
+  auraLocker_not_contains: String
+  auraLocker_not_contains_nocase: String
+  auraLocker_not_ends_with: String
+  auraLocker_not_ends_with_nocase: String
+  auraLocker_not_in: [String!]
+  auraLocker_not_starts_with: String
+  auraLocker_not_starts_with_nocase: String
+  auraLocker_starts_with: String
+  auraLocker_starts_with_nocase: String
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  relocked: Boolean
+  relocked_in: [Boolean!]
+  relocked_not: Boolean
+  relocked_not_in: [Boolean!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum LockerWithdrawnTransaction_orderBy {
+  amount
+  auraLocker
+  auraLockerAccount
+  hash
+  id
+  relocked
+  timestamp
 }
 
 type ManagementOperation {
@@ -2070,6 +2953,7 @@ enum ManagementOperation_orderBy {
   poolTokenId__isExemptFromYieldProtocolFee
   poolTokenId__managedBalance
   poolTokenId__name
+  poolTokenId__oldPriceRate
   poolTokenId__priceRate
   poolTokenId__symbol
   poolTokenId__weight
@@ -2625,6 +3509,7 @@ type Pool {
   isInRecoveryMode: Boolean
   isPaused: Boolean
   lambda: BigDecimal
+  lastPostJoinExitInvariant: BigDecimal
   lowerTarget: BigDecimal
 
   """
@@ -2650,6 +3535,7 @@ type Pool {
   principalToken: Bytes
   protocolAumFeeCache: BigDecimal
   protocolId: Int
+  protocolIdData: ProtocolIdData
   protocolSwapFeeCache: BigDecimal
   protocolYieldFeeCache: BigDecimal
 
@@ -2665,9 +3551,25 @@ type Pool {
   ): [PoolRewardData!]!
 
   """
-  BaseRewardPool (for factory pools)
+  Reward paid transactions for this pool
+  """
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: PoolRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolRewardPaidTransaction_filter
+  ): [PoolRewardPaidTransaction!]!
+
+  """
+  BaseRewardPool
   """
   rewardPool: Bytes!
+
+  """
+  Reward token of BaseRewardPool
+  """
+  rewardToken: Token!
   root3Alpha: BigDecimal
   s: BigDecimal
   shares(
@@ -2686,6 +3588,17 @@ type Pool {
   ): [PoolSnapshot!]
   sqrtAlpha: BigDecimal
   sqrtBeta: BigDecimal
+
+  """
+  Staked transactions for this pool
+  """
+  stakedTransactions(
+    first: Int = 100
+    orderBy: PoolStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolStakedTransaction_filter
+  ): [PoolStakedTransaction!]!
 
   """
   auraBal initial staking only
@@ -2744,6 +3657,17 @@ type Pool {
     skip: Int = 0
     where: GradualWeightUpdate_filter
   ): [GradualWeightUpdate!]
+
+  """
+  Withdrawn transactions for this pool
+  """
+  withdrawnTransactions(
+    first: Int = 100
+    orderBy: PoolWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolWithdrawnTransaction_filter
+  ): [PoolWithdrawnTransaction!]!
   wrappedIndex: Int
   z: BigDecimal
 }
@@ -2761,6 +3685,17 @@ type PoolAccount {
   """
   id: ID!
   pool: Pool!
+
+  """
+  Reward paid transactions for this pool account
+  """
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: PoolRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolRewardPaidTransaction_filter
+  ): [PoolRewardPaidTransaction!]!
   rewards(
     first: Int = 100
     orderBy: PoolAccountRewards_orderBy
@@ -2774,6 +3709,28 @@ type PoolAccount {
   i.e. the account's staked LP tokens
   """
   staked: BigInt!
+
+  """
+  Staked transactions for this pool account
+  """
+  stakedTransactions(
+    first: Int = 100
+    orderBy: PoolStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolStakedTransaction_filter
+  ): [PoolStakedTransaction!]!
+
+  """
+  Withdrawn transactions for this pool account
+  """
+  withdrawnTransactions(
+    first: Int = 100
+    orderBy: PoolWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: PoolWithdrawnTransaction_filter
+  ): [PoolWithdrawnTransaction!]!
 }
 
 type PoolAccountRewards {
@@ -2939,8 +3896,10 @@ input PoolAccount_filter {
   pool_not_starts_with_nocase: String
   pool_starts_with: String
   pool_starts_with_nocase: String
+  rewardPaidTransactions_: PoolRewardPaidTransaction_filter
   rewards_: PoolAccountRewards_filter
   staked: BigInt
+  stakedTransactions_: PoolStakedTransaction_filter
   staked_gt: BigInt
   staked_gte: BigInt
   staked_in: [BigInt!]
@@ -2948,6 +3907,7 @@ input PoolAccount_filter {
   staked_lte: BigInt
   staked_not: BigInt
   staked_not_in: [BigInt!]
+  withdrawnTransactions_: PoolWithdrawnTransaction_filter
 }
 
 enum PoolAccount_orderBy {
@@ -2955,8 +3915,11 @@ enum PoolAccount_orderBy {
   balance
   id
   pool
+  rewardPaidTransactions
   rewards
   staked
+  stakedTransactions
+  withdrawnTransactions
 }
 
 type PoolContract {
@@ -3022,6 +3985,7 @@ enum PoolContract_orderBy {
   pool__isInRecoveryMode
   pool__isPaused
   pool__lambda
+  pool__lastPostJoinExitInvariant
   pool__lowerTarget
   pool__mainIndex
   pool__managementFee
@@ -3174,6 +4138,7 @@ enum PoolHistoricalLiquidity_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -3227,6 +4192,7 @@ type PoolRewardData implements RewardData {
   lastUpdateTime: Int!
   periodFinish: Int!
   pool: Pool!
+  queuedRewards: BigInt!
   rewardPerTokenStored: BigInt!
   rewardRate: BigInt!
   token: Token!
@@ -3282,6 +4248,14 @@ input PoolRewardData_filter {
   pool_not_starts_with_nocase: String
   pool_starts_with: String
   pool_starts_with_nocase: String
+  queuedRewards: BigInt
+  queuedRewards_gt: BigInt
+  queuedRewards_gte: BigInt
+  queuedRewards_in: [BigInt!]
+  queuedRewards_lt: BigInt
+  queuedRewards_lte: BigInt
+  queuedRewards_not: BigInt
+  queuedRewards_not_in: [BigInt!]
   rewardPerTokenStored: BigInt
   rewardPerTokenStored_gt: BigInt
   rewardPerTokenStored_gte: BigInt
@@ -3326,9 +4300,107 @@ enum PoolRewardData_orderBy {
   lastUpdateTime
   periodFinish
   pool
+  queuedRewards
   rewardPerTokenStored
   rewardRate
   token
+}
+
+type PoolRewardPaidTransaction implements PoolTransaction {
+  hash: Bytes!
+  id: ID!
+  pool: Pool!
+  poolAccount: PoolAccount!
+  reward: BigInt!
+  timestamp: Int!
+}
+
+input PoolRewardPaidTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  pool: String
+  poolAccount: String
+  poolAccount_: PoolAccount_filter
+  poolAccount_contains: String
+  poolAccount_contains_nocase: String
+  poolAccount_ends_with: String
+  poolAccount_ends_with_nocase: String
+  poolAccount_gt: String
+  poolAccount_gte: String
+  poolAccount_in: [String!]
+  poolAccount_lt: String
+  poolAccount_lte: String
+  poolAccount_not: String
+  poolAccount_not_contains: String
+  poolAccount_not_contains_nocase: String
+  poolAccount_not_ends_with: String
+  poolAccount_not_ends_with_nocase: String
+  poolAccount_not_in: [String!]
+  poolAccount_not_starts_with: String
+  poolAccount_not_starts_with_nocase: String
+  poolAccount_starts_with: String
+  poolAccount_starts_with_nocase: String
+  pool_: Pool_filter
+  pool_contains: String
+  pool_contains_nocase: String
+  pool_ends_with: String
+  pool_ends_with_nocase: String
+  pool_gt: String
+  pool_gte: String
+  pool_in: [String!]
+  pool_lt: String
+  pool_lte: String
+  pool_not: String
+  pool_not_contains: String
+  pool_not_contains_nocase: String
+  pool_not_ends_with: String
+  pool_not_ends_with_nocase: String
+  pool_not_in: [String!]
+  pool_not_starts_with: String
+  pool_not_starts_with_nocase: String
+  pool_starts_with: String
+  pool_starts_with_nocase: String
+  reward: BigInt
+  reward_gt: BigInt
+  reward_gte: BigInt
+  reward_in: [BigInt!]
+  reward_lt: BigInt
+  reward_lte: BigInt
+  reward_not: BigInt
+  reward_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum PoolRewardPaidTransaction_orderBy {
+  hash
+  id
+  pool
+  poolAccount
+  reward
+  timestamp
 }
 
 type PoolShare {
@@ -3426,6 +4498,7 @@ enum PoolShare_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -3605,6 +4678,7 @@ enum PoolSnapshot_orderBy {
   pool__isInRecoveryMode
   pool__isPaused
   pool__lambda
+  pool__lastPostJoinExitInvariant
   pool__lowerTarget
   pool__mainIndex
   pool__managementFee
@@ -3651,6 +4725,103 @@ enum PoolSnapshot_orderBy {
   totalShares
 }
 
+type PoolStakedTransaction implements PoolTransaction {
+  amount: BigInt!
+  hash: Bytes!
+  id: ID!
+  pool: Pool!
+  poolAccount: PoolAccount!
+  timestamp: Int!
+}
+
+input PoolStakedTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  amount: BigInt
+  amount_gt: BigInt
+  amount_gte: BigInt
+  amount_in: [BigInt!]
+  amount_lt: BigInt
+  amount_lte: BigInt
+  amount_not: BigInt
+  amount_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  pool: String
+  poolAccount: String
+  poolAccount_: PoolAccount_filter
+  poolAccount_contains: String
+  poolAccount_contains_nocase: String
+  poolAccount_ends_with: String
+  poolAccount_ends_with_nocase: String
+  poolAccount_gt: String
+  poolAccount_gte: String
+  poolAccount_in: [String!]
+  poolAccount_lt: String
+  poolAccount_lte: String
+  poolAccount_not: String
+  poolAccount_not_contains: String
+  poolAccount_not_contains_nocase: String
+  poolAccount_not_ends_with: String
+  poolAccount_not_ends_with_nocase: String
+  poolAccount_not_in: [String!]
+  poolAccount_not_starts_with: String
+  poolAccount_not_starts_with_nocase: String
+  poolAccount_starts_with: String
+  poolAccount_starts_with_nocase: String
+  pool_: Pool_filter
+  pool_contains: String
+  pool_contains_nocase: String
+  pool_ends_with: String
+  pool_ends_with_nocase: String
+  pool_gt: String
+  pool_gte: String
+  pool_in: [String!]
+  pool_lt: String
+  pool_lte: String
+  pool_not: String
+  pool_not_contains: String
+  pool_not_contains_nocase: String
+  pool_not_ends_with: String
+  pool_not_ends_with_nocase: String
+  pool_not_in: [String!]
+  pool_not_starts_with: String
+  pool_not_starts_with_nocase: String
+  pool_starts_with: String
+  pool_starts_with_nocase: String
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum PoolStakedTransaction_orderBy {
+  amount
+  hash
+  id
+  pool
+  poolAccount
+  timestamp
+}
+
 type PoolToken {
   address: String!
   assetManager: Bytes!
@@ -3669,6 +4840,7 @@ type PoolToken {
     where: ManagementOperation_filter
   ): [ManagementOperation!]
   name: String!
+  oldPriceRate: BigDecimal
   poolId: Pool
   priceRate: BigDecimal!
   symbol: String!
@@ -3785,6 +4957,14 @@ input PoolToken_filter {
   name_not_starts_with_nocase: String
   name_starts_with: String
   name_starts_with_nocase: String
+  oldPriceRate: BigDecimal
+  oldPriceRate_gt: BigDecimal
+  oldPriceRate_gte: BigDecimal
+  oldPriceRate_in: [BigDecimal!]
+  oldPriceRate_lt: BigDecimal
+  oldPriceRate_lte: BigDecimal
+  oldPriceRate_not: BigDecimal
+  oldPriceRate_not_in: [BigDecimal!]
   or: [PoolToken_filter]
   poolId: String
   poolId_: Pool_filter
@@ -3878,6 +5058,7 @@ enum PoolToken_orderBy {
   managedBalance
   managements
   name
+  oldPriceRate
   poolId
   poolId__address
   poolId__alpha
@@ -3896,6 +5077,7 @@ enum PoolToken_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -3943,6 +5125,7 @@ enum PoolToken_orderBy {
   token__id
   token__latestFXPrice
   token__latestUSDPrice
+  token__latestUSDPriceTimestamp
   token__name
   token__symbol
   token__totalBalanceNotional
@@ -3951,6 +5134,190 @@ enum PoolToken_orderBy {
   token__totalVolumeNotional
   token__totalVolumeUSD
   weight
+}
+
+interface PoolTransaction {
+  hash: Bytes!
+  id: ID!
+  pool: Pool!
+  poolAccount: PoolAccount!
+  timestamp: Int!
+}
+
+input PoolTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  pool: String
+  poolAccount: String
+  poolAccount_: PoolAccount_filter
+  poolAccount_contains: String
+  poolAccount_contains_nocase: String
+  poolAccount_ends_with: String
+  poolAccount_ends_with_nocase: String
+  poolAccount_gt: String
+  poolAccount_gte: String
+  poolAccount_in: [String!]
+  poolAccount_lt: String
+  poolAccount_lte: String
+  poolAccount_not: String
+  poolAccount_not_contains: String
+  poolAccount_not_contains_nocase: String
+  poolAccount_not_ends_with: String
+  poolAccount_not_ends_with_nocase: String
+  poolAccount_not_in: [String!]
+  poolAccount_not_starts_with: String
+  poolAccount_not_starts_with_nocase: String
+  poolAccount_starts_with: String
+  poolAccount_starts_with_nocase: String
+  pool_: Pool_filter
+  pool_contains: String
+  pool_contains_nocase: String
+  pool_ends_with: String
+  pool_ends_with_nocase: String
+  pool_gt: String
+  pool_gte: String
+  pool_in: [String!]
+  pool_lt: String
+  pool_lte: String
+  pool_not: String
+  pool_not_contains: String
+  pool_not_contains_nocase: String
+  pool_not_ends_with: String
+  pool_not_ends_with_nocase: String
+  pool_not_in: [String!]
+  pool_not_starts_with: String
+  pool_not_starts_with_nocase: String
+  pool_starts_with: String
+  pool_starts_with_nocase: String
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum PoolTransaction_orderBy {
+  hash
+  id
+  pool
+  poolAccount
+  timestamp
+}
+
+type PoolWithdrawnTransaction implements PoolTransaction {
+  amount: BigInt!
+  hash: Bytes!
+  id: ID!
+  pool: Pool!
+  poolAccount: PoolAccount!
+  timestamp: Int!
+}
+
+input PoolWithdrawnTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  amount: BigInt
+  amount_gt: BigInt
+  amount_gte: BigInt
+  amount_in: [BigInt!]
+  amount_lt: BigInt
+  amount_lte: BigInt
+  amount_not: BigInt
+  amount_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  pool: String
+  poolAccount: String
+  poolAccount_: PoolAccount_filter
+  poolAccount_contains: String
+  poolAccount_contains_nocase: String
+  poolAccount_ends_with: String
+  poolAccount_ends_with_nocase: String
+  poolAccount_gt: String
+  poolAccount_gte: String
+  poolAccount_in: [String!]
+  poolAccount_lt: String
+  poolAccount_lte: String
+  poolAccount_not: String
+  poolAccount_not_contains: String
+  poolAccount_not_contains_nocase: String
+  poolAccount_not_ends_with: String
+  poolAccount_not_ends_with_nocase: String
+  poolAccount_not_in: [String!]
+  poolAccount_not_starts_with: String
+  poolAccount_not_starts_with_nocase: String
+  poolAccount_starts_with: String
+  poolAccount_starts_with_nocase: String
+  pool_: Pool_filter
+  pool_contains: String
+  pool_contains_nocase: String
+  pool_ends_with: String
+  pool_ends_with_nocase: String
+  pool_gt: String
+  pool_gte: String
+  pool_in: [String!]
+  pool_lt: String
+  pool_lte: String
+  pool_not: String
+  pool_not_contains: String
+  pool_not_contains_nocase: String
+  pool_not_ends_with: String
+  pool_not_ends_with_nocase: String
+  pool_not_in: [String!]
+  pool_not_starts_with: String
+  pool_not_starts_with_nocase: String
+  pool_starts_with: String
+  pool_starts_with_nocase: String
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+}
+
+enum PoolWithdrawnTransaction_orderBy {
+  amount
+  hash
+  id
+  pool
+  poolAccount
+  timestamp
 }
 
 input Pool_filter {
@@ -4162,6 +5529,14 @@ input Pool_filter {
   lambda_lte: BigDecimal
   lambda_not: BigDecimal
   lambda_not_in: [BigDecimal!]
+  lastPostJoinExitInvariant: BigDecimal
+  lastPostJoinExitInvariant_gt: BigDecimal
+  lastPostJoinExitInvariant_gte: BigDecimal
+  lastPostJoinExitInvariant_in: [BigDecimal!]
+  lastPostJoinExitInvariant_lt: BigDecimal
+  lastPostJoinExitInvariant_lte: BigDecimal
+  lastPostJoinExitInvariant_not: BigDecimal
+  lastPostJoinExitInvariant_not_in: [BigDecimal!]
   lowerTarget: BigDecimal
   lowerTarget_gt: BigDecimal
   lowerTarget_gte: BigDecimal
@@ -4290,6 +5665,27 @@ input Pool_filter {
   protocolAumFeeCache_not: BigDecimal
   protocolAumFeeCache_not_in: [BigDecimal!]
   protocolId: Int
+  protocolIdData: String
+  protocolIdData_: ProtocolIdData_filter
+  protocolIdData_contains: String
+  protocolIdData_contains_nocase: String
+  protocolIdData_ends_with: String
+  protocolIdData_ends_with_nocase: String
+  protocolIdData_gt: String
+  protocolIdData_gte: String
+  protocolIdData_in: [String!]
+  protocolIdData_lt: String
+  protocolIdData_lte: String
+  protocolIdData_not: String
+  protocolIdData_not_contains: String
+  protocolIdData_not_contains_nocase: String
+  protocolIdData_not_ends_with: String
+  protocolIdData_not_ends_with_nocase: String
+  protocolIdData_not_in: [String!]
+  protocolIdData_not_starts_with: String
+  protocolIdData_not_starts_with_nocase: String
+  protocolIdData_starts_with: String
+  protocolIdData_starts_with_nocase: String
   protocolId_gt: Int
   protocolId_gte: Int
   protocolId_in: [Int!]
@@ -4314,12 +5710,34 @@ input Pool_filter {
   protocolYieldFeeCache_not: BigDecimal
   protocolYieldFeeCache_not_in: [BigDecimal!]
   rewardData_: PoolRewardData_filter
+  rewardPaidTransactions_: PoolRewardPaidTransaction_filter
   rewardPool: Bytes
   rewardPool_contains: Bytes
   rewardPool_in: [Bytes!]
   rewardPool_not: Bytes
   rewardPool_not_contains: Bytes
   rewardPool_not_in: [Bytes!]
+  rewardToken: String
+  rewardToken_: Token_filter
+  rewardToken_contains: String
+  rewardToken_contains_nocase: String
+  rewardToken_ends_with: String
+  rewardToken_ends_with_nocase: String
+  rewardToken_gt: String
+  rewardToken_gte: String
+  rewardToken_in: [String!]
+  rewardToken_lt: String
+  rewardToken_lte: String
+  rewardToken_not: String
+  rewardToken_not_contains: String
+  rewardToken_not_contains_nocase: String
+  rewardToken_not_ends_with: String
+  rewardToken_not_ends_with_nocase: String
+  rewardToken_not_in: [String!]
+  rewardToken_not_starts_with: String
+  rewardToken_not_starts_with_nocase: String
+  rewardToken_starts_with: String
+  rewardToken_starts_with_nocase: String
   root3Alpha: BigDecimal
   root3Alpha_gt: BigDecimal
   root3Alpha_gte: BigDecimal
@@ -4354,6 +5772,7 @@ input Pool_filter {
   sqrtBeta_lte: BigDecimal
   sqrtBeta_not: BigDecimal
   sqrtBeta_not_in: [BigDecimal!]
+  stakedTransactions_: PoolStakedTransaction_filter
   startTime: Int
   startTime_gt: Int
   startTime_gte: Int
@@ -4578,6 +5997,7 @@ input Pool_filter {
   w_not: BigDecimal
   w_not_in: [BigDecimal!]
   weightUpdates_: GradualWeightUpdate_filter
+  withdrawnTransactions_: PoolWithdrawnTransaction_filter
   wrappedIndex: Int
   wrappedIndex_gt: Int
   wrappedIndex_gte: Int
@@ -4620,6 +6040,7 @@ enum Pool_orderBy {
   isInRecoveryMode
   isPaused
   lambda
+  lastPostJoinExitInvariant
   lowerTarget
   lpToken
   mainIndex
@@ -4633,16 +6054,22 @@ enum Pool_orderBy {
   principalToken
   protocolAumFeeCache
   protocolId
+  protocolIdData
+  protocolIdData__id
+  protocolIdData__name
   protocolSwapFeeCache
   protocolYieldFeeCache
   rewardData
+  rewardPaidTransactions
   rewardPool
+  rewardToken
   root3Alpha
   s
   shares
   snapshots
   sqrtAlpha
   sqrtBeta
+  stakedTransactions
   startTime
   strategyType
   swapEnabled
@@ -4677,6 +6104,7 @@ enum Pool_orderBy {
   vaultID__totalSwapVolume
   w
   weightUpdates
+  withdrawnTransactions
   wrappedIndex
   z
 }
@@ -4817,6 +6245,7 @@ enum PriceRateProvider_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -4868,9 +6297,57 @@ enum PriceRateProvider_orderBy {
   token__isExemptFromYieldProtocolFee
   token__managedBalance
   token__name
+  token__oldPriceRate
   token__priceRate
   token__symbol
   token__weight
+}
+
+type ProtocolIdData {
+  id: ID!
+  name: String!
+}
+
+input ProtocolIdData_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  and: [ProtocolIdData_filter]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  name: String
+  name_contains: String
+  name_contains_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_gt: String
+  name_gte: String
+  name_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_not: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  or: [ProtocolIdData_filter]
+}
+
+enum ProtocolIdData_orderBy {
+  id
+  name
 }
 
 type Query {
@@ -4934,6 +6411,34 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: AmpUpdate_filter
   ): [AmpUpdate!]!
+  auraBalMintTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AuraBalMintTransaction
+  auraBalMintTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: AuraBalMintTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: AuraBalMintTransaction_filter
+  ): [AuraBalMintTransaction!]!
   auraLocker(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -5326,6 +6831,174 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: LatestPrice_filter
   ): [LatestPrice!]!
+  lockerDelegateChangedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerDelegateChangedTransaction
+  lockerDelegateChangedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerDelegateChangedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerDelegateChangedTransaction_filter
+  ): [LockerDelegateChangedTransaction!]!
+  lockerKickRewardTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerKickRewardTransaction
+  lockerKickRewardTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerKickRewardTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerKickRewardTransaction_filter
+  ): [LockerKickRewardTransaction!]!
+  lockerRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerRewardPaidTransaction
+  lockerRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerRewardPaidTransaction_filter
+  ): [LockerRewardPaidTransaction!]!
+  lockerStakedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerStakedTransaction
+  lockerStakedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerStakedTransaction_filter
+  ): [LockerStakedTransaction!]!
+  lockerTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerTransaction
+  lockerTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerTransaction_filter
+  ): [LockerTransaction!]!
+  lockerWithdrawnTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerWithdrawnTransaction
+  lockerWithdrawnTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerWithdrawnTransaction_filter
+  ): [LockerWithdrawnTransaction!]!
   managementOperation(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -5634,6 +7307,34 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolRewardData_filter
   ): [PoolRewardData!]!
+  poolRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolRewardPaidTransaction
+  poolRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolRewardPaidTransaction_filter
+  ): [PoolRewardPaidTransaction!]!
   poolShare(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -5690,6 +7391,34 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolSnapshot_filter
   ): [PoolSnapshot!]!
+  poolStakedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolStakedTransaction
+  poolStakedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolStakedTransaction_filter
+  ): [PoolStakedTransaction!]!
   poolToken(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -5718,6 +7447,62 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolToken_filter
   ): [PoolToken!]!
+  poolTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolTransaction
+  poolTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolTransaction_filter
+  ): [PoolTransaction!]!
+  poolWithdrawnTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolWithdrawnTransaction
+  poolWithdrawnTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolWithdrawnTransaction_filter
+  ): [PoolWithdrawnTransaction!]!
   pools(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -5762,6 +7547,34 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PriceRateProvider_filter
   ): [PriceRateProvider!]!
+  protocolIdData(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ProtocolIdData
+  protocolIdDatas(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: ProtocolIdData_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: ProtocolIdData_filter
+  ): [ProtocolIdData!]!
   rewardData(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -6042,6 +7855,258 @@ type Query {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: User_filter
   ): [User!]!
+  vault(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Vault
+  vaultAccount(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultAccount
+  vaultAccountReward(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultAccountReward
+  vaultAccountRewards(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultAccountReward_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultAccountReward_filter
+  ): [VaultAccountReward!]!
+  vaultAccounts(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultAccount_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultAccount_filter
+  ): [VaultAccount!]!
+  vaultDepositTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultDepositTransaction
+  vaultDepositTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultDepositTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultDepositTransaction_filter
+  ): [VaultDepositTransaction!]!
+  vaultHarvestTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultHarvestTransaction
+  vaultHarvestTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultHarvestTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultHarvestTransaction_filter
+  ): [VaultHarvestTransaction!]!
+  vaultRewardData(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultRewardData
+  vaultRewardDatas(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultRewardData_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultRewardData_filter
+  ): [VaultRewardData!]!
+  vaultRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultRewardPaidTransaction
+  vaultRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultRewardPaidTransaction_filter
+  ): [VaultRewardPaidTransaction!]!
+  vaultTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultTransaction
+  vaultTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultTransaction_filter
+  ): [VaultTransaction!]!
+  vaultWithdrawTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultWithdrawTransaction
+  vaultWithdrawTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultWithdrawTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultWithdrawTransaction_filter
+  ): [VaultWithdrawTransaction!]!
+  vaults(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: Vault_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: Vault_filter
+  ): [Vault!]!
 }
 
 interface RewardData {
@@ -6196,6 +8261,34 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: AmpUpdate_filter
   ): [AmpUpdate!]!
+  auraBalMintTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AuraBalMintTransaction
+  auraBalMintTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: AuraBalMintTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: AuraBalMintTransaction_filter
+  ): [AuraBalMintTransaction!]!
   auraLocker(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -6588,6 +8681,174 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: LatestPrice_filter
   ): [LatestPrice!]!
+  lockerDelegateChangedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerDelegateChangedTransaction
+  lockerDelegateChangedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerDelegateChangedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerDelegateChangedTransaction_filter
+  ): [LockerDelegateChangedTransaction!]!
+  lockerKickRewardTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerKickRewardTransaction
+  lockerKickRewardTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerKickRewardTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerKickRewardTransaction_filter
+  ): [LockerKickRewardTransaction!]!
+  lockerRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerRewardPaidTransaction
+  lockerRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerRewardPaidTransaction_filter
+  ): [LockerRewardPaidTransaction!]!
+  lockerStakedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerStakedTransaction
+  lockerStakedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerStakedTransaction_filter
+  ): [LockerStakedTransaction!]!
+  lockerTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerTransaction
+  lockerTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerTransaction_filter
+  ): [LockerTransaction!]!
+  lockerWithdrawnTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): LockerWithdrawnTransaction
+  lockerWithdrawnTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: LockerWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: LockerWithdrawnTransaction_filter
+  ): [LockerWithdrawnTransaction!]!
   managementOperation(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -6896,6 +9157,34 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolRewardData_filter
   ): [PoolRewardData!]!
+  poolRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolRewardPaidTransaction
+  poolRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolRewardPaidTransaction_filter
+  ): [PoolRewardPaidTransaction!]!
   poolShare(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -6952,6 +9241,34 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolSnapshot_filter
   ): [PoolSnapshot!]!
+  poolStakedTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolStakedTransaction
+  poolStakedTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolStakedTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolStakedTransaction_filter
+  ): [PoolStakedTransaction!]!
   poolToken(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -6980,6 +9297,62 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PoolToken_filter
   ): [PoolToken!]!
+  poolTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolTransaction
+  poolTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolTransaction_filter
+  ): [PoolTransaction!]!
+  poolWithdrawnTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): PoolWithdrawnTransaction
+  poolWithdrawnTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: PoolWithdrawnTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: PoolWithdrawnTransaction_filter
+  ): [PoolWithdrawnTransaction!]!
   pools(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -7024,6 +9397,34 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: PriceRateProvider_filter
   ): [PriceRateProvider!]!
+  protocolIdData(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ProtocolIdData
+  protocolIdDatas(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: ProtocolIdData_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: ProtocolIdData_filter
+  ): [ProtocolIdData!]!
   rewardData(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -7304,6 +9705,258 @@ type Subscription {
     subgraphError: _SubgraphErrorPolicy_! = deny
     where: User_filter
   ): [User!]!
+  vault(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Vault
+  vaultAccount(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultAccount
+  vaultAccountReward(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultAccountReward
+  vaultAccountRewards(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultAccountReward_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultAccountReward_filter
+  ): [VaultAccountReward!]!
+  vaultAccounts(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultAccount_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultAccount_filter
+  ): [VaultAccount!]!
+  vaultDepositTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultDepositTransaction
+  vaultDepositTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultDepositTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultDepositTransaction_filter
+  ): [VaultDepositTransaction!]!
+  vaultHarvestTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultHarvestTransaction
+  vaultHarvestTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultHarvestTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultHarvestTransaction_filter
+  ): [VaultHarvestTransaction!]!
+  vaultRewardData(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultRewardData
+  vaultRewardDatas(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultRewardData_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultRewardData_filter
+  ): [VaultRewardData!]!
+  vaultRewardPaidTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultRewardPaidTransaction
+  vaultRewardPaidTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultRewardPaidTransaction_filter
+  ): [VaultRewardPaidTransaction!]!
+  vaultTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultTransaction
+  vaultTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultTransaction_filter
+  ): [VaultTransaction!]!
+  vaultWithdrawTransaction(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    id: ID!
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): VaultWithdrawTransaction
+  vaultWithdrawTransactions(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: VaultWithdrawTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: VaultWithdrawTransaction_filter
+  ): [VaultWithdrawTransaction!]!
+  vaults(
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    first: Int = 100
+    orderBy: Vault_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+    where: Vault_filter
+  ): [Vault!]!
 }
 
 type Swap {
@@ -7432,6 +10085,7 @@ enum SwapFeeUpdate_orderBy {
   pool__isInRecoveryMode
   pool__isPaused
   pool__lambda
+  pool__lastPostJoinExitInvariant
   pool__lowerTarget
   pool__mainIndex
   pool__managementFee
@@ -7668,6 +10322,7 @@ enum Swap_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -7731,6 +10386,7 @@ type Token {
   latestFXPrice: BigDecimal
   latestPrice: LatestPrice
   latestUSDPrice: BigDecimal
+  latestUSDPriceTimestamp: BigInt
   name: String!
   pool: Pool
   symbol: String!
@@ -7865,6 +10521,7 @@ enum TokenPrice_orderBy {
   poolId__isInRecoveryMode
   poolId__isPaused
   poolId__lambda
+  poolId__lastPostJoinExitInvariant
   poolId__lowerTarget
   poolId__mainIndex
   poolId__managementFee
@@ -8015,6 +10672,7 @@ enum TokenSnapshot_orderBy {
   token__id
   token__latestFXPrice
   token__latestUSDPrice
+  token__latestUSDPriceTimestamp
   token__name
   token__symbol
   token__totalBalanceNotional
@@ -8101,6 +10759,14 @@ input Token_filter {
   latestPrice_starts_with: String
   latestPrice_starts_with_nocase: String
   latestUSDPrice: BigDecimal
+  latestUSDPriceTimestamp: BigInt
+  latestUSDPriceTimestamp_gt: BigInt
+  latestUSDPriceTimestamp_gte: BigInt
+  latestUSDPriceTimestamp_in: [BigInt!]
+  latestUSDPriceTimestamp_lt: BigInt
+  latestUSDPriceTimestamp_lte: BigInt
+  latestUSDPriceTimestamp_not: BigInt
+  latestUSDPriceTimestamp_not_in: [BigInt!]
   latestUSDPrice_gt: BigDecimal
   latestUSDPrice_gte: BigDecimal
   latestUSDPrice_in: [BigDecimal!]
@@ -8224,6 +10890,7 @@ enum Token_orderBy {
   latestPrice__price
   latestPrice__pricingAsset
   latestUSDPrice
+  latestUSDPriceTimestamp
   name
   pool
   pool__address
@@ -8243,6 +10910,7 @@ enum Token_orderBy {
   pool__isInRecoveryMode
   pool__isPaused
   pool__lambda
+  pool__lastPostJoinExitInvariant
   pool__lowerTarget
   pool__mainIndex
   pool__managementFee
@@ -8465,6 +11133,7 @@ enum TradePair_orderBy {
   token0__id
   token0__latestFXPrice
   token0__latestUSDPrice
+  token0__latestUSDPriceTimestamp
   token0__name
   token0__symbol
   token0__totalBalanceNotional
@@ -8478,6 +11147,7 @@ enum TradePair_orderBy {
   token1__id
   token1__latestFXPrice
   token1__latestUSDPrice
+  token1__latestUSDPriceTimestamp
   token1__name
   token1__symbol
   token1__totalBalanceNotional
@@ -8610,6 +11280,1139 @@ enum User_orderBy {
   sharesOwned
   swaps
   userInternalBalances
+}
+
+"""
+ERC-4626 Vault
+"""
+type Vault {
+  accounts(
+    first: Int = 100
+    orderBy: VaultAccount_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultAccount_filter
+  ): [VaultAccount!]!
+  asset: Token!
+  decimals: Int!
+  depositTransactions(
+    first: Int = 100
+    orderBy: VaultDepositTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultDepositTransaction_filter
+  ): [VaultDepositTransaction!]!
+  harvestTransactions(
+    first: Int = 100
+    orderBy: VaultHarvestTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultHarvestTransaction_filter
+  ): [VaultHarvestTransaction!]!
+
+  """
+  Vault address
+  """
+  id: ID!
+  name: String!
+  rewardData(
+    first: Int = 100
+    orderBy: VaultRewardData_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultRewardData_filter
+  ): [VaultRewardData!]!
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: VaultRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultRewardPaidTransaction_filter
+  ): [VaultRewardPaidTransaction!]!
+  strategy: Bytes!
+  symbol: String!
+  totalSupply: BigInt!
+
+  """
+  Note that this field may not reflect the current value, as it is not updated on every
+  transfer event; rather, it is updated on deposit/stake/harvest.
+  """
+  totalUnderlying: BigInt!
+  underlying: Token!
+  withdrawTransactions(
+    first: Int = 100
+    orderBy: VaultWithdrawTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultWithdrawTransaction_filter
+  ): [VaultWithdrawTransaction!]!
+}
+
+type VaultAccount {
+  account: Account!
+  depositTransactions(
+    first: Int = 100
+    orderBy: VaultDepositTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultDepositTransaction_filter
+  ): [VaultDepositTransaction!]!
+  harvestTransactions(
+    first: Int = 100
+    orderBy: VaultHarvestTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultHarvestTransaction_filter
+  ): [VaultHarvestTransaction!]!
+
+  """
+  {Vault.id}.{Account.id}
+  """
+  id: ID!
+  rewardPaidTransactions(
+    first: Int = 100
+    orderBy: VaultRewardPaidTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultRewardPaidTransaction_filter
+  ): [VaultRewardPaidTransaction!]!
+  rewards(
+    first: Int = 100
+    orderBy: VaultAccountReward_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultAccountReward_filter
+  ): [VaultAccountReward!]!
+  shares: BigInt!
+  vault: Vault!
+  withdrawTransactions(
+    first: Int = 100
+    orderBy: VaultWithdrawTransaction_orderBy
+    orderDirection: OrderDirection
+    skip: Int = 0
+    where: VaultWithdrawTransaction_filter
+  ): [VaultWithdrawTransaction!]!
+}
+
+type VaultAccountReward {
+  """
+  {rewardsToken.id}.{vaultAccount.id}
+  """
+  id: ID!
+
+  """
+  userRewardPerTokenPaid(account)
+  """
+  rewardPerTokenPaid: BigInt!
+  rewardToken: Token!
+
+  """
+  rewards(account)
+  """
+  rewards: BigInt!
+  vaultAccount: VaultAccount!
+}
+
+input VaultAccountReward_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  rewardPerTokenPaid: BigInt
+  rewardPerTokenPaid_gt: BigInt
+  rewardPerTokenPaid_gte: BigInt
+  rewardPerTokenPaid_in: [BigInt!]
+  rewardPerTokenPaid_lt: BigInt
+  rewardPerTokenPaid_lte: BigInt
+  rewardPerTokenPaid_not: BigInt
+  rewardPerTokenPaid_not_in: [BigInt!]
+  rewardToken: String
+  rewardToken_: Token_filter
+  rewardToken_contains: String
+  rewardToken_contains_nocase: String
+  rewardToken_ends_with: String
+  rewardToken_ends_with_nocase: String
+  rewardToken_gt: String
+  rewardToken_gte: String
+  rewardToken_in: [String!]
+  rewardToken_lt: String
+  rewardToken_lte: String
+  rewardToken_not: String
+  rewardToken_not_contains: String
+  rewardToken_not_contains_nocase: String
+  rewardToken_not_ends_with: String
+  rewardToken_not_ends_with_nocase: String
+  rewardToken_not_in: [String!]
+  rewardToken_not_starts_with: String
+  rewardToken_not_starts_with_nocase: String
+  rewardToken_starts_with: String
+  rewardToken_starts_with_nocase: String
+  rewards: BigInt
+  rewards_gt: BigInt
+  rewards_gte: BigInt
+  rewards_in: [BigInt!]
+  rewards_lt: BigInt
+  rewards_lte: BigInt
+  rewards_not: BigInt
+  rewards_not_in: [BigInt!]
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+}
+
+enum VaultAccountReward_orderBy {
+  id
+  rewardPerTokenPaid
+  rewardToken
+  rewards
+  vaultAccount
+}
+
+input VaultAccount_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  account: String
+  account_: Account_filter
+  account_contains: String
+  account_contains_nocase: String
+  account_ends_with: String
+  account_ends_with_nocase: String
+  account_gt: String
+  account_gte: String
+  account_in: [String!]
+  account_lt: String
+  account_lte: String
+  account_not: String
+  account_not_contains: String
+  account_not_contains_nocase: String
+  account_not_ends_with: String
+  account_not_ends_with_nocase: String
+  account_not_in: [String!]
+  account_not_starts_with: String
+  account_not_starts_with_nocase: String
+  account_starts_with: String
+  account_starts_with_nocase: String
+  depositTransactions_: VaultDepositTransaction_filter
+  harvestTransactions_: VaultHarvestTransaction_filter
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  rewardPaidTransactions_: VaultRewardPaidTransaction_filter
+  rewards_: VaultAccountReward_filter
+  shares: BigInt
+  shares_gt: BigInt
+  shares_gte: BigInt
+  shares_in: [BigInt!]
+  shares_lt: BigInt
+  shares_lte: BigInt
+  shares_not: BigInt
+  shares_not_in: [BigInt!]
+  vault: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+  withdrawTransactions_: VaultWithdrawTransaction_filter
+}
+
+enum VaultAccount_orderBy {
+  account
+  depositTransactions
+  harvestTransactions
+  id
+  rewardPaidTransactions
+  rewards
+  shares
+  vault
+  withdrawTransactions
+}
+
+type VaultDepositTransaction implements VaultTransaction {
+  assets: BigInt!
+  hash: Bytes!
+  id: ID!
+  owner: Bytes!
+  sender: Bytes!
+  shares: BigInt!
+  timestamp: Int!
+  vault: Vault!
+  vaultAccount: VaultAccount!
+}
+
+input VaultDepositTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  assets: BigInt
+  assets_gt: BigInt
+  assets_gte: BigInt
+  assets_in: [BigInt!]
+  assets_lt: BigInt
+  assets_lte: BigInt
+  assets_not: BigInt
+  assets_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  owner: Bytes
+  owner_contains: Bytes
+  owner_in: [Bytes!]
+  owner_not: Bytes
+  owner_not_contains: Bytes
+  owner_not_in: [Bytes!]
+  sender: Bytes
+  sender_contains: Bytes
+  sender_in: [Bytes!]
+  sender_not: Bytes
+  sender_not_contains: Bytes
+  sender_not_in: [Bytes!]
+  shares: BigInt
+  shares_gt: BigInt
+  shares_gte: BigInt
+  shares_in: [BigInt!]
+  shares_lt: BigInt
+  shares_lte: BigInt
+  shares_not: BigInt
+  shares_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  vault: String
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultDepositTransaction_orderBy {
+  assets
+  hash
+  id
+  owner
+  sender
+  shares
+  timestamp
+  vault
+  vaultAccount
+}
+
+type VaultHarvestTransaction implements VaultTransaction {
+  harvested: BigInt!
+  hash: Bytes!
+  id: ID!
+  sender: Bytes!
+  timestamp: Int!
+  vault: Vault!
+  vaultAccount: VaultAccount!
+}
+
+input VaultHarvestTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  harvested: BigInt
+  harvested_gt: BigInt
+  harvested_gte: BigInt
+  harvested_in: [BigInt!]
+  harvested_lt: BigInt
+  harvested_lte: BigInt
+  harvested_not: BigInt
+  harvested_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  sender: Bytes
+  sender_contains: Bytes
+  sender_in: [Bytes!]
+  sender_not: Bytes
+  sender_not_contains: Bytes
+  sender_not_in: [Bytes!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  vault: String
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultHarvestTransaction_orderBy {
+  harvested
+  hash
+  id
+  sender
+  timestamp
+  vault
+  vaultAccount
+}
+
+type VaultRewardData implements RewardData {
+  """
+  {Vault.id}.{token.id}
+  """
+  id: ID!
+  lastUpdateTime: Int!
+  periodFinish: Int!
+  queuedRewards: BigInt!
+  rewardPerTokenStored: BigInt!
+  rewardRate: BigInt!
+  token: Token!
+  vault: Vault
+}
+
+input VaultRewardData_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  lastUpdateTime: Int
+  lastUpdateTime_gt: Int
+  lastUpdateTime_gte: Int
+  lastUpdateTime_in: [Int!]
+  lastUpdateTime_lt: Int
+  lastUpdateTime_lte: Int
+  lastUpdateTime_not: Int
+  lastUpdateTime_not_in: [Int!]
+  periodFinish: Int
+  periodFinish_gt: Int
+  periodFinish_gte: Int
+  periodFinish_in: [Int!]
+  periodFinish_lt: Int
+  periodFinish_lte: Int
+  periodFinish_not: Int
+  periodFinish_not_in: [Int!]
+  queuedRewards: BigInt
+  queuedRewards_gt: BigInt
+  queuedRewards_gte: BigInt
+  queuedRewards_in: [BigInt!]
+  queuedRewards_lt: BigInt
+  queuedRewards_lte: BigInt
+  queuedRewards_not: BigInt
+  queuedRewards_not_in: [BigInt!]
+  rewardPerTokenStored: BigInt
+  rewardPerTokenStored_gt: BigInt
+  rewardPerTokenStored_gte: BigInt
+  rewardPerTokenStored_in: [BigInt!]
+  rewardPerTokenStored_lt: BigInt
+  rewardPerTokenStored_lte: BigInt
+  rewardPerTokenStored_not: BigInt
+  rewardPerTokenStored_not_in: [BigInt!]
+  rewardRate: BigInt
+  rewardRate_gt: BigInt
+  rewardRate_gte: BigInt
+  rewardRate_in: [BigInt!]
+  rewardRate_lt: BigInt
+  rewardRate_lte: BigInt
+  rewardRate_not: BigInt
+  rewardRate_not_in: [BigInt!]
+  token: String
+  token_: Token_filter
+  token_contains: String
+  token_contains_nocase: String
+  token_ends_with: String
+  token_ends_with_nocase: String
+  token_gt: String
+  token_gte: String
+  token_in: [String!]
+  token_lt: String
+  token_lte: String
+  token_not: String
+  token_not_contains: String
+  token_not_contains_nocase: String
+  token_not_ends_with: String
+  token_not_ends_with_nocase: String
+  token_not_in: [String!]
+  token_not_starts_with: String
+  token_not_starts_with_nocase: String
+  token_starts_with: String
+  token_starts_with_nocase: String
+  vault: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultRewardData_orderBy {
+  id
+  lastUpdateTime
+  periodFinish
+  queuedRewards
+  rewardPerTokenStored
+  rewardRate
+  token
+  vault
+}
+
+type VaultRewardPaidTransaction implements VaultTransaction {
+  hash: Bytes!
+  id: ID!
+  reward: BigInt!
+  rewardData: VaultRewardData!
+  timestamp: Int!
+  vault: Vault!
+  vaultAccount: VaultAccount!
+}
+
+input VaultRewardPaidTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  reward: BigInt
+  rewardData: String
+  rewardData_: VaultRewardData_filter
+  rewardData_contains: String
+  rewardData_contains_nocase: String
+  rewardData_ends_with: String
+  rewardData_ends_with_nocase: String
+  rewardData_gt: String
+  rewardData_gte: String
+  rewardData_in: [String!]
+  rewardData_lt: String
+  rewardData_lte: String
+  rewardData_not: String
+  rewardData_not_contains: String
+  rewardData_not_contains_nocase: String
+  rewardData_not_ends_with: String
+  rewardData_not_ends_with_nocase: String
+  rewardData_not_in: [String!]
+  rewardData_not_starts_with: String
+  rewardData_not_starts_with_nocase: String
+  rewardData_starts_with: String
+  rewardData_starts_with_nocase: String
+  reward_gt: BigInt
+  reward_gte: BigInt
+  reward_in: [BigInt!]
+  reward_lt: BigInt
+  reward_lte: BigInt
+  reward_not: BigInt
+  reward_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  vault: String
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultRewardPaidTransaction_orderBy {
+  hash
+  id
+  reward
+  rewardData
+  timestamp
+  vault
+  vaultAccount
+}
+
+interface VaultTransaction {
+  hash: Bytes!
+  id: ID!
+  timestamp: Int!
+  vault: Vault!
+  vaultAccount: VaultAccount!
+}
+
+input VaultTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  vault: String
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultTransaction_orderBy {
+  hash
+  id
+  timestamp
+  vault
+  vaultAccount
+}
+
+type VaultWithdrawTransaction implements VaultTransaction {
+  assets: BigInt!
+  hash: Bytes!
+  id: ID!
+  owner: Bytes!
+  receiver: Bytes!
+  sender: Bytes!
+  shares: BigInt!
+  timestamp: Int!
+  vault: Vault!
+  vaultAccount: VaultAccount!
+}
+
+input VaultWithdrawTransaction_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  assets: BigInt
+  assets_gt: BigInt
+  assets_gte: BigInt
+  assets_in: [BigInt!]
+  assets_lt: BigInt
+  assets_lte: BigInt
+  assets_not: BigInt
+  assets_not_in: [BigInt!]
+  hash: Bytes
+  hash_contains: Bytes
+  hash_in: [Bytes!]
+  hash_not: Bytes
+  hash_not_contains: Bytes
+  hash_not_in: [Bytes!]
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  owner: Bytes
+  owner_contains: Bytes
+  owner_in: [Bytes!]
+  owner_not: Bytes
+  owner_not_contains: Bytes
+  owner_not_in: [Bytes!]
+  receiver: Bytes
+  receiver_contains: Bytes
+  receiver_in: [Bytes!]
+  receiver_not: Bytes
+  receiver_not_contains: Bytes
+  receiver_not_in: [Bytes!]
+  sender: Bytes
+  sender_contains: Bytes
+  sender_in: [Bytes!]
+  sender_not: Bytes
+  sender_not_contains: Bytes
+  sender_not_in: [Bytes!]
+  shares: BigInt
+  shares_gt: BigInt
+  shares_gte: BigInt
+  shares_in: [BigInt!]
+  shares_lt: BigInt
+  shares_lte: BigInt
+  shares_not: BigInt
+  shares_not_in: [BigInt!]
+  timestamp: Int
+  timestamp_gt: Int
+  timestamp_gte: Int
+  timestamp_in: [Int!]
+  timestamp_lt: Int
+  timestamp_lte: Int
+  timestamp_not: Int
+  timestamp_not_in: [Int!]
+  vault: String
+  vaultAccount: String
+  vaultAccount_: VaultAccount_filter
+  vaultAccount_contains: String
+  vaultAccount_contains_nocase: String
+  vaultAccount_ends_with: String
+  vaultAccount_ends_with_nocase: String
+  vaultAccount_gt: String
+  vaultAccount_gte: String
+  vaultAccount_in: [String!]
+  vaultAccount_lt: String
+  vaultAccount_lte: String
+  vaultAccount_not: String
+  vaultAccount_not_contains: String
+  vaultAccount_not_contains_nocase: String
+  vaultAccount_not_ends_with: String
+  vaultAccount_not_ends_with_nocase: String
+  vaultAccount_not_in: [String!]
+  vaultAccount_not_starts_with: String
+  vaultAccount_not_starts_with_nocase: String
+  vaultAccount_starts_with: String
+  vaultAccount_starts_with_nocase: String
+  vault_: Vault_filter
+  vault_contains: String
+  vault_contains_nocase: String
+  vault_ends_with: String
+  vault_ends_with_nocase: String
+  vault_gt: String
+  vault_gte: String
+  vault_in: [String!]
+  vault_lt: String
+  vault_lte: String
+  vault_not: String
+  vault_not_contains: String
+  vault_not_contains_nocase: String
+  vault_not_ends_with: String
+  vault_not_ends_with_nocase: String
+  vault_not_in: [String!]
+  vault_not_starts_with: String
+  vault_not_starts_with_nocase: String
+  vault_starts_with: String
+  vault_starts_with_nocase: String
+}
+
+enum VaultWithdrawTransaction_orderBy {
+  assets
+  hash
+  id
+  owner
+  receiver
+  sender
+  shares
+  timestamp
+  vault
+  vaultAccount
+}
+
+input Vault_filter {
+  """
+  Filter for the block changed event.
+  """
+  _change_block: BlockChangedFilter
+  accounts_: VaultAccount_filter
+  asset: String
+  asset_: Token_filter
+  asset_contains: String
+  asset_contains_nocase: String
+  asset_ends_with: String
+  asset_ends_with_nocase: String
+  asset_gt: String
+  asset_gte: String
+  asset_in: [String!]
+  asset_lt: String
+  asset_lte: String
+  asset_not: String
+  asset_not_contains: String
+  asset_not_contains_nocase: String
+  asset_not_ends_with: String
+  asset_not_ends_with_nocase: String
+  asset_not_in: [String!]
+  asset_not_starts_with: String
+  asset_not_starts_with_nocase: String
+  asset_starts_with: String
+  asset_starts_with_nocase: String
+  decimals: Int
+  decimals_gt: Int
+  decimals_gte: Int
+  decimals_in: [Int!]
+  decimals_lt: Int
+  decimals_lte: Int
+  decimals_not: Int
+  decimals_not_in: [Int!]
+  depositTransactions_: VaultDepositTransaction_filter
+  harvestTransactions_: VaultHarvestTransaction_filter
+  id: ID
+  id_gt: ID
+  id_gte: ID
+  id_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_not: ID
+  id_not_in: [ID!]
+  name: String
+  name_contains: String
+  name_contains_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_gt: String
+  name_gte: String
+  name_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_not: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  name_not_in: [String!]
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  rewardData_: VaultRewardData_filter
+  rewardPaidTransactions_: VaultRewardPaidTransaction_filter
+  strategy: Bytes
+  strategy_contains: Bytes
+  strategy_in: [Bytes!]
+  strategy_not: Bytes
+  strategy_not_contains: Bytes
+  strategy_not_in: [Bytes!]
+  symbol: String
+  symbol_contains: String
+  symbol_contains_nocase: String
+  symbol_ends_with: String
+  symbol_ends_with_nocase: String
+  symbol_gt: String
+  symbol_gte: String
+  symbol_in: [String!]
+  symbol_lt: String
+  symbol_lte: String
+  symbol_not: String
+  symbol_not_contains: String
+  symbol_not_contains_nocase: String
+  symbol_not_ends_with: String
+  symbol_not_ends_with_nocase: String
+  symbol_not_in: [String!]
+  symbol_not_starts_with: String
+  symbol_not_starts_with_nocase: String
+  symbol_starts_with: String
+  symbol_starts_with_nocase: String
+  totalSupply: BigInt
+  totalSupply_gt: BigInt
+  totalSupply_gte: BigInt
+  totalSupply_in: [BigInt!]
+  totalSupply_lt: BigInt
+  totalSupply_lte: BigInt
+  totalSupply_not: BigInt
+  totalSupply_not_in: [BigInt!]
+  totalUnderlying: BigInt
+  totalUnderlying_gt: BigInt
+  totalUnderlying_gte: BigInt
+  totalUnderlying_in: [BigInt!]
+  totalUnderlying_lt: BigInt
+  totalUnderlying_lte: BigInt
+  totalUnderlying_not: BigInt
+  totalUnderlying_not_in: [BigInt!]
+  underlying: String
+  underlying_: Token_filter
+  underlying_contains: String
+  underlying_contains_nocase: String
+  underlying_ends_with: String
+  underlying_ends_with_nocase: String
+  underlying_gt: String
+  underlying_gte: String
+  underlying_in: [String!]
+  underlying_lt: String
+  underlying_lte: String
+  underlying_not: String
+  underlying_not_contains: String
+  underlying_not_contains_nocase: String
+  underlying_not_ends_with: String
+  underlying_not_ends_with_nocase: String
+  underlying_not_in: [String!]
+  underlying_not_starts_with: String
+  underlying_not_starts_with_nocase: String
+  underlying_starts_with: String
+  underlying_starts_with_nocase: String
+  withdrawTransactions_: VaultWithdrawTransaction_filter
+}
+
+enum Vault_orderBy {
+  accounts
+  asset
+  decimals
+  depositTransactions
+  harvestTransactions
+  id
+  name
+  rewardData
+  rewardPaidTransactions
+  strategy
+  symbol
+  totalSupply
+  totalUnderlying
+  underlying
+  withdrawTransactions
 }
 
 type _Block_ {
