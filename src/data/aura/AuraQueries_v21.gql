@@ -29,6 +29,10 @@ query AuraBalMintTransactions($startTimestamp: Int!) {
     orderDirection: asc
   ) {
     timestamp
+    hash
+    account {
+      id
+    }
     amount
   }
 }
@@ -48,13 +52,13 @@ query AuraBalTransactions {
       id
     }
   }
-  vaultHarvestTransactions(first: 50, orderBy: timestamp, orderDirection: desc) {
+  vaultHarvestTransactions(first: 100, orderBy: timestamp, orderDirection: desc) {
     timestamp
     harvested
     hash
     sender
   }
-  vaultDepositTransactions(first: 250, orderBy: timestamp, orderDirection: desc) {
+  vaultDepositTransactions(first: 500, orderBy: timestamp, orderDirection: desc) {
     timestamp
     assets
     shares
@@ -200,7 +204,6 @@ fragment AllPool on Pool {
   rewardPool
   totalSupply
   totalStaked
-  __typename
 }
 
 fragment AllToken on Token {
