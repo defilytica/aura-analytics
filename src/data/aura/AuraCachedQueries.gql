@@ -1,28 +1,28 @@
 #Historical APR chart for a given pool
-query AuraPoolAprChart($range: DateRangeIntervalInput!, $auraPoolId: ID!) {
-  auraPool(id: $auraPoolId) {
-    aprs {
-      totalHistoric(range: $range) {
-        timestamp
-        total
-      }
-    }
-  }
-}
+# query AuraPoolAprChart($range: DateRangeIntervalInput!, $auraPoolId: ID!) {
+#   auraPool(id: $auraPoolId) {
+#     aprs {
+#       totalHistoric(range: $range) {
+#         timestamp
+#         total
+#       }
+#     }
+#   }
+# }
 
 # Fetch Aura Pools with their respective Convex pool configuration
-query AuraPools($paging: CursorPaging!) {
-  auraPools(paging: $paging) {
-    edges {
-      node {
-        address
-        balancerPoolId
-        name
-        poolId
-        tvl
-        totalSupply
-        id
-      }
-    }
-  }
-}
+# query AuraPools($paging: CursorPaging!) {
+#   auraPools(paging: $paging) {
+#     edges {
+#       node {
+#         address
+#         balancerPoolId
+#         name
+#         poolId
+#         tvl
+#         totalSupply
+#         id
+#       }
+#     }
+#   }
+# }

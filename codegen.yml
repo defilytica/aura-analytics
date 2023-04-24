@@ -3,7 +3,6 @@ schema:
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
-  - 'https://cache.aura.finance/graphql'
 documents:
   - 'src/**/*.gql'
 hooks:
@@ -55,3 +54,9 @@ generates:
         BigInt: 'string'
         BigDecimal: 'string'
         Bytes: 'string'
+
+      # Use namingConvention to avoid type clashes
+      namingConvention:
+        typeNames: 'change-case#pascalCase'
+        enumValues: 'change-case#upperCase'
+        transformUnderscore: true

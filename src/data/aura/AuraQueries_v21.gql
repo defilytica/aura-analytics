@@ -106,7 +106,7 @@ query VaultLeaderboard($vaultId: ID!) {
 
 # TODO: Refactor Global Aura stats query
 query Aura($accountId: String = "", $hasAccount: Boolean = false) {
-  ...Block
+  ...AuraBlock
   auraBal: pool(id: "auraBal") {
     ...AllPool
     rewardData {
@@ -167,7 +167,7 @@ query Aura($accountId: String = "", $hasAccount: Boolean = false) {
   }
 }
 
-fragment Block on Query {
+fragment AuraBlock on Query {
   _meta {
     block {
       number
