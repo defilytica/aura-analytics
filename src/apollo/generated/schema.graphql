@@ -3676,11 +3676,6 @@ type PoolAccount {
   account: Account!
 
   """
-  depositToken.balanceOf(account)
-  """
-  balance: BigInt!
-
-  """
   {Pool.id}.{Account.id}
   """
   id: ID!
@@ -3859,14 +3854,6 @@ input PoolAccount_filter {
   account_not_starts_with_nocase: String
   account_starts_with: String
   account_starts_with_nocase: String
-  balance: BigInt
-  balance_gt: BigInt
-  balance_gte: BigInt
-  balance_in: [BigInt!]
-  balance_lt: BigInt
-  balance_lte: BigInt
-  balance_not: BigInt
-  balance_not_in: [BigInt!]
   id: ID
   id_gt: ID
   id_gte: ID
@@ -3912,7 +3899,6 @@ input PoolAccount_filter {
 
 enum PoolAccount_orderBy {
   account
-  balance
   id
   pool
   rewardPaidTransactions

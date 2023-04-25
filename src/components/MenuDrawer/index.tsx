@@ -15,6 +15,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import DiscordIconLight from '../../assets/svg/discord-light.svg'
+import DiscordIconDark from '../../assets/svg/discord-dark.svg'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -146,7 +147,10 @@ const MenuDrawer = ({
                         <TwitterIcon />
                     </Link>
                     <Link href="https://discord.balancer.fi" target="_blank" rel="noopener noreferrer">
+                    {theme.palette.mode === 'dark' ? 
+                        <img src={DiscordIconDark} alt="Discord Icon" width="25" /> :
                         <img src={DiscordIconLight} alt="Discord Icon" width="25" />
+                    }
                     </Link>
                 </Box>
                 <Divider />

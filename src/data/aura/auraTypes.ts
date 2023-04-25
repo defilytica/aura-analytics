@@ -50,3 +50,14 @@ export interface AuraBALTransacionts{
     deposits: AuraVaultDepositWithdrawTransactionInfo[],
     withdrawals: AuraVaultDepositWithdrawTransactionInfo[],
 }
+
+export interface AuraPoolData{
+    totalStaked: number,
+    id: string,
+    gaugeId: string,
+    poolId: string,
+    balancerPoolId: string,
+    isShutdown: boolean,
+    gaugeTotalSupply: number,
+    gaugeWorkingSupply: number,
+}
