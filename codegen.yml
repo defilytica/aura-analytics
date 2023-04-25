@@ -1,7 +1,6 @@
 schema:
   - 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks'
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
-  - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
 documents:
   - 'src/**/*.gql'
@@ -20,43 +19,37 @@ generates:
     plugins:
       - fragment-matcher
 
-  # Generates query and mutation documents
-  src/apollo/generated/operations.ts:
-    plugins:
-      - typescript-document-nodes
-
-  # Generates query and mutation types
+  # Generates query and mutation documents and types for ethereum-blocks and balancer-v2 subgraphs
   src/apollo/generated/graphql-codegen-generated.ts:
+    schema:
+      - 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks'
+      - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
+    documents:
+      - 'src/data/balancer/*.gql'
     plugins:
       - add:
           content: '/* tslint:disable */'
       - typescript
       - typescript-operations
       - typescript-react-apollo
+      - fragment-matcher
     config:
       # Use interfaces where possible, instead of type aliases
       declarationKind: 'interface'
 
-      # Generate nullable fields as Maybe<T> (instead of { field?: Maybe<T> })
-      #avoidOptionals: true
-
-      # Use string literal types instead of enums, for compatibility with omni types
-      enumsAsTypes: true
-
-      # __typename is always fetched, so don’t mark it as optional in generated types
-      nonOptionalTypename: true
-
-      # Inline field selections in generated types, instead of using Pick<>
-      preResolveTypes: true
-
-      # Give scalars definite types, rather than 'any'
-      scalars:
-        BigInt: 'string'
-        BigDecimal: 'string'
-        Bytes: 'string'
-
-      # Use namingConvention to avoid type clashes
-      namingConvention:
-        typeNames: 'change-case#pascalCase'
-        enumValues: 'change-case#upperCase'
-        transformUnderscore: true
+  # Generates query and mutation documents and types for aura subgraphs
+  src/apollo/generated/graphql-aura-codegen-generated.ts:
+    schema:
+      - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
+    documents:
+      - 'src/data/aura/*.gql'
+    plugins:
+      - add:
+          content: '/* tslint:disable */'
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+      - fragment-matcher
+    config:
+      # Use interfaces where possible, instead of type aliases
+      declarationKind: 'interface'

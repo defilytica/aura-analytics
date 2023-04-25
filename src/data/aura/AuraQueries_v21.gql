@@ -37,6 +37,26 @@ query AuraBalMintTransactions($startTimestamp: Int!) {
   }
 }
 
+query AuraPools {
+  pools {
+    totalStaked
+    id
+    gauge {
+      id
+      pool {
+        id
+        factoryPoolData {
+          balancerPoolId
+          isShutdown
+        }
+      }
+      totalSupply
+      workingSupply
+      balance
+    }
+  }
+}
+
 #Transactions for AuraBAL
 query AuraBalTransactions {
   auraBalMintTransactions(
@@ -71,7 +91,7 @@ query AuraBalTransactions {
   }
 }
 
-#Leaderboard of accounts for a specific Aura Pool (not balancer pool!)
+#Leaderboard of accounts for a specific Aura Pool (not balancer pool!), e.g. "auraBal", "0", etc 
 query PoolLeaderboard($poolId: ID!) {
   leaderboard: pool(id: $poolId) {
     accounts(
