@@ -10,6 +10,7 @@
     "@emotion/styled": "^11.10.5",
     "@graphql-codegen/add": "^3.2.3",
     "@graphql-codegen/fragment-matcher": "^3.3.3",
+    "@graphql-codegen/introspection": "^3.0.1",
     "@graphql-codegen/schema-ast": "^2.6.1",
     "@graphql-codegen/typescript-document-nodes": "^2.3.12",
     "@graphql-codegen/typescript-operations": "^2.5.12",
@@ -68,7 +69,7 @@
     "eject": "react-scripts eject",
     "generate": "graphql-codegen --config codegen.yml -r dotenv/config",
     "codegen:schema": "npx apollo client:download-schema --endpoint=https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-rinkeby",
-    "codegen:generate": "apollo codegen:generate --localSchemaFile=schema.json --target=typescript --includes=src/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-global-types.ts types"
+    "codegen:generate": "apollo codegen:generate --localSchemaFile=schema.json --target=typescript --includes=src/**/*.ts --tagName=gql --addTypename --globalTypesFile=src/types/graphql-global-types.ts types --debug"
   },
   "eslintConfig": {
     "extends": [

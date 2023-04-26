@@ -26,3 +26,14 @@
 #     }
 #   }
 # }
+
+query AuraPoolAprChart($range: DateRangeIntervalInput!, $poolId: String!) {
+  pool(id: $poolId) {
+    aprs {
+      totalHistoric(range: $range) {
+        timestamp
+        total
+      }
+    }
+  }
+}

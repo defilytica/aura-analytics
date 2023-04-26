@@ -2,7 +2,7 @@ export interface TODO{
     yoloType: string
 }
 
-export interface GlobalAuraTypes{
+export interface GlobalAuraStats{
     id: string,
     aura: string,
     auraTotalSupply: number,
@@ -38,24 +38,22 @@ export interface AuraVaultDepositWithdrawTransactionInfo{
     assets: number,
     shares: number,
     hash: string,
-    vaultAccountId: string,
+    sender: string,
 }
 
 export interface AuraTransactions{
     transactions: AuraTransactionInfo[],
 }
 
-export interface AuraBALTransacionts{
+export interface AuraBALTransactions{
     harvests: AuraVaultHarvestTransactionInfo[],
     deposits: AuraVaultDepositWithdrawTransactionInfo[],
-    withdrawals: AuraVaultDepositWithdrawTransactionInfo[],
 }
 
 export interface AuraPoolData{
     totalStaked: number,
     id: string,
     gaugeId: string,
-    poolId: string,
     balancerPoolId: string,
     isShutdown: boolean,
     gaugeTotalSupply: number,
