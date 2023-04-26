@@ -14,6 +14,7 @@ import GenericPieChart from '../../components/Echarts/GenericPieChart';
 import MixedLineBarChart from '../../components/Echarts/MixedLineBarChart';
 import NavCrumbs from '../../components/NavCrumbs';
 import { NavElement } from '../../components/NavCrumbs';
+import { useAuraPools } from '../../data/aura/useAuraPools';
 
 export default function PoolsOverview() {
 
@@ -41,7 +42,12 @@ export default function PoolsOverview() {
 
     //Load pools
     const poolData = useBalancerPools();
-    const filteredPoolDatas = poolData.filter((x) => !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1);
+    //Load Aura pools
+    const auraPools = useAuraPools();
+    //Filter aura pools / gauges exclusively
+    const filteredPoolDatas = poolData.filter((x) => 
+        !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1 
+        && auraPools.some(auraPool => auraPool.balancerPoolId === x.id));
 
     //Create bar chart data for pool distribution
     const poolBarChartData: BalancerChartDataItem[] = [];
@@ -153,7 +159,7 @@ export default function PoolsOverview() {
                         mt={1}
                         xs={11}
                     >
-                        <Typography variant='h5'>Top 20 Pools by TVL</Typography>
+                        <Typography variant='h5'>Top 20 Aura Pools by TVL</Typography>
                     </Grid> : null}
                 {filteredPoolBarChartData.length > 1 ?
                     <Grid
@@ -203,10 +209,10 @@ export default function PoolsOverview() {
                     mt={1}
                     mb={1}>
                     <Typography variant="h5" mb={1}>
-                        Deployed Liquidity on {activeNetwork.name}
+                        Balancer Pools with Aura Staking Gauges
                     </Typography>
                     {poolData.length > 10 ?
-                        <PoolTable poolDatas={poolData} /> :
+                        <PoolTable poolDatas={filteredPoolDatas} /> :
                         <Grid
                             container
                             spacing={2}

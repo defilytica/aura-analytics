@@ -1,3 +1,4 @@
+# Global stats
 query AuraGlobalStats{
   global(id: "global") {
     id
@@ -20,23 +21,7 @@ query AuraGlobalStats{
   }
 }
 
-#Transactions for AuraBAL mints
-query AuraBalMintTransactions($startTimestamp: Int!) {
-  auraBalMintTransactions(
-    where: {timestamp_gt: $startTimestamp}
-    first: 800
-    orderBy: timestamp
-    orderDirection: asc
-  ) {
-    timestamp
-    hash
-    account {
-      id
-    }
-    amount
-  }
-}
-
+# Aura Pools with Convex pool ids and gauge information -> TODO: expand
 query AuraPools {
   pools {
     totalStaked
@@ -53,40 +38,6 @@ query AuraPools {
       totalSupply
       workingSupply
       balance
-    }
-  }
-}
-
-#Transactions for AuraBAL
-query AuraBalTransactions {
-  auraBalMintTransactions(
-    where: {amount_gte: "100000000000000000000"}
-    first: 100
-    orderBy: timestamp
-    orderDirection: desc
-  ) {
-    timestamp
-    amount
-    hash
-    account {
-      id
-    }
-  }
-  vaultHarvestTransactions(first: 100, orderBy: timestamp, orderDirection: desc) {
-    timestamp
-    harvested
-    hash
-    sender
-  }
-  vaultDepositTransactions(first: 500, orderBy: timestamp, orderDirection: desc) {
-    timestamp
-    assets
-    shares
-    hash
-    vaultAccount {
-      account {
-        id
-      }
     }
   }
 }
@@ -108,6 +59,43 @@ query PoolLeaderboard($poolId: ID!) {
     totalStaked
   }
 }
+
+## -----AURABAL-----
+#Transactions for AuraBAL mints - explicitly with a timestamp to get the full range of mints
+query AuraBalMintTransactions($startTimestamp: Int!) {
+  auraBalMintTransactions(
+    where: {timestamp_gt: $startTimestamp}
+    first: 1000
+    orderBy: timestamp
+    orderDirection: asc
+  ) {
+    timestamp
+    hash
+    account {
+      id
+    }
+    amount
+  }
+}
+
+#AuraBAL harvest transactions (auto-compounder) and deposits !== mints
+query AuraBalTransactions {
+  vaultHarvestTransactions(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    timestamp
+    harvested
+    hash
+    sender
+  }
+  vaultDepositTransactions(first: 1000, orderBy: timestamp, orderDirection: desc) {
+    timestamp
+    assets
+    shares
+    hash
+    sender
+  }
+}
+
+
 
 #TODO: Figure out what vault ID is!
 query VaultLeaderboard($vaultId: ID!) {

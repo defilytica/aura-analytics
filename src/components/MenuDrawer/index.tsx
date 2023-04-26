@@ -7,7 +7,6 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import LinkIcon from '@mui/icons-material/Link';
 import WavesIcon from '@mui/icons-material/Waves';
 import TokenIcon from '@mui/icons-material/Token';
 import LockClockIcon from '@mui/icons-material/LockClock';
@@ -16,7 +15,6 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import DiscordIconLight from '../../assets/svg/discord-light.svg'
 import DiscordIconDark from '../../assets/svg/discord-dark.svg'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LockResetIcon from '@mui/icons-material/LockReset';

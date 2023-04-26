@@ -3,7 +3,9 @@ schema:
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
 documents:
-  - 'src/**/*.gql'
+  - 'src/data/blocks/*.gql'
+  - 'src/data/balancer/*.gql'
+  - 'src/data/aura/*.gql'
 hooks:
   afterAllFileWrite:
     - 'prettier --write'
@@ -26,6 +28,7 @@ generates:
       - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
     documents:
       - 'src/data/balancer/*.gql'
+      - 'src/data/blocks/*.gql'
     plugins:
       - add:
           content: '/* tslint:disable */'
