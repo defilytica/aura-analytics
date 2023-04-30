@@ -11368,6 +11368,23 @@ export type PoolLeaderboardQuery = {
   } | null;
 };
 
+export type VaultLeaderboardQueryVariables = Exact<{
+  vaultId: Scalars["ID"];
+}>;
+
+export type VaultLeaderboardQuery = {
+  __typename?: "Query";
+  leaderboard?: {
+    __typename?: "Vault";
+    totalSupply: any;
+    accounts: Array<{
+      __typename?: "VaultAccount";
+      shares: any;
+      account: { __typename?: "Account"; id: string };
+    }>;
+  } | null;
+};
+
 export type AuraBalMintTransactionsQueryVariables = Exact<{
   startTimestamp: Scalars["Int"];
 }>;
@@ -11402,23 +11419,14 @@ export type AuraBalTransactionsQuery = {
     hash: any;
     sender: any;
   }>;
-};
-
-export type VaultLeaderboardQueryVariables = Exact<{
-  vaultId: Scalars["ID"];
-}>;
-
-export type VaultLeaderboardQuery = {
-  __typename?: "Query";
-  leaderboard?: {
-    __typename?: "Vault";
-    totalSupply: any;
-    accounts: Array<{
-      __typename?: "VaultAccount";
-      shares: any;
-      account: { __typename?: "Account"; id: string };
-    }>;
-  } | null;
+  vaultWithdrawTransactions: Array<{
+    __typename?: "VaultWithdrawTransaction";
+    timestamp: number;
+    assets: any;
+    shares: any;
+    hash: any;
+    sender: any;
+  }>;
 };
 
 export type AuraQueryVariables = Exact<{
@@ -13500,6 +13508,75 @@ export type PoolLeaderboardQueryResult = Apollo.QueryResult<
   PoolLeaderboardQuery,
   PoolLeaderboardQueryVariables
 >;
+export const VaultLeaderboardDocument = gql`
+  query VaultLeaderboard($vaultId: ID!) {
+    leaderboard: vault(id: $vaultId) {
+      accounts(
+        first: 1000
+        where: { shares_gt: 1000000000000000000 }
+        orderBy: shares
+        orderDirection: desc
+      ) {
+        shares
+        account {
+          id
+        }
+      }
+      totalSupply
+    }
+  }
+`;
+
+/**
+ * __useVaultLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useVaultLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVaultLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVaultLeaderboardQuery({
+ *   variables: {
+ *      vaultId: // value for 'vaultId'
+ *   },
+ * });
+ */
+export function useVaultLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<VaultLeaderboardQuery, VaultLeaderboardQueryVariables>(
+    VaultLeaderboardDocument,
+    options
+  );
+}
+export function useVaultLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >(VaultLeaderboardDocument, options);
+}
+export type VaultLeaderboardQueryHookResult = ReturnType<
+  typeof useVaultLeaderboardQuery
+>;
+export type VaultLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useVaultLeaderboardLazyQuery
+>;
+export type VaultLeaderboardQueryResult = Apollo.QueryResult<
+  VaultLeaderboardQuery,
+  VaultLeaderboardQueryVariables
+>;
 export const AuraBalMintTransactionsDocument = gql`
   query AuraBalMintTransactions($startTimestamp: Int!) {
     auraBalMintTransactions(
@@ -13573,7 +13650,7 @@ export const AuraBalTransactionsDocument = gql`
     vaultHarvestTransactions(
       first: 1000
       orderBy: timestamp
-      orderDirection: desc
+      orderDirection: asc
     ) {
       timestamp
       harvested
@@ -13583,7 +13660,18 @@ export const AuraBalTransactionsDocument = gql`
     vaultDepositTransactions(
       first: 1000
       orderBy: timestamp
-      orderDirection: desc
+      orderDirection: asc
+    ) {
+      timestamp
+      assets
+      shares
+      hash
+      sender
+    }
+    vaultWithdrawTransactions(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: asc
     ) {
       timestamp
       assets
@@ -13642,75 +13730,6 @@ export type AuraBalTransactionsLazyQueryHookResult = ReturnType<
 export type AuraBalTransactionsQueryResult = Apollo.QueryResult<
   AuraBalTransactionsQuery,
   AuraBalTransactionsQueryVariables
->;
-export const VaultLeaderboardDocument = gql`
-  query VaultLeaderboard($vaultId: ID!) {
-    leaderboard: vault(id: $vaultId) {
-      accounts(
-        first: 1000
-        where: { shares_gt: 1000000000000000000 }
-        orderBy: shares
-        orderDirection: desc
-      ) {
-        shares
-        account {
-          id
-        }
-      }
-      totalSupply
-    }
-  }
-`;
-
-/**
- * __useVaultLeaderboardQuery__
- *
- * To run a query within a React component, call `useVaultLeaderboardQuery` and pass it any options that fit your needs.
- * When your component renders, `useVaultLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVaultLeaderboardQuery({
- *   variables: {
- *      vaultId: // value for 'vaultId'
- *   },
- * });
- */
-export function useVaultLeaderboardQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<VaultLeaderboardQuery, VaultLeaderboardQueryVariables>(
-    VaultLeaderboardDocument,
-    options
-  );
-}
-export function useVaultLeaderboardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >(VaultLeaderboardDocument, options);
-}
-export type VaultLeaderboardQueryHookResult = ReturnType<
-  typeof useVaultLeaderboardQuery
->;
-export type VaultLeaderboardLazyQueryHookResult = ReturnType<
-  typeof useVaultLeaderboardLazyQuery
->;
-export type VaultLeaderboardQueryResult = Apollo.QueryResult<
-  VaultLeaderboardQuery,
-  VaultLeaderboardQueryVariables
 >;
 export const AuraDocument = gql`
   query Aura($accountId: String = "", $hasAccount: Boolean = false) {
