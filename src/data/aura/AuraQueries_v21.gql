@@ -60,6 +60,26 @@ query PoolLeaderboard($poolId: ID!) {
   }
 }
 
+# Used to find all depositors in a given vault like the auraBAL autocompounder. Does not apply to staking pools in Aura!
+query VaultLeaderboard($vaultId: ID!) {
+  leaderboard: vault(id: $vaultId) {
+    accounts(
+      first: 1000
+      where: {shares_gt: 1000000000000000000}
+      orderBy: shares
+      orderDirection: desc
+    ) {
+      shares
+      account {
+        id
+      }
+    }
+    totalSupply
+  }
+}
+
+# TODO: Obtain all vaults so they can be cross-referenced with Balancer pools and gauges!
+
 ## -----AURABAL-----
 #Transactions for AuraBAL mints - explicitly with a timestamp to get the full range of mints
 query AuraBalMintTransactions($startTimestamp: Int!) {
@@ -80,13 +100,20 @@ query AuraBalMintTransactions($startTimestamp: Int!) {
 
 #AuraBAL harvest transactions (auto-compounder) and deposits !== mints
 query AuraBalTransactions {
-  vaultHarvestTransactions(first: 1000, orderBy: timestamp, orderDirection: desc) {
+  vaultHarvestTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
     timestamp
     harvested
     hash
     sender
   }
-  vaultDepositTransactions(first: 1000, orderBy: timestamp, orderDirection: desc) {
+  vaultDepositTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
+    timestamp
+    assets
+    shares
+    hash
+    sender
+  }
+ vaultWithdrawTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
     timestamp
     assets
     shares
@@ -97,23 +124,7 @@ query AuraBalTransactions {
 
 
 
-#TODO: Figure out what vault ID is!
-query VaultLeaderboard($vaultId: ID!) {
-  leaderboard: vault(id: $vaultId) {
-    accounts(
-      first: 1000
-      where: {shares_gt: 1000000000000000000}
-      orderBy: shares
-      orderDirection: desc
-    ) {
-      shares
-      account {
-        id
-      }
-    }
-    totalSupply
-  }
-}
+
 
 
 # TODO: Refactor Global Aura stats query

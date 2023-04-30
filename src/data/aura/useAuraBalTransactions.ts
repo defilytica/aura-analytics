@@ -8,6 +8,7 @@ export function useAuraBalTransactions(): AuraBALTransactions {
     const aurabalTransactions: AuraBALTransactions = {
         harvests: [],
         deposits: [],
+        withdrawals: [],
     };
     //TODO: Dynamically call Aura client depending on network!
     const [getAuraTransactions, { data }] = useAuraBalTransactionsLazyQuery({ client: auraClient });
@@ -22,14 +23,28 @@ export function useAuraBalTransactions(): AuraBALTransactions {
 
     let vaultDepositTransactions = data.vaultDepositTransactions;
     let vaultharvestTransactions = data.vaultHarvestTransactions;
+    let vaultwithdrawalTransactions = data.vaultWithdrawTransactions;
     let auraBalDepositTransactions: AuraVaultDepositWithdrawTransactionInfo[] = [];
+    let auraBalWithdrawalTransactions: AuraVaultDepositWithdrawTransactionInfo[] = [];
     let auraBalHarvestTransactions: AuraVaultHarvestTransactionInfo[] = [];
 
 
     if (vaultDepositTransactions) {
         auraBalDepositTransactions = vaultDepositTransactions.map((transactions) => {
             return {
-                timestamp: transactions.hash,
+                timestamp: transactions.timestamp,
+                assets: 0,
+                shares: transactions.shares / 1e18,
+                hash: transactions.hash,
+                sender: transactions.sender,
+            }
+        })
+    }
+
+    if (vaultwithdrawalTransactions) {
+        auraBalWithdrawalTransactions = vaultwithdrawalTransactions.map((transactions) => {
+            return {
+                timestamp: transactions.timestamp,
                 assets: 0,
                 shares: transactions.shares / 1e18,
                 hash: transactions.hash,
@@ -42,7 +57,7 @@ export function useAuraBalTransactions(): AuraBALTransactions {
         auraBalHarvestTransactions = vaultharvestTransactions.map((transactions) => {
             return {
                 timestamp: transactions.timestamp,
-                harvested: transactions.harvested,
+                harvested: transactions.harvested / 1e18,
                 hash: transactions.hash,
                 sender: transactions.sender,
             }
@@ -52,6 +67,7 @@ export function useAuraBalTransactions(): AuraBALTransactions {
     if (auraBalDepositTransactions && auraBalHarvestTransactions) {
         aurabalTransactions.deposits = auraBalDepositTransactions
         aurabalTransactions.harvests = auraBalHarvestTransactions
+        aurabalTransactions.withdrawals = auraBalWithdrawalTransactions
     }
 
     return aurabalTransactions;

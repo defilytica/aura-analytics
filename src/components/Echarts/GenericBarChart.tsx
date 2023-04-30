@@ -7,10 +7,10 @@ import { pink } from '@mui/material/colors';
 
 export interface GenericBarChartProps {
     data: BalancerChartDataItem[],
-    isUsd?: boolean
+    customUnit?: string
 }
 
-export default function GenericBarChart({ data, isUsd = false }: GenericBarChartProps) {
+export default function GenericBarChart({ data, customUnit = '' }: GenericBarChartProps) {
 
     const theme = useTheme();
     let xData = data.map(el => el.time);
@@ -38,7 +38,7 @@ export default function GenericBarChart({ data, isUsd = false }: GenericBarChart
                 type: 'value',
                 axisLabel: {
                     formatter: function (d: number) {
-                        return isUsd ? formatDollarAmount(d) : formatAmount(d);
+                        return customUnit ? formatAmount(d) : formatDollarAmount(d) ;
                     }
                 }
             }
@@ -57,7 +57,7 @@ export default function GenericBarChart({ data, isUsd = false }: GenericBarChart
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return isUsd ? formatDollarAmount(value) : formatAmount(value);
+                        return customUnit ? formatAmount(value) + ' ' + customUnit: formatDollarAmount(value) ;
                     }
                 },
             },
