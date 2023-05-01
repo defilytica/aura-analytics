@@ -17,24 +17,17 @@ import CurrencyLogo from "../../CurrencyLogo";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import TablePagination from "@mui/material/TablePagination";
-import {Alchemy, Network} from "alchemy-sdk";
-import StyledExternalLink from "../../StyledExternalLink";
 import {useActiveNetworkVersion} from "../../../state/application/hooks";
-import {useNavigate} from "react-router-dom";
 import {getEtherscanLink} from "../../../utils";
-import {formatNumber} from "../../../utils/numbers";
-
-const config = {
-    apiKey: process.env.REACT_APP_ALCHEMY_KEY,
-    network: Network.ETH_MAINNET,
-};
-const alchemy = new Alchemy(config);
-const ensContractAddress = "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85";
+import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
+import {useState} from "react";
 
 interface Data {
     id: string;
     address: string;
     staked: string;
+    poolShare: string;
+    stakedUSD: string;
 }
 
 type Order = 'asc' | 'desc';
@@ -71,6 +64,13 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
+        id: 'id',
+        numeric: false,
+        disablePadding: false,
+        label: '#',
+        isMobileVisible: true,
+    },
+    {
         id: 'address',
         numeric: false,
         disablePadding: false,
@@ -81,7 +81,23 @@ const headCells: readonly HeadCell[] = [
         id: 'staked',
         numeric: false,
         disablePadding: false,
-        label: 'Staked',
+        label: 'Staked AURA',
+        isMobileVisible: false,
+    },
+
+    {
+        id: 'stakedUSD',
+        numeric: false,
+        disablePadding: false,
+        label: 'Staked USD',
+        isMobileVisible: false,
+    },
+
+    {
+        id: 'poolShare',
+        numeric: false,
+        disablePadding: false,
+        label: 'Pool Share %',
         isMobileVisible: false,
     },
 ];
@@ -151,14 +167,20 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 export default function LockerTable({
                                         lockerAccounts,
-                                        totalAmountLocked
-                                    }: { lockerAccounts?: LockerAccount[], totalAmountLocked: number }) {
+                                        totalAmountLocked,
+                                        auraUSD,
+                                        page,
+                                        setPage,
+                                        rowsPerPage,
+                                        setRowsPerPage,
+                                        ensMap,
+                                    }: { lockerAccounts: LockerAccount[], totalAmountLocked: number, auraUSD?: number, page: number, setPage: any, rowsPerPage: number, setRowsPerPage: any, ensMap:{ [key: string]: string | null }}) {
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('staked');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [dense, setDense] = React.useState(false);
     const [activeNetwork] = useActiveNetworkVersion();
+
+    console.log(ensMap);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -169,11 +191,15 @@ export default function LockerTable({
         setOrderBy(property);
     };
 
+    let rows = lockerAccounts;
+
     if (!lockerAccounts) {
         return <CircularProgress/>;
     }
 
-    let rows = lockerAccounts;
+    if (auraUSD === undefined) {
+        return <CircularProgress/>;
+    }
 
     const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
         setDense(event.target.checked);
@@ -191,6 +217,7 @@ export default function LockerTable({
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
 
     return (<Box sx={{width: '100%'}}>
             <Paper elevation={1} sx={{mb: 2, boxShadow: 3}}>
@@ -219,14 +246,19 @@ export default function LockerTable({
                                             key={row.id}
                                             sx={{cursor: 'pointer'}}
                                         >
+                                            <TableCell align="left">
+                                                {index + 1}
+                                            </TableCell>
                                             <TableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}
-                                                onClick={() => { window.open(`${getEtherscanLink(row.id, "address", activeNetwork)}/`, "_blank"); }}
+                                                onClick={() => {
+                                                    window.open(`${getEtherscanLink(row.id, "address", activeNetwork)}/`, "_blank");
+                                                }}
                                             >
-                                                {row.id}
+                                                {ensMap[row.id] ? ensMap[row.id] : row.id}
                                             </TableCell>
                                             <TableCell
                                                 component="th"
@@ -243,11 +275,30 @@ export default function LockerTable({
                                                             address="0xc0c293ce456ff0ed870add98a0828dd4d2903dbf"
                                                             size={'20px'}/>
                                                     </Box>
+                                                </Box>
+
+                                            </TableCell>
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                <Box display="flex" alignItems="center">
+                                                    <Box mr={1}>
+                                                        {formatDollarAmount(auraUSD * (Number(row.balanceLocked) / 10 ** 18))}
+                                                    </Box>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         {((100 / totalAmountLocked) * Math.round(Number(row.balanceLocked) / 10 ** 18)).toFixed(2)}%
                                                     </Box>
                                                 </Box>
-
                                             </TableCell>
                                         </TableRow>
                                     );

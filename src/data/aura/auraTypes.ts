@@ -1,5 +1,3 @@
-import {OwnedNftsResponse} from "alchemy-sdk";
-
 export interface AuraLockers{
     id: string
     address: string
