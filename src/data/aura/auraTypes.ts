@@ -1,3 +1,10 @@
+export interface AuraLockers{
+    id: string
+    address: string
+    totalSupply: string
+    lockedSupply: string
+    accounts: LockerAccount[]
+}
 export interface GlobalAuraStats{
     id: string,
     aura: string,
@@ -67,7 +74,6 @@ export interface AuraPoolData{
     gaugeWorkingSupply: number,
 import {OwnedNftsResponse} from "alchemy-sdk";
 
-export interface AuraLockers{
     id: string
     address: string
     totalSupply: string

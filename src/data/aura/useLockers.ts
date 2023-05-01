@@ -3,15 +3,8 @@ import {
 } from "../../apollo/generated/graphql-codegen-generated";
 import {LockerAccount} from "./auraTypes";
 import {useEffect} from "react";
-import { Alchemy, Network } from "alchemy-sdk";
 
-const config = {
-    apiKey: process.env.REACT_APP_ALCHEMY_KEY,
-    network: Network.ETH_MAINNET,
-};
-const alchemy = new Alchemy(config);
-
-export function useGetLeadingLockers(first = 0): LockerAccount[] {
+export function useGetLeadingLockers(): LockerAccount[] {
     const [getTopLockers, {data}] = useLockerLeaderboardLazyQuery();
 
     useEffect(() => {
@@ -22,6 +15,7 @@ export function useGetLeadingLockers(first = 0): LockerAccount[] {
         return [];
     }
 
+    console.log("querying lockers")
     let {auraLockerLeaderboard} = data;
 
     if (auraLockerLeaderboard){
