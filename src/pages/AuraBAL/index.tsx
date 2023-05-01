@@ -21,9 +21,7 @@ import TokenIcon from '@mui/icons-material/Token';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-
-
-
+import AuraPoolLeaderboardTable from '../../components/Tables/AuraPoolLeaderboardTable';
 
 
 export default function AuraBAL() {
@@ -257,9 +255,18 @@ export default function AuraBAL() {
                     </Card>
 
                 </Grid>
+                <Grid item mt={1} xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h6">Top Depositors</Typography>
+                    </Box>
+
+                        <Box p={1} display="flex" alignItems='center'>
+
+                        </Box>
+                        <AuraPoolLeaderboardTable leaderboardInfo={auraBalPoolLeaderboard} />
+
+                </Grid>
             </Grid>
-
-
             <Grid
                 mt={2}
                 container
@@ -279,12 +286,12 @@ export default function AuraBAL() {
                         sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
                     >
                         <Box m={1}>
-                            {auraBalDailyHarvestSeries.length > 0 && averageDailyHarvestsChange ?
+                            {auraBalDailyHarvestSeries.length > 0 ?
                                 <MetricsCard
-                                    mainMetric={auraBalDailyHarvestSeries[auraBalDailyHarvestSeries.length - 1].value}
+                                    mainMetric={auraBalDailyHarvestSeries[auraBalDailyHarvestSeries.length - 1].value ? auraBalDailyHarvestSeries[auraBalDailyHarvestSeries.length - 1].value : 0}
                                     mainMetricInUSD={false}
                                     mainMetricUnit=' auraBAL'
-                                    metricName='Daily Harvest'
+                                    metricName='Harvests Today'
                                     mainMetricChange={averageDailyHarvestsChange}
                                     MetricIcon={AgricultureIcon}
                                 />
@@ -303,7 +310,7 @@ export default function AuraBAL() {
                                 : <CircularProgress />}
                         </Box>
                         <Box m={1}>
-                            {auraBALCompounderRatio > 0 ?
+                            {averageDailyDepositAmount > 0 ?
                                 <MetricsCard
                                     mainMetric={averageDailyDepositAmount}
                                     mainMetricInUSD={false}
