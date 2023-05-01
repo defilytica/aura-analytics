@@ -1,16 +1,20 @@
-import {Box, Card, CardActionArea, CardContent, Grid, Typography} from '@mui/material';
+import {Box, Card, CardActionArea, CardContent, CircularProgress, Grid, Typography} from '@mui/material';
 import CurrencyLogo from '../../CurrencyLogo';
 import {useNavigate} from 'react-router-dom';
 import {useActiveNetworkVersion} from '../../../state/application/hooks';
-import {formatNumber} from "../../../utils/numbers";
+import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
+import {CoingeckoRawData} from "../../../data/coingecko/getCoingecoSimpleTokenPrices";
 
 export type LockedAuraCardProps = {
-    totalLockedAmount: number
+    totalLockedAmount: number,
+    coinData: CoingeckoRawData,
 }
 
-const LockedAuraCard = ({totalLockedAmount}: LockedAuraCardProps) => {
+const LockedAuraCard = ({totalLockedAmount, coinData}: LockedAuraCardProps) => {
     let navigate = useNavigate();
     const [activeNetwork] = useActiveNetworkVersion()
+    const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
+
     return (
         <Card
             sx={{
@@ -41,6 +45,12 @@ const LockedAuraCard = ({totalLockedAmount}: LockedAuraCardProps) => {
                                 variant="h6"
                             >
                                 {formatNumber(totalLockedAmount)} AURA
+                            </Typography>
+                            <Typography
+                                color="textPrimary"
+                                variant="h6"
+                            >
+                                {formatDollarAmount(totalLockedAmount * coinData[auraAddress].usd)}
                             </Typography>
                         </Grid>
                         <Grid item>
