@@ -12,7 +12,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import TokensWhite from "../../../assets/svg/tokens_white.svg";
 import TokensBlack from "../../../assets/svg/tokens_black.svg";
 import {visuallyHidden} from "@mui/utils";
-import {AuraLockers, LockerAccount} from "../../../data/aura/auraTypes";
+import {LockerAccount} from "../../../data/aura/auraTypes";
 import CurrencyLogo from "../../CurrencyLogo";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
@@ -26,24 +26,24 @@ import {deepPurple} from "@mui/material/colors";
 interface Data {
     id: number;
     address: string;
-    staked: string;
+    locked: string;
     poolShare: number;
-    stakedUSD: number;
+    lockedUSD: number;
 }
 
 function createData(
     id: number,
     address: string,
-    staked: string,
+    locked: string,
     poolShare: number,
-    stakedUSD: number
+    lockedUSD: number
 ): Data {
     return {
         id,
         address,
-        staked,
+        locked,
         poolShare,
-        stakedUSD,
+        lockedUSD,
     };
 }
 
@@ -63,8 +63,8 @@ function getComparator<Key extends keyof any>(
     order: Order,
     orderBy: Key,
 ): (
-    a: { [key in Key]: number | string | LockerAccount[] | AuraLockers },
-    b: { [key in Key]: number | string | LockerAccount[] | AuraLockers },
+    a: { [key in Key]: number | string | LockerAccount[] },
+    b: { [key in Key]: number | string | LockerAccount[] },
 ) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
@@ -95,18 +95,18 @@ const headCells: readonly HeadCell[] = [
         isMobileVisible: true,
     },
     {
-        id: 'staked',
+        id: 'locked',
         numeric: false,
         disablePadding: false,
-        label: 'Staked AURA',
+        label: 'Locked AURA',
         isMobileVisible: false,
     },
 
     {
-        id: 'stakedUSD',
+        id: 'lockedUSD',
         numeric: false,
         disablePadding: false,
-        label: 'Staked USD',
+        label: 'Locked USD',
         isMobileVisible: false,
     },
 
@@ -193,7 +193,7 @@ export default function LockerTable({
                                         ensMap,
                                     }: { lockerAccounts: LockerAccount[], totalAmountLocked: number, auraUSD?: number, page: number, setPage: any, rowsPerPage: number, setRowsPerPage: any, ensMap:{ [key: string]: string | null }}) {
     const [order, setOrder] = React.useState<Order>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('staked');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('locked');
     const [dense, setDense] = React.useState(false);
     const [activeNetwork] = useActiveNetworkVersion();
 
@@ -296,7 +296,7 @@ export default function LockerTable({
                                             >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {formatNumber(Number(row.staked) / 10 ** 18)}
+                                                        {formatNumber(Number(row.locked) / 10 ** 18)}
                                                     </Box>
                                                     <Box mr={1}>
                                                         <CurrencyLogo
@@ -313,7 +313,7 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {formatDollarAmount(row.stakedUSD)}
+                                                        {formatDollarAmount(row.lockedUSD)}
                                                     </Box>
                                                 </Box>
                                             </TableCell>
@@ -324,7 +324,7 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {((100 / totalAmountLocked) * Math.round(Number(row.staked) / 10 ** 18)).toFixed(2)}%
+                                                        {((100 / totalAmountLocked) * Math.round(Number(row.locked) / 10 ** 18)).toFixed(2)}%
                                                     </Box>
                                                 </Box>
                                             </TableCell>

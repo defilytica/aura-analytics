@@ -1,10 +1,3 @@
-export interface AuraLockers{
-    id: string
-    address: string
-    totalSupply: string
-    lockedSupply: string
-    accounts: LockerAccount[]
-}
 export interface GlobalAuraStats{
     id: string,
     aura: string,
@@ -82,7 +75,14 @@ export interface UserData{
     id: string
 }
 
-export interface LockerAccount{
+export interface LockerAccount {
     id: string
     balanceLocked: string,
+    userLocksLength: number,
+    userLocks: Lock[]
+}
+
+export interface Lock {
+    amount: number,
+    unlockTime: number
 }
