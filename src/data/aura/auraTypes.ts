@@ -72,13 +72,6 @@ export interface AuraPoolData{
     isShutdown: boolean,
     gaugeTotalSupply: number,
     gaugeWorkingSupply: number,
-import {OwnedNftsResponse} from "alchemy-sdk";
-
-    id: string
-    address: string
-    totalSupply: string
-    lockedSupply: string
-    accounts: LockerAccount[]
 }
 
 export interface Account{

@@ -51,6 +51,7 @@ export default function AuraLocks() {
                             console.log("Query: ");
                             console.log(account.id);
 
+                            console.log(response);
                             enslocalMap[account.id] = response;
                         })
                     }

@@ -1,4 +1,4 @@
-import {Typography, Box, Card, Grid, CircularProgress, Stack} from "@mui/material";
+import {Typography, Box, Card, Grid, CircularProgress, Stack, Link, Avatar} from "@mui/material";
 import Paper from '@mui/material/Paper';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -20,14 +20,31 @@ import TablePagination from "@mui/material/TablePagination";
 import {useActiveNetworkVersion} from "../../../state/application/hooks";
 import {getEtherscanLink} from "../../../utils";
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
-import {useState} from "react";
+import {generateIdenticon} from "../../../utils/generateIdenticon";
+import {deepPurple} from "@mui/material/colors";
 
 interface Data {
-    id: string;
+    id: number;
     address: string;
     staked: string;
-    poolShare: string;
-    stakedUSD: string;
+    poolShare: number;
+    stakedUSD: number;
+}
+
+function createData(
+    id: number,
+    address: string,
+    staked: string,
+    poolShare: number,
+    stakedUSD: number
+): Data {
+    return {
+        id,
+        address,
+        staked,
+        poolShare,
+        stakedUSD,
+    };
 }
 
 type Order = 'asc' | 'desc';
@@ -191,8 +208,6 @@ export default function LockerTable({
         setOrderBy(property);
     };
 
-    let rows = lockerAccounts;
-
     if (!lockerAccounts) {
         return <CircularProgress/>;
     }
@@ -214,6 +229,12 @@ export default function LockerTable({
         setRowsPerPage(parseInt(event.target.value, 10));
         setPage(0);
     };
+
+
+    const rows = lockerAccounts.map(el =>
+        createData(lockerAccounts.indexOf(el) + 1, el.id, el.balanceLocked, Number(el.balanceLocked) / 10 ** 18, auraUSD * (Number(el.balanceLocked) / 10 ** 18))
+    )
+
 
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -247,18 +268,25 @@ export default function LockerTable({
                                             sx={{cursor: 'pointer'}}
                                         >
                                             <TableCell align="left">
-                                                {index + 1}
+                                                {row.id}
                                             </TableCell>
                                             <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
-                                                onClick={() => {
-                                                    window.open(`${getEtherscanLink(row.id, "address", activeNetwork)}/`, "_blank");
-                                                }}
+                                                sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
-                                                {ensMap[row.id] ? ensMap[row.id] : row.id}
+                                                <Box display="flex" alignItems="center" alignContent="center">
+                                                    <Box mr={1}>
+                                                        <Avatar
+                                                            sx={{
+                                                                bgcolor: deepPurple[500],
+                                                                height: 25,
+                                                                width: 25,
+                                                                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)'
+                                                            }}
+                                                            src={generateIdenticon(row.address)}
+                                                        />
+                                                    </Box>
+                                                    <Link href={getEtherscanLink(row.address, 'address', activeNetwork)} target='_blank'>     {ensMap[row.address] ? ensMap[row.address] : row.address}</Link>
+                                                </Box>
                                             </TableCell>
                                             <TableCell
                                                 component="th"
@@ -268,7 +296,7 @@ export default function LockerTable({
                                             >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {formatNumber(Number(row.balanceLocked) / 10 ** 18)}
+                                                        {formatNumber(Number(row.staked) / 10 ** 18)}
                                                     </Box>
                                                     <Box mr={1}>
                                                         <CurrencyLogo
@@ -285,7 +313,7 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {formatDollarAmount(auraUSD * (Number(row.balanceLocked) / 10 ** 18))}
+                                                        {formatDollarAmount(row.stakedUSD)}
                                                     </Box>
                                                 </Box>
                                             </TableCell>
@@ -296,7 +324,7 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {((100 / totalAmountLocked) * Math.round(Number(row.balanceLocked) / 10 ** 18)).toFixed(2)}%
+                                                        {((100 / totalAmountLocked) * Math.round(Number(row.staked) / 10 ** 18)).toFixed(2)}%
                                                     </Box>
                                                 </Box>
                                             </TableCell>

@@ -11268,29 +11268,19 @@ export enum _SubgraphErrorPolicy_ {
   Deny = "deny",
 }
 
-export type GetAuraLockersQueryVariables = Exact<{
-  first?: InputMaybe<Scalars["Int"]>;
-  orderBy?: InputMaybe<AuraLocker_OrderBy>;
-  auraBlock?: InputMaybe<Block_Height>;
-}>;
+export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
 
-export type GetAuraLockersQuery = {
+export type LockerLeaderboardQuery = {
   __typename?: "Query";
-  _meta?: { __typename?: "_Meta_"; deployment: string } | null;
-  auraLockers: Array<{
-    __typename?: "AuraLocker";
-    address: any;
-    id: string;
-    totalSupply: any;
+  auraLockerLeaderboard?: {
+    __typename: "AuraLocker";
+    lockedSupply: any;
     accounts: Array<{
-      __typename?: "AuraLockerAccount";
-      balanceLocked: any;
-      balance: any;
+      __typename: "AuraLockerAccount";
       id: string;
-      account: { __typename?: "Account"; id: string };
-      userData: Array<{ __typename?: "AuraLockerUserData"; id: string }>;
+      balanceLocked: any;
     }>;
-  }>;
+  } | null;
 };
 
 export type AuraGlobalStatsQueryVariables = Exact<{ [key: string]: never }>;
@@ -13219,85 +13209,73 @@ export const BalancerSnapshotFragmentDoc = gql`
     totalSwapFee
   }
 `;
-export const GetAuraLockersDocument = gql`
-  query GetAuraLockers(
-    $first: Int
-    $orderBy: AuraLocker_orderBy
-    $auraBlock: Block_height
-  ) {
-    _meta {
-      deployment
-    }
-    auraLockers(first: $first, orderBy: $orderBy, block: $auraBlock) {
-      accounts {
-        account {
-          id
-        }
-        balanceLocked
-        balance
+export const LockerLeaderboardDocument = gql`
+  query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+      accounts(
+        first: 1000
+        where: { balance_gt: 1000000000000000000 }
+        orderBy: balanceLocked
+        orderDirection: desc
+      ) {
         id
-        userData {
-          id
-        }
+        balanceLocked
+        __typename
       }
-      address
-      id
-      totalSupply
+      lockedSupply
+      __typename
     }
   }
 `;
 
 /**
- * __useGetAuraLockersQuery__
+ * __useLockerLeaderboardQuery__
  *
- * To run a query within a React component, call `useGetAuraLockersQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAuraLockersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAuraLockersQuery({
+ * const { data, loading, error } = useLockerLeaderboardQuery({
  *   variables: {
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      auraBlock: // value for 'auraBlock'
  *   },
  * });
  */
-export function useGetAuraLockersQuery(
+export function useLockerLeaderboardQuery(
   baseOptions?: Apollo.QueryHookOptions<
-    GetAuraLockersQuery,
-    GetAuraLockersQueryVariables
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAuraLockersQuery, GetAuraLockersQueryVariables>(
-    GetAuraLockersDocument,
-    options
-  );
+  return Apollo.useQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
 }
-export function useGetAuraLockersLazyQuery(
+export function useLockerLeaderboardLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAuraLockersQuery,
-    GetAuraLockersQueryVariables
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAuraLockersQuery, GetAuraLockersQueryVariables>(
-    GetAuraLockersDocument,
-    options
-  );
+  return Apollo.useLazyQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
 }
-export type GetAuraLockersQueryHookResult = ReturnType<
-  typeof useGetAuraLockersQuery
+export type LockerLeaderboardQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardQuery
 >;
-export type GetAuraLockersLazyQueryHookResult = ReturnType<
-  typeof useGetAuraLockersLazyQuery
+export type LockerLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardLazyQuery
 >;
-export type GetAuraLockersQueryResult = Apollo.QueryResult<
-  GetAuraLockersQuery,
-  GetAuraLockersQueryVariables
+export type LockerLeaderboardQueryResult = Apollo.QueryResult<
+  LockerLeaderboardQuery,
+  LockerLeaderboardQueryVariables
 >;
 export const AuraGlobalStatsDocument = gql`
   query AuraGlobalStats {
