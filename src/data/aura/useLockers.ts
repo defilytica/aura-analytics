@@ -20,10 +20,13 @@ export function useGetLeadingLockers(): LockerAccount[] {
 
     if (auraLockerLeaderboard){
         let accounts = auraLockerLeaderboard["accounts"];
+
         return accounts.map((locker) => {
             return {
                 balanceLocked: locker.balanceLocked,
                 id: locker.id,
+                userLocksLength: locker.userLocksLength,
+                userLocks: locker.userLocks
             }
         })
     }

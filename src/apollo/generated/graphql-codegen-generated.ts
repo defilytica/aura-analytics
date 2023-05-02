@@ -11279,6 +11279,12 @@ export type LockerLeaderboardQuery = {
       __typename: "AuraLockerAccount";
       id: string;
       balanceLocked: any;
+      userLocksLength: number;
+      userLocks: Array<{
+        __typename?: "AuraLockerUserLock";
+        amount: any;
+        unlockTime: number;
+      }>;
     }>;
   } | null;
 };
@@ -13221,6 +13227,11 @@ export const LockerLeaderboardDocument = gql`
         id
         balanceLocked
         __typename
+        userLocksLength
+        userLocks {
+          amount
+          unlockTime
+        }
       }
       lockedSupply
       __typename
