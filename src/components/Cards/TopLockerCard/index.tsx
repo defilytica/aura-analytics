@@ -1,9 +1,17 @@
 import {Box, Card, CardActionArea, CardContent, Grid, Typography} from '@mui/material';
 import {formatNumber} from "../../../utils/numbers";
 import GoldMedal from '../../../assets/svg/gold-medal.svg';
+import SilverMedal from '../../../assets/svg/silver-medal.svg';
+import BronzeMedal from '../../../assets/svg/bronze-medal.svg';
 
 
-const TopLockerCard = ({address, lockedAmount, place}: { address: string, lockedAmount:string, place: string }) => {
+const TopLockerCard = ({address, lockedAmount, place}: { address: string, lockedAmount: string, place: string }) => {
+    let icon = BronzeMedal;
+    if (place === 'first') {
+        icon = GoldMedal;
+    } else if (place === 'second') {
+        icon = SilverMedal;
+    }
     return (
         <Card
             sx={{
@@ -23,7 +31,7 @@ const TopLockerCard = ({address, lockedAmount, place}: { address: string, locked
                     >
                         <Grid item>
                             <Grid item>
-                                <img src={GoldMedal} alt="Gold medal" width="30" />
+                                <img src={icon} alt="Bronze medal" width="30"/>
                             </Grid>
                             <Typography
                                 color="textPrimary"
