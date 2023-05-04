@@ -5,7 +5,7 @@ import SilverMedal from '../../../assets/svg/silver-medal.svg';
 import BronzeMedal from '../../../assets/svg/bronze-medal.svg';
 
 
-const TopLockerCard = ({address, lockedAmount, place}: { address: string, lockedAmount: string, place: string }) => {
+const TopLockerCard = ({address, lockedAmount, place}: { address: string, lockedAmount: number, place: string }) => {
     let icon = BronzeMedal;
     if (place === 'first') {
         icon = GoldMedal;
@@ -37,7 +37,7 @@ const TopLockerCard = ({address, lockedAmount, place}: { address: string, locked
                                 color="textPrimary"
                                 variant="h6"
                             >
-                                {formatNumber(Number(lockedAmount) / 10 ** 18)} AURA
+                                {formatNumber(lockedAmount)} AURA
                             </Typography>
 
                             <Typography

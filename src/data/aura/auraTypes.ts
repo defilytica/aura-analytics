@@ -77,7 +77,7 @@ export interface UserData{
 
 export interface LockerAccount {
     id: string
-    balanceLocked: string,
+    balanceLocked: number,
     userLocksLength: number,
     userLocks: Lock[]
 }
