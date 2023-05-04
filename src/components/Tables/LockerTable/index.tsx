@@ -26,7 +26,7 @@ import {deepPurple} from "@mui/material/colors";
 interface Data {
     id: number;
     address: string;
-    locked: string;
+    locked: number;
     poolShare: number;
     lockedUSD: number;
 }
@@ -34,7 +34,7 @@ interface Data {
 function createData(
     id: number,
     address: string,
-    locked: string,
+    locked: number,
     poolShare: number,
     lockedUSD: number
 ): Data {
@@ -120,6 +120,7 @@ const headCells: readonly HeadCell[] = [
 ];
 
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
+    console.log(array);
     const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
@@ -197,7 +198,6 @@ export default function LockerTable({
     const [dense, setDense] = React.useState(false);
     const [activeNetwork] = useActiveNetworkVersion();
 
-    console.log(ensMap);
 
     const handleRequestSort = (
         event: React.MouseEvent<unknown>,
@@ -232,7 +232,7 @@ export default function LockerTable({
 
 
     const rows = lockerAccounts.map(el =>
-        createData(lockerAccounts.indexOf(el) + 1, el.id, el.balanceLocked, Number(el.balanceLocked) / 10 ** 18, auraUSD * (Number(el.balanceLocked) / 10 ** 18))
+        createData(lockerAccounts.indexOf(el) + 1, el.id, el.balanceLocked, el.balanceLocked, auraUSD * el.balanceLocked)
     )
 
 
@@ -296,7 +296,7 @@ export default function LockerTable({
                                             >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {formatNumber(Number(row.locked) / 10 ** 18)}
+                                                        {formatNumber(row.locked)}
                                                     </Box>
                                                     <Box mr={1}>
                                                         <CurrencyLogo
@@ -324,7 +324,7 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {((100 / totalAmountLocked) * Math.round(Number(row.locked) / 10 ** 18)).toFixed(2)}%
+                                                        {((100 / totalAmountLocked) * Math.round(row.locked)).toFixed(2)}%
                                                     </Box>
                                                 </Box>
                                             </TableCell>

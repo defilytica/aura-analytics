@@ -103,13 +103,12 @@ export default function AuraLocks() {
 
 
     let totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
-    totalLockedAmount = totalLockedAmount / 10 ** 18;
 
     let tokenBarChartData: BalancerChartDataItem[] = [];
     lockers.map((locker) =>
         tokenBarChartData.push(
             {
-                value: Number(((100 / totalLockedAmount) * Math.round(Number(locker.balanceLocked) / 10 ** 18)).toFixed(2)),
+                value: ((100 / totalLockedAmount) * Math.round(locker.balanceLocked)),
                 time: shortenAddress(locker.id),
             }
         )
