@@ -8,14 +8,17 @@ query LockerLeaderboard {
         ) {
             id
             balanceLocked
-            __typename
             userLocksLength
             userLocks {
                 amount
                 unlockTime
             }
+            withdrawnTransactions {
+                amount
+                relocked
+                timestamp
+            }
         }
         lockedSupply
-        __typename
     }
 }

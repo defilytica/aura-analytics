@@ -29,6 +29,7 @@ interface Data {
     locked: number;
     poolShare: number;
     lockedUSD: number;
+    nrOfLocks: number;
 }
 
 function createData(
@@ -36,7 +37,8 @@ function createData(
     address: string,
     locked: number,
     poolShare: number,
-    lockedUSD: number
+    lockedUSD: number,
+    nrOfLocks: number,
 ): Data {
     return {
         id,
@@ -44,6 +46,7 @@ function createData(
         locked,
         poolShare,
         lockedUSD,
+        nrOfLocks,
     };
 }
 
@@ -99,9 +102,8 @@ const headCells: readonly HeadCell[] = [
         numeric: false,
         disablePadding: false,
         label: 'Locked AURA',
-        isMobileVisible: false,
+        isMobileVisible: true,
     },
-
     {
         id: 'lockedUSD',
         numeric: false,
@@ -109,7 +111,6 @@ const headCells: readonly HeadCell[] = [
         label: 'Locked USD',
         isMobileVisible: false,
     },
-
     {
         id: 'poolShare',
         numeric: false,
@@ -117,6 +118,13 @@ const headCells: readonly HeadCell[] = [
         label: 'Pool Share %',
         isMobileVisible: false,
     },
+    {
+        id: 'nrOfLocks',
+        numeric: false,
+        disablePadding: false,
+        label: '# Locks',
+        isMobileVisible: false
+    }
 ];
 
 function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
@@ -192,7 +200,7 @@ export default function LockerTable({
                                         rowsPerPage,
                                         setRowsPerPage,
                                         ensMap,
-                                    }: { lockerAccounts: LockerAccount[], totalAmountLocked: number, auraUSD?: number, page: number, setPage: any, rowsPerPage: number, setRowsPerPage: any, ensMap:{ [key: string]: string | null }}) {
+                                    }: { lockerAccounts: LockerAccount[], totalAmountLocked: number, auraUSD?: number, page: number, setPage: any, rowsPerPage: number, setRowsPerPage: any, ensMap: { [key: string]: string | null } }) {
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('locked');
     const [dense, setDense] = React.useState(false);
@@ -232,7 +240,7 @@ export default function LockerTable({
 
 
     const rows = lockerAccounts.map(el =>
-        createData(lockerAccounts.indexOf(el) + 1, el.id, el.balanceLocked, el.balanceLocked, auraUSD * el.balanceLocked)
+        createData(lockerAccounts.indexOf(el) + 1, el.id, el.balanceLocked, (100 / totalAmountLocked) * Math.round(el.balanceLocked), auraUSD * el.balanceLocked, el.userLocksLength)
     )
 
 
@@ -271,7 +279,7 @@ export default function LockerTable({
                                                 {row.id}
                                             </TableCell>
                                             <TableCell
-                                                sx={{ display: { xs: 'none', md: 'table-cell' } }}
+                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
                                                     <Box mr={1}>
@@ -285,7 +293,8 @@ export default function LockerTable({
                                                             src={generateIdenticon(row.address)}
                                                         />
                                                     </Box>
-                                                    <Link href={getEtherscanLink(row.address, 'address', activeNetwork)} target='_blank'>     {ensMap[row.address] ? ensMap[row.address] : row.address}</Link>
+                                                    <Link href={getEtherscanLink(row.address, 'address', activeNetwork)}
+                                                          target='_blank'>     {ensMap[row.address] ? ensMap[row.address] : row.address}</Link>
                                                 </Box>
                                             </TableCell>
                                             <TableCell
@@ -324,7 +333,18 @@ export default function LockerTable({
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
-                                                        {((100 / totalAmountLocked) * Math.round(row.locked)).toFixed(2)}%
+                                                        {row.poolShare.toFixed(2)}%
+                                                    </Box>
+                                                </Box>
+                                            </TableCell>
+                                            <TableCell
+                                                component="th"
+                                                id={labelId}
+                                                scope="row"
+                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                <Box display="flex" alignItems="center">
+                                                    <Box mr={1}>
+                                                        {row.nrOfLocks}
                                                     </Box>
                                                 </Box>
                                             </TableCell>

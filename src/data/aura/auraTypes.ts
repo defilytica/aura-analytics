@@ -79,7 +79,14 @@ export interface LockerAccount {
     id: string
     balanceLocked: number,
     userLocksLength: number,
-    userLocks: Lock[]
+    userLocks: Lock[],
+    withdrawnTransactions: withdrawnTransaction [],
+}
+
+export interface withdrawnTransaction {
+    amount: number,
+    relocked: boolean,
+    timestamp: number
 }
 
 export interface Lock {
