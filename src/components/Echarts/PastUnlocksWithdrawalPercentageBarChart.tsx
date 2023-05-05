@@ -14,9 +14,30 @@ export interface PastUnlocksWithdrawalsChartProps {
     filteredChartData: ChartDataItem[];
 }
 
-export function PastUnlocksWithdrawalsChart({
+type TransformedDataItem = {
+    date: string;
+    unlockPercentage: number;
+    withdrawPercentage: number;
+    relockedPercentage: number;
+};
+
+
+const transformData = (data: ChartDataItem[]) => {
+    return data.map(({ date, unlock, withdraw, relocked }) => {
+        const total = unlock + withdraw + relocked;
+        return {
+            date,
+            unlockPercentage: (unlock / total) * 100,
+            withdrawPercentage: (withdraw / total) * 100,
+            relockedPercentage: (relocked / total) * 100,
+        };
+    });
+};
+
+export function PastUnlocksWithdrawalPercentageBarChart({
                                                 filteredChartData,
                                             }: PastUnlocksWithdrawalsChartProps){
+    const transformedData = transformData(filteredChartData);
     const theme = useTheme();
     let height = '278px'
     const option = {
@@ -41,23 +62,28 @@ export function PastUnlocksWithdrawalsChart({
         },
         xAxis: {
             type: 'category',
-            data: filteredChartData.map(item => {
+            data: transformedData.map((item:TransformedDataItem) => {
                 const weekStart = new Date(item.date);
                 const weekEnd = new Date(weekStart);
                 weekEnd.setDate(weekStart.getDate() + 6);
                 return (
-                    weekStart.toLocaleDateString() + ' - ' + weekEnd.toLocaleDateString()
+                    weekStart.toLocaleDateString() +
+                    ' - ' +
+                    weekEnd.toLocaleDateString()
                 );
             }),
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            axisLabel: { formatter: '{value}%' },
+            max: 100,
         },
         series: [
             {
                 name: 'Unlocked',
                 type: 'bar',
-                data: filteredChartData.map(item => item.unlock),
+                stack: 'percentage',
+                data: transformedData.map((item: TransformedDataItem) => item.unlockPercentage),
                 itemStyle: {
                     color: theme.palette.secondary.main
                 },
@@ -77,7 +103,8 @@ export function PastUnlocksWithdrawalsChart({
             {
                 name: 'Withdrawn',
                 type: 'bar',
-                data: filteredChartData.map(item => item.withdraw),
+                stack: 'percentage',
+                data: transformedData.map((item: TransformedDataItem) => item.withdrawPercentage),
                 itemStyle: {
                     color: theme.palette.primary.main
                 },
@@ -97,7 +124,8 @@ export function PastUnlocksWithdrawalsChart({
             {
                 name: 'Relocked',
                 type: 'bar',
-                data: filteredChartData.map(item => item.relocked),
+                stack: 'percentage',
+                data: transformedData.map((item: TransformedDataItem) => item.relockedPercentage),
                 itemStyle: {
                     color: theme.palette.success.main
                 },
