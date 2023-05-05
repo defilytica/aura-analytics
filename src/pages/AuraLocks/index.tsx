@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import {Grid, Typography, CircularProgress, Card} from '@mui/material';
+import {Card, CircularProgress, Grid, Typography} from '@mui/material';
 import {useParams} from "react-router-dom";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import {useGetLeadingLockers} from "../../data/aura/useLockers";
@@ -14,6 +14,7 @@ import * as React from "react";
 import {ethers} from "ethers"
 import GenericBarChart from "../../components/Echarts/GenericBarChart";
 import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
+import {ChartDataItem, PastUnlocksWithdrawalsChart,} from "../../components/Echarts/PastUnlocksWithdrawalBarChart";
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
 
@@ -27,7 +28,7 @@ export default function AuraLocks() {
     const ensDict: { [key: string]: string | null } = {};
     const [ensMap, setEnsMap] = React.useState(ensDict);
     let unlockAmounts: BalancerChartDataItem[] = [];
-    console.log(lockers);
+    let filteredChartData : ChartDataItem[] = []
 
     //Navigation
     const homeNav: NavElement = {
@@ -44,10 +45,19 @@ export default function AuraLocks() {
         const futureDate = new Date(today);
         futureDate.setDate(today.getDate() + 7 * 16);
 
+        const pastUnlockAmounts: { [key: string]: { unlock: number; withdraw: number; relocked: number } } = {};
+
+        const getWeekStart = (date: Date) => {
+            const weekStart = new Date(date);
+            weekStart.setUTCDate(date.getUTCDate() - date.getUTCDay());
+            weekStart.setUTCHours(0, 0, 0, 0);
+            return weekStart;
+        };
+
         lockers.forEach(account => {
             account.userLocks.forEach(lock => {
                 const unlockDate = new Date(lock.unlockTime * 1000);
-                const unlockTimestamp = unlockDate.getTime(); // Get the timestamp
+                const unlockTimestamp = unlockDate.getTime();
                 const todayTimestamp = today.getTime();
                 const futureDateTimestamp = futureDate.getTime();
 
@@ -64,6 +74,37 @@ export default function AuraLocks() {
                     weeklyUnlockAmounts[weekKey] += amountInEther;
                 }
             });
+
+            account.userLocks.forEach(lock => {
+                const unlockDate = new Date(lock.unlockTime * 1000);
+                if (unlockDate < today) {
+                    const weekStart = getWeekStart(unlockDate);
+                    const weekKey = weekStart.toISOString().split('T')[0];
+                    if (!pastUnlockAmounts[weekKey]) {
+                        pastUnlockAmounts[weekKey] = {unlock: 0, withdraw: 0, relocked: 0};
+                    }
+                    const amountInEther = parseFloat(ethers.utils.formatEther(lock.amount.toString()));
+                    pastUnlockAmounts[weekKey].unlock += amountInEther;
+                }
+            });
+
+            // Process past withdrawn transactions
+            account.withdrawnTransactions.forEach(transaction => {
+                const withdrawDate = new Date(transaction.timestamp * 1000);
+                if (withdrawDate < today) {
+                    const weekStart = getWeekStart(withdrawDate);
+                    const weekKey = weekStart.toISOString().split('T')[0];
+                    if (!pastUnlockAmounts[weekKey]) {
+                        pastUnlockAmounts[weekKey] = {unlock: 0, withdraw: 0, relocked: 0};
+                    }
+                    const amountInEther = parseFloat(ethers.utils.formatEther(transaction.amount.toString()));
+                    pastUnlockAmounts[weekKey].withdraw += amountInEther;
+                    if (transaction.relocked) {
+                        pastUnlockAmounts[weekKey].relocked += amountInEther;
+                    }
+                }
+            });
+
         });
 
         unlockAmounts = Array.from({length: 16}, (_, i) => {
@@ -77,7 +118,18 @@ export default function AuraLocks() {
             };
         });
 
-        console.log(unlockAmounts)
+        const chartData = Object.keys(pastUnlockAmounts).map(dateKey => ({
+            date: dateKey,
+            unlock: pastUnlockAmounts[dateKey].unlock,
+            withdraw: pastUnlockAmounts[dateKey].withdraw,
+            relocked: pastUnlockAmounts[dateKey].relocked,
+        }));
+
+        filteredChartData = chartData.filter(item => item.withdraw > 0 || item.relocked > 0);
+        filteredChartData = filteredChartData.sort((a, b) => +new Date(a.date) - +new Date(b.date));
+
+
+        console.log(filteredChartData);
     }
 
 
@@ -121,6 +173,7 @@ export default function AuraLocks() {
     }))
 
 
+
     return (
         <Box sx={{flexGrow: 2}}>
             <Grid
@@ -130,7 +183,7 @@ export default function AuraLocks() {
             >
                 <Grid item xs={11}>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
-                        <NavCrumbs crumbSet={navCrumbs} destination={'auraLocks'} />
+                        <NavCrumbs crumbSet={navCrumbs} destination={'auraLocks'}/>
                     </Box>
 
                 </Grid>
@@ -180,7 +233,15 @@ export default function AuraLocks() {
                         <Typography variant="h6">Weekly Aura Unlocks</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
-                        <GenericBarChart data={unlockAmounts} customUnit={'AURA'}/>
+                        <GenericBarChart data={unlockAmounts} customUnit={'vlAura'}/>
+                    </Card>
+                </Grid>
+                <Grid item xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h6">Weekly Aura Re-Locks</Typography>
+                    </Box>
+                    <Card sx={{boxShadow: 3}}>
+                        <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
                     </Card>
                 </Grid>
                 <Grid item xs={11}>

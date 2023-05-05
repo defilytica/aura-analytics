@@ -11273,10 +11273,10 @@ export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
 export type LockerLeaderboardQuery = {
   __typename?: "Query";
   auraLockerLeaderboard?: {
-    __typename: "AuraLocker";
+    __typename?: "AuraLocker";
     lockedSupply: any;
     accounts: Array<{
-      __typename: "AuraLockerAccount";
+      __typename?: "AuraLockerAccount";
       id: string;
       balanceLocked: any;
       userLocksLength: number;
@@ -11284,6 +11284,12 @@ export type LockerLeaderboardQuery = {
         __typename?: "AuraLockerUserLock";
         amount: any;
         unlockTime: number;
+      }>;
+      withdrawnTransactions: Array<{
+        __typename?: "LockerWithdrawnTransaction";
+        amount: any;
+        relocked: boolean;
+        timestamp: number;
       }>;
     }>;
   } | null;
@@ -13226,15 +13232,18 @@ export const LockerLeaderboardDocument = gql`
       ) {
         id
         balanceLocked
-        __typename
         userLocksLength
         userLocks {
           amount
           unlockTime
         }
+        withdrawnTransactions {
+          amount
+          relocked
+          timestamp
+        }
       }
       lockedSupply
-      __typename
     }
   }
 `;

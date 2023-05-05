@@ -26,7 +26,8 @@ export function useGetLeadingLockers(): LockerAccount[] {
                 balanceLocked: (Number(locker.balanceLocked) / 10 ** 18),
                 id: locker.id,
                 userLocksLength: locker.userLocksLength,
-                userLocks: locker.userLocks
+                userLocks: locker.userLocks,
+                withdrawnTransactions: locker.withdrawnTransactions
             }
         })
     }
