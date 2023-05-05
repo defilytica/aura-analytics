@@ -15,6 +15,7 @@ import {ethers} from "ethers"
 import GenericBarChart from "../../components/Echarts/GenericBarChart";
 import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
 import {ChartDataItem, PastUnlocksWithdrawalsChart,} from "../../components/Echarts/PastUnlocksWithdrawalBarChart";
+import {PastUnlocksWithdrawalPercentageBarChart} from "../../components/Echarts/PastUnlocksWithdrawalPercentageBarChart";
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
 
@@ -242,6 +243,14 @@ export default function AuraLocks() {
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
+                    </Card>
+                </Grid>
+                <Grid item xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h6">Weekly Aura Percentage Re-Locks</Typography>
+                    </Box>
+                    <Card sx={{boxShadow: 3}}>
+                        <PastUnlocksWithdrawalPercentageBarChart filteredChartData={filteredChartData}/>
                     </Card>
                 </Grid>
                 <Grid item xs={11}>
