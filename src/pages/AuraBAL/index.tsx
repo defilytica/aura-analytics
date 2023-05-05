@@ -1,27 +1,44 @@
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles'
-import NavCrumbs, { NavElement } from '../../components/NavCrumbs';
-import { Grid, Typography, List, ListItem, CardMedia, Card, CircularProgress } from '@mui/material';
-import { useAuraPools } from '../../data/aura/useAuraPools';
-import { useAuraBalMints } from '../../data/aura/useAuraBalMints';
-import { useAuraBalTransactions } from '../../data/aura/useAuraBalTransactions';
-import { useAuraGlobalStats } from '../../data/aura/useAuraGlobalStats';
-import { BalancerChartDataItem } from '../../data/balancer/balancerTypes';
+import {useTheme} from '@mui/material/styles'
+import NavCrumbs, {NavElement} from '../../components/NavCrumbs';
+import {Card, CardMedia, CircularProgress, Grid, Typography} from '@mui/material';
+import {useAuraBalMints} from '../../data/aura/useAuraBalMints';
+import {useAuraBalTransactions} from '../../data/aura/useAuraBalTransactions';
+import {useAuraGlobalStats} from '../../data/aura/useAuraGlobalStats';
+import {BalancerChartDataItem, BalancerPieChartDataItem} from '../../data/balancer/balancerTypes';
 import GenericBarChart from '../../components/Echarts/GenericBarChart';
-import { useCoinGeckoSimpleTokenPrices } from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
+import {useCoinGeckoSimpleTokenPrices} from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
 import CoinCard from '../../components/Cards/CoinCard';
-import { useAuraPoolLeaderboardInfo } from '../../data/aura/useAuraPoolLeaderboard';
-import { AuraBALTransactions, AuraVaultDepositWithdrawTransactionInfo, AuraVaultHarvestTransactionInfo, PositionInfo } from '../../data/aura/auraTypes';
-import { BalancerPieChartDataItem } from '../../data/balancer/balancerTypes'
+import {useAuraPoolLeaderboardInfo} from '../../data/aura/useAuraPoolLeaderboard';
+import {
+    AuraVaultDepositWithdrawTransactionInfo,
+    AuraVaultHarvestTransactionInfo,
+    PositionInfo
+} from '../../data/aura/auraTypes';
 import GenericPieChart from '../../components/Echarts/GenericPieChart';
-import { useAuraVaultLeaderboardInfo } from '../../data/aura/useAuraVaultLeaderboard';
-import { useActiveNetworkVersion } from '../../state/application/hooks';
+import {useAuraVaultLeaderboardInfo} from '../../data/aura/useAuraVaultLeaderboard';
+import {useActiveNetworkVersion} from '../../state/application/hooks';
 import MetricsCard from '../../components/Cards/MetricsCard';
 import TokenIcon from '@mui/icons-material/Token';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import AgricultureIcon from '@mui/icons-material/Agriculture';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import AuraPoolLeaderboardTable from '../../components/Tables/AuraPoolLeaderboardTable';
+import {useBalancerTokenPageData, useBalancerTokenSingleData} from "../../data/balancer/useTokens";
+import {useBalancerPoolsForToken} from "../../data/balancer/usePools";
+import EqualizerIcon from "@mui/icons-material/Equalizer";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import SwapHorizontalCircleIcon from "@mui/icons-material/SwapHorizontalCircle";
+import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
+import TokenChart from "../../components/TokenChart";
+import PoolTable from "../../components/Tables/PoolTable";
+import {cumulativeTokenSupply} from "./helpers";
+import {AURA_BAL_STAKED_SUPPLY, AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
+import GenericLineChart from "../../components/Echarts/GenericLineChart";
+import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
+import MixedLineBarChart from "../../components/Echarts/MixedLineBarChart";
+import AuraBALProtocolTVLCharts from "../../components/Echarts/auraBAL/AuraBALProtocolTVLCharts";
+import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
 
 
 export default function AuraBAL() {
@@ -43,7 +60,6 @@ export default function AuraBAL() {
     navCrumbs.push(homeNav)
 
 
-
     //Data fetching
     //const auraPools = useAuraPools();
     const [activeNetwork] = useActiveNetworkVersion();
@@ -54,7 +70,10 @@ export default function AuraBAL() {
     //auraBAL vault
     const auraBalVaultLeaderboard = useAuraVaultLeaderboardInfo(auraBALVaultAddress)
 
-    console.log("aurabaltransactions", auraBALTransactions)
+    //Coin data for global Balancer stats
+    const tokenData = useBalancerTokenSingleData(auraBALAddress);
+    const {tvlData, volumeData, priceData} = useBalancerTokenPageData(auraBALAddress);
+    const poolData = useBalancerPoolsForToken(auraBALAddress);
 
 
     //Create daily mint data
@@ -70,6 +89,8 @@ export default function AuraBAL() {
             value: dailySums[date],
         };
     });
+
+
 
     //Daily auraBAL harvest chart
     const dailyHarvestSums: { [date: string]: number } = auraBALTransactions.harvests.reduce((acc, item) => {
@@ -110,26 +131,20 @@ export default function AuraBAL() {
         };
     });
 
+    const auraNetCompounderDeposits: BalancerChartDataItem[] = Object.keys(dailyWithdrawalSums).map((date) => {
+        const dailyWithdrawalSum = dailyWithdrawalSums[date] || 0;
+        return {
+            time: date,
+            value: dailySums[date] - dailyWithdrawalSum,
+        };
+    });
+
+    //Create the cumulative trace
+    const cumulativeAuraBAL = cumulativeTokenSupply(AURA_BAL_SUPPLY, auraBalDailyMintSeries);
+    const cumulativeCompounderAuraBAL = cumulativeTokenSupply(0, auraNetCompounderDeposits)
+
     //--------DATA--------
-    //AuraBAL Top 20 Stakers: TODO: also pass ens name if applicable
-    const auraBALPieChartData: BalancerPieChartDataItem[] = auraBalPoolLeaderboard.leaderboard.map((positionInfo: PositionInfo) => {
-        const value = positionInfo.stakedAmount;
-        const name = positionInfo.accountId;
-        return { value, name };
-    }).slice(0, 20);
-
-    //AuraBAL Top 20 Stakers: TODO: also pass ens name if applicable
-    const auraBALVaultPieChartData: BalancerPieChartDataItem[] = auraBalVaultLeaderboard.leaderboard.map((positionInfo: PositionInfo) => {
-        const value = positionInfo.stakedAmount;
-        const name = positionInfo.accountId;
-        return { value, name };
-    }).slice(0, 20);
-
     const auraBALCompounderRatio = 100 / auraBalPoolLeaderboard.totalStaked * auraBalVaultLeaderboard.totalStaked
-
-    //AuraBAL Autocompounder stats
-    //1. calcuate average daily harvest amount and frequency
-
     // Calculate average daily harvest amount
     let averageDailyHarvestAmount = 0
     let averageDailyDepositAmount = 0
@@ -155,23 +170,23 @@ export default function AuraBAL() {
     }
 
 
-
     return (
-        <Box sx={{ flexGrow: 2 }}>
+        <Box sx={{flexGrow: 2}}>
             <Grid
                 container
                 spacing={2}
-                sx={{ justifyContent: 'center' }}
+                sx={{justifyContent: 'center'}}
             >
                 <Grid item xs={11}>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
-                        <NavCrumbs crumbSet={navCrumbs} destination={'auraBAL'} />
+                        <NavCrumbs crumbSet={navCrumbs} destination={'auraBAL'}/>
                     </Box>
 
                 </Grid>
                 <Grid item xs={11}>
+
                     <Box>
-                        <div style={{ position: "relative" }}>
+                        <div style={{position: "relative"}}>
                             <CardMedia
                                 component="img"
                                 height="200"
@@ -190,17 +205,20 @@ export default function AuraBAL() {
                                     variant='h4'
                                     color={theme.palette.mode === 'dark' ? 'white' : '#9C4ED6'}
                                 >
-                                    AuraBAL Statistics
+                                    AuraBAL
                                 </Typography>
                             </div>
                         </div>
                     </Box>
                 </Grid>
                 <Grid item xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h5">Global Metrics</Typography>
+                    </Box>
                     <Grid
                         container
-                        columns={{ xs: 4, sm: 8, md: 12 }}
-                        sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
+                        columns={{xs: 4, sm: 8, md: 12}}
+                        sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
                             {coinData && coinData[auraBALAddress] && coinData[auraBALAddress].usd ?
@@ -211,7 +229,7 @@ export default function AuraBAL() {
                                     tokenPriceChange={coinData[auraBALAddress].usd_24h_change}
 
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
                         <Box m={1}>
                             {auraGlobalStats ?
@@ -223,47 +241,130 @@ export default function AuraBAL() {
                                     mainMetricChange={0}
                                     MetricIcon={TokenIcon}
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
 
                     </Grid>
+                </Grid>
+                <Grid item xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h6">Historical auraBAL Supply</Typography>
+                    </Box>
+                    <Card>
+                        <AuraBALMultiAreaChart
+                            mintedAuraBAL={cumulativeAuraBAL}
+                            stakedAuraBAL={cumulativeAuraBAL}
+                            compounderAuraBAL={cumulativeCompounderAuraBAL}
+                            />
+                    </Card>
+                </Grid>
+                {tokenData ?
+                    <Grid item xs={11}>
+                        <Box mb={1}>
+                            <Typography variant="h5">Balancer Metrics</Typography>
+                        </Box>
+                        <Grid
+                            container
+                            columns={{xs: 4, sm: 8, md: 12}}
+                            sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                        >
+                            <Box m={1}>
+                                <MetricsCard
+                                    mainMetric={tokenData ? tokenData.volumeUSD : 0}
+                                    mainMetricInUSD={true}
+                                    metricName='auraBAL Volume'
+                                    mainMetricChange={tokenData.volumeUSDChange}
+                                    MetricIcon={EqualizerIcon}
+                                />
+                            </Box>
+                            <Box m={1}>
+                                <MetricsCard
+                                    mainMetric={tokenData.tvlUSD}
+                                    mainMetricInUSD={true}
+                                    metricName='auraBAL TVL'
+                                    mainMetricChange={tokenData.tvlUSDChange * 100}
+                                    MetricIcon={MonetizationOnIcon}
+                                />
+                            </Box>
+                            <Box m={1}>
+                                <MetricsCard
+                                    mainMetric={tokenData.txCount}
+                                    mainMetricInUSD={false}
+                                    metricName='auraBAL Swaps'
+                                    mainMetricChange={0}
+                                    MetricIcon={SwapHorizontalCircleIcon}
+
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid> :
+                    <Grid
+                        container
+                        spacing={2}
+                        mt='25%'
+                        sx={{justifyContent: 'center'}}
+                    >
+                        <CustomLinearProgress/>
+                    </Grid>}
+            </Grid>
+            <Grid
+                container
+                spacing={3}
+                sx={{justifyContent: 'center'}}
+            >
+                <Grid item xs={11} mt={2}>
+                    <Box mb={1}>
+                        <Typography variant="h6">Deployed Liquidity Metrics</Typography>
+                    </Box>
+                    <Box>
+                        <Card>
+                            <TokenChart tvlData={tvlData} volumeData={volumeData} priceData={priceData}/>
+                        </Card>
+                    </Box>
+                </Grid>
+                <Grid item xs={11}>
+                    <Box mb={1}>
+                        <Typography variant="h6">auraBAL: Deployed Balancer Pools</Typography>
+                    </Box>
+                    <PoolTable poolDatas={poolData}/>
                 </Grid>
             </Grid>
             <Grid
                 container
                 spacing={2}
-                sx={{ justifyContent: 'center' }}
+                sx={{justifyContent: 'center'}}
             >
 
                 <Grid item mt={1} xs={11}>
                     <Box mb={1}>
                         <Typography variant="h6">Daily AuraBAL Mints</Typography>
                     </Box>
-                    <Card sx={{ boxShadow: 3 }}>
+                    <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
 
                         </Box>
-                        <GenericBarChart data={auraBalDailyMintSeries} customUnit={'auraBAL'} />
+                        <GenericBarChart data={auraBalDailyMintSeries} customUnit={'auraBAL'}/>
                     </Card>
                 </Grid>
-                <Grid item mt={1} xs={11}>
+                {/* <Grid item mt={1} xs={11}>
                     <Box mb={1}>
                         <Typography variant="h6">Top 20 auraBAL Stakers</Typography>
                     </Box>
                     <Card>
-                        <GenericPieChart data={auraBALPieChartData} height={'350px'} isNotUSD={true} />
+                        <GenericPieChart data={auraBALPieChartData} height={'350px'} isNotUSD={true}/>
                     </Card>
 
                 </Grid>
+                */}
                 <Grid item mt={1} xs={11}>
                     <Box mb={1}>
                         <Typography variant="h6">Top Depositors</Typography>
                     </Box>
 
-                        <Box p={1} display="flex" alignItems='center'>
+                    <Box p={1} display="flex" alignItems='center'>
 
-                        </Box>
-                        <AuraPoolLeaderboardTable leaderboardInfo={auraBalPoolLeaderboard} />
+                    </Box>
+                    <AuraPoolLeaderboardTable leaderboardInfo={auraBalPoolLeaderboard}/>
 
                 </Grid>
             </Grid>
@@ -271,7 +372,7 @@ export default function AuraBAL() {
                 mt={2}
                 container
                 spacing={2}
-                sx={{ justifyContent: 'center' }}
+                sx={{justifyContent: 'center'}}
             >
                 <Grid item xs={11}>
                     <Box mb={1}>
@@ -282,8 +383,8 @@ export default function AuraBAL() {
                     <Grid
 
                         container
-                        columns={{ xs: 4, sm: 8, md: 12 }}
-                        sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
+                        columns={{xs: 4, sm: 8, md: 12}}
+                        sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
                             {auraBalDailyHarvestSeries.length > 0 ?
@@ -295,7 +396,7 @@ export default function AuraBAL() {
                                     mainMetricChange={averageDailyHarvestsChange}
                                     MetricIcon={AgricultureIcon}
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
                         <Box m={1}>
                             {auraBALCompounderRatio > 0 ?
@@ -307,7 +408,7 @@ export default function AuraBAL() {
                                     mainMetricChange={0}
                                     MetricIcon={AgricultureIcon}
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
                         <Box m={1}>
                             {averageDailyDepositAmount > 0 ?
@@ -319,7 +420,7 @@ export default function AuraBAL() {
                                     mainMetricChange={0}
                                     MetricIcon={ArrowCircleDownIcon}
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
                         <Box m={1}>
                             {auraBALCompounderRatio > 0 ?
@@ -331,7 +432,7 @@ export default function AuraBAL() {
                                     mainMetricChange={0}
                                     MetricIcon={PieChartIcon}
                                 />
-                                : <CircularProgress />}
+                                : <CircularProgress/>}
                         </Box>
 
                     </Grid>
@@ -340,44 +441,38 @@ export default function AuraBAL() {
                     <Box mb={1}>
                         <Typography variant="h6">Daily Vault Harvests</Typography>
                     </Box>
-                    <Card sx={{ boxShadow: 3 }}>
+                    <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
 
                         </Box>
-                        <GenericBarChart data={auraBalDailyHarvestSeries} customUnit={'auraBAL'} />
+                        <GenericBarChart data={auraBalDailyHarvestSeries} customUnit={'auraBAL'}/>
                     </Card>
                 </Grid>
                 <Grid item mt={1} xs={11}>
                     <Box mb={1}>
-                        <Typography variant="h6">Daily Vault Deposits</Typography>
+                        <Typography variant="h6">Historical auraBAL in Compounder</Typography>
                     </Box>
-                    <Card sx={{ boxShadow: 3 }}>
+                    <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
 
                         </Box>
-                        <GenericBarChart data={auraBalDailyDepositSeries} customUnit={'auraBAL'} />
+                        <GenericAreaChart
+                            chartData={cumulativeCompounderAuraBAL}
+                            dataTitle={"compounder"}
+                            format={"auraBAL"}
+                        />
                     </Card>
                 </Grid>
-                <Grid item mt={1} xs={11}>
-                    <Box mb={1}>
-                        <Typography variant="h6">Daily Vault Withdrawals</Typography>
-                    </Box>
-                    <Card sx={{ boxShadow: 3 }}>
-                        <Box p={1} display="flex" alignItems='center'>
 
-                        </Box>
-                        <GenericBarChart data={auraBalDailyWithdrawalSeries} customUnit={'auraBAL'} />
-                    </Card>
-                </Grid>
-                <Grid item mt={1} xs={11}>
+                {/* <Grid item mt={1} xs={11}>
                     <Box mb={1}>
                         <Typography variant="h6">Top 20 Autocompounder Stakers</Typography>
                     </Box>
                     <Card>
-                        <GenericPieChart data={auraBALVaultPieChartData} height={'350px'} isNotUSD={true} />
+                        <GenericPieChart data={auraBALVaultPieChartData} height={'350px'} isNotUSD={true}/>
                     </Card>
 
-                </Grid>
+                </Grid> */}
             </Grid>
         </Box>
     );
