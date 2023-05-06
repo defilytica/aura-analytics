@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom';
 import { Typography, Box, Card, Grid, Stack } from "@mui/material";
 import { useBalancerTransactionData } from "../../data/balancer/useTransactions";
 import MetricsCard from '../../components/Cards/MetricsCard';
-import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import SwapHorizontalCircleIcon from '@mui/icons-material/SwapHorizontalCircle';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -53,7 +52,7 @@ export default function TokenPage() {
 
 
     //Ideas to show richer data:
-    // Biggest swaps token, bigges fees token? Show Pool routes from swap data?
+    // Biggest swaps token, biggest fees token? Show Pool routes from swap data?
     return (
         tokenData ?
             <Box sx={{ flexGrow: 2 }}>

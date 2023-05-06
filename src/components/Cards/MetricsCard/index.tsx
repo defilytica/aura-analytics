@@ -30,7 +30,7 @@ const MetricsCard = ({
     sx={{
       maxWidth: '275px',
       minWidth: '250px',
-      maxHeight: '150px',
+      minHeight: '130px',
       boxShadow: 3,
     }}
     >
@@ -52,7 +52,7 @@ const MetricsCard = ({
               color="textPrimary"
               variant="h6"
             >
-              {mainMetricInUSD ? formatDollarAmount(mainMetric) : formatNumber(mainMetric, 0) + metricUnit}
+              {mainMetricInUSD ? formatDollarAmount(mainMetric) : formatNumber(mainMetric, 2) + metricUnit}
             </Typography>
           </Grid>
           <Grid item>

@@ -21,7 +21,6 @@ import PoolInfoTable from '../../components/Tables/PoolInfoTable';
 import StyledLinkButton from '../../components/Buttons/StyledLinkButton';
 import SwapsTable from '../../components/Tables/SwapsTable';
 import JoinExitsTable from '../../components/Tables/JoinExitsTable';
-import { STABLE_POOLS } from '../../constants';
 
 
 

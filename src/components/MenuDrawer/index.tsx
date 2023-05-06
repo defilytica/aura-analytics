@@ -7,7 +7,6 @@ import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import LinkIcon from '@mui/icons-material/Link';
 import WavesIcon from '@mui/icons-material/Waves';
 import TokenIcon from '@mui/icons-material/Token';
 import LockClockIcon from '@mui/icons-material/LockClock';
@@ -15,7 +14,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import DiscordIconLight from '../../assets/svg/discord-light.svg'
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import DiscordIconDark from '../../assets/svg/discord-dark.svg'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LockResetIcon from '@mui/icons-material/LockReset';
@@ -146,7 +145,10 @@ const MenuDrawer = ({
                         <TwitterIcon />
                     </Link>
                     <Link href="https://discord.balancer.fi" target="_blank" rel="noopener noreferrer">
+                    {theme.palette.mode === 'dark' ? 
+                        <img src={DiscordIconDark} alt="Discord Icon" width="25" /> :
                         <img src={DiscordIconLight} alt="Discord Icon" width="25" />
+                    }
                     </Link>
                 </Box>
                 <Divider />

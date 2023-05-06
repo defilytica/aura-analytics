@@ -29,8 +29,6 @@ export default function GenericMultiBarChart({chartData, dataTitle, format = '$'
                     backgroundColor: '#6a7985',
                 }
             },
-            
-            
         },
         grid: {
             left: '3%',
