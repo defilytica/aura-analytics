@@ -15,13 +15,13 @@ export default function TvlAreaChart({tvlData}: TvlAreaProps) {
     let yData = tvlData.map(el => el.value);
 
     const option = {
-        color: ['#00DDFF'],
+        color: ['#9C4ED6'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {
                 type: 'cross',
                 label: {
-                    backgroundColor: '#6a7985',
+                    backgroundColor: '#9C4ED6',
                 }
             },
             
@@ -57,7 +57,13 @@ export default function TvlAreaChart({tvlData}: TvlAreaProps) {
                 stack: 'Total',
                 smooth: true,
                 lineStyle: {
-                    width: 0
+                    width: 2,
+                    color: new graphic.LinearGradient(0, 0, 1, 0, [
+                        { offset: 0, color: '#9C4ED6' }, // Brighter color
+                        { offset: 1, color: '#5d24c6' }, // Darker color
+                    ]),
+                    shadowColor: 'rgba(156, 78, 214, 0.5)',
+                    shadowBlur: 10,
                 },
                 showSymbol: false,
                 areaStyle: {
@@ -65,11 +71,11 @@ export default function TvlAreaChart({tvlData}: TvlAreaProps) {
                     color: new graphic.LinearGradient(0, 0, 0, 1, [
                         {
                             offset: 0,
-                            color: 'rgb(77, 119, 255)'
+                            color: 'rgb(93, 36, 198)'
                         },
                         {
                             offset: 1,
-                            color: 'rgb(0, 221, 255)'
+                            color: 'rgb(156, 78, 214)'
                         }
                     ])
                 },

@@ -6,7 +6,7 @@ import App from './App';
 import { HashRouter } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import reportWebVitals from './reportWebVitals';
-import { client } from './apollo/client';
+import {auraClient, client} from './apollo/client';
 import store from './state';
 
 function Updaters() {
@@ -21,7 +21,7 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-    <ApolloProvider client={client}>
+    <ApolloProvider client={auraClient}>
       <Provider store={store}>
         <Updaters />
         <HashRouter>

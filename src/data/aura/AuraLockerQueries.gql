@@ -1,0 +1,24 @@
+query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+        accounts(
+            first: 1000
+            where: {balance_gt: 1000000000000000000}
+            orderBy: balanceLocked
+            orderDirection: desc
+        ) {
+            id
+            balanceLocked
+            userLocksLength
+            userLocks {
+                amount
+                unlockTime
+            }
+            withdrawnTransactions {
+                amount
+                relocked
+                timestamp
+            }
+        }
+        lockedSupply
+    }
+}

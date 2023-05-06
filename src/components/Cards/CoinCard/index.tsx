@@ -34,7 +34,7 @@ const CoinCard = ({
     sx={{
       maxWidth: '275px',
       minWidth: '250px',
-      maxHeight: '150px',
+      minHeight: '130px',
       cursor: 'pointer',
       boxShadow: 3,
     }}

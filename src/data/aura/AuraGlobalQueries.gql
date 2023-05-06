@@ -1,0 +1,222 @@
+# Global stats
+query AuraGlobalStats{
+  global(id: "global") {
+    id
+    aura
+    auraTotalSupply
+    auraBalTotalSupply
+    auraMaxSupply
+    auraReductionPerCliff
+    auraTotalCliffs
+  }
+  masterChefs {
+    id
+    endBlock
+    startBlock
+    totalAllocPoint
+    rewardPerBlock
+  }
+  tokens(first: 1000) {
+    ...AllToken
+  }
+}
+
+# Aura Pools with Convex pool ids and gauge information -> TODO: expand
+query AuraPools {
+  pools {
+    totalStaked
+    id
+    gauge {
+      id
+      pool {
+        id
+        factoryPoolData {
+          balancerPoolId
+          isShutdown
+        }
+      }
+      totalSupply
+      workingSupply
+      balance
+    }
+  }
+}
+
+#Leaderboard of accounts for a specific Aura Pool (not balancer pool!), e.g. "auraBal", "0", etc 
+query PoolLeaderboard($poolId: ID!) {
+  leaderboard: pool(id: $poolId) {
+    accounts(
+      first: 1000
+      where: {staked_gt: 1000000000000000000}
+      orderBy: staked
+      orderDirection: desc
+    ) {
+      staked
+      account {
+        id
+      }
+    }
+    totalStaked
+  }
+}
+
+# Used to find all depositors in a given vault like the auraBAL autocompounder. Does not apply to staking pools in Aura!
+query VaultLeaderboard($vaultId: ID!) {
+  leaderboard: vault(id: $vaultId) {
+    accounts(
+      first: 1000
+      where: {shares_gt: 1000000000000000000}
+      orderBy: shares
+      orderDirection: desc
+    ) {
+      shares
+      account {
+        id
+      }
+    }
+    totalSupply
+  }
+}
+
+# TODO: Obtain all vaults so they can be cross-referenced with Balancer pools and gauges!
+
+
+
+
+
+
+
+
+# TODO: Refactor Global Aura stats query
+query Aura($accountId: String = "", $hasAccount: Boolean = false) {
+  ...AuraBlock
+  auraBal: pool(id: "auraBal") {
+    ...AllPool
+    rewardData {
+      ...AllPoolRewardData
+      queuedRewards
+    }
+    accounts(where: {account: $accountId}) @include(if: $hasAccount) {
+      ...AllPoolAccount
+    }
+  }
+  factoryPools: pools(where: {isFactoryPool: true}) {
+    ...AllPool
+    rewardData {
+      ...AllPoolRewardData
+      queuedRewards
+    }
+    accounts(where: {account: $accountId}) @include(if: $hasAccount) {
+      ...AllPoolAccount
+    }
+  }
+  vault(id: "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6") {
+    id
+    decimals
+    name
+    symbol
+    strategy
+    totalSupply
+    totalUnderlying
+    underlying {
+      ...AllToken
+    }
+    asset {
+      ...AllToken
+    }
+    rewardData {
+      id
+      token {
+        ...AllToken
+      }
+      periodFinish
+      lastUpdateTime
+      rewardPerTokenStored
+      rewardRate
+      queuedRewards
+    }
+    accounts(where: {account: $accountId}) @include(if: $hasAccount) {
+      id
+      shares
+      rewards {
+        id
+        rewardToken {
+          ...AllToken
+        }
+        rewardPerTokenPaid
+        rewards
+      }
+    }
+  }
+}
+
+fragment AuraBlock on Query {
+  _meta {
+    block {
+      number
+    }
+  }
+}
+
+fragment AllPool on Pool {
+  id
+  depositToken {
+    ...AllToken
+  }
+  lpToken {
+    ...AllToken
+  }
+  isFactoryPool
+  factoryPoolData {
+    id
+    addedAt
+    isShutdown
+    stash
+    gauge
+  }
+  gauge {
+    id
+    balance
+    totalSupply
+    workingSupply
+  }
+  rewardPool
+  totalSupply
+  totalStaked
+}
+
+fragment AllToken on Token {
+  id
+  decimals
+  symbol
+  name
+
+}
+
+fragment AllPoolRewardData on PoolRewardData {
+  id
+  token {
+    ...AllToken
+  }
+  periodFinish
+  lastUpdateTime
+  rewardPerTokenStored
+  rewardRate
+}
+
+fragment AllPoolAccount on PoolAccount {
+  id
+  staked
+  rewards {
+    ...AllPoolAccountRewards
+  }
+}
+
+fragment AllPoolAccountRewards on PoolAccountRewards {
+  id
+  rewards
+  rewardPerTokenPaid
+  rewardToken {
+    ...AllToken
+  }
+}

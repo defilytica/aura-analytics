@@ -1,0 +1,41 @@
+## -----AURABAL-----
+#Transactions for AuraBAL mints - explicitly with a timestamp to get the full range of mints
+query AuraBalMintTransactions($startTimestamp: Int!) {
+    auraBalMintTransactions(
+        where: {timestamp_gt: $startTimestamp}
+        first: 1000
+        orderBy: timestamp
+        orderDirection: asc
+    ) {
+        timestamp
+        hash
+        account {
+            id
+        }
+        amount
+    }
+}
+
+#AuraBAL harvest transactions (auto-compounder) and deposits !== mints
+query AuraBalTransactions {
+    vaultHarvestTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
+        timestamp
+        harvested
+        hash
+        sender
+    }
+    vaultDepositTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
+        timestamp
+        assets
+        shares
+        hash
+        sender
+    }
+    vaultWithdrawTransactions(first: 1000, orderBy: timestamp, orderDirection: asc) {
+        timestamp
+        assets
+        shares
+        hash
+        sender
+    }
+}

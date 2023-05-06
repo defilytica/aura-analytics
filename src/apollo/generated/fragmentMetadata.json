@@ -1,5 +1,23 @@
 {
   "possibleTypes": {
-    "RewardData": ["AuraLockerRewardData", "PoolRewardData"]
+    "LockerTransaction": [
+      "LockerDelegateChangedTransaction",
+      "LockerKickRewardTransaction",
+      "LockerRewardPaidTransaction",
+      "LockerStakedTransaction",
+      "LockerWithdrawnTransaction"
+    ],
+    "PoolTransaction": [
+      "PoolRewardPaidTransaction",
+      "PoolStakedTransaction",
+      "PoolWithdrawnTransaction"
+    ],
+    "RewardData": ["AuraLockerRewardData", "PoolRewardData", "VaultRewardData"],
+    "VaultTransaction": [
+      "VaultDepositTransaction",
+      "VaultHarvestTransaction",
+      "VaultRewardPaidTransaction",
+      "VaultWithdrawTransaction"
+    ]
   }
 }

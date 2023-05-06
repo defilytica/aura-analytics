@@ -2,14 +2,15 @@ import ReactEcharts from 'echarts-for-react';
 import { useTheme } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 import { BalancerChartDataItem } from '../../data/balancer/balancerTypes';
-import { formatDollarAmount } from '../../utils/numbers';
+import { formatAmount, formatDollarAmount } from '../../utils/numbers';
 import { pink } from '@mui/material/colors';
 
 export interface GenericBarChartProps {
     data: BalancerChartDataItem[],
+    customUnit?: string
 }
 
-export default function GenericBarChart({ data }: GenericBarChartProps) {
+export default function GenericBarChart({ data, customUnit = '' }: GenericBarChartProps) {
 
     const theme = useTheme();
     let xData = data.map(el => el.time);
@@ -37,7 +38,7 @@ export default function GenericBarChart({ data }: GenericBarChartProps) {
                 type: 'value',
                 axisLabel: {
                     formatter: function (d: number) {
-                        return formatDollarAmount(d);
+                        return customUnit ? formatAmount(d) : formatDollarAmount(d) ;
                     }
                 }
             }
@@ -56,7 +57,7 @@ export default function GenericBarChart({ data }: GenericBarChartProps) {
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return formatDollarAmount(value)
+                        return customUnit ? formatAmount(value) + ' ' + customUnit: formatDollarAmount(value) ;
                     }
                 },
             },
