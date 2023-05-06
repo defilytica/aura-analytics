@@ -27,9 +27,9 @@ const transformData = (data: ChartDataItem[]) => {
         const total = unlock + withdraw + relocked;
         return {
             date,
-            unlockPercentage: (unlock / total) * 100,
-            withdrawPercentage: (withdraw / total) * 100,
-            relockedPercentage: (relocked / total) * 100,
+            unlockPercentage: parseFloat(((unlock / total) * 100).toFixed(1)),
+            withdrawPercentage: parseFloat(((withdraw / total) * 100).toFixed(1)),
+            relockedPercentage: parseFloat(((relocked / total) * 100).toFixed(1)),
         };
     });
 };
