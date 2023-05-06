@@ -25,6 +25,20 @@ export function PastUnlocksWithdrawalsChart({
             axisPointer: {
                 type: 'shadow'
             },
+            formatter: (params: any) => {
+                const date = params[0].axisValue;
+                let tooltipText = date + '<br>';
+                params.forEach((param: any) => {
+                    const value = (param.data / param.dataIndex) * 100;
+                    const roundedValue = parseFloat(value.toFixed(0));
+                    tooltipText +=
+                        param.marker +
+                        param.seriesName + ': ' +
+                        roundedValue +
+                        '<br>';
+                });
+                return tooltipText;
+            },
         },
         grid: {
             left: '3%',
@@ -51,7 +65,7 @@ export function PastUnlocksWithdrawalsChart({
             }),
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
         },
         series: [
             {
