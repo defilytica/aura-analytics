@@ -22,8 +22,8 @@ query AuraGlobalStats{
 }
 
 # Aura Pools with Convex pool ids and gauge information -> TODO: expand
-query AuraPools {
-  pools {
+query AuraPools($block: Block_height) {
+  pools(block: $block) {
     totalStaked
     id
     gauge {
@@ -41,6 +41,7 @@ query AuraPools {
     }
   }
 }
+
 
 #Leaderboard of accounts for a specific Aura Pool (not balancer pool!), e.g. "auraBal", "0", etc 
 query PoolLeaderboard($poolId: ID!) {

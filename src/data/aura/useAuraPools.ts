@@ -2,14 +2,28 @@ import { useEffect } from 'react';
 import { useAuraPoolsLazyQuery, useAuraPoolsQuery } from '../../apollo/generated/graphql-aura-codegen-generated';
 import { AuraPoolData } from './auraTypes';
 import { auraClient } from '../../apollo/client';
+import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
+import {useDeltaTimestamps} from "../../utils/queries";
+import {useActiveNetworkVersion} from "../../state/application/hooks";
 
 export function useAuraPools(): AuraPoolData[] {
     //TODO: Dynamically call Aura client depending on network!
+    const [activeNetwork] = useActiveNetworkVersion();
+    const [t24, t48, tWeek] = useDeltaTimestamps();
+    const { blocks } = useBlocksFromTimestamps([t24, t48, tWeek]);
+    const [block24] = blocks ?? [];
     const [getAuraPools, {data}] = useAuraPoolsLazyQuery({client: auraClient});
 
+    console.log(block24)
     useEffect(() => {
-        getAuraPools();
-    }, []);
+        if (block24) {
+            getAuraPools({
+                variables: {
+                    block: {number: parseInt(block24.number)},
+                },
+            });
+        }
+    }, [block24]);
 
     if (!data) {
         return [];

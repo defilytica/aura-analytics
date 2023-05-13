@@ -23,7 +23,7 @@ export function useGetLeadingLockers(): LockerAccount[] {
 
         return accounts.map((locker) => {
             return {
-                balanceLocked: (Number(locker.balanceLocked) / 10 ** 18),
+                balanceLocked: (Number(locker.balanceLocked) / 1e18),
                 id: locker.id,
                 userLocksLength: locker.userLocksLength,
                 userLocks: locker.userLocks,

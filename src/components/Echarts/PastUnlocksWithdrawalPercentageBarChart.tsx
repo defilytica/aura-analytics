@@ -46,6 +46,19 @@ export function PastUnlocksWithdrawalPercentageBarChart({
             axisPointer: {
                 type: 'shadow'
             },
+            formatter: (params: any) => {
+                const date = params[0].axisValue;
+                let tooltipText = date + '<br>';
+                params.forEach((param: any) => {
+                    tooltipText +=
+                        param.marker +
+                        param.seriesName +
+                        ': ' +
+                        param.value +
+                        '%<br>';
+                });
+                return tooltipText;
+            },
         },
         grid: {
             left: '3%',

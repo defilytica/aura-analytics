@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import {Card, CircularProgress, Grid, Typography} from '@mui/material';
 import {useParams} from "react-router-dom";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
-import {useGetLeadingLockers} from "../../data/aura/useLockers";
+import {useGetLeadingLockers} from "../../data/aura/useAuraLockers";
 import LockerTable from "../../components/Tables/LockerTable";
 import LockedAuraCard from "../../components/Cards/LockedAuraCard";
 import TopLockerCard from "../../components/Cards/TopLockerCard";
