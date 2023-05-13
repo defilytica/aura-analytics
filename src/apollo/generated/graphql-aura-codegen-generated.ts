@@ -11268,31 +11268,48 @@ export enum _SubgraphErrorPolicy_ {
   Deny = "deny",
 }
 
-export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
+export type AuraBalMintTransactionsQueryVariables = Exact<{
+  startTimestamp: Scalars["Int"];
+}>;
 
-export type LockerLeaderboardQuery = {
+export type AuraBalMintTransactionsQuery = {
   __typename?: "Query";
-  auraLockerLeaderboard?: {
-    __typename?: "AuraLocker";
-    lockedSupply: any;
-    accounts: Array<{
-      __typename?: "AuraLockerAccount";
-      id: string;
-      balanceLocked: any;
-      userLocksLength: number;
-      userLocks: Array<{
-        __typename?: "AuraLockerUserLock";
-        amount: any;
-        unlockTime: number;
-      }>;
-      withdrawnTransactions: Array<{
-        __typename?: "LockerWithdrawnTransaction";
-        amount: any;
-        relocked: boolean;
-        timestamp: number;
-      }>;
-    }>;
-  } | null;
+  auraBalMintTransactions: Array<{
+    __typename?: "AuraBalMintTransaction";
+    timestamp: number;
+    hash: any;
+    amount: any;
+    account: { __typename?: "Account"; id: string };
+  }>;
+};
+
+export type AuraBalTransactionsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AuraBalTransactionsQuery = {
+  __typename?: "Query";
+  vaultHarvestTransactions: Array<{
+    __typename?: "VaultHarvestTransaction";
+    timestamp: number;
+    harvested: any;
+    hash: any;
+    sender: any;
+  }>;
+  vaultDepositTransactions: Array<{
+    __typename?: "VaultDepositTransaction";
+    timestamp: number;
+    assets: any;
+    shares: any;
+    hash: any;
+    sender: any;
+  }>;
+  vaultWithdrawTransactions: Array<{
+    __typename?: "VaultWithdrawTransaction";
+    timestamp: number;
+    assets: any;
+    shares: any;
+    hash: any;
+    sender: any;
+  }>;
 };
 
 export type AuraGlobalStatsQueryVariables = Exact<{ [key: string]: never }>;
@@ -11326,7 +11343,9 @@ export type AuraGlobalStatsQuery = {
   }>;
 };
 
-export type AuraPoolsQueryVariables = Exact<{ [key: string]: never }>;
+export type AuraPoolsQueryVariables = Exact<{
+  block?: InputMaybe<Block_Height>;
+}>;
 
 export type AuraPoolsQuery = {
   __typename?: "Query";
@@ -11385,50 +11404,6 @@ export type VaultLeaderboardQuery = {
       account: { __typename?: "Account"; id: string };
     }>;
   } | null;
-};
-
-export type AuraBalMintTransactionsQueryVariables = Exact<{
-  startTimestamp: Scalars["Int"];
-}>;
-
-export type AuraBalMintTransactionsQuery = {
-  __typename?: "Query";
-  auraBalMintTransactions: Array<{
-    __typename?: "AuraBalMintTransaction";
-    timestamp: number;
-    hash: any;
-    amount: any;
-    account: { __typename?: "Account"; id: string };
-  }>;
-};
-
-export type AuraBalTransactionsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type AuraBalTransactionsQuery = {
-  __typename?: "Query";
-  vaultHarvestTransactions: Array<{
-    __typename?: "VaultHarvestTransaction";
-    timestamp: number;
-    harvested: any;
-    hash: any;
-    sender: any;
-  }>;
-  vaultDepositTransactions: Array<{
-    __typename?: "VaultDepositTransaction";
-    timestamp: number;
-    assets: any;
-    shares: any;
-    hash: any;
-    sender: any;
-  }>;
-  vaultWithdrawTransactions: Array<{
-    __typename?: "VaultWithdrawTransaction";
-    timestamp: number;
-    assets: any;
-    shares: any;
-    hash: any;
-    sender: any;
-  }>;
 };
 
 export type AuraQueryVariables = Exact<{
@@ -11745,6 +11720,33 @@ export type AllPoolAccountRewardsFragment = {
     symbol: string;
     name: string;
   };
+};
+
+export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LockerLeaderboardQuery = {
+  __typename?: "Query";
+  auraLockerLeaderboard?: {
+    __typename?: "AuraLocker";
+    lockedSupply: any;
+    accounts: Array<{
+      __typename?: "AuraLockerAccount";
+      id: string;
+      balanceLocked: any;
+      userLocksLength: number;
+      userLocks: Array<{
+        __typename?: "AuraLockerUserLock";
+        amount: any;
+        unlockTime: number;
+      }>;
+      withdrawnTransactions: Array<{
+        __typename?: "LockerWithdrawnTransaction";
+        amount: any;
+        relocked: boolean;
+        timestamp: number;
+      }>;
+    }>;
+  } | null;
 };
 
 export type GetProtocolDataQueryVariables = Exact<{
@@ -13221,81 +13223,159 @@ export const BalancerSnapshotFragmentDoc = gql`
     totalSwapFee
   }
 `;
-export const LockerLeaderboardDocument = gql`
-  query LockerLeaderboard {
-    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
-      accounts(
-        first: 1000
-        where: { balance_gt: 1000000000000000000 }
-        orderBy: balanceLocked
-        orderDirection: desc
-      ) {
+export const AuraBalMintTransactionsDocument = gql`
+  query AuraBalMintTransactions($startTimestamp: Int!) {
+    auraBalMintTransactions(
+      where: { timestamp_gt: $startTimestamp }
+      first: 1000
+      orderBy: timestamp
+      orderDirection: asc
+    ) {
+      timestamp
+      hash
+      account {
         id
-        balanceLocked
-        userLocksLength
-        userLocks {
-          amount
-          unlockTime
-        }
-        withdrawnTransactions {
-          amount
-          relocked
-          timestamp
-        }
       }
-      lockedSupply
+      amount
     }
   }
 `;
 
 /**
- * __useLockerLeaderboardQuery__
+ * __useAuraBalMintTransactionsQuery__
  *
- * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
- * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAuraBalMintTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuraBalMintTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useLockerLeaderboardQuery({
+ * const { data, loading, error } = useAuraBalMintTransactionsQuery({
  *   variables: {
+ *      startTimestamp: // value for 'startTimestamp'
  *   },
  * });
  */
-export function useLockerLeaderboardQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
+export function useAuraBalMintTransactionsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    AuraBalMintTransactionsQuery,
+    AuraBalMintTransactionsQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >(LockerLeaderboardDocument, options);
+    AuraBalMintTransactionsQuery,
+    AuraBalMintTransactionsQueryVariables
+  >(AuraBalMintTransactionsDocument, options);
 }
-export function useLockerLeaderboardLazyQuery(
+export function useAuraBalMintTransactionsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
+    AuraBalMintTransactionsQuery,
+    AuraBalMintTransactionsQueryVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useLazyQuery<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >(LockerLeaderboardDocument, options);
+    AuraBalMintTransactionsQuery,
+    AuraBalMintTransactionsQueryVariables
+  >(AuraBalMintTransactionsDocument, options);
 }
-export type LockerLeaderboardQueryHookResult = ReturnType<
-  typeof useLockerLeaderboardQuery
+export type AuraBalMintTransactionsQueryHookResult = ReturnType<
+  typeof useAuraBalMintTransactionsQuery
 >;
-export type LockerLeaderboardLazyQueryHookResult = ReturnType<
-  typeof useLockerLeaderboardLazyQuery
+export type AuraBalMintTransactionsLazyQueryHookResult = ReturnType<
+  typeof useAuraBalMintTransactionsLazyQuery
 >;
-export type LockerLeaderboardQueryResult = Apollo.QueryResult<
-  LockerLeaderboardQuery,
-  LockerLeaderboardQueryVariables
+export type AuraBalMintTransactionsQueryResult = Apollo.QueryResult<
+  AuraBalMintTransactionsQuery,
+  AuraBalMintTransactionsQueryVariables
+>;
+export const AuraBalTransactionsDocument = gql`
+  query AuraBalTransactions {
+    vaultHarvestTransactions(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: asc
+    ) {
+      timestamp
+      harvested
+      hash
+      sender
+    }
+    vaultDepositTransactions(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: asc
+    ) {
+      timestamp
+      assets
+      shares
+      hash
+      sender
+    }
+    vaultWithdrawTransactions(
+      first: 1000
+      orderBy: timestamp
+      orderDirection: asc
+    ) {
+      timestamp
+      assets
+      shares
+      hash
+      sender
+    }
+  }
+`;
+
+/**
+ * __useAuraBalTransactionsQuery__
+ *
+ * To run a query within a React component, call `useAuraBalTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuraBalTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAuraBalTransactionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAuraBalTransactionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AuraBalTransactionsQuery,
+    AuraBalTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    AuraBalTransactionsQuery,
+    AuraBalTransactionsQueryVariables
+  >(AuraBalTransactionsDocument, options);
+}
+export function useAuraBalTransactionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AuraBalTransactionsQuery,
+    AuraBalTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    AuraBalTransactionsQuery,
+    AuraBalTransactionsQueryVariables
+  >(AuraBalTransactionsDocument, options);
+}
+export type AuraBalTransactionsQueryHookResult = ReturnType<
+  typeof useAuraBalTransactionsQuery
+>;
+export type AuraBalTransactionsLazyQueryHookResult = ReturnType<
+  typeof useAuraBalTransactionsLazyQuery
+>;
+export type AuraBalTransactionsQueryResult = Apollo.QueryResult<
+  AuraBalTransactionsQuery,
+  AuraBalTransactionsQueryVariables
 >;
 export const AuraGlobalStatsDocument = gql`
   query AuraGlobalStats {
@@ -13372,8 +13452,8 @@ export type AuraGlobalStatsQueryResult = Apollo.QueryResult<
   AuraGlobalStatsQueryVariables
 >;
 export const AuraPoolsDocument = gql`
-  query AuraPools {
-    pools {
+  query AuraPools($block: Block_height) {
+    pools(block: $block) {
       totalStaked
       id
       gauge {
@@ -13405,6 +13485,7 @@ export const AuraPoolsDocument = gql`
  * @example
  * const { data, loading, error } = useAuraPoolsQuery({
  *   variables: {
+ *      block: // value for 'block'
  *   },
  * });
  */
@@ -13575,160 +13656,6 @@ export type VaultLeaderboardQueryResult = Apollo.QueryResult<
   VaultLeaderboardQuery,
   VaultLeaderboardQueryVariables
 >;
-export const AuraBalMintTransactionsDocument = gql`
-  query AuraBalMintTransactions($startTimestamp: Int!) {
-    auraBalMintTransactions(
-      where: { timestamp_gt: $startTimestamp }
-      first: 1000
-      orderBy: timestamp
-      orderDirection: asc
-    ) {
-      timestamp
-      hash
-      account {
-        id
-      }
-      amount
-    }
-  }
-`;
-
-/**
- * __useAuraBalMintTransactionsQuery__
- *
- * To run a query within a React component, call `useAuraBalMintTransactionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAuraBalMintTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAuraBalMintTransactionsQuery({
- *   variables: {
- *      startTimestamp: // value for 'startTimestamp'
- *   },
- * });
- */
-export function useAuraBalMintTransactionsQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    AuraBalMintTransactionsQuery,
-    AuraBalMintTransactionsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    AuraBalMintTransactionsQuery,
-    AuraBalMintTransactionsQueryVariables
-  >(AuraBalMintTransactionsDocument, options);
-}
-export function useAuraBalMintTransactionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AuraBalMintTransactionsQuery,
-    AuraBalMintTransactionsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    AuraBalMintTransactionsQuery,
-    AuraBalMintTransactionsQueryVariables
-  >(AuraBalMintTransactionsDocument, options);
-}
-export type AuraBalMintTransactionsQueryHookResult = ReturnType<
-  typeof useAuraBalMintTransactionsQuery
->;
-export type AuraBalMintTransactionsLazyQueryHookResult = ReturnType<
-  typeof useAuraBalMintTransactionsLazyQuery
->;
-export type AuraBalMintTransactionsQueryResult = Apollo.QueryResult<
-  AuraBalMintTransactionsQuery,
-  AuraBalMintTransactionsQueryVariables
->;
-export const AuraBalTransactionsDocument = gql`
-  query AuraBalTransactions {
-    vaultHarvestTransactions(
-      first: 1000
-      orderBy: timestamp
-      orderDirection: asc
-    ) {
-      timestamp
-      harvested
-      hash
-      sender
-    }
-    vaultDepositTransactions(
-      first: 1000
-      orderBy: timestamp
-      orderDirection: asc
-    ) {
-      timestamp
-      assets
-      shares
-      hash
-      sender
-    }
-    vaultWithdrawTransactions(
-      first: 1000
-      orderBy: timestamp
-      orderDirection: asc
-    ) {
-      timestamp
-      assets
-      shares
-      hash
-      sender
-    }
-  }
-`;
-
-/**
- * __useAuraBalTransactionsQuery__
- *
- * To run a query within a React component, call `useAuraBalTransactionsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAuraBalTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAuraBalTransactionsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAuraBalTransactionsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AuraBalTransactionsQuery,
-    AuraBalTransactionsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    AuraBalTransactionsQuery,
-    AuraBalTransactionsQueryVariables
-  >(AuraBalTransactionsDocument, options);
-}
-export function useAuraBalTransactionsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AuraBalTransactionsQuery,
-    AuraBalTransactionsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    AuraBalTransactionsQuery,
-    AuraBalTransactionsQueryVariables
-  >(AuraBalTransactionsDocument, options);
-}
-export type AuraBalTransactionsQueryHookResult = ReturnType<
-  typeof useAuraBalTransactionsQuery
->;
-export type AuraBalTransactionsLazyQueryHookResult = ReturnType<
-  typeof useAuraBalTransactionsLazyQuery
->;
-export type AuraBalTransactionsQueryResult = Apollo.QueryResult<
-  AuraBalTransactionsQuery,
-  AuraBalTransactionsQueryVariables
->;
 export const AuraDocument = gql`
   query Aura($accountId: String = "", $hasAccount: Boolean = false) {
     ...AuraBlock
@@ -13833,6 +13760,82 @@ export function useAuraLazyQuery(
 export type AuraQueryHookResult = ReturnType<typeof useAuraQuery>;
 export type AuraLazyQueryHookResult = ReturnType<typeof useAuraLazyQuery>;
 export type AuraQueryResult = Apollo.QueryResult<AuraQuery, AuraQueryVariables>;
+export const LockerLeaderboardDocument = gql`
+  query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+      accounts(
+        first: 1000
+        where: { balance_gt: 1000000000000000000 }
+        orderBy: balanceLocked
+        orderDirection: desc
+      ) {
+        id
+        balanceLocked
+        userLocksLength
+        userLocks {
+          amount
+          unlockTime
+        }
+        withdrawnTransactions {
+          amount
+          relocked
+          timestamp
+        }
+      }
+      lockedSupply
+    }
+  }
+`;
+
+/**
+ * __useLockerLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLockerLeaderboardQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLockerLeaderboardQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
+}
+export function useLockerLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
+}
+export type LockerLeaderboardQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardQuery
+>;
+export type LockerLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardLazyQuery
+>;
+export type LockerLeaderboardQueryResult = Apollo.QueryResult<
+  LockerLeaderboardQuery,
+  LockerLeaderboardQueryVariables
+>;
 export const GetProtocolDataDocument = gql`
   query GetProtocolData(
     $startTimestamp: Int!
