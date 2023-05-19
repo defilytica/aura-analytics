@@ -11389,6 +11389,33 @@ export type PoolLeaderboardQuery = {
   } | null;
 };
 
+export type PoolWithdrawnTransactionsQueryVariables = Exact<{
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type PoolWithdrawnTransactionsQuery = {
+  __typename?: "Query";
+  poolWithdrawnTransactions: Array<{
+    __typename?: "PoolWithdrawnTransaction";
+    amount: any;
+    id: string;
+    timestamp: number;
+  }>;
+  poolRewardPaidTransactions: Array<{
+    __typename?: "PoolRewardPaidTransaction";
+    id: string;
+    reward: any;
+    timestamp: number;
+  }>;
+  poolStakedTransactions: Array<{
+    __typename?: "PoolStakedTransaction";
+    amount: any;
+    timestamp: number;
+    id: string;
+  }>;
+};
+
 export type VaultLeaderboardQueryVariables = Exact<{
   vaultId: Scalars["ID"];
 }>;
@@ -13586,6 +13613,77 @@ export type PoolLeaderboardLazyQueryHookResult = ReturnType<
 export type PoolLeaderboardQueryResult = Apollo.QueryResult<
   PoolLeaderboardQuery,
   PoolLeaderboardQueryVariables
+>;
+export const PoolWithdrawnTransactionsDocument = gql`
+  query PoolWithdrawnTransactions($block: Block_height, $first: Int) {
+    poolWithdrawnTransactions(block: $block, first: $first) {
+      amount
+      id
+      timestamp
+    }
+    poolRewardPaidTransactions(block: $block, first: $first) {
+      id
+      reward
+      timestamp
+    }
+    poolStakedTransactions(block: $block, first: $first) {
+      amount
+      timestamp
+      id
+    }
+  }
+`;
+
+/**
+ * __usePoolWithdrawnTransactionsQuery__
+ *
+ * To run a query within a React component, call `usePoolWithdrawnTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePoolWithdrawnTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePoolWithdrawnTransactionsQuery({
+ *   variables: {
+ *      block: // value for 'block'
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function usePoolWithdrawnTransactionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >(PoolWithdrawnTransactionsDocument, options);
+}
+export function usePoolWithdrawnTransactionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >(PoolWithdrawnTransactionsDocument, options);
+}
+export type PoolWithdrawnTransactionsQueryHookResult = ReturnType<
+  typeof usePoolWithdrawnTransactionsQuery
+>;
+export type PoolWithdrawnTransactionsLazyQueryHookResult = ReturnType<
+  typeof usePoolWithdrawnTransactionsLazyQuery
+>;
+export type PoolWithdrawnTransactionsQueryResult = Apollo.QueryResult<
+  PoolWithdrawnTransactionsQuery,
+  PoolWithdrawnTransactionsQueryVariables
 >;
 export const VaultLeaderboardDocument = gql`
   query VaultLeaderboard($vaultId: ID!) {

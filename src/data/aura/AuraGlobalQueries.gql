@@ -61,6 +61,25 @@ query PoolLeaderboard($poolId: ID!) {
   }
 }
 
+# All pool transactions, used to calculate volume.
+query PoolWithdrawnTransactions($block: Block_height, $first: Int) {
+  poolWithdrawnTransactions(block: $block, first: $first) {
+    amount
+    id
+    timestamp
+  }
+  poolRewardPaidTransactions(block: $block, first: $first) {
+    id
+    reward
+    timestamp
+  }
+  poolStakedTransactions(block: $block, first: $first) {
+    amount
+    timestamp
+    id
+  }
+}
+
 # Used to find all depositors in a given vault like the auraBAL autocompounder. Does not apply to staking pools in Aura!
 query VaultLeaderboard($vaultId: ID!) {
   leaderboard: vault(id: $vaultId) {
