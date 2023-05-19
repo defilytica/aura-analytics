@@ -23,7 +23,7 @@ export const blockClient = new ApolloClient({
 //Aura client
 export const auraClient = new ApolloClient({
   //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
-  uri: 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1',
+  uri: 'https://aura-v2-1-analytics.stellate.sh/',
   cache: new InMemoryCache({
       typePolicies: {
           Token: {
