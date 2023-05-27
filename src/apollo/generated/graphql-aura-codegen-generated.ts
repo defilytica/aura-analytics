@@ -11268,31 +11268,48 @@ export enum _SubgraphErrorPolicy_ {
   Deny = "deny",
 }
 
-export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
+export type AuraBalMintTransactionsQueryVariables = Exact<{
+  startTimestamp: Scalars["Int"];
+}>;
 
-export type LockerLeaderboardQuery = {
+export type AuraBalMintTransactionsQuery = {
   __typename?: "Query";
-  auraLockerLeaderboard?: {
-    __typename?: "AuraLocker";
-    lockedSupply: any;
-    accounts: Array<{
-      __typename?: "AuraLockerAccount";
-      id: string;
-      balanceLocked: any;
-      userLocksLength: number;
-      userLocks: Array<{
-        __typename?: "AuraLockerUserLock";
-        amount: any;
-        unlockTime: number;
-      }>;
-      withdrawnTransactions: Array<{
-        __typename?: "LockerWithdrawnTransaction";
-        amount: any;
-        relocked: boolean;
-        timestamp: number;
-      }>;
-    }>;
-  } | null;
+  auraBalMintTransactions: Array<{
+    __typename?: "AuraBalMintTransaction";
+    timestamp: number;
+    hash: any;
+    amount: any;
+    account: { __typename?: "Account"; id: string };
+  }>;
+};
+
+export type AuraBalTransactionsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type AuraBalTransactionsQuery = {
+  __typename?: "Query";
+  vaultHarvestTransactions: Array<{
+    __typename?: "VaultHarvestTransaction";
+    timestamp: number;
+    harvested: any;
+    hash: any;
+    sender: any;
+  }>;
+  vaultDepositTransactions: Array<{
+    __typename?: "VaultDepositTransaction";
+    timestamp: number;
+    assets: any;
+    shares: any;
+    hash: any;
+    sender: any;
+  }>;
+  vaultWithdrawTransactions: Array<{
+    __typename?: "VaultWithdrawTransaction";
+    timestamp: number;
+    assets: any;
+    shares: any;
+    hash: any;
+    sender: any;
+  }>;
 };
 
 export type AuraGlobalStatsQueryVariables = Exact<{ [key: string]: never }>;
@@ -11326,7 +11343,9 @@ export type AuraGlobalStatsQuery = {
   }>;
 };
 
-export type AuraPoolsQueryVariables = Exact<{ [key: string]: never }>;
+export type AuraPoolsQueryVariables = Exact<{
+  block?: InputMaybe<Block_Height>;
+}>;
 
 export type AuraPoolsQuery = {
   __typename?: "Query";
@@ -11370,6 +11389,33 @@ export type PoolLeaderboardQuery = {
   } | null;
 };
 
+export type PoolWithdrawnTransactionsQueryVariables = Exact<{
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]>;
+}>;
+
+export type PoolWithdrawnTransactionsQuery = {
+  __typename?: "Query";
+  poolWithdrawnTransactions: Array<{
+    __typename?: "PoolWithdrawnTransaction";
+    amount: any;
+    id: string;
+    timestamp: number;
+  }>;
+  poolRewardPaidTransactions: Array<{
+    __typename?: "PoolRewardPaidTransaction";
+    id: string;
+    reward: any;
+    timestamp: number;
+  }>;
+  poolStakedTransactions: Array<{
+    __typename?: "PoolStakedTransaction";
+    amount: any;
+    timestamp: number;
+    id: string;
+  }>;
+};
+
 export type VaultLeaderboardQueryVariables = Exact<{
   vaultId: Scalars["ID"];
 }>;
@@ -11385,50 +11431,6 @@ export type VaultLeaderboardQuery = {
       account: { __typename?: "Account"; id: string };
     }>;
   } | null;
-};
-
-export type AuraBalMintTransactionsQueryVariables = Exact<{
-  startTimestamp: Scalars["Int"];
-}>;
-
-export type AuraBalMintTransactionsQuery = {
-  __typename?: "Query";
-  auraBalMintTransactions: Array<{
-    __typename?: "AuraBalMintTransaction";
-    timestamp: number;
-    hash: any;
-    amount: any;
-    account: { __typename?: "Account"; id: string };
-  }>;
-};
-
-export type AuraBalTransactionsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type AuraBalTransactionsQuery = {
-  __typename?: "Query";
-  vaultHarvestTransactions: Array<{
-    __typename?: "VaultHarvestTransaction";
-    timestamp: number;
-    harvested: any;
-    hash: any;
-    sender: any;
-  }>;
-  vaultDepositTransactions: Array<{
-    __typename?: "VaultDepositTransaction";
-    timestamp: number;
-    assets: any;
-    shares: any;
-    hash: any;
-    sender: any;
-  }>;
-  vaultWithdrawTransactions: Array<{
-    __typename?: "VaultWithdrawTransaction";
-    timestamp: number;
-    assets: any;
-    shares: any;
-    hash: any;
-    sender: any;
-  }>;
 };
 
 export type AuraQueryVariables = Exact<{
@@ -11745,6 +11747,33 @@ export type AllPoolAccountRewardsFragment = {
     symbol: string;
     name: string;
   };
+};
+
+export type LockerLeaderboardQueryVariables = Exact<{ [key: string]: never }>;
+
+export type LockerLeaderboardQuery = {
+  __typename?: "Query";
+  auraLockerLeaderboard?: {
+    __typename?: "AuraLocker";
+    lockedSupply: any;
+    accounts: Array<{
+      __typename?: "AuraLockerAccount";
+      id: string;
+      balanceLocked: any;
+      userLocksLength: number;
+      userLocks: Array<{
+        __typename?: "AuraLockerUserLock";
+        amount: any;
+        unlockTime: number;
+      }>;
+      withdrawnTransactions: Array<{
+        __typename?: "LockerWithdrawnTransaction";
+        amount: any;
+        relocked: boolean;
+        timestamp: number;
+      }>;
+    }>;
+  } | null;
 };
 
 export type GetProtocolDataQueryVariables = Exact<{
@@ -13221,360 +13250,6 @@ export const BalancerSnapshotFragmentDoc = gql`
     totalSwapFee
   }
 `;
-export const LockerLeaderboardDocument = gql`
-  query LockerLeaderboard {
-    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
-      accounts(
-        first: 1000
-        where: { balance_gt: 1000000000000000000 }
-        orderBy: balanceLocked
-        orderDirection: desc
-      ) {
-        id
-        balanceLocked
-        userLocksLength
-        userLocks {
-          amount
-          unlockTime
-        }
-        withdrawnTransactions {
-          amount
-          relocked
-          timestamp
-        }
-      }
-      lockedSupply
-    }
-  }
-`;
-
-/**
- * __useLockerLeaderboardQuery__
- *
- * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
- * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useLockerLeaderboardQuery({
- *   variables: {
- *   },
- * });
- */
-export function useLockerLeaderboardQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >(LockerLeaderboardDocument, options);
-}
-export function useLockerLeaderboardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    LockerLeaderboardQuery,
-    LockerLeaderboardQueryVariables
-  >(LockerLeaderboardDocument, options);
-}
-export type LockerLeaderboardQueryHookResult = ReturnType<
-  typeof useLockerLeaderboardQuery
->;
-export type LockerLeaderboardLazyQueryHookResult = ReturnType<
-  typeof useLockerLeaderboardLazyQuery
->;
-export type LockerLeaderboardQueryResult = Apollo.QueryResult<
-  LockerLeaderboardQuery,
-  LockerLeaderboardQueryVariables
->;
-export const AuraGlobalStatsDocument = gql`
-  query AuraGlobalStats {
-    global(id: "global") {
-      id
-      aura
-      auraTotalSupply
-      auraBalTotalSupply
-      auraMaxSupply
-      auraReductionPerCliff
-      auraTotalCliffs
-    }
-    masterChefs {
-      id
-      endBlock
-      startBlock
-      totalAllocPoint
-      rewardPerBlock
-    }
-    tokens(first: 1000) {
-      ...AllToken
-    }
-  }
-  ${AllTokenFragmentDoc}
-`;
-
-/**
- * __useAuraGlobalStatsQuery__
- *
- * To run a query within a React component, call `useAuraGlobalStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAuraGlobalStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAuraGlobalStatsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAuraGlobalStatsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    AuraGlobalStatsQuery,
-    AuraGlobalStatsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AuraGlobalStatsQuery, AuraGlobalStatsQueryVariables>(
-    AuraGlobalStatsDocument,
-    options
-  );
-}
-export function useAuraGlobalStatsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AuraGlobalStatsQuery,
-    AuraGlobalStatsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    AuraGlobalStatsQuery,
-    AuraGlobalStatsQueryVariables
-  >(AuraGlobalStatsDocument, options);
-}
-export type AuraGlobalStatsQueryHookResult = ReturnType<
-  typeof useAuraGlobalStatsQuery
->;
-export type AuraGlobalStatsLazyQueryHookResult = ReturnType<
-  typeof useAuraGlobalStatsLazyQuery
->;
-export type AuraGlobalStatsQueryResult = Apollo.QueryResult<
-  AuraGlobalStatsQuery,
-  AuraGlobalStatsQueryVariables
->;
-export const AuraPoolsDocument = gql`
-  query AuraPools {
-    pools {
-      totalStaked
-      id
-      gauge {
-        id
-        pool {
-          id
-          factoryPoolData {
-            balancerPoolId
-            isShutdown
-          }
-        }
-        totalSupply
-        workingSupply
-        balance
-      }
-    }
-  }
-`;
-
-/**
- * __useAuraPoolsQuery__
- *
- * To run a query within a React component, call `useAuraPoolsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAuraPoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useAuraPoolsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useAuraPoolsQuery(
-  baseOptions?: Apollo.QueryHookOptions<AuraPoolsQuery, AuraPoolsQueryVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AuraPoolsQuery, AuraPoolsQueryVariables>(
-    AuraPoolsDocument,
-    options
-  );
-}
-export function useAuraPoolsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    AuraPoolsQuery,
-    AuraPoolsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AuraPoolsQuery, AuraPoolsQueryVariables>(
-    AuraPoolsDocument,
-    options
-  );
-}
-export type AuraPoolsQueryHookResult = ReturnType<typeof useAuraPoolsQuery>;
-export type AuraPoolsLazyQueryHookResult = ReturnType<
-  typeof useAuraPoolsLazyQuery
->;
-export type AuraPoolsQueryResult = Apollo.QueryResult<
-  AuraPoolsQuery,
-  AuraPoolsQueryVariables
->;
-export const PoolLeaderboardDocument = gql`
-  query PoolLeaderboard($poolId: ID!) {
-    leaderboard: pool(id: $poolId) {
-      accounts(
-        first: 1000
-        where: { staked_gt: 1000000000000000000 }
-        orderBy: staked
-        orderDirection: desc
-      ) {
-        staked
-        account {
-          id
-        }
-      }
-      totalStaked
-    }
-  }
-`;
-
-/**
- * __usePoolLeaderboardQuery__
- *
- * To run a query within a React component, call `usePoolLeaderboardQuery` and pass it any options that fit your needs.
- * When your component renders, `usePoolLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = usePoolLeaderboardQuery({
- *   variables: {
- *      poolId: // value for 'poolId'
- *   },
- * });
- */
-export function usePoolLeaderboardQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    PoolLeaderboardQuery,
-    PoolLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<PoolLeaderboardQuery, PoolLeaderboardQueryVariables>(
-    PoolLeaderboardDocument,
-    options
-  );
-}
-export function usePoolLeaderboardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    PoolLeaderboardQuery,
-    PoolLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    PoolLeaderboardQuery,
-    PoolLeaderboardQueryVariables
-  >(PoolLeaderboardDocument, options);
-}
-export type PoolLeaderboardQueryHookResult = ReturnType<
-  typeof usePoolLeaderboardQuery
->;
-export type PoolLeaderboardLazyQueryHookResult = ReturnType<
-  typeof usePoolLeaderboardLazyQuery
->;
-export type PoolLeaderboardQueryResult = Apollo.QueryResult<
-  PoolLeaderboardQuery,
-  PoolLeaderboardQueryVariables
->;
-export const VaultLeaderboardDocument = gql`
-  query VaultLeaderboard($vaultId: ID!) {
-    leaderboard: vault(id: $vaultId) {
-      accounts(
-        first: 1000
-        where: { shares_gt: 1000000000000000000 }
-        orderBy: shares
-        orderDirection: desc
-      ) {
-        shares
-        account {
-          id
-        }
-      }
-      totalSupply
-    }
-  }
-`;
-
-/**
- * __useVaultLeaderboardQuery__
- *
- * To run a query within a React component, call `useVaultLeaderboardQuery` and pass it any options that fit your needs.
- * When your component renders, `useVaultLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useVaultLeaderboardQuery({
- *   variables: {
- *      vaultId: // value for 'vaultId'
- *   },
- * });
- */
-export function useVaultLeaderboardQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<VaultLeaderboardQuery, VaultLeaderboardQueryVariables>(
-    VaultLeaderboardDocument,
-    options
-  );
-}
-export function useVaultLeaderboardLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    VaultLeaderboardQuery,
-    VaultLeaderboardQueryVariables
-  >(VaultLeaderboardDocument, options);
-}
-export type VaultLeaderboardQueryHookResult = ReturnType<
-  typeof useVaultLeaderboardQuery
->;
-export type VaultLeaderboardLazyQueryHookResult = ReturnType<
-  typeof useVaultLeaderboardLazyQuery
->;
-export type VaultLeaderboardQueryResult = Apollo.QueryResult<
-  VaultLeaderboardQuery,
-  VaultLeaderboardQueryVariables
->;
 export const AuraBalMintTransactionsDocument = gql`
   query AuraBalMintTransactions($startTimestamp: Int!) {
     auraBalMintTransactions(
@@ -13729,6 +13404,356 @@ export type AuraBalTransactionsQueryResult = Apollo.QueryResult<
   AuraBalTransactionsQuery,
   AuraBalTransactionsQueryVariables
 >;
+export const AuraGlobalStatsDocument = gql`
+  query AuraGlobalStats {
+    global(id: "global") {
+      id
+      aura
+      auraTotalSupply
+      auraBalTotalSupply
+      auraMaxSupply
+      auraReductionPerCliff
+      auraTotalCliffs
+    }
+    masterChefs {
+      id
+      endBlock
+      startBlock
+      totalAllocPoint
+      rewardPerBlock
+    }
+    tokens(first: 1000) {
+      ...AllToken
+    }
+  }
+  ${AllTokenFragmentDoc}
+`;
+
+/**
+ * __useAuraGlobalStatsQuery__
+ *
+ * To run a query within a React component, call `useAuraGlobalStatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuraGlobalStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAuraGlobalStatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useAuraGlobalStatsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    AuraGlobalStatsQuery,
+    AuraGlobalStatsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<AuraGlobalStatsQuery, AuraGlobalStatsQueryVariables>(
+    AuraGlobalStatsDocument,
+    options
+  );
+}
+export function useAuraGlobalStatsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AuraGlobalStatsQuery,
+    AuraGlobalStatsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    AuraGlobalStatsQuery,
+    AuraGlobalStatsQueryVariables
+  >(AuraGlobalStatsDocument, options);
+}
+export type AuraGlobalStatsQueryHookResult = ReturnType<
+  typeof useAuraGlobalStatsQuery
+>;
+export type AuraGlobalStatsLazyQueryHookResult = ReturnType<
+  typeof useAuraGlobalStatsLazyQuery
+>;
+export type AuraGlobalStatsQueryResult = Apollo.QueryResult<
+  AuraGlobalStatsQuery,
+  AuraGlobalStatsQueryVariables
+>;
+export const AuraPoolsDocument = gql`
+  query AuraPools($block: Block_height) {
+    pools(block: $block) {
+      totalStaked
+      id
+      gauge {
+        id
+        pool {
+          id
+          factoryPoolData {
+            balancerPoolId
+            isShutdown
+          }
+        }
+        totalSupply
+        workingSupply
+        balance
+      }
+    }
+  }
+`;
+
+/**
+ * __useAuraPoolsQuery__
+ *
+ * To run a query within a React component, call `useAuraPoolsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useAuraPoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useAuraPoolsQuery({
+ *   variables: {
+ *      block: // value for 'block'
+ *   },
+ * });
+ */
+export function useAuraPoolsQuery(
+  baseOptions?: Apollo.QueryHookOptions<AuraPoolsQuery, AuraPoolsQueryVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<AuraPoolsQuery, AuraPoolsQueryVariables>(
+    AuraPoolsDocument,
+    options
+  );
+}
+export function useAuraPoolsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    AuraPoolsQuery,
+    AuraPoolsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<AuraPoolsQuery, AuraPoolsQueryVariables>(
+    AuraPoolsDocument,
+    options
+  );
+}
+export type AuraPoolsQueryHookResult = ReturnType<typeof useAuraPoolsQuery>;
+export type AuraPoolsLazyQueryHookResult = ReturnType<
+  typeof useAuraPoolsLazyQuery
+>;
+export type AuraPoolsQueryResult = Apollo.QueryResult<
+  AuraPoolsQuery,
+  AuraPoolsQueryVariables
+>;
+export const PoolLeaderboardDocument = gql`
+  query PoolLeaderboard($poolId: ID!) {
+    leaderboard: pool(id: $poolId) {
+      accounts(
+        first: 1000
+        where: { staked_gt: 1000000000000000000 }
+        orderBy: staked
+        orderDirection: desc
+      ) {
+        staked
+        account {
+          id
+        }
+      }
+      totalStaked
+    }
+  }
+`;
+
+/**
+ * __usePoolLeaderboardQuery__
+ *
+ * To run a query within a React component, call `usePoolLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePoolLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePoolLeaderboardQuery({
+ *   variables: {
+ *      poolId: // value for 'poolId'
+ *   },
+ * });
+ */
+export function usePoolLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PoolLeaderboardQuery,
+    PoolLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<PoolLeaderboardQuery, PoolLeaderboardQueryVariables>(
+    PoolLeaderboardDocument,
+    options
+  );
+}
+export function usePoolLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PoolLeaderboardQuery,
+    PoolLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PoolLeaderboardQuery,
+    PoolLeaderboardQueryVariables
+  >(PoolLeaderboardDocument, options);
+}
+export type PoolLeaderboardQueryHookResult = ReturnType<
+  typeof usePoolLeaderboardQuery
+>;
+export type PoolLeaderboardLazyQueryHookResult = ReturnType<
+  typeof usePoolLeaderboardLazyQuery
+>;
+export type PoolLeaderboardQueryResult = Apollo.QueryResult<
+  PoolLeaderboardQuery,
+  PoolLeaderboardQueryVariables
+>;
+export const PoolWithdrawnTransactionsDocument = gql`
+  query PoolWithdrawnTransactions($block: Block_height, $first: Int) {
+    poolWithdrawnTransactions(block: $block, first: $first) {
+      amount
+      id
+      timestamp
+    }
+    poolRewardPaidTransactions(block: $block, first: $first) {
+      id
+      reward
+      timestamp
+    }
+    poolStakedTransactions(block: $block, first: $first) {
+      amount
+      timestamp
+      id
+    }
+  }
+`;
+
+/**
+ * __usePoolWithdrawnTransactionsQuery__
+ *
+ * To run a query within a React component, call `usePoolWithdrawnTransactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePoolWithdrawnTransactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePoolWithdrawnTransactionsQuery({
+ *   variables: {
+ *      block: // value for 'block'
+ *      first: // value for 'first'
+ *   },
+ * });
+ */
+export function usePoolWithdrawnTransactionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >(PoolWithdrawnTransactionsDocument, options);
+}
+export function usePoolWithdrawnTransactionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PoolWithdrawnTransactionsQuery,
+    PoolWithdrawnTransactionsQueryVariables
+  >(PoolWithdrawnTransactionsDocument, options);
+}
+export type PoolWithdrawnTransactionsQueryHookResult = ReturnType<
+  typeof usePoolWithdrawnTransactionsQuery
+>;
+export type PoolWithdrawnTransactionsLazyQueryHookResult = ReturnType<
+  typeof usePoolWithdrawnTransactionsLazyQuery
+>;
+export type PoolWithdrawnTransactionsQueryResult = Apollo.QueryResult<
+  PoolWithdrawnTransactionsQuery,
+  PoolWithdrawnTransactionsQueryVariables
+>;
+export const VaultLeaderboardDocument = gql`
+  query VaultLeaderboard($vaultId: ID!) {
+    leaderboard: vault(id: $vaultId) {
+      accounts(
+        first: 1000
+        where: { shares_gt: 1000000000000000000 }
+        orderBy: shares
+        orderDirection: desc
+      ) {
+        shares
+        account {
+          id
+        }
+      }
+      totalSupply
+    }
+  }
+`;
+
+/**
+ * __useVaultLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useVaultLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVaultLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVaultLeaderboardQuery({
+ *   variables: {
+ *      vaultId: // value for 'vaultId'
+ *   },
+ * });
+ */
+export function useVaultLeaderboardQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<VaultLeaderboardQuery, VaultLeaderboardQueryVariables>(
+    VaultLeaderboardDocument,
+    options
+  );
+}
+export function useVaultLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    VaultLeaderboardQuery,
+    VaultLeaderboardQueryVariables
+  >(VaultLeaderboardDocument, options);
+}
+export type VaultLeaderboardQueryHookResult = ReturnType<
+  typeof useVaultLeaderboardQuery
+>;
+export type VaultLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useVaultLeaderboardLazyQuery
+>;
+export type VaultLeaderboardQueryResult = Apollo.QueryResult<
+  VaultLeaderboardQuery,
+  VaultLeaderboardQueryVariables
+>;
 export const AuraDocument = gql`
   query Aura($accountId: String = "", $hasAccount: Boolean = false) {
     ...AuraBlock
@@ -13833,6 +13858,82 @@ export function useAuraLazyQuery(
 export type AuraQueryHookResult = ReturnType<typeof useAuraQuery>;
 export type AuraLazyQueryHookResult = ReturnType<typeof useAuraLazyQuery>;
 export type AuraQueryResult = Apollo.QueryResult<AuraQuery, AuraQueryVariables>;
+export const LockerLeaderboardDocument = gql`
+  query LockerLeaderboard {
+    auraLockerLeaderboard: auraLocker(id: "auraLocker") {
+      accounts(
+        first: 1000
+        where: { balance_gt: 1000000000000000000 }
+        orderBy: balanceLocked
+        orderDirection: desc
+      ) {
+        id
+        balanceLocked
+        userLocksLength
+        userLocks {
+          amount
+          unlockTime
+        }
+        withdrawnTransactions {
+          amount
+          relocked
+          timestamp
+        }
+      }
+      lockedSupply
+    }
+  }
+`;
+
+/**
+ * __useLockerLeaderboardQuery__
+ *
+ * To run a query within a React component, call `useLockerLeaderboardQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLockerLeaderboardQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLockerLeaderboardQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLockerLeaderboardQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
+}
+export function useLockerLeaderboardLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    LockerLeaderboardQuery,
+    LockerLeaderboardQueryVariables
+  >(LockerLeaderboardDocument, options);
+}
+export type LockerLeaderboardQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardQuery
+>;
+export type LockerLeaderboardLazyQueryHookResult = ReturnType<
+  typeof useLockerLeaderboardLazyQuery
+>;
+export type LockerLeaderboardQueryResult = Apollo.QueryResult<
+  LockerLeaderboardQuery,
+  LockerLeaderboardQueryVariables
+>;
 export const GetProtocolDataDocument = gql`
   query GetProtocolData(
     $startTimestamp: Int!
