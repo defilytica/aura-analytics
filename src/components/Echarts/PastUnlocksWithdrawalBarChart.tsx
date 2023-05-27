@@ -2,6 +2,7 @@ import React from 'react';
 import {graphic} from 'echarts';
 import ReactEcharts from 'echarts-for-react';
 import {useTheme} from "@mui/material/styles";
+import {formatNumber} from "../../utils/numbers";
 
 export type ChartDataItem = {
     date: string;
@@ -29,12 +30,10 @@ export function PastUnlocksWithdrawalsChart({
                 const date = params[0].axisValue;
                 let tooltipText = date + '<br>';
                 params.forEach((param: any) => {
-                    const value = (param.data / param.dataIndex) * 100;
-                    const roundedValue = parseFloat(value.toFixed(0));
                     tooltipText +=
                         param.marker +
                         param.seriesName + ': ' +
-                        roundedValue +
+                        formatNumber(param.value) +
                         '<br>';
                 });
                 return tooltipText;
