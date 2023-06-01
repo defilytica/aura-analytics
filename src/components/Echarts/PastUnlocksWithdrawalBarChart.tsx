@@ -19,7 +19,7 @@ export function PastUnlocksWithdrawalsChart({
                                                 filteredChartData,
                                             }: PastUnlocksWithdrawalsChartProps){
     const theme = useTheme();
-    let height = '278px'
+    let height = '350px'
     const option = {
         tooltip: {
             trigger: 'axis',

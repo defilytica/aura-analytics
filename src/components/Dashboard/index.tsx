@@ -1,8 +1,6 @@
 import * as React from 'react';
 import Cookies from 'universal-cookie';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import BalancerLogoWhite from '../../assets/svg/logo-light.svg'
-import BalancerLogoBlack from '../../assets/svg/logo-dark.svg'
+import {Route, Routes, useLocation} from 'react-router-dom';
 import AuraLogo from '../../assets/png/AURA_ISO_colors.png'
 import MoonIcon from '../../assets/svg/MoonIcon.svg';
 import SunIcon from '../../assets/svg/SunIcon.svg';
@@ -11,13 +9,12 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
+import {createTheme, styled, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { getThemeDesignTokens } from '../../assets/theme';
-import { useActiveNetworkVersion } from '../../state/application/hooks';
-import { SUPPORTED_NETWORK_VERSIONS, EthereumNetworkInfo } from '../../constants/networks';
+import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
+import {getThemeDesignTokens} from '../../assets/theme';
+import {useActiveNetworkVersion} from '../../state/application/hooks';
+import {EthereumNetworkInfo, SUPPORTED_NETWORK_VERSIONS} from '../../constants/networks';
 import NetworkSelector from '../NetworkSelector';
 import MenuDrawer from '../MenuDrawer'
 import PoolsOverview from '../../pages/Pool/PoolsOverview';
@@ -26,14 +23,17 @@ import Protocol from '../../pages/Protocol';
 import Tokens from '../../pages/Tokens';
 import TokenPage from '../../pages/Token/TokenPage';
 import Fees from '../../pages/Fees';
-import { networkPrefix } from '../../utils/networkPrefix'
+import {networkPrefix} from '../../utils/networkPrefix'
 import Treasury from '../../pages/Treasury';
 import Financials from '../../pages/Financials';
-import { isMobile } from 'react-device-detect';
+import {isMobile} from 'react-device-detect';
 import Emissions from '../../pages/Emissions';
 import AuraBAL from '../../pages/AuraBAL';
 import AuraLocks from '../../pages/AuraLocks';
 import VotingIncentives from "../../pages/VotingIncentives";
+import {ConnectButton, darkTheme, lightTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
+import {WagmiConfig} from "wagmi";
+import {chains, wagmiConfig} from "../../wagmi/wagmiConfig";
 
 
 interface AppBarProps extends MuiAppBarProps {
@@ -43,12 +43,15 @@ interface AppBarProps extends MuiAppBarProps {
 const drawerWidth = 240;
 
 //Color mode
-const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
+const ColorModeContext = React.createContext({
+    toggleColorMode: () => {
+    }
+});
 
-const MainContent = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
+const MainContent = styled('main', {shouldForwardProp: (prop) => prop !== 'open'})<{
     open?: boolean;
-    
-}>(({ theme, open }) => ({
+
+}>(({theme, open}) => ({
     flexGrow: 1,
     marginTop: theme.spacing(1),
     transition: theme.transitions.create('margin', {
@@ -69,7 +72,7 @@ const MainContent = styled('main', { shouldForwardProp: (prop) => prop !== 'open
 //Custom Appbar settings
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({theme, open}) => ({
     transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -85,7 +88,7 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 //Styled Drawer settings
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled('div')(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0, 1),
@@ -93,7 +96,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
 }));
-
 
 
 function Dashboard() {
@@ -148,103 +150,123 @@ function Dashboard() {
     }, [location.pathname, setActiveNetwork]);
 
     return (
-        <ColorModeContext.Provider value={colorMode}>
-            <ThemeProvider theme={theme}>
-                <Box sx={{ display: 'flex' }}>
-                    <CssBaseline />
-                    <AppBar
-                        position="fixed"
-                        open={open}
-                        enableColorOnDark
-                        sx={{
-                            background: mode === 'dark' ? "rgba(14, 23, 33, 0.2)" : "rgba(255, 255, 255, 0.2)",
-                            boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-                            backdropFilter: "blur(5px)"
-                        }}>
-                        <Toolbar>
-                            <IconButton
-                                aria-label="open drawer"
-                                onClick={handleDrawerOpen}
-                                edge="start"
-                                sx={{ mr: 2, ...(open && { display: 'none' }) }}
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Box display="flex" alignItems="center" alignContent="center" justifyContent='flex-end'>
-                                <Box
-                                    sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} >
-                                    <img src={AuraLogo} alt="Aura Logo" width="30" />
-                                </Box>
-                                <Typography
-                                    variant="h6"
-                                    noWrap
-                                    component="a"
-                                    href="/"
-                                    sx={{
-                                        mr: 0.5,
-                                        display: { xs: 'none', md: 'flex' },
-                                        fontWeight: 700,
-                                        textDecoration: 'none',
-                                        color: (mode === 'dark') ? 'white' : 'black',
-                                    }}
-                                >
-                                    Analytics
-                                </Typography>
-                                <Typography variant="caption" sx={{ color: (mode === 'dark') ? 'white' : 'black', }}>Prototype</Typography>
-                                <Box position="absolute" right="10px" >
-                                    <Box display="flex" alignItems="center" alignContent="center" justifyContent='flex-end'>
+        <WagmiConfig config={wagmiConfig}>
+            <RainbowKitProvider
+                chains={chains}
+                theme={
+                    mode === 'dark' ? darkTheme(
+                        {
+                            borderRadius: 'small',
 
-                                        <IconButton
+                        }) : lightTheme()}>
+                <ColorModeContext.Provider value={colorMode}>
+                    <ThemeProvider theme={theme}>
+                        <Box sx={{display: 'flex'}}>
+                            <CssBaseline/>
+                            <AppBar
+                                position="fixed"
+                                open={open}
+                                enableColorOnDark
+                                sx={{
+                                    background: mode === 'dark' ? "rgba(14, 23, 33, 0.2)" : "rgba(255, 255, 255, 0.2)",
+                                    boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+                                    backdropFilter: "blur(5px)"
+                                }}>
+                                <Toolbar>
+                                    <IconButton
+                                        aria-label="open drawer"
+                                        onClick={handleDrawerOpen}
+                                        edge="start"
+                                        sx={{mr: 2, ...(open && {display: 'none'})}}
+                                    >
+                                        <MenuIcon/>
+                                    </IconButton>
+                                    <Box display="flex" alignItems="center" alignContent="center"
+                                         justifyContent='flex-end'>
+                                        <Box
+                                            sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}>
+                                            <img src={AuraLogo} alt="Aura Logo" width="30"/>
+                                        </Box>
+                                        <Typography
+                                            variant="h6"
+                                            noWrap
+                                            component="a"
+                                            href="/"
                                             sx={{
-                                                mr: 1,
-                                                animationDuration: 2,
-                                                width: 40,
-                                                height: 35,
-                                                borderRadius: 2,
-                                                backgroundColor: "background.paper",
-                                                boxShadow: 2,
+                                                mr: 0.5,
+                                                display: {xs: 'none', md: 'flex'},
+                                                fontWeight: 700,
+                                                textDecoration: 'none',
+                                                color: (mode === 'dark') ? 'white' : 'black',
                                             }}
-                                            onClick={colorMode.toggleColorMode}>
-                                            <img src={(mode === 'dark') ? MoonIcon : SunIcon} alt="Theme Icon" width="25" />
-                                        </IconButton>
-                                        {/*<NetworkSelector />*/}
+                                        >
+                                            Analytics
+                                        </Typography>
+                                        <Typography variant="caption"
+                                                    sx={{color: (mode === 'dark') ? 'white' : 'black',}}>Prototype</Typography>
+                                        <Box position="absolute" right="10px">
+                                            <Box display="flex" alignItems="center" alignContent="center"
+                                                 justifyContent='flex-end'>
+
+                                                <IconButton
+                                                    sx={{
+                                                        mr: 1,
+                                                        animationDuration: 2,
+                                                        width: 40,
+                                                        height: 35,
+                                                        borderRadius: 2,
+                                                        backgroundColor: "background.paper",
+                                                        boxShadow: 2,
+                                                    }}
+                                                    onClick={colorMode.toggleColorMode}>
+                                                    <img src={(mode === 'dark') ? MoonIcon : SunIcon} alt="Theme Icon"
+                                                         width="25"/>
+                                                </IconButton>
+                                                <NetworkSelector />
+                                                <Box ml={1}>
+                                                    <ConnectButton chainStatus={"none"} showBalance={false}/>
+                                                </Box>
+                                            </Box>
+                                        </Box>
                                     </Box>
-                                </Box>
-                            </Box>
-                        </Toolbar>
-                    </AppBar>
-                    <MenuDrawer
-                        open={open}
-                        drawerWidth={drawerWidth}
-                        handleDrawerClose={handleDrawerClose}
-                        activeNetwork={activeNetwork}
-                    />
-                    <MainContent open={open} >
-                        <DrawerHeader />
-                        <Routes>
-                            <Route path="/" element={<Protocol />} />
-                            <Route path={networkPrefix(activeNetwork) + 'pools'} element={<PoolsOverview />} />
-                            <Route path={networkPrefix(activeNetwork) + 'tokens'} element={<Tokens />} />
-                            <Route path={networkPrefix(activeNetwork) + 'emissions'} element={<Emissions />} />
-                            <Route path={networkPrefix(activeNetwork) + 'locks'} element={<AuraLocks />} />
-                            <Route path={networkPrefix(activeNetwork) + 'aurabal'} element={<AuraBAL />} />
-                            <Route path={networkPrefix(activeNetwork) + 'voting-incentives'} element={<VotingIncentives />} />
-                            {/* Router v6: no query searches possible anymore. Provide all possible paths */}
-                            <Route path={"/:networkID/pools/:poolId"} element={<PoolPage />} />
-                            <Route path={"/pools/:poolId"} element={<PoolPage />} />
-                            <Route path={"/:networkID/tokens/:address"} element={<TokenPage />} />
-                            <Route path={"/tokens/:address"} element={<TokenPage />} />
-                            <Route path={"/:networkID/fees"} element={<Fees />} />
-                            <Route path={"/fees"} element={<Fees />} />
-                            <Route path={"/:networkID/treasury"} element={<Treasury />} />
-                            <Route path={"/treasury"} element={<Treasury />} />
-                            <Route path={"/:networkID/financials"} element={<Financials />} />
-                            <Route path={"/financials"} element={<Financials />} />
-                        </Routes>
-                    </MainContent>
-                </Box>
-            </ThemeProvider>
-        </ColorModeContext.Provider>
+                                </Toolbar>
+                            </AppBar>
+                            <MenuDrawer
+                                open={open}
+                                drawerWidth={drawerWidth}
+                                handleDrawerClose={handleDrawerClose}
+                                activeNetwork={activeNetwork}
+                            />
+                            <MainContent open={open}>
+                                <DrawerHeader/>
+                                <Routes>
+                                    <Route path="/" element={<Protocol/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'pools'} element={<PoolsOverview/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'tokens'} element={<Tokens/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'emissions'} element={<Emissions/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'locks'} element={<AuraLocks/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'aurabal'} element={<AuraBAL/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'voting-incentives'}
+                                           element={<VotingIncentives/>}/>
+                                    {/* Router v6: no query searches possible anymore. Provide all possible paths */}
+                                    <Route path={"/:networkID/pools/:poolId"} element={<PoolPage/>}/>
+                                    <Route path={"/pools/:poolId"} element={<PoolPage/>}/>
+                                    <Route path={"/:networkID/tokens/:address"} element={<TokenPage/>}/>
+                                    <Route path={"/tokens/:address"} element={<TokenPage/>}/>
+                                    <Route path={"/:networkID/fees"} element={<Fees/>}/>
+                                    <Route path={"/fees"} element={<Fees/>}/>
+                                    <Route path={"/:networkID/treasury"} element={<Treasury/>}/>
+                                    <Route path={"/treasury"} element={<Treasury/>}/>
+                                    <Route path={"/:networkID/financials"} element={<Financials/>}/>
+                                    <Route path={"/financials"} element={<Financials/>}/>
+                                </Routes>
+                            </MainContent>
+                        </Box>
+                    </ThemeProvider>
+                </ColorModeContext.Provider>
+            </RainbowKitProvider>
+        </WagmiConfig>
     );
 }
+
 export default Dashboard;

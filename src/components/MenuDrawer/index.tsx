@@ -15,10 +15,12 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import RequestQuoteIcon from '@mui/icons-material/RequestQuote';
 import DiscordIconLight from '../../assets/svg/discord-light.svg'
 import DiscordIconDark from '../../assets/svg/discord-dark.svg'
+import DefilyticaIcon from '../../assets/png/defilytica.png'
 import GitHubIcon from '@mui/icons-material/GitHub';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import ListItemButton from '@mui/material/ListItemButton';
+import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import CoingeckoColor from '../../assets/svg/coingecko-color.svg'
@@ -96,12 +98,18 @@ const MenuDrawer = ({
                     <ListItemText primary={'Staking Pools'} />
                 </ListItemButton>
 
-
                 <ListItemButton key={'Tokens'} component={NavLink} to={'/' + route + 'tokens'}>
                     <ListItemIcon>
                         <TokenIcon />
                     </ListItemIcon>
                     <ListItemText primary={'Tokens'} />
+                </ListItemButton>
+                <Divider />
+                <ListItemButton key={'Aura'} component={NavLink} to={'/' + route + 'tokens/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf'}>
+                    <ListItemIcon>
+                        <SelfImprovementIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Aura'} />
                 </ListItemButton>
                 <ListItemButton key={'Aura Locks'} component={NavLink} to={'/' + route + 'locks'}>
                     <ListItemIcon>
@@ -115,14 +123,13 @@ const MenuDrawer = ({
                     </ListItemIcon>
                     <ListItemText primary={'AuraBAL'} />
                 </ListItemButton>
+                <Divider />
                 <ListItemButton key={'Voting Incentives'} component={NavLink} to={'/' + route + 'voting-incentives'}>
                     <ListItemIcon>
                         <Handshake />
                     </ListItemIcon>
                     <ListItemText primary={'Voting Incentives'} />
                 </ListItemButton>
-            </List>
-            <List>
                 <Divider />
                 <ListItemButton key={'DAO Treasury'} component={NavLink} to={networkPrefix(activeNetwork) + 'treasury'}>
                     <ListItemIcon>
@@ -156,6 +163,9 @@ const MenuDrawer = ({
                         <img src={DiscordIconDark} alt="Discord Icon" width="25" /> :
                         <img src={DiscordIconLight} alt="Discord Icon" width="25" />
                     }
+                    </Link>
+                    <Link href="https://defilytica.com" target="_blank" rel="noopener noreferrer">
+                        <img src={DefilyticaIcon} alt="Defilytica Icon" width="25" />
                     </Link>
                 </Box>
                 <Divider />

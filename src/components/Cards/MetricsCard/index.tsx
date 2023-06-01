@@ -5,14 +5,17 @@ import { formatDollarAmount, formatNumber } from '../../../utils/numbers';
 import { green } from '@mui/material/colors';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
+import DiscordIconDark from "../../../assets/svg/discord-dark.svg";
 
 export type CoinCardProps = {
   mainMetric: number,
   mainMetricInUSD: boolean,
   mainMetricUnit? : string,
   mainMetricChange?: number,
+  mainMetricChangeRange?: string,
   metricName: string,
   MetricIcon: OverridableComponent<SvgIconTypeMap<{}, "svg">>
+  svgContent?: string,
 }
 
 const MetricsCard = ({
@@ -20,8 +23,10 @@ const MetricsCard = ({
   mainMetricInUSD,
   mainMetricUnit,
   mainMetricChange,
+  mainMetricChangeRange,
   metricName,
-  MetricIcon }: CoinCardProps) => {
+  MetricIcon,
+  svgContent}: CoinCardProps) => {
 
   const metricUnit = mainMetricUnit ? mainMetricUnit : '';
 
@@ -56,7 +61,7 @@ const MetricsCard = ({
             </Typography>
           </Grid>
           <Grid item>
-           <MetricIcon />
+            {svgContent? <img src={svgContent} alt="Svg Icon" width="30" /> : <MetricIcon />}
           </Grid>
         </Grid>
         <Box
@@ -84,7 +89,7 @@ const MetricsCard = ({
             color="textSecondary"
             variant="caption"
           >
-            (24h)
+            {mainMetricChangeRange ? (mainMetricChangeRange) : '(24h)'}
           </Typography> : null }
         </Box>
       </CardContent>

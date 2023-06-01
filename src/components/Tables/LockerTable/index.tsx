@@ -1,4 +1,4 @@
-import {Typography, Box, Card, Grid, CircularProgress, Stack, Link, Avatar} from "@mui/material";
+import {Avatar, Box, CircularProgress, Link} from "@mui/material";
 import Paper from '@mui/material/Paper';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,7 +13,6 @@ import TokensWhite from "../../../assets/svg/tokens_white.svg";
 import TokensBlack from "../../../assets/svg/tokens_black.svg";
 import {visuallyHidden} from "@mui/utils";
 import {LockerAccount} from "../../../data/aura/auraTypes";
-import CurrencyLogo from "../../CurrencyLogo";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import TablePagination from "@mui/material/TablePagination";
@@ -108,14 +107,14 @@ const headCells: readonly HeadCell[] = [
         id: 'lockedUSD',
         numeric: false,
         disablePadding: false,
-        label: 'Locked USD',
+        label: 'Value ($)',
         isMobileVisible: false,
     },
     {
         id: 'poolShare',
         numeric: false,
         disablePadding: false,
-        label: 'Pool Share %',
+        label: 'Relative Share (%)',
         isMobileVisible: false,
     },
     {
@@ -200,7 +199,16 @@ export default function LockerTable({
                                         rowsPerPage,
                                         setRowsPerPage,
                                         ensMap,
-                                    }: { lockerAccounts: LockerAccount[], totalAmountLocked: number, auraUSD?: number, page: number, setPage: any, rowsPerPage: number, setRowsPerPage: any, ensMap: { [key: string]: string | null } }) {
+                                    }: {
+    lockerAccounts: LockerAccount[],
+    totalAmountLocked: number,
+    auraUSD?: number,
+    page: number,
+    setPage: any,
+    rowsPerPage: number,
+    setRowsPerPage: any,
+    ensMap: { [key: string]: string | null }
+}) {
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('locked');
     const [dense, setDense] = React.useState(false);
@@ -306,11 +314,6 @@ export default function LockerTable({
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         {formatNumber(row.locked)}
-                                                    </Box>
-                                                    <Box mr={1}>
-                                                        <CurrencyLogo
-                                                            address="0xc0c293ce456ff0ed870add98a0828dd4d2903dbf"
-                                                            size={'20px'}/>
                                                     </Box>
                                                 </Box>
 
