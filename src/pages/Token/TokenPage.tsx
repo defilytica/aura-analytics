@@ -48,8 +48,6 @@ export default function TokenPage() {
     navCrumbs.push(homeNav)
     navCrumbs.push(tokenNav);
 
-    console.log("tokenData", tokenData)
-
 
     //Ideas to show richer data:
     // Biggest swaps token, biggest fees token? Show Pool routes from swap data?
