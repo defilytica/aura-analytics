@@ -16,7 +16,11 @@ import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/Da
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
 import {CurrencyExchange, Handshake, Money} from "@mui/icons-material";
-
+import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
+export type PoolReward = {
+    pool: string;
+    [token: string]: string | number; // this represents any number of token properties with their corresponding `amountDollars` value
+};
 export default function VotingIncentives() {
     const homeNav: NavElement = {
         name: 'Home',
@@ -51,13 +55,29 @@ export default function VotingIncentives() {
 
 
 
+
     let xAxisDataRound;
     let bribeRewards;
     let bribeRewardsRatio;
     if (bribes) {
         console.log(bribes);
         xAxisDataRound = bribes.epoch.bribes.map(item => item.pool);
-        bribeRewards = bribes.epoch.bribes.map(item => item.amountDollars);
+        bribeRewards = bribes.epoch.bribes.reduce((acc: PoolReward[], item) => {
+            // find the existing pool object
+            let pool = acc.find(pool => pool.pool === item.pool);
+
+            // if the pool does not exist yet, create it
+            if (!pool) {
+                pool = { pool: item.pool };
+                acc.push(pool);
+            }
+
+            // if the pool already has this token, add to its amountDollars
+            // otherwise, set it to the current bribe's amountDollars
+            pool[item.token] = (pool[item.token] as number || 0) + item.amountDollars;
+
+            return acc;
+        }, []);
 
         const calculateRatios = (response: BribeResponse): number[] => {
             return response.epoch.bribes.map(bribe => {
@@ -135,6 +155,29 @@ export default function VotingIncentives() {
                                 </Card>
                             </Grid>
                         : <CircularProgress/>}
+                        <Grid item xs={11} mt={1}>
+                            <Typography variant="h6" mb={1}>Round by Round</Typography>
+                        </Grid>
+                        <Select
+                            value={currentRound}
+                            onChange={handleChange}
+                            displayEmpty
+                        >
+                            {roundsNumbers.map((roundNumber, index) => (
+                                <MenuItem value={roundNumber} key={index}>{`Round ${roundNumber}`}</MenuItem>
+                            ))}
+                        </Select>
+                        {bribes&& bribeRewards && bribeRewardsRatio && xAxisDataRound ?
+                            <Grid item mt={1} xs={11}>
+                                <Card sx={{boxShadow: 3, marginBottom: 5}}>
+                                    <SingleRoundBarChart
+                                        rewardData={bribeRewards}
+                                        xAxisData={xAxisDataRound}
+                                        height="400px"
+                                    />
+                                </Card>
+                            </Grid>
+                            : <CircularProgress/>}
                     </Grid>
                 </Box>
             )}
