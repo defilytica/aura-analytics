@@ -29,6 +29,7 @@ import Polling from '../Header/Polling';
 import { NavLink } from "react-router-dom";
 import { EthereumNetworkInfo, NetworkInfo } from '../../constants/networks';
 import { networkPrefix } from '../../utils/networkPrefix';
+import {Handshake} from "@mui/icons-material";
 
 export type MenuDrawerProps = {
     drawerWidth: number,
@@ -113,6 +114,12 @@ const MenuDrawer = ({
                         <LockResetIcon />
                     </ListItemIcon>
                     <ListItemText primary={'AuraBAL'} />
+                </ListItemButton>
+                <ListItemButton key={'Voting Incentives'} component={NavLink} to={'/' + route + 'voting-incentives'}>
+                    <ListItemIcon>
+                        <Handshake />
+                    </ListItemIcon>
+                    <ListItemText primary={'Voting Incentives'} />
                 </ListItemButton>
             </List>
             <List>
