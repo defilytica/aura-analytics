@@ -1,7 +1,5 @@
 .idea/
 node_modules
 .idea
-.firebaserc
 .firebase
-firebase.json
 build
