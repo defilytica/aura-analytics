@@ -1,6 +1,6 @@
 {
-  "name": "balancer-analytics",
-  "description": "Balancer Analytics Interface",
+  "name": "aura-analytics",
+  "description": "Aura Analytics Interface",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
