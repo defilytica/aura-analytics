@@ -10,6 +10,7 @@ const MULTICALL_NETWORKS: { [chainId in SupportedChainId]: string } = {
     [SupportedChainId.CELO_ALFAJORES]: '',
     [SupportedChainId.OPTIMISM]: '',
     [SupportedChainId.OPTIMISM_GOERLI]: '',
+    [SupportedChainId.SEPOLIA]: '',
     [SupportedChainId.POLYGON]: '',
     [SupportedChainId.POLYGON_MUMBAI]: '',
     [SupportedChainId.BNB]: '',
