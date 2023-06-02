@@ -130,9 +130,6 @@ export default function AuraLocks() {
 
         filteredChartData = chartData.filter(item => item.withdraw > 0 || item.relocked > 0);
         filteredChartData = filteredChartData.sort((a, b) => +new Date(a.date) - +new Date(b.date));
-
-
-        console.log(filteredChartData);
     }
 
 

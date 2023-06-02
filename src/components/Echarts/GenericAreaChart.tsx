@@ -14,7 +14,7 @@ export interface TvlAreaProps {
 }
 
 
-export default function GenericAreaChart({chartData, dataTitle, format = '$', backgroundColor = '#6a7985', height = '278px'}: TvlAreaProps) {
+export default function GenericAreaChart({chartData, dataTitle, format = '$', backgroundColor = '#6a7985', height = '350px'}: TvlAreaProps) {
 
     let xData = chartData.map(el => el.time);
     let yData = chartData.map(el => el.value);

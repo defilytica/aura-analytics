@@ -9,6 +9,19 @@ import FinancialAreaChart from "../../components/Echarts/FinancialCharts/Financi
 import React from "react";
 import {SelectChangeEvent} from "@mui/material/Select";
 import {usePoolTransactions} from "../../data/aura/usePoolTransactions";
+import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
+import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
+import GenericBarChart from "../../components/Echarts/GenericBarChart";
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import AuraIcon from "../../assets/png/AURA_ISO_colors.png";
+import KeyOffIcon from "@mui/icons-material/KeyOff";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import {useGetLeadingLockers} from "../../data/aura/useAuraLockers";
+import {ethers} from "ethers";
+import {BalancerChartDataItem} from "../../data/balancer/balancerTypes";
+import {ChartDataItem} from "../../components/Echarts/PastUnlocksWithdrawalBarChart";
+import TokenIcon from "@mui/icons-material/Token";
+import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 
 export default function Protocol() {
 
@@ -19,8 +32,14 @@ export default function Protocol() {
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
     //Data
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    const auraGlobalStats = useAuraGlobalStats();
     const auraPools = useAuraPoolsHistorically(timeRange);
     const poolTransactions = usePoolTransactions(timeRange);
+    const lockers = useGetLeadingLockers();
+
+    let totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
+
+
 
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(Number(event.target.value));
@@ -30,24 +49,27 @@ export default function Protocol() {
         setTimeRangeVolume(Number(event.target.value));
     };
 
+    //TODO Silas: Fix this state handling and if loop for conditional jsx elements. Decouple data loading from rendering!
     if (auraPools && auraPools.length > 0 && poolTransactions && poolTransactions.length > 0) {
         const tvl = auraPools[0].tvl;
+        const tvlChange = (auraPools[0].tvl - auraPools[1].tvl) / auraPools[1].tvl * 100;
         const volume = poolTransactions[0].volume;
+        const volumeChange = (poolTransactions[0].volume - poolTransactions[1].volume) / poolTransactions[1].volume * 100;
         let tvlDollar;
         let volumeDollar;
         let sortedPoolTransactions;
-        let finalData;
+        let sortedTvlData;
         if (coinData) {
             tvlDollar = tvl * coinData[auraAddress].usd
             console.log(tvl);
-            finalData = auraPools.sort((a, b) => b.date.getTime() - a.date.getTime()).map(({tvl, date}) => {
+            sortedTvlData = auraPools.sort((a, b) => b.date.getTime() - a.date.getTime()).map(({tvl, date}) => {
                 return {
                     value: tvl * coinData[auraAddress].usd,
                     time: date.toLocaleDateString('en-US') // Convert the date to an ISO string
                 };
             });
 
-            finalData.sort((a, b) => +new Date(a.time) - +new Date(b.time));
+            sortedTvlData.sort((a, b) => +new Date(a.time) - +new Date(b.time));
 
 
             volumeDollar = volume * coinData[auraAddress].usd;
@@ -67,17 +89,16 @@ export default function Protocol() {
                     spacing={2}
                     sx={{justifyContent: 'center'}}
                 >
-
-                    <Grid
-                        item
-                        xs={11}
-                    >
+                    <Grid item xs={11} mt={1}>
+                        <Typography variant="h5" mb={1}>Global Aura Stats</Typography>
+                    </Grid>
+                    <Grid item xs={11}>
                         <Grid
                             container
-                            spacing={{xs: 2, md: 2}}
-                            columns={{xs: 4, sm: 2, md: 10}}
+                            columns={{xs: 4, sm: 8, md: 12}}
+                            sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                         >
-                            <Grid item xs={11} sm={4} md={4}>
+                            <Box m={1}>
                                 {coinData && coinData[auraAddress] && coinData[auraAddress].usd ?
                                     <CoinCard
                                         tokenAddress={auraAddress}
@@ -87,7 +108,47 @@ export default function Protocol() {
 
                                     />
                                     : <CircularProgress/>}
-                            </Grid>
+                            </Box>
+
+                                <Box m={1}>
+                                    {tvl && tvlChange && tvlDollar ?
+                                    <MetricsCard
+                                        mainMetric={tvlDollar}
+                                        mainMetricInUSD={true}
+                                        mainMetricChange={tvlChange}
+                                        MetricIcon={MonetizationOnIcon}
+                                        metricName={"Protocol TVL"}/>
+                                        : <CircularProgress/>}
+                                </Box>
+                            <Box m={1}>
+                                {volume && volumeChange && volumeDollar ?
+                                <MetricsCard
+                                    mainMetric={volumeDollar}
+                                    mainMetricInUSD={true}
+                                    mainMetricChange={volumeChange}
+                                    MetricIcon={MonetizationOnIcon}
+                                    metricName={"Protocol Volume"}/>
+                                : <CircularProgress/>}
+                            </Box>
+                            <Box m={1}>
+                                <MetricsCard
+                                    mainMetric={totalLockedAmount}
+                                    mainMetricInUSD={false}
+                                    metricName={'Total Aura Locked'}
+                                    MetricIcon={SelfImprovementIcon}
+                                    svgContent={AuraIcon}/>
+                            </Box>
+                            <Box m={1}>
+                                {auraGlobalStats ?
+                                    <MetricsCard
+                                        mainMetric={auraGlobalStats ? auraGlobalStats.auraBALTotalSupply : 0}
+                                        mainMetricInUSD={false}
+                                        metricName='AuraBAL Supply'
+                                        mainMetricChange={0}
+                                        MetricIcon={TokenIcon}
+                                    />
+                                    : <CircularProgress/>}
+                            </Box>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -97,55 +158,38 @@ export default function Protocol() {
                     sx={{justifyContent: 'center'}}
                 >
                     <Grid item mt={1} xs={11}>
-                        <Typography variant='h5'>Historical TVL</Typography>
+                        <Typography variant='h5'>Historical TVL (30d)</Typography>
                     </Grid>
-                    <Grid item mt={1} xs={11}>
-                        {tvl && tvlDollar ?
-                            <Box mr={3} mb={1}>
-                                <MetricsCard
-                                    mainMetric={tvlDollar}
-                                    mainMetricInUSD={true}
-                                    mainMetricUnit={"$"}
-                                    MetricIcon={MonetizationOnIcon}
-                                    metricName={"TVL"}/>
-                            </Box>
-                            : <CircularProgress/>}
 
-                    </Grid>
-                    {finalData ?
+                    {sortedTvlData ?
                         <Grid item mt={1} xs={11}>
                             <Card sx={{boxShadow: 3}}>
-                                <Box p={1} display="flex" alignItems='center'>
-
-                                </Box>
-                                <FinancialAreaChart chartData={finalData} dataTitle={""} changeHandler={handleChange} timeRange={timeRange}/>
+                                <GenericAreaChart chartData={sortedTvlData} dataTitle={""} />
+                                {/* <FinancialAreaChart
+                                    chartData={finalData}
+                                    dataTitle={""}
+                                    changeHandler={handleChange}
+                                    timeRange={timeRange}/>
+                                */}
                             </Card>
                         </Grid>
                         : <CircularProgress/>
                     }
                     <Grid item mt={1} xs={11}>
-                        <Typography variant='h5'>Historical Volume</Typography>
+                        <Typography variant='h5'>Historical Volume (30d)</Typography>
                     </Grid>
-                    <Grid item mt={1} xs={11}>
-                        {volume && volumeDollar ?
-                            <Box mr={3} mb={1}>
-                                <MetricsCard
-                                    mainMetric={volumeDollar}
-                                    mainMetricInUSD={true}
-                                    mainMetricUnit={"$"}
-                                    MetricIcon={MonetizationOnIcon}
-                                    metricName={"Volume"}/>
-                            </Box>
-                            : <CircularProgress/>}
 
-                    </Grid>
                     {sortedPoolTransactions ?
-                        <Grid item mt={1} xs={11}>
+                        <Grid item mt={1} mb={2} xs={11}>
                             <Card sx={{boxShadow: 3}}>
-                                <Box p={1} display="flex" alignItems='center'>
+                                <GenericBarChart data={sortedPoolTransactions} />
 
-                                </Box>
-                                <FinancialAreaChart chartData={sortedPoolTransactions} dataTitle={""} changeHandler={handleChangeVolume} timeRange={timeRangeVolume}/>
+                                { /* <FinancialAreaChart
+                                    chartData={sortedPoolTransactions}
+                                    dataTitle={""}
+                                    changeHandler={handleChangeVolume}
+                                    timeRange={timeRangeVolume}/>
+                                 */}
                             </Card>
                         </Grid>
                         : <CircularProgress/>
@@ -154,6 +198,12 @@ export default function Protocol() {
             </Box>
         );
     }
-
-    return <CircularProgress/>
+    return  <Grid
+        container
+        spacing={2}
+        mt='25%'
+        sx={{justifyContent: 'center'}}
+    >
+        <CustomLinearProgress/>
+    </Grid>
 }

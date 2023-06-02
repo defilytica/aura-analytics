@@ -97,13 +97,13 @@ const MenuDrawer = ({
                     </ListItemIcon>
                     <ListItemText primary={'Staking Pools'} />
                 </ListItemButton>
-
-                <ListItemButton key={'Tokens'} component={NavLink} to={'/' + route + 'tokens'}>
+                {/* <ListItemButton key={'Tokens'} component={NavLink} to={'/' + route + 'tokens'}>
                     <ListItemIcon>
                         <TokenIcon />
                     </ListItemIcon>
                     <ListItemText primary={'Tokens'} />
                 </ListItemButton>
+                */}
                 <Divider />
                 <ListItemButton key={'Aura'} component={NavLink} to={'/' + route + 'tokens/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf'}>
                     <ListItemIcon>

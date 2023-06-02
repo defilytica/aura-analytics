@@ -114,7 +114,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
                 },
                 data: mintedAuraBAL
             },
-            {
+           /* {
                 name: 'auraBAL Staked',
                 type: 'line',
                 stack: 'Total',
@@ -145,7 +145,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
                     }
                 },
                 data: stakedAuraBAL
-            },
+            },*/
             {
                 name: 'auraBAL Autocompounder',
                 type: 'line',
@@ -183,7 +183,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
 
 
     return (
-        mintedAuraBAL.length > 1 && stakedAuraBAL.length > 1 && compounderAuraBAL.length > 1 && xAxis ?
+        xAxis.length > 2 ?
             <ReactEcharts
                 option={option}
                 style={{ height: '350px' }}

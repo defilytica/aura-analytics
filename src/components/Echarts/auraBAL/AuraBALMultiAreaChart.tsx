@@ -81,7 +81,7 @@ export default function AuraBALMultiAreaChart({mintedAuraBAL, stakedAuraBAL, com
             setrangedCompounderAuraBALData(compounderAuraBALData.slice(compounderAuraBALData.length - Number(timeRange)))
             setRangedTimexAxisData(timexAxisData.slice(timexAxisData.length - Number(timeRange)))
         }
-    }, [timeRange]);
+    }, [mintedAuraBAL, timeRange]);
 
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(event.target.value as string);
@@ -97,7 +97,6 @@ export default function AuraBALMultiAreaChart({mintedAuraBAL, stakedAuraBAL, com
     };
 
     return (
-        compounderAuraBALData.length > 10 ?
             <Card sx={{boxShadow: 3}}>
                 <Box m={1}>
                     <FormControl size="small">
@@ -133,14 +132,6 @@ export default function AuraBALMultiAreaChart({mintedAuraBAL, stakedAuraBAL, com
                     stakedAuraBAL={rangedStakedAuraBALData}
                     compounderAuraBAL={rangedCompounderAuraBALData}
                     xAxis={rangedTimexAxisData} />
-            </Card> : <Grid
-                container
-                spacing={2}
-                mt='10%'
-                mb='10%'
-                sx={{ justifyContent: 'center' }}
-            >
-                <CustomLinearProgress />
-            </Grid>
+            </Card>
     )
 }
