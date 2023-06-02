@@ -1,6 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { SupportedChainId, Token, WETH9 } from '@uniswap/sdk-core';
-import { AbstractConnector } from '@web3-react/abstract-connector';
 import process from "process";
 
 const development: boolean = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
@@ -145,17 +144,5 @@ export const DEFAULT_FEE_SYMBOLS = [
     'WETH',
     'YFI',
 ]
-
-export interface WalletInfo {
-    connector?: AbstractConnector;
-    name: string;
-    iconName: string;
-    description: string;
-    href: string | null;
-    color: string;
-    primary?: true;
-    mobile?: true;
-    mobileOnly?: true;
-}
 
 export const NetworkContextName = 'NETWORK';
