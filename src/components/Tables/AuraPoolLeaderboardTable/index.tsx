@@ -23,6 +23,7 @@ import { getEtherscanLink } from "../../../utils";
 import { AuraLeaderboardInfo } from "../../../data/aura/auraTypes";
 import { deepPurple } from '@mui/material/colors';
 import { generateIdenticon } from '../../../utils/generateIdenticon';
+import {useContractRead, useEnsName} from "wagmi";
 
 
 interface Data {

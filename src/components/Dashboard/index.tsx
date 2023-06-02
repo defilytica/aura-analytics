@@ -34,6 +34,7 @@ import VotingIncentives from "../../pages/VotingIncentives";
 import {ConnectButton, darkTheme, lightTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
 import {WagmiConfig} from "wagmi";
 import {chains, wagmiConfig} from "../../wagmi/wagmiConfig";
+import {alpha} from "@mui/material";
 
 
 interface AppBarProps extends MuiAppBarProps {
@@ -157,12 +158,22 @@ function Dashboard() {
                     mode === 'dark' ? darkTheme(
                         {
                             borderRadius: 'small',
+                            accentColor: alpha('#0F172A', 0.8),
+                            overlayBlur: "large"
 
-                        }) : lightTheme()}>
+                        }) :
+                        lightTheme(
+                            {
+                                borderRadius: 'small',
+                                accentColor: '#9C4ED6'
+
+                            }
+                        )}>
                 <ColorModeContext.Provider value={colorMode}>
                     <ThemeProvider theme={theme}>
                         <Box sx={{display: 'flex'}}>
                             <CssBaseline/>
+
                             <AppBar
                                 position="fixed"
                                 open={open}
@@ -203,7 +214,7 @@ function Dashboard() {
                                             Analytics
                                         </Typography>
                                         <Typography variant="caption"
-                                                    sx={{color: (mode === 'dark') ? 'white' : 'black',}}>Prototype</Typography>
+                                                    sx={{color: (mode === 'dark') ? 'white' : 'black',}}>Alpha</Typography>
                                         <Box position="absolute" right="10px">
                                             <Box display="flex" alignItems="center" alignContent="center"
                                                  justifyContent='flex-end'>

@@ -5,17 +5,12 @@ import {Card, CardMedia, CircularProgress, Grid, Typography} from '@mui/material
 import {useAuraBalMints} from '../../data/aura/useAuraBalMints';
 import {useAuraBalTransactions} from '../../data/aura/useAuraBalTransactions';
 import {useAuraGlobalStats} from '../../data/aura/useAuraGlobalStats';
-import {BalancerChartDataItem, BalancerPieChartDataItem} from '../../data/balancer/balancerTypes';
+import {BalancerChartDataItem} from '../../data/balancer/balancerTypes';
 import GenericBarChart from '../../components/Echarts/GenericBarChart';
 import {useCoinGeckoSimpleTokenPrices} from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
 import CoinCard from '../../components/Cards/CoinCard';
 import {useAuraPoolLeaderboardInfo} from '../../data/aura/useAuraPoolLeaderboard';
-import {
-    AuraVaultDepositWithdrawTransactionInfo,
-    AuraVaultHarvestTransactionInfo,
-    PositionInfo
-} from '../../data/aura/auraTypes';
-import GenericPieChart from '../../components/Echarts/GenericPieChart';
+import {AuraVaultDepositWithdrawTransactionInfo, AuraVaultHarvestTransactionInfo} from '../../data/aura/auraTypes';
 import {useAuraVaultLeaderboardInfo} from '../../data/aura/useAuraVaultLeaderboard';
 import {useActiveNetworkVersion} from '../../state/application/hooks';
 import MetricsCard from '../../components/Cards/MetricsCard';
@@ -33,11 +28,8 @@ import CustomLinearProgress from "../../components/Progress/CustomLinearProgress
 import TokenChart from "../../components/TokenChart";
 import PoolTable from "../../components/Tables/PoolTable";
 import {cumulativeTokenSupply} from "./helpers";
-import {AURA_BAL_STAKED_SUPPLY, AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
-import GenericLineChart from "../../components/Echarts/GenericLineChart";
+import {AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
 import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
-import MixedLineBarChart from "../../components/Echarts/MixedLineBarChart";
-import AuraBALProtocolTVLCharts from "../../components/Echarts/auraBAL/AuraBALProtocolTVLCharts";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
 
 
@@ -89,7 +81,6 @@ export default function AuraBAL() {
             value: dailySums[date],
         };
     });
-
 
 
     //Daily auraBAL harvest chart
@@ -255,7 +246,7 @@ export default function AuraBAL() {
                             mintedAuraBAL={cumulativeAuraBAL}
                             stakedAuraBAL={cumulativeAuraBAL}
                             compounderAuraBAL={cumulativeCompounderAuraBAL}
-                            />
+                        />
                     </Card>
                 </Grid>
                 {tokenData ?
