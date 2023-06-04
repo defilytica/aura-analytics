@@ -1,0 +1,290 @@
+{
+  "success": true,
+  "epoch": {
+    "platform": "hh",
+    "protocol": "aura-bal",
+    "round": 25,
+    "proposal": "0x18c1b955920405478fe1467f015fa1fd203b51aa4f1c9970d34d47d492b33922",
+    "end": 1685412000,
+    "bribed": {
+      "50/50 ACX/wstETH": 182187.01225290942,
+      "50/50 BADGER/rETH": 38675.864601303925,
+      "50/50 DFX/WETH": 47559.79999192836,
+      "50/50 OHM/wstETH": 262770.41779196006,
+      "50/50 PENDLE/WETH": 109443.11728414957,
+      "50/50 STG/bb-a-USD": 1518970.5381742488,
+      "50/50 SYN/WETH": 1347876.258342428,
+      "50/50 TEMPLE/DAI": 857159.5843302575,
+      "50/50 USH/WETH": 160268.39626293804,
+      "50/50 wstETH/COMP": 119960.06416543976,
+      "80/20 ALCX/WETH": 359593.6590466643,
+      "80/20 BADGER/WBTC": 637804.7191271399,
+      "80/20 Silo/WETH": 35523.2853115258,
+      "80/20 VITA/WETH": 118302.98187694624,
+      "80/20 wjAURA/WETH": 429101.1162550987,
+      "a-50/50 MAGIC/USDC": 71443.53653079321,
+      "a-50/50 wstETH-bb-a-WETH-BPT/bb-a-USD": 122874.62282351342,
+      "a-80/20 RDNT/WETH": 148380.53022030462,
+      "a-ComposableStable bb-a-USDT/bb-a-USDC/bb-a-DAI": 30376.43856348665,
+      "a-ComposableStable wstETH/bb-a-WETH": 123646.00640823986,
+      "a-MetaStable wstETH/WETH": 89994.05010791589,
+      "ComposableStable bb-a-DAI/bb-a-USDT/bb-a-USDC": 151842.72115207353,
+      "ComposableStable bb-a-WETH/ankrETH": 118273.88089550775,
+      "ComposableStable bb-a-WETH/qETH": 203842.62875875263,
+      "ComposableStable bb-g-USDC/bb-g-DAI": 89048.24289805058,
+      "ComposableStable vETH/WETH": 55966.64938096095,
+      "ComposableStable wstETH/sfrxETH/rETH": 245147.86467420583,
+      "MetaStable rETH/WETH": 3402099.9997221436,
+      "MetaStable StaFi rETH/WETH": 406916.6782094571,
+      "MetaStable wstETH/cbETH": 168365.624396462,
+      "MetaStable wstETH/WETH": 596830.6511943054,
+      "p-ComposableStable bb-a-WMATIC/MaticX": 61189.61936287414,
+      "p-ComposableStable BRZ/jBRL": 45766.99298886925,
+      "p-ComposableStable stMATIC/bb-a-WMATIC": 181892.24051260855,
+      "p-ComposableStable wstETH/bb-a-WETH": 78211.62734405066,
+      "veUSH": 366842.1577198374
+    },
+    "bribes": [
+      {
+        "pool": "MetaStable rETH/WETH",
+        "token": "RPL",
+        "amount": 2068.4448,
+        "amountDollars": 101664.06192000001
+      },
+      {
+        "pool": "MetaStable rETH/WETH",
+        "token": "USDC",
+        "amount": 10139.175072,
+        "amountDollars": 10138.931731798271
+      },
+      {
+        "pool": "MetaStable wstETH/WETH",
+        "token": "USDC",
+        "amount": 15026.875344,
+        "amountDollars": 15026.514698991743
+      },
+      {
+        "pool": "80/20 VITA/WETH",
+        "token": "VITA",
+        "amount": 1920,
+        "amountDollars": 3974.3999999999996
+      },
+      {
+        "pool": "80/20 BADGER/WBTC",
+        "token": "BADGER",
+        "amount": 8640,
+        "amountDollars": 21513.600000000002
+      },
+      {
+        "pool": "50/50 DFX/WETH",
+        "token": "DFX",
+        "amount": 24000,
+        "amountDollars": 1598.4479999999999
+      },
+      {
+        "pool": "MetaStable wstETH/cbETH",
+        "token": "USDC",
+        "amount": 5656.277952,
+        "amountDollars": 5656.142201329152
+      },
+      {
+        "pool": "MetaStable StaFi rETH/WETH",
+        "token": "FIS",
+        "amount": 38400,
+        "amountDollars": 13679.5392
+      },
+      {
+        "pool": "50/50 SYN/WETH",
+        "token": "SYN",
+        "amount": 67200,
+        "amountDollars": 42686.3808
+      },
+      {
+        "pool": "50/50 PENDLE/WETH",
+        "token": "PENDLE",
+        "amount": 9139.2,
+        "amountDollars": 3662.4247296000003
+      },
+      {
+        "pool": "ComposableStable wstETH/sfrxETH/rETH",
+        "token": "USDC",
+        "amount": 8235.787248,
+        "amountDollars": 8235.589589106048
+      },
+      {
+        "pool": "50/50 BADGER/rETH",
+        "token": "USDC",
+        "amount": 1299.302784,
+        "amountDollars": 1299.271600733184
+      },
+      {
+        "pool": "50/50 ACX/wstETH",
+        "token": "ACX",
+        "amount": 144000,
+        "amountDollars": 5660.798400000001
+      },
+      {
+        "pool": "ComposableStable bb-g-USDC/bb-g-DAI",
+        "token": "GEAR",
+        "amount": 257645.93738780127,
+        "amountDollars": 1587.9466294428616
+      },
+      {
+        "pool": "ComposableStable bb-g-USDC/bb-g-DAI",
+        "token": "USDC",
+        "amount": 1349.02872,
+        "amountDollars": 1348.99634331072
+      },
+      {
+        "pool": "50/50 OHM/wstETH",
+        "token": "LDO",
+        "amount": 3840,
+        "amountDollars": 8448
+      },
+      {
+        "pool": "80/20 ALCX/WETH",
+        "token": "USDC",
+        "amount": 5762.908992,
+        "amountDollars": 5762.770682184191
+      },
+      {
+        "pool": "80/20 Silo/WETH",
+        "token": "Silo",
+        "amount": 16320,
+        "amountDollars": 1203.7468800000001
+      },
+      {
+        "pool": "ComposableStable bb-a-DAI/bb-a-USDT/bb-a-USDC",
+        "token": "USDC",
+        "amount": 1819.818,
+        "amountDollars": 1819.774324368
+      },
+      {
+        "pool": "50/50 USH/WETH",
+        "token": "USH",
+        "amount": 14400,
+        "amountDollars": 5408.7984
+      },
+      {
+        "pool": "50/50 STG/bb-a-USD",
+        "token": "USDC",
+        "amount": 1694.841408,
+        "amountDollars": 1694.800731806208
+      },
+      {
+        "pool": "50/50 STG/bb-a-USD",
+        "token": "STG",
+        "amount": 72720,
+        "amountDollars": 52122.64176
+      },
+      {
+        "pool": "50/50 TEMPLE/DAI",
+        "token": "DAI",
+        "amount": 28800,
+        "amountDollars": 28800
+      },
+      {
+        "pool": "50/50 wstETH/COMP",
+        "token": "USDC",
+        "amount": 4030.08,
+        "amountDollars": 4029.9832780799998
+      },
+      {
+        "pool": "ComposableStable bb-a-WETH/qETH",
+        "token": "CHESS",
+        "amount": 36916.75770280378,
+        "amountDollars": 0
+      },
+      {
+        "pool": "80/20 wjAURA/WETH",
+        "token": "USDC",
+        "amount": 14400,
+        "amountDollars": 14399.6544
+      },
+      {
+        "pool": "80/20 wjAURA/WETH",
+        "token": "AURA",
+        "amount": 349.1285685131551,
+        "amountDollars": 642.3965660642053
+      },
+      {
+        "pool": "ComposableStable vETH/WETH",
+        "token": "WETH",
+        "amount": 1.2672,
+        "amountDollars": 2404.7527680000003
+      },
+      {
+        "pool": "ComposableStable bb-a-WETH/ankrETH",
+        "token": "USDC",
+        "amount": 3973.44,
+        "amountDollars": 3973.34463744
+      },
+      {
+        "pool": "veUSH",
+        "token": "USH",
+        "amount": 24000,
+        "amountDollars": 9014.663999999999
+      },
+      {
+        "pool": "a-50/50 MAGIC/USDC",
+        "token": "USDC",
+        "amount": 2400.1648,
+        "amountDollars": 2400.1071960448
+      },
+      {
+        "pool": "a-MetaStable wstETH/WETH",
+        "token": "USDC",
+        "amount": 3023.345904,
+        "amountDollars": 3023.2733436983035
+      },
+      {
+        "pool": "a-80/20 RDNT/WETH",
+        "token": "USDC",
+        "amount": 4984.88328,
+        "amountDollars": 4984.76364280128
+      },
+      {
+        "pool": "a-ComposableStable bb-a-USDT/bb-a-USDC/bb-a-DAI",
+        "token": "USDC",
+        "amount": 1020.48,
+        "amountDollars": 1020.45550848
+      },
+      {
+        "pool": "a-ComposableStable wstETH/bb-a-WETH",
+        "token": "USDC",
+        "amount": 4153.92,
+        "amountDollars": 4153.82030592
+      },
+      {
+        "pool": "a-50/50 wstETH-bb-a-WETH-BPT/bb-a-USD",
+        "token": "USDC",
+        "amount": 4128,
+        "amountDollars": 4127.900928
+      },
+      {
+        "pool": "p-ComposableStable stMATIC/bb-a-WMATIC",
+        "token": "USDC",
+        "amount": 6110.700042,
+        "amountDollars": 6110.553385198992
+      },
+      {
+        "pool": "p-ComposableStable bb-a-WMATIC/MaticX",
+        "token": "USDC",
+        "amount": 2055.651093,
+        "amountDollars": 2055.601757373768
+      },
+      {
+        "pool": "p-ComposableStable wstETH/bb-a-WETH",
+        "token": "USDC",
+        "amount": 2627.52,
+        "amountDollars": 2627.45693952
+      },
+      {
+        "pool": "p-ComposableStable BRZ/jBRL",
+        "token": "USDT",
+        "amount": 1536,
+        "amountDollars": 1537.5359999999998
+      }
+    ]
+  }
+}

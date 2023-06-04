@@ -1,4 +1,6 @@
 import {useEffect, useState} from "react";
+import isDev from "../../constants";
+import rounds from './data/rounds.json';
 
 export interface Rounds {
     rounds: number[]
@@ -26,8 +28,15 @@ export function GetBribingRounds() {
                 console.log("error", error);
             }
         };
+        if (isDev()) {
+            console.log("DEV: loading transaction mock")
+            const copy = JSON.parse(JSON.stringify(rounds));
+            setJsonData(copy)
+        } else {
+            console.log("PRODUCTION: fetching rounds from LlamaAirforce")
+            fetchData();
+        }
 
-        fetchData();
     }, []);
     return jsonData;
 }
