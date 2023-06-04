@@ -15,8 +15,9 @@ import * as React from "react";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
-import {CurrencyExchange, Handshake, Money} from "@mui/icons-material";
+import {CurrencyExchange, Handshake} from "@mui/icons-material";
 import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
+import isDev from "../../constants";
 export type PoolReward = {
     pool: string;
     [token: string]: string | number; // this represents any number of token properties with their corresponding `amountDollars` value
@@ -33,7 +34,7 @@ export default function VotingIncentives() {
     const roundsData = GetBribingRounds();
 
     const roundsNumbers = roundsData ? roundsData.rounds : [];
-    const [currentRound, setCurrentRound] = useState(roundsNumbers[0] || 1); // Select the first round by default
+    const [currentRound, setCurrentRound] = useState(roundsNumbers[-0] || 25); // Select the first round by default
 
     let allRoundsBribes = GetBribingStatsForRounds()
     console.log(allRoundsBribes);
@@ -97,7 +98,11 @@ export default function VotingIncentives() {
 
 
     const handleChange = (event: SelectChangeEvent<number>) => {
-        setCurrentRound(event.target.value as number);
+        if (isDev()) {
+            setCurrentRound(25);
+        } else {
+            setCurrentRound(event.target.value as number);
+        }
     };
 
     return (<>
