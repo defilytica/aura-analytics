@@ -136,15 +136,12 @@ export default function AuraLocks() {
     React.useEffect(() => {
         if (lockers && lockers.length > 0) {
             const enslocalMap = {...ensMap};
-            console.log(lockers);
+
             for (let x = page * rowsPerPage; x <= page * rowsPerPage + rowsPerPage - 1; x++) {
                 let account = lockers[x]
                 const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_URL);
                 if (ensMap[account.id] === undefined) {
                     provider.lookupAddress(account.id).then(response => {
-                        console.log("Query: ");
-                        console.log(account.id);
-                        console.log(response);
                         enslocalMap[account.id] = response;
                     })
                 }
