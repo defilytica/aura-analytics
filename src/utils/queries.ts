@@ -1,5 +1,6 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc';
 
 /**
  * Used to get large amounts of data when
@@ -54,4 +55,17 @@ export function useDeltaTimestamps(): [number, number, number] {
   const t2 = utcCurrentTime.subtract(2, 'day').startOf('hour').unix()
   const tWeek = utcCurrentTime.subtract(1, 'week').startOf('hour').unix()
   return [t1, t2, tWeek]
+}
+
+export function useDeltaTimestampsDailyUTCPastNDays(n: number): number[] {
+  dayjs.extend(utc);
+  const utcCurrentTime = dayjs().utc();
+  let timestamps: number[] = [];
+
+  for(let i = 1; i <= n; i++) {
+    let timestamp = utcCurrentTime.subtract(i, 'day').startOf('day').unix();
+    timestamps.push(timestamp);
+  }
+
+  return timestamps;
 }

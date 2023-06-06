@@ -1,7 +1,7 @@
 import {useActiveNetworkVersion} from "../../state/application/hooks";
-import {useDeltaTimestamps} from "../../utils/queries";
+import {useDeltaTimestamps, useDeltaTimestampsDailyUTCPastNDays} from "../../utils/queries";
 import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {auraClient} from "../../apollo/client";
 import {TVL} from "./useAuraPools";
 import {
@@ -9,19 +9,12 @@ import {
     PoolWithdrawnTransactionsQuery
 } from "../../apollo/generated/graphql-aura-codegen-generated";
 import {ethers} from "ethers";
-
-const getPastBlockNumber = (
-    currentBlockNumber: number,
-    blocksPerDay: number,
-    daysAgo: number
-): number => {
-    return Number((currentBlockNumber - (blocksPerDay * daysAgo)).toFixed(0));
-};
+import {child, get, getDatabase, ref, set} from "firebase/database";
 
 type PoolTransactionEntry = {
     blockNumber: number;
     data: PoolWithdrawnTransactionsQuery | undefined;
-    date: Date;
+    date: number;
 };
 
 export type Volume = {
@@ -46,54 +39,85 @@ const addToVolumeMap = (dateObj: Date, blockNumber: number, vol: number, volumeM
 };
 
 export function usePoolTransactions(timeRange:number): Volume[] {
-    //TODO: Dynamically call Aura client depending on network!
     const [activeNetwork] = useActiveNetworkVersion();
-    const [t24, t48, tWeek] = useDeltaTimestamps();
-    const {blocks} = useBlocksFromTimestamps([t24, t48, tWeek]);
+    const timestamps = useDeltaTimestampsDailyUTCPastNDays(timeRange);
+    const {blocks} = useBlocksFromTimestamps(timestamps);
     const [block24] = blocks ?? [];
 
-    const [auraPoolsData, setAuraPoolsData] = useState<PoolTransactionEntry[]>([]);
+    const [poolTransactionEntries, setPoolTransactionEntries] = useState<PoolTransactionEntry[]>([]);
 
-    console.log(block24);
-    useEffect(() => {
-        if (block24) {
-            const blocksPerDay = 24 * 60 * 60 / 13.2; // Assuming 13.2 seconds per block on average
-            const currentBlockNumber = parseInt(block24.number);
-            const blockNumbers = Array.from({length: timeRange}, (_, i) => getPastBlockNumber(currentBlockNumber, blocksPerDay, i));
-
-            const fetchAuraPoolsData = async () => {
-                const fetchedData = await Promise.all(
-                    blockNumbers.map(async (blockNumber) => {
-                        const response = await auraClient.query<PoolWithdrawnTransactionsQuery>({
-                            query: PoolWithdrawnTransactionsDocument,
-                            variables: {
-                                block: { number: blockNumber },
-                                first: 200
-                            },
-                        });
-                        const block = await provider.getBlock(blockNumber);
-                        return { blockNumber, data: response.data, date: new Date(block.timestamp * 1000) };
-                    })
-                );
-                setAuraPoolsData(fetchedData);
-            };
-
-            fetchAuraPoolsData();
+    const fetchPoolTransactions = useCallback(async () => {
+        if (!block24 || !blocks) {
+            return;
         }
-    }, [timeRange,block24]);
+        const fetchedData = await Promise.all(
+            blocks.map(async (blockNumber) => {
+                const response = await auraClient.query<PoolWithdrawnTransactionsQuery>({
+                    query: PoolWithdrawnTransactionsDocument,
+                    variables: {
+                        block: { number: Number(blockNumber.number) },
+                        first: 200
+                    },
+                });
+                return { blockNumber: Number(blockNumber.number), data: response.data, date: Number(blockNumber.timestamp) * 1000 };
+            })
+        );
+        const db = getDatabase();
+        fetchedData.forEach(function(item) {
+            set(ref(db, 'poolTransactions/' + item.blockNumber), item)
+        });
+        setPoolTransactionEntries(fetchedData);
+    }, [block24, blocks]);
 
-    const processAuraPoolsData = (poolTransactionEntries: PoolTransactionEntry[]) => {
+    const fetchPoolDataFromDB = useCallback(async () => {
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, `poolTransactions/`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const object = snapshot.val();
+                const array = Object.keys(object).map(key => object[key]);
+                setPoolTransactionEntries(array);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }, []);
+
+    const checkDBForLatestBlock = useCallback(async () => {
+        if (!blocks) {
+            return;
+        }
+        try {
+            const dbRef = ref(getDatabase());
+            const snapshot = await get(child(dbRef, `poolTransactions/` + blocks[0].number));
+            if (snapshot.exists()) {
+                console.log("PoolTransactions are available in the Backend: Fetching Backend")
+                await fetchPoolDataFromDB();
+            } else {
+                console.log("PoolTransactions are not up to date: Fetching Subgraph")
+                await fetchPoolTransactions();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, [blocks, fetchPoolTransactions, fetchPoolDataFromDB]);
+
+    useEffect(() => {
+        if (block24 && blocks) {
+            checkDBForLatestBlock();
+        }
+    }, [timeRange, block24, checkDBForLatestBlock]);
+
+    const processPoolTransactionsData = (poolTransactionEntries: PoolTransactionEntry[]) => {
         let volumeMap: { [key: string]: Volume } = {};
         let processedIDs: Set<string> = new Set();
-
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - timeRange);
+        const now = new Date();
+        now.setDate(now.getDate() - timeRange);
 
         poolTransactionEntries.map(({ blockNumber, data, date }) => {
             if (data) {
-                processTransactions(data.poolRewardPaidTransactions, 'reward', blockNumber, processedIDs, volumeMap, thirtyDaysAgo);
-                processTransactions(data.poolStakedTransactions, 'amount', blockNumber, processedIDs, volumeMap, thirtyDaysAgo);
-                processTransactions(data.poolWithdrawnTransactions, 'amount', blockNumber, processedIDs, volumeMap, thirtyDaysAgo);
+                processTransactions(data.poolRewardPaidTransactions, 'reward', blockNumber, processedIDs, volumeMap, now);
+                processTransactions(data.poolStakedTransactions, 'amount', blockNumber, processedIDs, volumeMap, now);
+                processTransactions(data.poolWithdrawnTransactions, 'amount', blockNumber, processedIDs, volumeMap, now);
             }
         });
 
@@ -107,13 +131,13 @@ export function usePoolTransactions(timeRange:number): Volume[] {
         blockNumber: number,
         processedIDs: Set<string>,
         volumeMap: { [key: string]: Volume },
-        thirtyDaysAgo: Date
+        now: Date
     ) => {
         for (const transaction of transactions) {
             if (!processedIDs.has(transaction.id)) {
                 processedIDs.add(transaction.id);
                 const dateObj = new Date(transaction.timestamp * 1000);
-                if (dateObj >= thirtyDaysAgo) {
+                if (dateObj >= now) {
                     const vol = transaction[valueKey] / 1e18;
                     addToVolumeMap(dateObj, blockNumber, vol, volumeMap);
                 }
@@ -121,11 +145,11 @@ export function usePoolTransactions(timeRange:number): Volume[] {
         }
     };
 
-    const processedData = processAuraPoolsData(auraPoolsData);
+    const processedData = processPoolTransactionsData(poolTransactionEntries);
 
     if (!processedData) {
         return [];
     }
 
-    return processedData
+    return processedData;
 }

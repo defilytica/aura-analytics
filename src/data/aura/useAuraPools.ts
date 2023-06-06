@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {
     AuraPoolsDocument,
     AuraPoolsQuery,
@@ -6,10 +6,11 @@ import {
 } from '../../apollo/generated/graphql-aura-codegen-generated';
 import {AuraPoolData} from './auraTypes';
 import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
-import {useDeltaTimestamps} from "../../utils/queries";
+import {useDeltaTimestamps, useDeltaTimestampsDailyUTCPastNDays} from "../../utils/queries";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import {auraClient} from "../../apollo/client";
 import {ethers} from "ethers";
+import { getDatabase, ref, child, get, set } from "firebase/database";
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_URL);
 
@@ -55,18 +56,10 @@ export function useAuraPools(): AuraPoolData[] {
     return [];
 }
 
-const getPastBlockNumber = (
-    currentBlockNumber: number,
-    blocksPerDay: number,
-    daysAgo: number
-): number => {
-    return Number((currentBlockNumber - (blocksPerDay * daysAgo)).toFixed(0));
-};
-
 type AuraPoolsDataEntry = {
     blockNumber: number;
     data: AuraPoolsQuery | undefined;
-    date: Date;
+    date: number;
 };
 
 export type TVL = {
@@ -75,51 +68,91 @@ export type TVL = {
     blockNumber: number;
 }
 
+//TODO prevent fetching of all days, instead refetch only necessary days
+//TODO add initial loading of all elements. The current implementation only checks if the newest day is present and if not fetches the past 30 days.
 export function useAuraPoolsHistorically(timeRange:number): TVL[] {
-    //TODO: Dynamically call Aura client depending on network!
     const [activeNetwork] = useActiveNetworkVersion();
-    const [t24, t48, tWeek] = useDeltaTimestamps();
-    const {blocks} = useBlocksFromTimestamps([t24, t48, tWeek]);
+    const timestamps  = useDeltaTimestampsDailyUTCPastNDays(timeRange);
+    const {blocks} = useBlocksFromTimestamps(timestamps);
     const [block24] = blocks ?? [];
-
     const [auraPoolsData, setAuraPoolsData] = useState<AuraPoolsDataEntry[]>([]);
 
-    console.log(block24);
-    useEffect(() => {
-        if (block24) {
-            const blocksPerDay = 24 * 60 * 60 / 13.2; // Assuming 13.2 seconds per block on average
-            const currentBlockNumber = parseInt(block24.number);
-            const blockNumbers = Array.from({length: timeRange}, (_, i) => getPastBlockNumber(currentBlockNumber, blocksPerDay, i));
-
-            const fetchAuraPoolsData = async () => {
-                const fetchedData = await Promise.all(
-                    blockNumbers.map(async (blockNumber) => {
-                        const response = await auraClient.query<AuraPoolsQuery>({
-                            query: AuraPoolsDocument,
-                            variables: {
-                                block: { number: blockNumber },
-                            },
-                        });
-                        const block = await provider.getBlock(blockNumber);
-                        return { blockNumber, data: response.data, date: new Date(block.timestamp * 1000) };
-                    })
-                );
-                setAuraPoolsData(fetchedData);
-            };
-
-            fetchAuraPoolsData();
+    const fetchAuraPoolsData = useCallback(async () => {
+        if (!blocks) {
+            return;
         }
-    }, [timeRange,block24]);
+
+        const fetchedData = await Promise.all(
+            blocks.map(async (blockNumber) => {
+                const response = await auraClient.query<AuraPoolsQuery>({
+                    query: AuraPoolsDocument,
+                    variables: {
+                        block: { number: Number(blockNumber.number) },
+                    },
+                });
+                return { blockNumber: Number(blockNumber.number), data: response.data, date: Number(blockNumber.timestamp) * 1000 };
+            })
+        );
+        const db = getDatabase();
+        fetchedData.forEach(function(item) {
+            set(ref(db, 'poolData/' + item.blockNumber), item)
+        });
+        setAuraPoolsData(fetchedData);
+    }, [blocks]);
+
+    const fetchPoolDataFromDB = useCallback(async () => {
+        const dbRef = ref(getDatabase());
+        get(child(dbRef, `poolData/`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const object = snapshot.val();
+                const array = Object.keys(object).map(key => object[key]);
+                setAuraPoolsData(array);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }, []);
+
+    const checkDBForLatestBlock = useCallback(async () => {
+        if (!blocks) {
+            return;
+        }
+        try {
+            const dbRef = ref(getDatabase());
+            const snapshot = await get(child(dbRef, `poolData/` + blocks[0].number));
+            if (snapshot.exists()) {
+                console.log("PoolData is available in the Backend: Fetching Backend")
+                await fetchPoolDataFromDB();
+            } else {
+                console.log("PoolData is not up to date: Fetching Subgraph")
+                await fetchAuraPoolsData();
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }, [blocks, fetchAuraPoolsData, fetchPoolDataFromDB]);
+
+    useEffect(() => {
+        if (block24 && blocks) {
+            checkDBForLatestBlock();
+        }
+    }, [timeRange, block24, checkDBForLatestBlock]);
 
     const processAuraPoolsData = (auraPoolsData: AuraPoolsDataEntry[]) => {
         let tvlArray : TVL[] = [];
-        auraPoolsData.map(({blockNumber, data,date}) => {
-            let totalStaked = 0;
+        const now = new Date();
+        now.setDate(now.getDate() - timeRange);
+
+        auraPoolsData.map(({blockNumber, data, date}) => {
             if (data) {
+                let totalStaked = 0;
                 for (const pool of data.pools) {
                     totalStaked = totalStaked + pool.totalStaked / 1e18;
                 }
-                tvlArray.push({ blockNumber, date, tvl: totalStaked });
+                const dateObject = new Date(date);
+                if (dateObject >= now) {
+                    tvlArray.push({ blockNumber: blockNumber, date: dateObject, tvl: totalStaked });
+                }
             }
         });
         return tvlArray;
@@ -131,5 +164,5 @@ export function useAuraPoolsHistorically(timeRange:number): TVL[] {
         return [];
     }
 
-    return processedData
+    return processedData;
 }
