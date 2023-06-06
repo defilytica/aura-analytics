@@ -8,6 +8,9 @@ import { ApolloProvider } from '@apollo/client';
 import reportWebVitals from './reportWebVitals';
 import {auraClient, client} from './apollo/client';
 import store from './state';
+import { initializeApp } from "firebase/app";
+
+
 
 function Updaters() {
   return (
@@ -16,6 +19,18 @@ function Updaters() {
     </>
   );
 }
+const firebaseConfig = {
+    apiKey: "AIzaSyBj0D4TOgDpKfv_daj7MD3u8x4JAv65SAI",
+    authDomain: "aura-analytics-1c4b3.firebaseapp.com",
+    databaseURL: "https://aura-analytics-1c4b3-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "aura-analytics-1c4b3",
+    storageBucket: "aura-analytics-1c4b3.appspot.com",
+    messagingSenderId: "1086945417593",
+    appId: "1:1086945417593:web:8ef6c8fa5aa484205e37a8",
+    measurementId: "G-8YYQH414HC"
+};
+
+initializeApp(firebaseConfig);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
