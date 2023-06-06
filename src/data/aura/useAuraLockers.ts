@@ -15,7 +15,6 @@ export function useGetLeadingLockers(): LockerAccount[] {
         return [];
     }
 
-    console.log("querying lockers")
     let {auraLockerLeaderboard} = data;
 
     if (auraLockerLeaderboard){

@@ -34,12 +34,10 @@ export default function Protocol() {
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
     const auraGlobalStats = useAuraGlobalStats();
     const auraPools = useAuraPoolsHistorically(timeRange);
-    const poolTransactions = usePoolTransactions(timeRange);
+    const poolTransactions = usePoolTransactions(timeRangeVolume);
     const lockers = useGetLeadingLockers();
 
     let totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
-
-
 
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(Number(event.target.value));
@@ -51,17 +49,16 @@ export default function Protocol() {
 
     //TODO Silas: Fix this state handling and if loop for conditional jsx elements. Decouple data loading from rendering!
     if (auraPools && auraPools.length > 0 && poolTransactions && poolTransactions.length > 0) {
-        const tvl = auraPools[0].tvl;
-        const tvlChange = (auraPools[0].tvl - auraPools[1].tvl) / auraPools[1].tvl * 100;
-        const volume = poolTransactions[0].volume;
-        const volumeChange = (poolTransactions[0].volume - poolTransactions[1].volume) / poolTransactions[1].volume * 100;
+        const tvl = auraPools[auraPools.length - 1].tvl;
+        const tvlChange = (auraPools[auraPools.length - 1].tvl - auraPools[auraPools.length - 2].tvl) / auraPools[auraPools.length - 2].tvl * 100;
+        const volume = poolTransactions[poolTransactions.length - 1].volume;
+        const volumeChange = (poolTransactions[poolTransactions.length - 1].volume - poolTransactions[poolTransactions.length - 2].volume) / poolTransactions[poolTransactions.length - 2].volume * 100;
         let tvlDollar;
         let volumeDollar;
         let sortedPoolTransactions;
         let sortedTvlData;
         if (coinData) {
             tvlDollar = tvl * coinData[auraAddress].usd
-            console.log(tvl);
             sortedTvlData = auraPools.sort((a, b) => b.date.getTime() - a.date.getTime()).map(({tvl, date}) => {
                 return {
                     value: tvl * coinData[auraAddress].usd,
@@ -164,13 +161,11 @@ export default function Protocol() {
                     {sortedTvlData ?
                         <Grid item mt={1} xs={11}>
                             <Card sx={{boxShadow: 3}}>
-                                <GenericAreaChart chartData={sortedTvlData} dataTitle={""} />
-                                {/* <FinancialAreaChart
-                                    chartData={finalData}
+                                <FinancialAreaChart
+                                    chartData={sortedTvlData}
                                     dataTitle={""}
                                     changeHandler={handleChange}
                                     timeRange={timeRange}/>
-                                */}
                             </Card>
                         </Grid>
                         : <CircularProgress/>
@@ -182,14 +177,11 @@ export default function Protocol() {
                     {sortedPoolTransactions ?
                         <Grid item mt={1} mb={2} xs={11}>
                             <Card sx={{boxShadow: 3}}>
-                                <GenericBarChart data={sortedPoolTransactions} />
-
-                                { /* <FinancialAreaChart
+                                 <FinancialAreaChart
                                     chartData={sortedPoolTransactions}
                                     dataTitle={""}
                                     changeHandler={handleChangeVolume}
                                     timeRange={timeRangeVolume}/>
-                                 */}
                             </Card>
                         </Grid>
                         : <CircularProgress/>
