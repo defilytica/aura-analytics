@@ -103,6 +103,7 @@ export default function Protocol() {
 
 
     return (
+        tvlDollar && tvlChange && volumeChange && volumeDollar && displayPoolData && displayTransactions && totalLockedAmount ?(
         <Box sx={{flexGrow: 2}}>
             <Grid
                 container
@@ -210,6 +211,14 @@ export default function Protocol() {
                     : <CircularProgress/>
                 }
             </Grid>
-        </Box>
+        </Box>) :
+    <Grid
+        container
+        spacing={2}
+        mt='25%'
+        sx={{justifyContent: 'center'}}
+    >
+        <CustomLinearProgress/>
+    </Grid>
     );
 }
