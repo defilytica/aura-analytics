@@ -3,7 +3,6 @@ import {useDeltaTimestamps, useDeltaTimestampsDailyUTCPastNDays} from "../../uti
 import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
 import {useCallback, useEffect, useState} from "react";
 import {auraClient} from "../../apollo/client";
-import {TVL} from "./useAuraPools";
 import {
     PoolWithdrawnTransactionsDocument,
     PoolWithdrawnTransactionsQuery
@@ -14,37 +13,34 @@ import {child, get, getDatabase, ref, set} from "firebase/database";
 type PoolTransactionEntry = {
     blockNumber: number;
     data: PoolWithdrawnTransactionsQuery | undefined;
-    date: number;
 };
 
 export type Volume = {
     volume: number;
-    date: Date;
-    blockNumber: number;
+    date: number;
 }
 
 const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_URL);
 
-const addToVolumeMap = (dateObj: Date, blockNumber: number, vol: number, volumeMap: {[key: string]: Volume}) => {
+const addToVolumeMap = (dateObj: Date, vol: number, volumeMap: {[key: string]: Volume}) => {
     const dateStr = dateObj.toISOString().split('T')[0];
 
     // If the date is not in the map, add it with the current volume and block number
     if (!volumeMap[dateStr]) {
-        volumeMap[dateStr] = {blockNumber, date: new Date(dateStr), volume:vol};
+        volumeMap[dateStr] = {date: Math.floor(dateObj.getTime() / 1000), volume:vol};
     } else {
         // If the date is already in the map, add the volume to the existing entry and update the block number
         volumeMap[dateStr].volume += vol;
-        volumeMap[dateStr].blockNumber = blockNumber;
     }
 };
 
-export function usePoolTransactions(timeRange:number): Volume[] {
+export function usePoolTransactions(): Volume[] {
     const [activeNetwork] = useActiveNetworkVersion();
-    const timestamps = useDeltaTimestampsDailyUTCPastNDays(timeRange);
+    const timestamps = useDeltaTimestampsDailyUTCPastNDays(180);
     const {blocks} = useBlocksFromTimestamps(timestamps);
     const [block24] = blocks ?? [];
 
-    const [poolTransactionEntries, setPoolTransactionEntries] = useState<PoolTransactionEntry[]>([]);
+    const [poolTransactionEntries, setPoolTransactionEntries] = useState<Volume[]>([]);
 
     const fetchPoolTransactions = useCallback(async () => {
         if (!block24 || !blocks) {
@@ -59,28 +55,12 @@ export function usePoolTransactions(timeRange:number): Volume[] {
                         first: 200
                     },
                 });
-                return { blockNumber: Number(blockNumber.number), data: response.data, date: Number(blockNumber.timestamp) * 1000 };
+                return { blockNumber: Number(blockNumber.number), data: response.data };
             })
         );
-        const db = getDatabase();
-        fetchedData.forEach(function(item) {
-            set(ref(db, 'poolTransactions/' + item.blockNumber), item)
-        });
-        setPoolTransactionEntries(fetchedData);
+        const processedData = processPoolTransactionsData(fetchedData);
+        setPoolTransactionEntries(processedData);
     }, [block24, blocks]);
-
-    const fetchPoolDataFromDB = useCallback(async () => {
-        const dbRef = ref(getDatabase());
-        get(child(dbRef, `poolTransactions/`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                const object = snapshot.val();
-                const array = Object.keys(object).map(key => object[key]);
-                setPoolTransactionEntries(array);
-            }
-        }).catch((error) => {
-            console.error(error);
-        });
-    }, []);
 
     const checkDBForLatestBlock = useCallback(async () => {
         if (!blocks) {
@@ -88,32 +68,54 @@ export function usePoolTransactions(timeRange:number): Volume[] {
         }
         try {
             const dbRef = ref(getDatabase());
-            const snapshot = await get(child(dbRef, `poolTransactions/` + blocks[0].number));
+            const yesterdayMidnight = new Date();
+            yesterdayMidnight.setHours(0,0,0,0);
+            yesterdayMidnight.setDate(yesterdayMidnight.getDate()-2);
+
+            // Convert yesterday's date to Unix timestamp
+            const yesterdayMidnightTimestamp = Math.floor(yesterdayMidnight.getTime() / 1000);
+
+            // Fetch all transactions
+            const snapshot = await get(child(dbRef, `poolTransactions`));
             if (snapshot.exists()) {
-                console.log("PoolTransactions are available in the Backend: Fetching Backend")
-                await fetchPoolDataFromDB();
+                let poolTransactions = snapshot.val();
+
+                // Get the latest transaction
+                let latestTransactionTimestamp = Math.max(
+                    ...(Object.values(poolTransactions) as Volume[]).map(t => t.date)
+                );
+
+                // Check if the latest transaction is older than yesterday midnight
+                if (latestTransactionTimestamp < yesterdayMidnightTimestamp) {
+                    console.log("PoolTransactions are not up to date: Fetching Subgraph")
+                    await fetchPoolTransactions();
+                } else {
+                    console.log("PoolTransactions are available in the Backend: Fetching Backend")
+                    const array = Object.keys(poolTransactions).map(key => poolTransactions[key]);
+                    setPoolTransactionEntries(array);
+                }
             } else {
-                console.log("PoolTransactions are not up to date: Fetching Subgraph")
+                console.log("PoolTransactions are not available: Fetching Subgraph")
                 await fetchPoolTransactions();
             }
         } catch (error) {
             console.error(error);
         }
-    }, [blocks, fetchPoolTransactions, fetchPoolDataFromDB]);
+    }, [blocks, fetchPoolTransactions]);
 
     useEffect(() => {
         if (block24 && blocks) {
             checkDBForLatestBlock();
         }
-    }, [timeRange, block24, checkDBForLatestBlock]);
+    }, [block24, checkDBForLatestBlock]);
 
     const processPoolTransactionsData = (poolTransactionEntries: PoolTransactionEntry[]) => {
         let volumeMap: { [key: string]: Volume } = {};
         let processedIDs: Set<string> = new Set();
         const now = new Date();
-        now.setDate(now.getDate() - timeRange);
+        now.setDate(now.getDate() - 180);
 
-        poolTransactionEntries.map(({ blockNumber, data, date }) => {
+        poolTransactionEntries.map(({ blockNumber, data }) => {
             if (data) {
                 processTransactions(data.poolRewardPaidTransactions, 'reward', blockNumber, processedIDs, volumeMap, now);
                 processTransactions(data.poolStakedTransactions, 'amount', blockNumber, processedIDs, volumeMap, now);
@@ -122,7 +124,14 @@ export function usePoolTransactions(timeRange:number): Volume[] {
         });
 
         // Convert the map values to an array
-        return Object.values(volumeMap);
+        let volumeArr =  Object.values(volumeMap);
+        volumeArr.map(({date,volume}) => {
+            console.log("upload");
+            const db = getDatabase();
+            set(ref(db, 'poolTransactions/' + date), { date: date, volume: volume })
+        })
+
+        return volumeArr;
     };
 
     const processTransactions = (
@@ -139,17 +148,15 @@ export function usePoolTransactions(timeRange:number): Volume[] {
                 const dateObj = new Date(transaction.timestamp * 1000);
                 if (dateObj >= now) {
                     const vol = transaction[valueKey] / 1e18;
-                    addToVolumeMap(dateObj, blockNumber, vol, volumeMap);
+                    addToVolumeMap(dateObj, vol, volumeMap);
                 }
             }
         }
     };
 
-    const processedData = processPoolTransactionsData(poolTransactionEntries);
-
-    if (!processedData) {
+    if (!poolTransactionEntries) {
         return [];
     }
 
-    return processedData;
+    return poolTransactionEntries;
 }

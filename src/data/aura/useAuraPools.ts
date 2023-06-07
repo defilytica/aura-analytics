@@ -64,18 +64,18 @@ type AuraPoolsDataEntry = {
 
 export type TVL = {
     tvl: number;
-    date: Date;
+    date: number;
     blockNumber: number;
 }
 
 //TODO prevent fetching of all days, instead refetch only necessary days
 //TODO add initial loading of all elements. The current implementation only checks if the newest day is present and if not fetches the past 30 days.
-export function useAuraPoolsHistorically(timeRange:number): TVL[] {
+export function useAuraPoolsHistorically(): TVL[] {
     const [activeNetwork] = useActiveNetworkVersion();
-    const timestamps  = useDeltaTimestampsDailyUTCPastNDays(timeRange);
+    const timestamps  = useDeltaTimestampsDailyUTCPastNDays(180);
     const {blocks} = useBlocksFromTimestamps(timestamps);
     const [block24] = blocks ?? [];
-    const [auraPoolsData, setAuraPoolsData] = useState<AuraPoolsDataEntry[]>([]);
+    const [auraPoolsData, setAuraPoolsData] = useState<TVL[]>([]);
 
     const fetchAuraPoolsData = useCallback(async () => {
         if (!blocks) {
@@ -93,11 +93,8 @@ export function useAuraPoolsHistorically(timeRange:number): TVL[] {
                 return { blockNumber: Number(blockNumber.number), data: response.data, date: Number(blockNumber.timestamp) * 1000 };
             })
         );
-        const db = getDatabase();
-        fetchedData.forEach(function(item) {
-            set(ref(db, 'poolData/' + item.blockNumber), item)
-        });
-        setAuraPoolsData(fetchedData);
+        const processedData = processAuraPoolsData(fetchedData);
+        setAuraPoolsData(processedData);
     }, [blocks]);
 
     const fetchPoolDataFromDB = useCallback(async () => {
@@ -136,12 +133,12 @@ export function useAuraPoolsHistorically(timeRange:number): TVL[] {
         if (block24 && blocks) {
             checkDBForLatestBlock();
         }
-    }, [timeRange, block24, checkDBForLatestBlock]);
+    }, [block24, checkDBForLatestBlock]);
 
     const processAuraPoolsData = (auraPoolsData: AuraPoolsDataEntry[]) => {
         let tvlArray : TVL[] = [];
         const now = new Date();
-        now.setDate(now.getDate() - timeRange);
+        now.setDate(now.getDate() - 180);
 
         auraPoolsData.map(({blockNumber, data, date}) => {
             if (data) {
@@ -151,18 +148,18 @@ export function useAuraPoolsHistorically(timeRange:number): TVL[] {
                 }
                 const dateObject = new Date(date);
                 if (dateObject >= now) {
-                    tvlArray.push({ blockNumber: blockNumber, date: dateObject, tvl: totalStaked });
+                    const db = getDatabase();
+                    set(ref(db, 'poolData/' + blockNumber), { blockNumber: blockNumber, date: date, tvl: totalStaked })
+                    tvlArray.push({ blockNumber: blockNumber, date: date, tvl: totalStaked });
                 }
             }
         });
         return tvlArray;
     };
 
-    const processedData = processAuraPoolsData(auraPoolsData);
-
-    if (!processedData) {
+    if (!auraPoolsData) {
         return [];
     }
 
-    return processedData;
+    return auraPoolsData;
 }
