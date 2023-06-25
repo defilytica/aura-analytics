@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useAuraGlobalStatsLazyQuery } from '../../apollo/generated/graphql-aura-codegen-generated';
 import { GlobalAuraStats } from './auraTypes';
-import { auraClient } from '../../apollo/client';
+import {auraClient, getAuraNetworkClient} from '../../apollo/client';
+import {EthereumNetworkInfo} from "../../constants/networks";
 
-export function useAuraGlobalStats(): GlobalAuraStats | null {
+export function useAuraGlobalStats(chainId = EthereumNetworkInfo.chainId): GlobalAuraStats | null {
     //TODO: Dynamically call Aura client depending on network!
-    const [getAuraStats, {data}] = useAuraGlobalStatsLazyQuery({client: auraClient});
+    const [getAuraStats, {data}] = useAuraGlobalStatsLazyQuery({client: getAuraNetworkClient(chainId)});
     ;
 
     useEffect(() => {

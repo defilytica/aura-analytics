@@ -34,7 +34,7 @@ export default function PoolsOverview() {
         name: 'Pools',
         link: 'pools'
     }
-    const navCrumbs: NavElement[] = new Array()
+    const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
     navCrumbs.push(poolNav);
     navCrumbs.push(tokenNav)
@@ -157,6 +157,7 @@ export default function PoolsOverview() {
                         item
                         ml={1}
                         mt={1}
+                        mb={1}
                         xs={11}
                     >
                         <Typography variant='h5'>Top 20 Aura Pools by TVL</Typography>

@@ -1,9 +1,14 @@
-import { useEffect } from 'react';
-import { useAuraBalMintTransactionsLazyQuery, useAuraBalTransactionsLazyQuery } from '../../apollo/generated/graphql-aura-codegen-generated';
-import { AuraBALTransactions, AuraTransactionInfo, AuraVaultDepositWithdrawTransactionInfo, AuraVaultHarvestTransactionInfo } from './auraTypes';
-import { auraClient } from '../../apollo/client';
+import {useEffect} from 'react';
+import {useAuraBalTransactionsLazyQuery} from '../../apollo/generated/graphql-aura-codegen-generated';
+import {
+    AuraBALTransactions,
+    AuraVaultDepositWithdrawTransactionInfo,
+    AuraVaultHarvestTransactionInfo
+} from './auraTypes';
+import {auraClient, getAuraNetworkClient} from '../../apollo/client';
+import {EthereumNetworkInfo} from "../../constants/networks";
 
-export function useAuraBalTransactions(): AuraBALTransactions {
+export function useAuraBalTransactions(chainId = EthereumNetworkInfo.chainId): AuraBALTransactions {
 
     const aurabalTransactions: AuraBALTransactions = {
         harvests: [],
@@ -11,7 +16,7 @@ export function useAuraBalTransactions(): AuraBALTransactions {
         withdrawals: [],
     };
     //TODO: Dynamically call Aura client depending on network!
-    const [getAuraTransactions, { data }] = useAuraBalTransactionsLazyQuery({ client: auraClient });
+    const [getAuraTransactions, {data}] = useAuraBalTransactionsLazyQuery({client: getAuraNetworkClient(chainId)});
 
     useEffect(() => {
         getAuraTransactions();

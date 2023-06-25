@@ -252,7 +252,7 @@ export function useBalancerTokenSingleData(address: string): TokenData | null {
         }
     }, [data]);
 
-    if (!data) {
+    if (!data || (data.tokens && data.tokens.length === 0)) {
         return null;
     }
 

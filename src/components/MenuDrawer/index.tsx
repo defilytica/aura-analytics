@@ -32,6 +32,7 @@ import { NavLink } from "react-router-dom";
 import { EthereumNetworkInfo, NetworkInfo } from '../../constants/networks';
 import { networkPrefix } from '../../utils/networkPrefix';
 import {Handshake} from "@mui/icons-material";
+import {AURA_TOKEN_ARBITRUM, AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 
 export type MenuDrawerProps = {
     drawerWidth: number,
@@ -60,6 +61,7 @@ const MenuDrawer = ({
     }));
 
     const route = activeNetwork === EthereumNetworkInfo ? '' : activeNetwork.route + '/';
+    const auraAddress = activeNetwork === EthereumNetworkInfo ? AURA_TOKEN_MAINNET : AURA_TOKEN_ARBITRUM;
 
     return (
         <Drawer
@@ -105,13 +107,13 @@ const MenuDrawer = ({
                 </ListItemButton>
                 */}
                 <Divider />
-                <ListItemButton key={'Aura'} component={NavLink} to={'/' + route + 'tokens/0xc0c293ce456ff0ed870add98a0828dd4d2903dbf'}>
+                <ListItemButton key={'Aura'} component={NavLink} to={'/' + route + 'tokens/' + auraAddress}>
                     <ListItemIcon>
                         <SelfImprovementIcon />
                     </ListItemIcon>
                     <ListItemText primary={'Aura'} />
                 </ListItemButton>
-                <ListItemButton key={'Aura Locks'} component={NavLink} to={'/' + route + 'locks'}>
+                <ListItemButton key={'Aura Locks'} component={NavLink} to={'/' + 'locks'}>
                     <ListItemIcon>
                         <LockClockIcon />
                     </ListItemIcon>

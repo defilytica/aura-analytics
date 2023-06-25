@@ -38,7 +38,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
     const theme = useTheme()
 
     const option = {
-        color: ['#b300ff','#582ca2', '#868e94'],
+        color: ['#b300ff', '#868e94'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {

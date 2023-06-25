@@ -1,4 +1,5 @@
-import { ApolloClient, InMemoryCache } from '@apollo/client';
+import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
+import {ArbitrumNetworkInfo, EthereumNetworkInfo} from "../constants/networks";
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
@@ -48,6 +49,36 @@ export const auraClient = new ApolloClient({
           errorPolicy: 'all',
       },
   },
+});
+
+//Aura client
+export const auraArbitrumClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://aura-arbitrum.stellate.sh',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
 });
 
 export const client = new ApolloClient({
@@ -210,3 +241,14 @@ export const arbitrumClient = new ApolloClient({
       },
     },
   })
+
+export function getAuraNetworkClient(networkId: string): ApolloClient<NormalizedCacheObject> {
+    switch (networkId) {
+        case EthereumNetworkInfo.chainId:
+            return auraClient;
+        case ArbitrumNetworkInfo.chainId:
+            return auraArbitrumClient;
+        default:
+            return auraClient;
+    }
+}
