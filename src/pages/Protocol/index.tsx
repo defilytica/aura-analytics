@@ -179,7 +179,7 @@ export default function Protocol() {
                 sx={{justifyContent: 'center'}}
             >
                 <Grid item mt={1} xs={11}>
-                    <Typography variant='h5'>Historical TVL</Typography>
+                    <Typography variant='h5'>Historical Staking TVL</Typography>
                 </Grid>
 
                 {sortedTvlData ?
@@ -195,7 +195,7 @@ export default function Protocol() {
                     : <CircularProgress/>
                 }
                 <Grid item mt={1} xs={11}>
-                    <Typography variant='h5'>Historical Volume</Typography>
+                    <Typography variant='h5'>Historical Staking Volume</Typography>
                 </Grid>
 
                 {sortedPoolTransactions ?

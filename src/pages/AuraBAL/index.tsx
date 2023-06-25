@@ -31,13 +31,22 @@ import {cumulativeTokenSupply} from "./helpers";
 import {AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
 import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
+import {ArbitrumNetworkInfo} from "../../constants/networks";
 
 
 export default function AuraBAL() {
 
     const theme = useTheme();
-    const auraBALAddress = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d'
-    const auraBALVaultAddress = "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6"
+    const [activeNetwork] = useActiveNetworkVersion();
+    //TODO: add to auraConstants
+    let auraBALAddress = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d';
+    let auraBALVaultAddress = "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6";
+    let startTimeStamp = 1655276813;
+    if (activeNetwork === ArbitrumNetworkInfo) {
+        auraBALAddress = '0x223738a747383d6F9f827d95964e4d8E8AC754cE'
+        auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
+        startTimeStamp = 1686811327
+    }
     const coinData = useCoinGeckoSimpleTokenPrices([auraBALAddress]);
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
@@ -54,13 +63,13 @@ export default function AuraBAL() {
 
     //Data fetching
     //const auraPools = useAuraPools();
-    const [activeNetwork] = useActiveNetworkVersion();
-    const auraBalMints = useAuraBalMints();
-    const auraBALTransactions = useAuraBalTransactions();
+    const auraBalMints = useAuraBalMints(startTimeStamp, activeNetwork.chainId);
+    const auraBALTransactions = useAuraBalTransactions(activeNetwork.chainId);
     const auraGlobalStats = useAuraGlobalStats();
     const auraBalPoolLeaderboard = useAuraPoolLeaderboardInfo("auraBal");
+    console.log("auraBAL LEADERBOARD", auraBalPoolLeaderboard)
     //auraBAL vault
-    const auraBalVaultLeaderboard = useAuraVaultLeaderboardInfo(auraBALVaultAddress)
+    const auraBalVaultLeaderboard = useAuraVaultLeaderboardInfo(auraBALVaultAddress, activeNetwork.chainId)
 
     //Coin data for global Balancer stats
     const tokenData = useBalancerTokenSingleData(auraBALAddress);
@@ -196,7 +205,7 @@ export default function AuraBAL() {
                                     variant='h4'
                                     color={theme.palette.mode === 'dark' ? 'white' : '#9C4ED6'}
                                 >
-                                    AuraBAL
+                                    AuraBAL on {activeNetwork.name}
                                 </Typography>
                             </div>
                         </div>

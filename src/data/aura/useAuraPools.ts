@@ -7,7 +7,7 @@ import {AuraPoolData} from './auraTypes';
 import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
 import {useDeltaTimestamps} from "../../utils/queries";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
-import {auraClient} from "../../apollo/client";
+import {auraClient, getAuraNetworkClient} from "../../apollo/client";
 import { getDatabase, ref, child, get} from "firebase/database";
 
 export function useAuraPools(): AuraPoolData[] {
@@ -16,7 +16,7 @@ export function useAuraPools(): AuraPoolData[] {
     const [t24, t48, tWeek] = useDeltaTimestamps();
     const {blocks} = useBlocksFromTimestamps([t24, t48, tWeek]);
     const [block24] = blocks ?? [];
-    const [getAuraPools, {data}] = useAuraPoolsLazyQuery({client: auraClient});
+    const [getAuraPools, {data}] = useAuraPoolsLazyQuery({client: getAuraNetworkClient(activeNetwork.chainId)});
 
     useEffect(() => {
         if (block24) {
