@@ -1,5 +1,5 @@
 import ReactEcharts from 'echarts-for-react';
-import { useTheme } from '@mui/material/styles';
+import {useTheme} from '@mui/material/styles';
 import {formatDollarAmount} from "../../../utils/numbers";
 import {PoolReward} from "../../../pages/VotingIncentives";
 
@@ -16,13 +16,9 @@ interface TooltipParam {
     dataIndex: number;
 }
 
-export default function SingleRoundBarChart({
-                                                   rewardData,
-                                                   xAxisData,
-                                                   height
-                                               }: BribesProps) {
-    const theme = useTheme()
+export default function SingleRoundBarChart({rewardData, xAxisData, height }: BribesProps) {
 
+    const theme = useTheme()
     const rewardDataArray = rewardData.map(obj => {
         return Object.entries(obj).reduce((total: number, [key, value]) => {
             if (key !== 'pool' && typeof value === 'number') {
@@ -49,6 +45,10 @@ export default function SingleRoundBarChart({
 
 
     const option = {
+        grid: {
+            left: "100px",
+            bottom:"120px"
+        },
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -71,7 +71,7 @@ export default function SingleRoundBarChart({
             }
         },
         legend: {
-            data:['Voting Incentives'],
+            data: ['Voting Incentives'],
             textStyle: {
                 color: '#FFFFFF',
             }
@@ -87,8 +87,14 @@ export default function SingleRoundBarChart({
                     interval: 0, // This makes all labels visible
                     rotate: 45, // This rotates labels by 45 degrees
                     textStyle: {
-                        fontSize: 8 // This reduces font size to 10px
-                    }
+                        fontSize: 11 // This reduces font size to 10px
+                    },
+                    formatter: function (value: string) {
+                        if (value.length > 20) {
+                            return value.slice(0, 17) + '...';
+                        }
+                        return value;
+                    },
                 },
             }
         ],
@@ -105,7 +111,7 @@ export default function SingleRoundBarChart({
                     }
                 },
                 axisLabel: {
-                    formatter: function (value:number) {
+                    formatter: function (value: number) {
                         return formatDollarAmount(value);
                     },
                     color: '#FFFFFF'
@@ -114,9 +120,9 @@ export default function SingleRoundBarChart({
         ],
         series: [
             {
-                name:'Voting Incentives',
-                type:'bar',
-                data:sortedRewardDataArray,
+                name: 'Voting Incentives',
+                type: 'bar',
+                data: sortedRewardDataArray,
                 yAxisIndex: 0,
                 itemStyle: {
                     color: theme.palette.secondary.main
@@ -128,7 +134,7 @@ export default function SingleRoundBarChart({
     return (
         <ReactEcharts
             option={option}
-            style={{ height: height, width: '100%' }}
+            style={{height: height, width: '100%'}}
             className="graph"
         />
     );

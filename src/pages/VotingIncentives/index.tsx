@@ -30,9 +30,7 @@ export default function VotingIncentives() {
     const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
 
-    const [activeNetwork] = useActiveNetworkVersion()
     const roundsData = GetBribingRounds();
-
     const roundsNumbers = roundsData ? roundsData.rounds : [];
     const [currentRound, setCurrentRound] = useState(roundsNumbers[-0] || 25); // Select the first round by default
 
@@ -163,22 +161,35 @@ export default function VotingIncentives() {
                         <Grid item xs={11} mt={1}>
                             <Typography variant="h6" mb={1}>Round by Round</Typography>
                         </Grid>
-                        <Select
-                            value={currentRound}
-                            onChange={handleChange}
-                            displayEmpty
-                        >
-                            {roundsNumbers.map((roundNumber, index) => (
-                                <MenuItem value={roundNumber} key={index}>{`Round ${roundNumber}`}</MenuItem>
-                            ))}
-                        </Select>
-                        {bribes&& bribeRewards && bribeRewardsRatio && xAxisDataRound ?
+                        {bribes && bribeRewards && bribeRewardsRatio && xAxisDataRound ?
                             <Grid item mt={1} xs={11}>
                                 <Card sx={{boxShadow: 3, marginBottom: 5}}>
+                                    <Box m={1}>
+                                        <Select
+                                            sx={{
+                                                backgroundColor: "background.paper",
+                                                boxShadow: 2,
+                                                borderRadius: 2,
+                                                borderColor: 0,
+                                            }}
+                                            color="primary"
+                                            value={currentRound}
+                                            onChange={handleChange}
+                                            displayEmpty
+                                        >
+                                            {roundsNumbers.map((roundNumber, index) => (
+                                                <MenuItem
+                                                    value={roundNumber}
+                                                    key={index}>{`Round ${roundNumber}`}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </Box>
+
                                     <SingleRoundBarChart
                                         rewardData={bribeRewards}
                                         xAxisData={xAxisDataRound}
-                                        height="400px"
+                                        height="500px"
                                     />
                                 </Card>
                             </Grid>
