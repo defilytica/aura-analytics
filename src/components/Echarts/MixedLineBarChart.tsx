@@ -2,7 +2,7 @@ import ReactEcharts from 'echarts-for-react';
 import { useTheme } from '@mui/material/styles';
 import { CircularProgress } from '@mui/material';
 import { BalancerChartDataItem } from '../../data/balancer/balancerTypes';
-import { formatDollarAmount } from '../../utils/numbers';
+import {formatDollarAmount, formatNumber} from '../../utils/numbers';
 import { pink, blue } from '@mui/material/colors';
 
 export interface GenericBarChartProps {
@@ -10,10 +10,11 @@ export interface GenericBarChartProps {
     barChartName: string,
     lineChartData: BalancerChartDataItem[],
     lineChartName: string,
+    isNumber?: boolean
     rotateAxis?: boolean
 }
 
-export default function MixedLineBarChart({ barChartData, barChartName, lineChartData, lineChartName, rotateAxis = false}: GenericBarChartProps) {
+export default function MixedLineBarChart({ barChartData, barChartName, lineChartData, lineChartName, isNumber = false, rotateAxis = false}: GenericBarChartProps) {
 
     const theme = useTheme();
     let xData = barChartData.map(el => el.time);
@@ -55,7 +56,7 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
                 name: barChartName,
                 axisLabel: {
                     formatter: function (d: number) {
-                        return formatDollarAmount(d);
+                        return isNumber? formatNumber(d) : formatDollarAmount(d);
                     }
                 }
             },
@@ -68,7 +69,7 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
                 name: lineChartName,
                 axisLabel: {
                     formatter: function (d: number) {
-                        return formatDollarAmount(d);
+                        return isNumber? formatNumber(d) : formatDollarAmount(d);
                     }
                 }
             }
@@ -91,6 +92,7 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
                     }
                 },
             },
+
             {
                 emphasis: {
                     itemStyle: {
@@ -100,9 +102,6 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
                 yAxisIndex: 1,
                 data: yDataLine,
                 type: 'line',
-                itemStyle: {
-                    color: theme.palette.primary.main
-                },
                 tooltip: {
                     valueFormatter: function (value: number) {
                         return formatDollarAmount(value)

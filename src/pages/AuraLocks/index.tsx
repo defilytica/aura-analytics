@@ -20,7 +20,9 @@ import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import KeyOffIcon from '@mui/icons-material/KeyOff';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
-import isDev from "../../constants";
+import MixedLineBarChart from "../../components/Echarts/MixedLineBarChart";
+import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
+import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -30,8 +32,6 @@ export default function AuraLocks() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
-    const ensDict: { [key: string]: string | null } = {};
-    const [ensMap, setEnsMap] = React.useState(ensDict);
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []
 
@@ -43,6 +43,13 @@ export default function AuraLocks() {
     const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
 
+    const getWeekStart = (date: Date) => {
+        const weekStart = new Date(date);
+        weekStart.setUTCDate(date.getUTCDate() - date.getUTCDay());
+        weekStart.setUTCHours(0, 0, 0, 0);
+        return weekStart;
+    };
+
     if (lockers && lockers.length > 0) {
         const weeklyUnlockAmounts: { [key: string]: number } = {};
         const today = new Date();
@@ -51,12 +58,7 @@ export default function AuraLocks() {
 
         const pastUnlockAmounts: { [key: string]: { unlock: number; withdraw: number; relocked: number } } = {};
 
-        const getWeekStart = (date: Date) => {
-            const weekStart = new Date(date);
-            weekStart.setUTCDate(date.getUTCDate() - date.getUTCDay());
-            weekStart.setUTCHours(0, 0, 0, 0);
-            return weekStart;
-        };
+
 
         lockers.forEach(account => {
             account.userLocks.forEach(lock => {
@@ -152,6 +154,44 @@ export default function AuraLocks() {
         name: time,
     }))
 
+// Generate the dailyUnlocks array
+    const dailyUnlocks: BalancerChartDataItem[] = [];
+    lockers.forEach((locker) => {
+        locker.withdrawnTransactions.forEach((transaction) => {
+            const transactionDate = new Date(transaction.timestamp * 1000); // Convert to Unix timestamp format
+            transactionDate.setHours(0, 0, 0, 0); // Set time to 00:00:00:00
+
+            const existingUnlock = dailyUnlocks.find(
+                (item) => item.time === transactionDate.toLocaleDateString()
+            );
+
+            if (existingUnlock) {
+                existingUnlock.value += parseFloat(ethers.utils.formatEther(transaction.amount.toString()));
+            } else {
+                dailyUnlocks.push({
+                    time: transactionDate.toLocaleDateString(),
+                    value: parseFloat(ethers.utils.formatEther(transaction.amount.toString())),
+                });
+            }
+        });
+    });
+
+    dailyUnlocks.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+
+// Generate the cumulativeUnlocks array
+    const cumulativeUnlocks: BalancerChartDataItem[] = [];
+    let cumulativeSum = 0;
+
+    dailyUnlocks.forEach((item) => {
+        cumulativeSum += item.value;
+        cumulativeUnlocks.push({
+            time: item.time,
+            value: cumulativeSum,
+        });
+    });
+
+    console.log("dailyUnlocks", dailyUnlocks)
+
 
     return (
         totalLockedAmount && filteredChartData.length > 1 ? (
@@ -222,6 +262,18 @@ export default function AuraLocks() {
                     </Card>
                 </Grid>
                 */}
+                        <Grid item xs={11}>
+                            <Box mb={1}>
+                                <Typography variant="h6">Cumulative Daily Unlocks</Typography>
+                            </Box>
+                            <Card sx={{boxShadow: 3}}>
+                                <AuraDailyUnlocksChart
+                                    dollarPerVlAssetData={cumulativeUnlocks.map(el => el.value)}
+                                    totalAmountDollarsData={dailyUnlocks.map(el => el.value)}
+                                    xAxisData={dailyUnlocks.map(el => el.time)}
+                                    height="400px" />
+                            </Card>
+                        </Grid>
                         <Grid item xs={11}>
                             <Box mb={1}>
                                 <Typography variant="h6">Weekly Aura Unlocks</Typography>
