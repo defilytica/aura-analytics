@@ -24,6 +24,8 @@ import { AuraLeaderboardInfo } from "../../../data/aura/auraTypes";
 import { deepPurple } from '@mui/material/colors';
 import { generateIdenticon } from '../../../utils/generateIdenticon';
 import {useContractRead, useEnsName} from "wagmi";
+import {ethers} from "ethers";
+import isDev from "../../../constants";
 
 
 interface Data {
@@ -180,6 +182,34 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [activeNetwork] = useActiveNetworkVersion();
+    const ensDict: { [key: string]: string | null } = {};
+    const [localEnsMap, setLocalEnsMap] = React.useState(ensDict);
+
+    React.useEffect(() => {
+        if (leaderboardInfo && leaderboardInfo.leaderboard.length > 0) {
+            const provider = new ethers.providers.JsonRpcProvider(isDev() ? 'https://eth.llamarpc.com' : process.env.REACT_APP_ALCHEMY_URL);
+
+            const updateENSMap = async () => {
+                const ensLocalMap = { ...localEnsMap };
+
+                for (let x = page * rowsPerPage; x <= page * rowsPerPage + rowsPerPage - 1; x++) {
+                    let account = leaderboardInfo.leaderboard[x];
+                    if (account && localEnsMap[account.accountId] === undefined) {
+                        const response = await provider.lookupAddress(account.accountId);
+                        ensLocalMap[account.accountId] = response;
+                    }
+                }
+
+                setLocalEnsMap(ensLocalMap);
+            };
+
+            updateENSMap();
+        }
+    }, [leaderboardInfo.leaderboard.length, page]);
+
+    console.log(localEnsMap);
+
+
 
     if (!leaderboardInfo) {
         return <CircularProgress />;
@@ -277,7 +307,8 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
                                                     src={generateIdenticon(row.accountId)} 
                                                 />
                                                 </Box>
-                                                <Link href={getEtherscanLink(row.accountId, 'address', activeNetwork)} target='_blank'>{row.accountId}</Link>
+                                                    <Link href={getEtherscanLink(row.accountId, 'address', activeNetwork)}
+                                                          target='_blank'>     {localEnsMap[row.accountId] ? localEnsMap[row.accountId] : row.accountId}</Link>
                                                 </Box>
                                             </TableCell>
                                             <TableCell

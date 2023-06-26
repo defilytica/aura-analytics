@@ -100,7 +100,7 @@ export default function GenericAreaChart({chartData, dataTitle, format = '$', ba
     };
 
     return(
-        chartData.length > 2 ?
+        chartData.length > 1 ?
             <ReactEcharts
                 option={option}
                 style={{ height: height, width: '100%' }}

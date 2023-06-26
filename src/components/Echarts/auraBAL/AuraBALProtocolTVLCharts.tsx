@@ -3,7 +3,7 @@ import { graphic } from 'echarts'
 import { Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles'
 import CustomLinearProgress from '../../Progress/CustomLinearProgress';
-import { formatDollarAmount } from '../../../utils/numbers';
+import {formatAmount, formatDollarAmount} from '../../../utils/numbers';
 
 export interface Normal {
     color: string;
@@ -76,7 +76,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
                 type: 'value',
                 axisLabel: {
                     formatter: function (d: number) {
-                        return formatDollarAmount(d);
+                        return formatAmount(d);
                     }
                 }
             }
@@ -109,7 +109,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return formatDollarAmount(value)
+                        return formatAmount(value)
                     }
                 },
                 data: mintedAuraBAL
@@ -173,7 +173,7 @@ export default function AuraBALProtocolTVLCharts({ mintedAuraBAL, stakedAuraBAL,
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return formatDollarAmount(value)
+                        return formatAmount(value)
                     }
                 },
                 data: compounderAuraBAL
