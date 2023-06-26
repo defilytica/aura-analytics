@@ -218,7 +218,7 @@ export default function LockerTable({
 
     React.useEffect(() => {
         if (lockerAccounts && lockerAccounts.length > 0) {
-            const provider = new ethers.providers.JsonRpcProvider(isDev() ? 'https://eth.llamarpc.com' : process.env.REACT_APP_ALCHEMY_URL);
+            const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
 
             const updateENSMap = async () => {
                 const ensLocalMap = { ...localEnsMap };
