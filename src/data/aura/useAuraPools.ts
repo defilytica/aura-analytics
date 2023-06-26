@@ -70,7 +70,8 @@ export function useAuraPoolsHistorically(): TVL[] {
 
     const fetchPoolDataFromDB = useCallback(async () => {
         const dbRef = ref(getDatabase());
-        get(child(dbRef, `poolData/`)).then((snapshot) => {
+        console.log(activeNetwork)
+        get(child(dbRef, `poolData/` + activeNetwork.debankId + '/')).then((snapshot) => {
             if (snapshot.exists()) {
                 const object = snapshot.val();
                 const array = Object.keys(object).map(key => object[key]);
