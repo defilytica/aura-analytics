@@ -237,6 +237,7 @@ enum AmpUpdate_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -980,6 +981,7 @@ type Balancer {
     skip: Int = 0
     where: Pool_filter
   ): [Pool!]
+  protocolFeesCollector: Bytes
   totalLiquidity: BigDecimal!
   totalSwapCount: BigInt!
   totalSwapFee: BigDecimal!
@@ -1094,6 +1096,7 @@ enum BalancerSnapshot_orderBy {
   vault
   vault__id
   vault__poolCount
+  vault__protocolFeesCollector
   vault__totalLiquidity
   vault__totalSwapCount
   vault__totalSwapFee
@@ -1124,6 +1127,16 @@ input Balancer_filter {
   poolCount_not: Int
   poolCount_not_in: [Int!]
   pools_: Pool_filter
+  protocolFeesCollector: Bytes
+  protocolFeesCollector_contains: Bytes
+  protocolFeesCollector_gt: Bytes
+  protocolFeesCollector_gte: Bytes
+  protocolFeesCollector_in: [Bytes!]
+  protocolFeesCollector_lt: Bytes
+  protocolFeesCollector_lte: Bytes
+  protocolFeesCollector_not: Bytes
+  protocolFeesCollector_not_contains: Bytes
+  protocolFeesCollector_not_in: [Bytes!]
   totalLiquidity: BigDecimal
   totalLiquidity_gt: BigDecimal
   totalLiquidity_gte: BigDecimal
@@ -1162,6 +1175,7 @@ enum Balancer_orderBy {
   id
   poolCount
   pools
+  protocolFeesCollector
   totalLiquidity
   totalSwapCount
   totalSwapFee
@@ -1880,6 +1894,7 @@ enum GradualWeightUpdate_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -1896,6 +1911,11 @@ enum GradualWeightUpdate_orderBy {
   startTimestamp
   startWeights
 }
+
+"""
+8 bytes signed integer
+"""
+scalar Int8
 
 enum InvestType {
   Exit
@@ -2068,6 +2088,7 @@ enum JoinExit_orderBy {
   pool__tauBetaX
   pool__tauBetaY
   pool__totalLiquidity
+  pool__totalProtocolFeePaidInBPT
   pool__totalShares
   pool__totalSwapFee
   pool__totalSwapVolume
@@ -2222,6 +2243,7 @@ enum LatestPrice_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -2954,6 +2976,7 @@ enum ManagementOperation_orderBy {
   poolTokenId__managedBalance
   poolTokenId__name
   poolTokenId__oldPriceRate
+  poolTokenId__paidProtocolFees
   poolTokenId__priceRate
   poolTokenId__symbol
   poolTokenId__weight
@@ -3629,6 +3652,7 @@ type Pool {
   ): [PoolToken!]
   tokensList: [Bytes!]!
   totalLiquidity: BigDecimal!
+  totalProtocolFeePaidInBPT: BigDecimal
   totalShares: BigDecimal!
 
   """
@@ -3999,6 +4023,7 @@ enum PoolContract_orderBy {
   pool__tauBetaX
   pool__tauBetaY
   pool__totalLiquidity
+  pool__totalProtocolFeePaidInBPT
   pool__totalShares
   pool__totalSwapFee
   pool__totalSwapVolume
@@ -4152,6 +4177,7 @@ enum PoolHistoricalLiquidity_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -4512,6 +4538,7 @@ enum PoolShare_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -4692,6 +4719,7 @@ enum PoolSnapshot_orderBy {
   pool__tauBetaX
   pool__tauBetaY
   pool__totalLiquidity
+  pool__totalProtocolFeePaidInBPT
   pool__totalShares
   pool__totalSwapFee
   pool__totalSwapVolume
@@ -4827,6 +4855,7 @@ type PoolToken {
   ): [ManagementOperation!]
   name: String!
   oldPriceRate: BigDecimal
+  paidProtocolFees: BigDecimal
   poolId: Pool
   priceRate: BigDecimal!
   symbol: String!
@@ -4952,6 +4981,14 @@ input PoolToken_filter {
   oldPriceRate_not: BigDecimal
   oldPriceRate_not_in: [BigDecimal!]
   or: [PoolToken_filter]
+  paidProtocolFees: BigDecimal
+  paidProtocolFees_gt: BigDecimal
+  paidProtocolFees_gte: BigDecimal
+  paidProtocolFees_in: [BigDecimal!]
+  paidProtocolFees_lt: BigDecimal
+  paidProtocolFees_lte: BigDecimal
+  paidProtocolFees_not: BigDecimal
+  paidProtocolFees_not_in: [BigDecimal!]
   poolId: String
   poolId_: Pool_filter
   poolId_contains: String
@@ -5045,6 +5082,7 @@ enum PoolToken_orderBy {
   managements
   name
   oldPriceRate
+  paidProtocolFees
   poolId
   poolId__address
   poolId__alpha
@@ -5091,6 +5129,7 @@ enum PoolToken_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -5863,6 +5902,14 @@ input Pool_filter {
   totalLiquidity_lte: BigDecimal
   totalLiquidity_not: BigDecimal
   totalLiquidity_not_in: [BigDecimal!]
+  totalProtocolFeePaidInBPT: BigDecimal
+  totalProtocolFeePaidInBPT_gt: BigDecimal
+  totalProtocolFeePaidInBPT_gte: BigDecimal
+  totalProtocolFeePaidInBPT_in: [BigDecimal!]
+  totalProtocolFeePaidInBPT_lt: BigDecimal
+  totalProtocolFeePaidInBPT_lte: BigDecimal
+  totalProtocolFeePaidInBPT_not: BigDecimal
+  totalProtocolFeePaidInBPT_not_in: [BigDecimal!]
   totalShares: BigDecimal
   totalShares_gt: BigDecimal
   totalShares_gte: BigDecimal
@@ -6070,6 +6117,7 @@ enum Pool_orderBy {
   tokens
   tokensList
   totalLiquidity
+  totalProtocolFeePaidInBPT
   totalShares
   totalStaked
   totalSupply
@@ -6084,6 +6132,7 @@ enum Pool_orderBy {
   vaultID
   vaultID__id
   vaultID__poolCount
+  vaultID__protocolFeesCollector
   vaultID__totalLiquidity
   vaultID__totalSwapCount
   vaultID__totalSwapFee
@@ -6259,6 +6308,7 @@ enum PriceRateProvider_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -6284,6 +6334,7 @@ enum PriceRateProvider_orderBy {
   token__managedBalance
   token__name
   token__oldPriceRate
+  token__paidProtocolFees
   token__priceRate
   token__symbol
   token__weight
@@ -10099,6 +10150,7 @@ enum SwapFeeUpdate_orderBy {
   pool__tauBetaX
   pool__tauBetaY
   pool__totalLiquidity
+  pool__totalProtocolFeePaidInBPT
   pool__totalShares
   pool__totalSwapFee
   pool__totalSwapVolume
@@ -10336,6 +10388,7 @@ enum Swap_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -10535,6 +10588,7 @@ enum TokenPrice_orderBy {
   poolId__tauBetaX
   poolId__tauBetaY
   poolId__totalLiquidity
+  poolId__totalProtocolFeePaidInBPT
   poolId__totalShares
   poolId__totalSwapFee
   poolId__totalSwapVolume
@@ -10924,6 +10978,7 @@ enum Token_orderBy {
   pool__tauBetaX
   pool__tauBetaY
   pool__totalLiquidity
+  pool__totalProtocolFeePaidInBPT
   pool__totalShares
   pool__totalSwapFee
   pool__totalSwapVolume
@@ -11174,6 +11229,7 @@ type UserInternalBalance {
   balance: BigDecimal!
   id: ID!
   token: Bytes!
+  tokenInfo: Token
   userAddress: User
 }
 
@@ -11201,6 +11257,27 @@ input UserInternalBalance_filter {
   id_not_in: [ID!]
   or: [UserInternalBalance_filter]
   token: Bytes
+  tokenInfo: String
+  tokenInfo_: Token_filter
+  tokenInfo_contains: String
+  tokenInfo_contains_nocase: String
+  tokenInfo_ends_with: String
+  tokenInfo_ends_with_nocase: String
+  tokenInfo_gt: String
+  tokenInfo_gte: String
+  tokenInfo_in: [String!]
+  tokenInfo_lt: String
+  tokenInfo_lte: String
+  tokenInfo_not: String
+  tokenInfo_not_contains: String
+  tokenInfo_not_contains_nocase: String
+  tokenInfo_not_ends_with: String
+  tokenInfo_not_ends_with_nocase: String
+  tokenInfo_not_in: [String!]
+  tokenInfo_not_starts_with: String
+  tokenInfo_not_starts_with_nocase: String
+  tokenInfo_starts_with: String
+  tokenInfo_starts_with_nocase: String
   token_contains: Bytes
   token_gt: Bytes
   token_gte: Bytes
@@ -11237,6 +11314,20 @@ enum UserInternalBalance_orderBy {
   balance
   id
   token
+  tokenInfo
+  tokenInfo__address
+  tokenInfo__decimals
+  tokenInfo__id
+  tokenInfo__latestFXPrice
+  tokenInfo__latestUSDPrice
+  tokenInfo__latestUSDPriceTimestamp
+  tokenInfo__name
+  tokenInfo__symbol
+  tokenInfo__totalBalanceNotional
+  tokenInfo__totalBalanceUSD
+  tokenInfo__totalSwapCount
+  tokenInfo__totalVolumeNotional
+  tokenInfo__totalVolumeUSD
   userAddress
   userAddress__id
 }

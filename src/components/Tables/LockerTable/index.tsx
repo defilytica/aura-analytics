@@ -21,6 +21,8 @@ import {getEtherscanLink} from "../../../utils";
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import {generateIdenticon} from "../../../utils/generateIdenticon";
 import {deepPurple} from "@mui/material/colors";
+import {ethers} from "ethers";
+import isDev from "../../../constants";
 
 interface Data {
     id: number;
@@ -198,7 +200,6 @@ export default function LockerTable({
                                         setPage,
                                         rowsPerPage,
                                         setRowsPerPage,
-                                        ensMap,
                                     }: {
     lockerAccounts: LockerAccount[],
     totalAmountLocked: number,
@@ -207,12 +208,38 @@ export default function LockerTable({
     setPage: any,
     rowsPerPage: number,
     setRowsPerPage: any,
-    ensMap: { [key: string]: string | null }
 }) {
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('locked');
     const [dense, setDense] = React.useState(false);
     const [activeNetwork] = useActiveNetworkVersion();
+    const ensDict: { [key: string]: string | null } = {};
+    const [localEnsMap, setLocalEnsMap] = React.useState(ensDict);
+
+    React.useEffect(() => {
+        if (lockerAccounts && lockerAccounts.length > 0) {
+            const provider = new ethers.providers.JsonRpcProvider(isDev() ? 'https://eth.llamarpc.com' : process.env.REACT_APP_ALCHEMY_URL);
+
+            const updateENSMap = async () => {
+                const ensLocalMap = { ...localEnsMap };
+
+                for (let x = page * rowsPerPage; x <= page * rowsPerPage + rowsPerPage - 1; x++) {
+                    let account = lockerAccounts[x];
+                    if (account && localEnsMap[account.id] === undefined) {
+                        const response = await provider.lookupAddress(account.id);
+                        ensLocalMap[account.id] = response;
+                    }
+                }
+
+                setLocalEnsMap(ensLocalMap);
+            };
+
+            updateENSMap();
+        }
+    }, [lockerAccounts.length, page]);
+
+    console.log(localEnsMap);
+
 
 
     const handleRequestSort = (
@@ -302,7 +329,7 @@ export default function LockerTable({
                                                         />
                                                     </Box>
                                                     <Link href={getEtherscanLink(row.address, 'address', activeNetwork)}
-                                                          target='_blank'>     {ensMap[row.address] ? ensMap[row.address] : row.address}</Link>
+                                                          target='_blank'>     {localEnsMap[row.address] ? localEnsMap[row.address] : row.address}</Link>
                                                 </Box>
                                             </TableCell>
                                             <TableCell

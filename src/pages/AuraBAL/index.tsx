@@ -31,7 +31,7 @@ import {cumulativeTokenSupply} from "./helpers";
 import {AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
 import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
-import {ArbitrumNetworkInfo} from "../../constants/networks";
+import {ArbitrumNetworkInfo, EthereumNetworkInfo} from "../../constants/networks";
 
 
 export default function AuraBAL() {
@@ -67,7 +67,6 @@ export default function AuraBAL() {
     const auraBALTransactions = useAuraBalTransactions(activeNetwork.chainId);
     const auraGlobalStats = useAuraGlobalStats();
     const auraBalPoolLeaderboard = useAuraPoolLeaderboardInfo("auraBal");
-    console.log("auraBAL LEADERBOARD", auraBalPoolLeaderboard)
     //auraBAL vault
     const auraBalVaultLeaderboard = useAuraVaultLeaderboardInfo(auraBALVaultAddress, activeNetwork.chainId)
 
@@ -117,6 +116,7 @@ export default function AuraBAL() {
             value: dailySums[date],
         };
     });
+    console.log("auraBalDailyDepositSeries", auraBalDailyDepositSeries)
 
     //Daily auraBAL withdrawal chart
     const dailyWithdrawalSums: { [date: string]: number } = auraBALTransactions.withdrawals.reduce((acc, item) => {
@@ -131,11 +131,12 @@ export default function AuraBAL() {
         };
     });
 
-    const auraNetCompounderDeposits: BalancerChartDataItem[] = Object.keys(dailyWithdrawalSums).map((date) => {
+    const auraNetCompounderDeposits: BalancerChartDataItem[] = Object.keys(dailyDepositSums).map((date) => {
+        const dailyDepositSum = dailyDepositSums[date] || 0;
         const dailyWithdrawalSum = dailyWithdrawalSums[date] || 0;
         return {
             time: date,
-            value: dailySums[date] - dailyWithdrawalSum,
+            value: dailyDepositSum - dailyWithdrawalSum,
         };
     });
 
@@ -364,7 +365,7 @@ export default function AuraBAL() {
                     <Box p={1} display="flex" alignItems='center'>
 
                     </Box>
-                    <AuraPoolLeaderboardTable leaderboardInfo={auraBalPoolLeaderboard}/>
+                    <AuraPoolLeaderboardTable leaderboardInfo={activeNetwork === EthereumNetworkInfo ? auraBalPoolLeaderboard : auraBalVaultLeaderboard}/>
 
                 </Grid>
             </Grid>
@@ -423,7 +424,7 @@ export default function AuraBAL() {
                                 : <CircularProgress/>}
                         </Box>
                         <Box m={1}>
-                            {auraBALCompounderRatio > 0 ?
+                            {auraBALCompounderRatio > 0 && activeNetwork === EthereumNetworkInfo ?
                                 <MetricsCard
                                     mainMetric={auraBALCompounderRatio}
                                     mainMetricInUSD={false}
@@ -432,7 +433,7 @@ export default function AuraBAL() {
                                     mainMetricChange={0}
                                     MetricIcon={PieChartIcon}
                                 />
-                                : <CircularProgress/>}
+                                : null}
                         </Box>
 
                     </Grid>

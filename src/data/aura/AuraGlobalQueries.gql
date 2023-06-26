@@ -48,7 +48,7 @@ query PoolLeaderboard($poolId: ID!) {
   leaderboard: pool(id: $poolId) {
     accounts(
       first: 1000
-      where: {staked_gt: 1000000000000000000}
+      where: {staked_gt: 1000}
       orderBy: staked
       orderDirection: desc
     ) {
@@ -85,7 +85,7 @@ query VaultLeaderboard($vaultId: ID!) {
   leaderboard: vault(id: $vaultId) {
     accounts(
       first: 1000
-      where: {shares_gt: 1000000000000000000}
+      where: {shares_gt: 1000}
       orderBy: shares
       orderDirection: desc
     ) {

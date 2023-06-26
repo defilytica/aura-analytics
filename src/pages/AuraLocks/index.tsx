@@ -20,6 +20,7 @@ import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import KeyOffIcon from '@mui/icons-material/KeyOff';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
+import isDev from "../../constants";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -131,26 +132,6 @@ export default function AuraLocks() {
         filteredChartData = chartData.filter(item => item.withdraw > 0 || item.relocked > 0);
         filteredChartData = filteredChartData.sort((a, b) => +new Date(a.date) - +new Date(b.date));
     }
-
-
-    React.useEffect(() => {
-        if (lockers && lockers.length > 0) {
-            const enslocalMap = {...ensMap};
-
-            for (let x = page * rowsPerPage; x <= page * rowsPerPage + rowsPerPage - 1; x++) {
-                let account = lockers[x]
-                const provider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_ALCHEMY_URL);
-                if (ensMap[account.id] === undefined) {
-                    provider.lookupAddress(account.id).then(response => {
-                        enslocalMap[account.id] = response;
-                    })
-                }
-            }
-            setEnsMap(enslocalMap);
-        }
-    }, [page]);
-
-    console.log(ensMap)
 
 
     let totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
@@ -300,7 +281,7 @@ export default function AuraLocks() {
                                          setPage={setPage}
                                          rowsPerPage={rowsPerPage}
                                          setRowsPerPage={setRowsPerPage}
-                                         ensMap={ensMap}/>
+                                         />
                         </Grid>
                     </Grid>
                 </Box>) :
