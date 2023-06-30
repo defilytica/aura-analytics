@@ -162,27 +162,30 @@ export default function AuraLocks() {
             transactionDate.setHours(0, 0, 0, 0); // Set time to 00:00:00:00
 
             const existingUnlock = dailyUnlocks.find(
-                (item) => item.time === transactionDate.toLocaleDateString()
+                (item) => item.time === transactionDate.toISOString()
             );
 
             if (existingUnlock) {
                 existingUnlock.value += parseFloat(ethers.utils.formatEther(transaction.amount.toString()));
             } else {
                 dailyUnlocks.push({
-                    time: transactionDate.toLocaleDateString(),
+                    time: transactionDate.toISOString(),
                     value: parseFloat(ethers.utils.formatEther(transaction.amount.toString())),
                 });
             }
         });
     });
 
-    dailyUnlocks.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+   const sortedUnlocks = dailyUnlocks.sort((a, b) => +new Date(a.time) - +new Date(b.time));
+   sortedUnlocks.forEach((el) =>{
+       el.time = new Date(el.time).toLocaleDateString()
+   })
 
 // Generate the cumulativeUnlocks array
     const cumulativeUnlocks: BalancerChartDataItem[] = [];
     let cumulativeSum = 0;
 
-    dailyUnlocks.forEach((item) => {
+    sortedUnlocks.forEach((item) => {
         cumulativeSum += item.value;
         cumulativeUnlocks.push({
             time: item.time,
@@ -190,7 +193,7 @@ export default function AuraLocks() {
         });
     });
 
-    console.log("dailyUnlocks", dailyUnlocks)
+    console.log("dailyUnlocks", sortedUnlocks)
 
 
     return (
@@ -269,8 +272,8 @@ export default function AuraLocks() {
                             <Card sx={{boxShadow: 3}}>
                                 <AuraDailyUnlocksChart
                                     dollarPerVlAssetData={cumulativeUnlocks.map(el => el.value)}
-                                    totalAmountDollarsData={dailyUnlocks.map(el => el.value)}
-                                    xAxisData={dailyUnlocks.map(el => el.time)}
+                                    totalAmountDollarsData={sortedUnlocks.map(el => el.value)}
+                                    xAxisData={sortedUnlocks.map(el => el.time)}
                                     height="400px" />
                             </Card>
                         </Grid>
