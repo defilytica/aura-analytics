@@ -1,19 +1,42 @@
 
 import { FormControl, Select, MenuItem, Avatar, Divider, SelectChangeEvent } from "@mui/material"
 import { Box } from "@mui/system"
-import { ArbitrumNetworkInfo, EthereumNetworkInfo, GnosisNetworkInfo, PolygonNetworkInfo } from "../../constants/networks"
+import {
+    ArbitrumNetworkInfo,
+    EthereumNetworkInfo,
+    GnosisNetworkInfo, NetworkInfo,
+    PolygonNetworkInfo,
+    SupportedNetwork
+} from "../../constants/networks"
 import { useActiveNetworkVersion } from "../../state/application/hooks"
 import ArbitrumLogo from '../../assets/svg/arbitrum.svg'
 import EtherLogo from '../../assets/svg/ethereum.svg'
 import PolygonLogo from '../../assets/svg/polygon.svg'
 import GnosisLogo from '../../assets/svg/gnosis.svg'
-import { useNavigate } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import { useSwitchNetwork } from 'wagmi'
+
+const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
+    const pathParts = currentPath.split('/');
+    console.log("currentPath", currentPath)
+
+    let newPath;
+
+    if (network === EthereumNetworkInfo) {
+        newPath = `/${pathParts[pathParts.length - 1]}`;
+    } else {
+        newPath = `/${network.name.toLowerCase()}/${pathParts[pathParts.length - 1]}`;
+    }
+
+    return newPath;
+};
 
 export default function NetworkSelector() {
 
     const [activeNetwork, update] = useActiveNetworkVersion();
     const navigate = useNavigate();
+    const location = useLocation();
+    console.log("location", location)
     const { switchNetwork } = useSwitchNetwork()
 
     const handleNetworkChange = (evt: SelectChangeEvent) => {
@@ -21,12 +44,14 @@ export default function NetworkSelector() {
         switchNetwork?.(Number(chainId))
         if (chainId === EthereumNetworkInfo.chainId) {
             update(EthereumNetworkInfo)
-            navigate('/')
+            const newPath = updatePathForNetwork(EthereumNetworkInfo, location.pathname)
+            navigate(newPath)
         } else if (chainId === ArbitrumNetworkInfo.chainId) {
             update(ArbitrumNetworkInfo)
-            navigate('/arbitrum/chain');
+            const newPath = updatePathForNetwork(ArbitrumNetworkInfo, location.pathname)
+            navigate(newPath)
         }
-        
+
     };
 
     return (
