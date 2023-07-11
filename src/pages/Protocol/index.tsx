@@ -68,7 +68,7 @@ export default function Protocol() {
         if (auraPools && auraPools.length > 0 && poolTransactions && poolTransactions.length > 0 && coinData) {
             let tempSortedTvlData = auraPools.sort((a, b) => b.date - a.date).map(({tvl, date}) => {
                 return {
-                    value: tvl * coinData[auraAddress].usd,
+                    value: tvl,
                     time: new Date(date).toLocaleDateString('en-US') // Convert the Unix timestamp to an ISO string
                 };
             });
