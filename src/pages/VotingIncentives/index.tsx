@@ -1,5 +1,4 @@
-import {Typography, Grid, Box, Card, MenuItem, Select, CircularProgress} from "@mui/material";
-import {useActiveNetworkVersion} from "../../state/application/hooks";
+import {Box, Card, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
 
 import CustomLinearProgress from '../../components/Progress/CustomLinearProgress';
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
@@ -8,16 +7,85 @@ import {
     GetBribingStatsForRound,
     GetBribingStatsForRounds
 } from "../../data/llamaairforce/getBribingStatsForRound";
-import {useState} from "react";
+import * as React from "react";
+import {useEffect, useState} from "react";
 import {SelectChangeEvent} from "@mui/material/Select";
 import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
-import * as React from "react";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
 import {CurrencyExchange, Handshake} from "@mui/icons-material";
 import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
 import isDev from "../../constants";
+import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
+import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
+import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
+
+// Helper functions to parse data types to Llama model
+const calculateIncentives = (data: HiddenHandIncentives | null) => {
+    let totalValue = 0;
+    let totalVotes = 0;
+
+    if (data) {
+        data.data.forEach((item) => {
+            totalValue += item.totalValue;
+            totalVotes += item.voteCount;
+        });
+    }
+
+    const valuePerVote = totalVotes > 0 ? totalValue / totalVotes : 0;
+
+    return { totalValue, valuePerVote };
+};
+
+const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
+    const poolRewards: PoolReward[] = [];
+
+    if (data) {
+        data.data.forEach((item) => {
+            const { title, bribes } = item;
+
+            if (bribes.length > 0) {
+                const poolReward: PoolReward = { pool: title };
+
+                bribes.forEach((bribe) => {
+                    const { token, amount } = bribe;
+                    const tokenKey = `${token}`;
+
+                    if (!poolReward[tokenKey]) {
+                        poolReward[tokenKey] = amount;
+                    } else {
+                        const existingValue = poolReward[tokenKey];
+                        poolReward[tokenKey] = typeof existingValue === 'number' ? existingValue + amount : amount;
+                    }
+                });
+
+                poolRewards.push(poolReward);
+            }
+        });
+    }
+
+    return poolRewards;
+};
+
+interface IncentiveData {
+    dollarPerVlAssetData: number[];
+    totalAmountDollarsData: number[];
+    totalAmountDollarsSum: number;
+    xAxisData: string[];
+}
+
+interface Epoch {
+    dollarPerVlAsset: number;
+    totalAmountDollars: number;
+    end: string;
+}
+
+interface DashboardData {
+    epochs: Epoch[];
+}
+
+
 export type PoolReward = {
     pool: string;
     [token: string]: string | number; // this represents any number of token properties with their corresponding `amountDollars` value
@@ -30,6 +98,20 @@ export default function VotingIncentives() {
     const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
 
+
+    // New Hidden Hand API
+    //const hiddenHandData = useGetHiddenHandVotingIncentives('1687809600');
+    //console.log("hiddenHandData", hiddenHandData)
+
+    //const { totalValue, valuePerVote } = calculateIncentives(hiddenHandData ? hiddenHandData.incentives : null);
+    //const poolRewards = extractPoolRewards(hiddenHandData ? hiddenHandData.incentives : null);
+    const historicalData = useGetHiddenHandHistoricalIncentives();
+    console.log("historicalData", historicalData)
+
+
+
+
+    // LLAMA API
     const roundsData = GetBribingRounds();
     const roundsNumbers = roundsData ? roundsData.rounds : [];
     const [currentRound, setCurrentRound] = useState(roundsNumbers[-0] || 25); // Select the first round by default
@@ -38,6 +120,7 @@ export default function VotingIncentives() {
     console.log(allRoundsBribes);
     const bribes = GetBribingStatsForRound(currentRound);
     console.log(bribes);
+
 
     let dashboardData = allRoundsBribes?.dashboard;
 
@@ -89,9 +172,11 @@ export default function VotingIncentives() {
         }
 
         bribeRewardsRatio = calculateRatios(bribes);
-        console.log(bribeRewardsRatio);
-        console.log(bribeRewards);
+        console.log("bribeRewardsRatio", bribeRewardsRatio);
+        console.log("bribeRewards", bribeRewards);
     }
+
+
 
 
 
@@ -143,8 +228,8 @@ export default function VotingIncentives() {
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Grid item xs={11} mt={1}>
-                            <Typography variant="h6" mb={1}>Overview</Typography>
+                        <Grid item xs={11} >
+                            <Typography variant="h5" >Overview</Typography>
                         </Grid>
                         {dashboardData&&dollarPerVlAssetData&&totalAmountDollarsData&&xAxisData ?
                             <Grid item mt={1} xs={11}>
