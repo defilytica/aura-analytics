@@ -19,4 +19,5 @@ export interface Bribe {
     token: string
     amount: number
     chainId: number
+    value: number
 }

@@ -24,7 +24,7 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
     useEffect(() => {
         const ONE_DAY = 60 * 60 * 24;
         const BIWEEKLY = ONE_DAY * 14;
-        const startDate = 1685390400;
+        const startDate = 1687809600;
         const today = Math.floor(Date.now() / 1000);
 
         const timestamps: number[] = [];
@@ -35,13 +35,10 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
         const fetchAndCalculateData = async () => {
             const results = await Promise.all(
                 timestamps.map(async (timestamp: number) => {
-                    const requestURL = API_URL + '?deadline=' + timestamp.toString();
-                    console.log("requestUrl", requestURL)
+                    const requestURL = API_URL + '/' + timestamp.toString();
                     try {
                         const response = await axios.get(requestURL);
                         const hiddenHandData: HiddenHandIncentives = response.data;
-
-                        console.log(timestamp, hiddenHandData.data[120].totalValue);
 
                         let totalValue = 0;
                         let totalVotes = 0;
@@ -78,6 +75,7 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
                 totalAmountDollarsData: totalValueList,
                 totalAmountDollarsSum: totalAmountDollarsSum,
                 xAxisData: xAxisData,
+
             });
         };
 
