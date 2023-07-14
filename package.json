@@ -18,7 +18,7 @@
     "@graphql-codegen/typescript-document-nodes": "^4.0.0",
     "@graphql-codegen/typescript-operations": "^4.0.0",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
-    "@mui/icons-material": "^5.11.16",
+    "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.13.3",
     "@mui/x-date-pickers-pro": "^5.0.15",
     "@rainbow-me/rainbowkit": "^1.0.1",
