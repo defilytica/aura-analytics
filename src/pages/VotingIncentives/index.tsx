@@ -66,8 +66,8 @@ export default function VotingIncentives() {
 
 
     // New Hidden Hand API
-
-    const [currentRoundNew, setCurrentRoundNew] = useState<number>(1656378000); // Default timestamp
+    const timestamps = AURA_TIMESTAMPS;
+    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length-1]); // Default timestamp
     const [bribeRewardsNew, setBribeRewardsNew] = useState<PoolReward[]>([]);
     const [xAxisDataRoundNew, setXAxisDataRoundNew] = useState<string[]>([]);
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
@@ -107,7 +107,7 @@ export default function VotingIncentives() {
         setCurrentRoundNew(Number(event.target.value));
     };
 
-    const timestamps = AURA_TIMESTAMPS;
+
 
 
     //Historical data
