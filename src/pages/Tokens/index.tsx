@@ -80,7 +80,7 @@ export default function Tokens() {
                 spacing={3}
                 sx={{ justifyContent: 'center' }}
             >
-                <Grid item mt={2} xs={11}>
+                <Grid item mt={2} xs={11} sm={9}>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
                         <NavCrumbs crumbSet={navCrumbs} destination={activeNetwork.name} />
                     </Box>
@@ -88,15 +88,15 @@ export default function Tokens() {
                 {filteredPoolBarChartData.length ?
                     <Grid
                         item
-                        xs={11}
+                        xs={11} sm={9}
                     >
                         <Typography variant='h5'>Top 20 Tokens by TVL</Typography>
                     </Grid> : null}
                 {filteredPoolBarChartData.length > 1 ?
                     <Grid
                     container
-                    sx={{ 
-                        direction: { xs: 'column', sm: 'row' } 
+                    sx={{
+                        direction: { xs: 'column', sm: 'row' }
                     }}
                     justifyContent="center"
                     alignItems="left"
@@ -110,7 +110,7 @@ export default function Tokens() {
                             xs={10}
                             md={5}
                         >
-                                
+
                                     <Card
                                         sx={{ boxShadow: 3 }}
                                     >
@@ -121,7 +121,7 @@ export default function Tokens() {
                                             lineChartName={'Trading Fees 24h'}
                                             rotateAxis={true} />
                                     </Card>
-                                
+
 
                             </Grid> : null}
                         <Grid
@@ -138,11 +138,11 @@ export default function Tokens() {
 
                         </Grid>
                     </Grid> : null}
-                <Grid item xs={11} mt={1}>
+                <Grid item xs={11} sm={9} mt={1}>
                     <Typography variant="h5" mb={1}>Tokens Overview ({activeNetwork.name})</Typography>
                 </Grid>
                 {tokenDatas.length > 10 ?
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <TokenTable tokenDatas={tokenDatas} />
                     </Grid>
                     :

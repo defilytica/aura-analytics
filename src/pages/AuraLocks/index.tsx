@@ -204,16 +204,16 @@ export default function AuraLocks() {
                         spacing={2}
                         sx={{justifyContent: 'center'}}
                     >
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box display="flex" alignItems="center" justifyContent="space-between">
                                 <NavCrumbs crumbSet={navCrumbs} destination={'auraLocks'}/>
                             </Box>
 
                         </Grid>
-                        <Grid item xs={11} mt={1}>
+                        <Grid item xs={11} sm={9} mt={1}>
                             <Typography variant="h6" mb={1}>Global Aura Locking Stats</Typography>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
@@ -256,7 +256,7 @@ export default function AuraLocks() {
                         {/*
                 <Grid
                     item
-                    xs={11}
+                    xs={11} sm={9}
                 >
                     <Card
                         sx={{boxShadow: 3}}
@@ -265,7 +265,7 @@ export default function AuraLocks() {
                     </Card>
                 </Grid>
                 */}
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography variant="h6">Cumulative Daily Unlocks</Typography>
                             </Box>
@@ -277,7 +277,7 @@ export default function AuraLocks() {
                                     height="400px" />
                             </Card>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography variant="h6">Weekly Aura Unlocks</Typography>
                             </Box>
@@ -285,7 +285,7 @@ export default function AuraLocks() {
                                 <GenericBarChart data={unlockAmounts} customUnit={'vlAura'}/>
                             </Card>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography variant="h6">Weekly Aura Unlocks vs Re-Locks vs Withdrawals</Typography>
                             </Box>
@@ -293,7 +293,7 @@ export default function AuraLocks() {
                                 <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
                             </Card>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography variant="h6">Weekly Percentage Aura Unlocks vs Re-Locks vs
                                     Withdrawals</Typography>
@@ -302,11 +302,11 @@ export default function AuraLocks() {
                                 <PastUnlocksWithdrawalPercentageBarChart filteredChartData={filteredChartData}/>
                             </Card>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography variant="h6">Top Depositors</Typography>
                             </Box>
-                            <Grid item xs={11}>
+                            <Grid item xs={11} sm={9}>
                                 <Grid
                                     container
                                     columns={{xs: 4, sm: 8, md: 12}}

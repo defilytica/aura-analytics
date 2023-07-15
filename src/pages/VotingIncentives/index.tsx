@@ -26,13 +26,13 @@ const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => 
 
     if (data) {
         data.data.forEach((item) => {
-            const { title, bribes } = item;
+            const {title, bribes} = item;
 
             if (bribes.length > 0) {
-                const poolReward: PoolReward = { pool: title };
+                const poolReward: PoolReward = {pool: title};
 
                 bribes.forEach((bribe) => {
-                    const { symbol, value } = bribe;
+                    const {symbol, value} = bribe;
                     const tokenKey = `${symbol.toUpperCase()}`;
 
                     if (!poolReward[tokenKey]) {
@@ -67,7 +67,7 @@ export default function VotingIncentives() {
 
     // New Hidden Hand API
     const timestamps = AURA_TIMESTAMPS;
-    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length-1]); // Default timestamp
+    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 1]); // Default timestamp
     const [bribeRewardsNew, setBribeRewardsNew] = useState<PoolReward[]>([]);
     const [xAxisDataRoundNew, setXAxisDataRoundNew] = useState<string[]>([]);
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
@@ -108,8 +108,6 @@ export default function VotingIncentives() {
     };
 
 
-
-
     //Historical data
     const historicalData = useGetHiddenHandHistoricalIncentives();
 
@@ -141,8 +139,6 @@ export default function VotingIncentives() {
     }
 
 
-
-
     let xAxisDataRound;
     let bribeRewards;
     let bribeRewardsRatio;
@@ -155,7 +151,7 @@ export default function VotingIncentives() {
 
             // if the pool does not exist yet, create it
             if (!pool) {
-                pool = { pool: item.pool };
+                pool = {pool: item.pool};
                 acc.push(pool);
             }
 
@@ -184,7 +180,7 @@ export default function VotingIncentives() {
     }
 
     return (<>
-            {!roundsData ? (
+            {(!roundsData?.rounds && !historicalData && !hiddenHandData.incentives) ? (
                 <Grid
                     container
                     spacing={2}
@@ -200,12 +196,12 @@ export default function VotingIncentives() {
                         spacing={2}
                         sx={{justifyContent: 'center'}}
                     >
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box display="flex" alignItems="center" justifyContent="space-between">
                                 <NavCrumbs crumbSet={navCrumbs} destination={'Voting Incentives'}/>
                             </Box>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
@@ -213,7 +209,9 @@ export default function VotingIncentives() {
                             >
                                 <Box m={1}>
                                     {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={totalAmountDollarsSum} metricName={"All time incentives"} mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
+                                        <MetricsCard mainMetric={totalAmountDollarsSum}
+                                                     metricName={"All time incentives"} mainMetricInUSD={true}
+                                                     MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
                                 { /*<Box m={1}>
@@ -223,11 +221,11 @@ export default function VotingIncentives() {
                                 </Box> */}
                             </Grid>
                         </Grid>
-                        <Grid item xs={11} >
-                            <Typography variant="h5" >Overview</Typography>
+                        <Grid item xs={11} sm={9}>
+                            <Typography variant="h5">Overview</Typography>
                         </Grid>
-                        {dashboardData&&dollarPerVlAssetData&&totalAmountDollarsData&&xAxisData ?
-                            <Grid item mt={1} xs={11}>
+                        {dashboardData && dollarPerVlAssetData && totalAmountDollarsData && xAxisData ?
+                            <Grid item mt={1} xs={11} sm={9}>
                                 <Card sx={{boxShadow: 3}}>
                                     <DashboardOverviewChart
                                         dollarPerVlAssetData={dollarPerVlAssetData}
@@ -237,11 +235,11 @@ export default function VotingIncentives() {
                                     />
                                 </Card>
                             </Grid>
-                        : <CircularProgress/>}
-                        <Grid item xs={11} mt={1}>
+                            : <CircularProgress/>}
+                        <Grid item xs={11} sm={9} mt={1}>
                             <Typography variant="h5" mb={1}>Voting Epoch Metrics</Typography>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Box m={1}>
                                 <Select
                                     sx={{
@@ -264,7 +262,7 @@ export default function VotingIncentives() {
                                 </Select>
                             </Box>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
@@ -272,17 +270,24 @@ export default function VotingIncentives() {
                             >
                                 <Box m={1}>
                                     {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"} mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
+                                        <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"}
+                                                     mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={1}>
                                     {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={incentivePerVote} metricName={"Incentives per Vote"} mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
+                                        <MetricsCard mainMetric={incentivePerVote} metricName={"Incentives per Vote"}
+                                                     metricDecimals={4}
+                                                     mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={1}>
                                     {dashboardData ?
-                                        <MetricsCard mainMetric={1+(emissionPerVote - incentivePerVote) / emissionPerVote} metricName={"Emissions per $1"} mainMetricInUSD={true} MetricIcon={Handshake}/>
+                                        <MetricsCard
+                                            mainMetric={1 + (emissionPerVote - incentivePerVote) / emissionPerVote}
+                                            metricName={"Emissions per $1"} mainMetricInUSD={true}
+                                            metricDecimals={4}
+                                            MetricIcon={Handshake}/>
                                         : <CircularProgress/>}
                                 </Box>
                             </Grid>
@@ -290,7 +295,7 @@ export default function VotingIncentives() {
                         {hiddenHandData.incentives === null ? (
                             <CircularProgress/>
                         ) : (
-                            <Grid item mt={1} xs={11}>
+                            <Grid item mt={1} xs={11} sm={9}>
                                 <Card sx={{boxShadow: 3, marginBottom: 5}}>
 
                                     <SingleRoundBarChart

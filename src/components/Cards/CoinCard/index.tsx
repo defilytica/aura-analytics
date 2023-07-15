@@ -27,14 +27,14 @@ const CoinCard = ({
   tokenAddress }: CoinCardProps) => {
 
     let navigate = useNavigate();
-    
+
     const [activeNetwork] = useActiveNetworkVersion()
   return (
     <Card
     sx={{
       maxWidth: '275px',
-      minWidth: '250px',
-      minHeight: '130px',
+      minWidth: '200px',
+      minHeight: '110px',
       cursor: 'pointer',
       boxShadow: 3,
     }}
@@ -42,7 +42,7 @@ const CoinCard = ({
       <CardActionArea
       onClick={() => { navigate(`${getLink(activeNetwork, tokenAddress)}/`); }}
       >
-      <CardContent>
+      <CardContent sx={{p: '10px'}}>
         <Grid
           container
           spacing={1}
@@ -73,9 +73,9 @@ const CoinCard = ({
             alignItems: 'center'
           }}
         >
-          {tokenPriceChange > 0 ? 
-            <ArrowUpwardIcon fontSize="small" sx={{color: green[500]}} /> 
-            : 
+          {tokenPriceChange > 0 ?
+            <ArrowUpwardIcon fontSize="small" sx={{color: green[500]}} />
+            :
             <ArrowDownwardIcon fontSize="small" color="error" />}
           <Typography
             color={tokenPriceChange > 0 ? 'green' : 'error'}

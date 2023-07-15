@@ -19,14 +19,14 @@ const LockedAuraCard = ({totalLockedAmount, coinData}: LockedAuraCardProps) => {
         <Card
             sx={{
                 maxWidth: '275px',
-                minWidth: '250px',
+                minWidth: '200px',
                 maxHeight: '150px',
                 cursor: 'pointer',
                 boxShadow: 3,
             }}
         >
             <CardActionArea>
-                <CardContent>
+                <CardContent sx={{p: '10px'}}>
                     <Grid
                         container
                         spacing={1}
