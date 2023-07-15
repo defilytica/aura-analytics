@@ -59,14 +59,14 @@ export default function TokenPage() {
                     spacing={3}
                     sx={{ justifyContent: 'center' }}
                 >
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <NavCrumbs crumbSet={navCrumbs} destination={tokenData.symbol} />
                             <StyledExternalLink address={address} type={'address'} activeNetwork={activeNetwork} />
                         </Box>
 
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box display="flex" alignItems="center">
                             <Box mr={1}>
                                 <CurrencyLogo address={tokenData.address} size={'25px'} />
@@ -77,7 +77,7 @@ export default function TokenPage() {
                             <Typography >({tokenData.name})</Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Grid
                             container
                             columns={{ xs: 4, sm: 8, md: 12 }}
@@ -115,12 +115,12 @@ export default function TokenPage() {
                     </Grid>
                 </Grid>
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box mt={2}>
                             <Typography variant="h5">{tokenData.symbol} - Historical Data </Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box>
                             <Card >
                                 <TokenChart tvlData={tvlData} volumeData={volumeData} priceData={priceData} />
@@ -129,25 +129,25 @@ export default function TokenPage() {
                     </Grid>
                 </Grid>
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box mt={2}>
                             <Typography variant="h5">{tokenData.symbol} - Deployed Liquidity Pools </Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <PoolTable poolDatas={poolData} />
                     </Grid>
                 </Grid>
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box mt={2} mb={1}>
                             <Typography variant="h5">Historical Swaps </Typography>
                         </Box>
                     </Grid>
-                    <Grid item xs={11} >
+                    <Grid item xs={11} sm={9} >
                         <SwapsTable swaps={swaps} />
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box mt={2} mb={1}>
                             <Typography variant="h5">Liquidity Provisions </Typography>
                         </Box>

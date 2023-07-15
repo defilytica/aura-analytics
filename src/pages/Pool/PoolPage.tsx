@@ -115,7 +115,7 @@ export default function PoolPage() {
                     spacing={1}
                     sx={{ justifyContent: 'center' }}
                 >
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box
                             display="flex"
                             alignItems="center"
@@ -125,7 +125,7 @@ export default function PoolPage() {
                             <StyledExternalLink address={poolData.address} type={'address'} activeNetwork={activeNetwork} />
                         </Box>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box
                                 display="flex"
@@ -147,7 +147,7 @@ export default function PoolPage() {
                             </Box>
                         </Box>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Grid
                             container
                             columns={{ xs: 4, sm: 8, md: 12 }}
@@ -201,16 +201,16 @@ export default function PoolPage() {
                             </Box>
                         </Grid>
                     </Grid>
-                    <Grid mt={2} item xs={11}>
+                    <Grid mt={2} item xs={11} sm={9}>
                         <Typography variant="h5">Historical Performance </Typography>
                     </Grid>
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Card>
                             <PoolChart tvlData={tvlData} volumeData={volumeData} feesData={feesData} />
                         </Card>
                     </Grid>
 
-                    <Grid item mt={1} xs={11}>
+                    <Grid item mt={1} xs={11} sm={9}>
                         <Typography variant="h5">Pool & Token Metrics </Typography>
 
                     </Grid>
@@ -218,8 +218,8 @@ export default function PoolPage() {
                         <Grid
                             item
                             mt={1}
-                            xs={11}
-                            md={5.5}
+                            xs={11} sm={9}
+                            md={4.5}
                         >
                             <PoolTokenTable tokenDatas={poolData.tokens} poolType={poolData.poolType} />
                             {filteredTokenDatas.length === poolData.tokens.length ? <PoolTokenChart poolData={poolData} tokenDatas={filteredTokenDatas} /> :
@@ -232,8 +232,8 @@ export default function PoolPage() {
                         <Grid
                             item
                             mt={1}
-                            xs={11}
-                            md={5.5}
+                            xs={11} sm={9}
+                            md={4.5}
                         >
                             <PoolInfoTable poolData={poolData} />
                         </Grid>
@@ -242,20 +242,20 @@ export default function PoolPage() {
                         <Grid
                             item
                             mt={1}
-                            xs={11}
+                            xs={11} sm={9}
                         >
                             <Typography variant="h5">Historical Swaps </Typography>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <SwapsTable swaps={swaps} />
                         </Grid>
                     </Grid>
 
                     <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                        <Grid item mt={1} xs={11}>
+                        <Grid item mt={1} xs={11} sm={9}>
                             <Typography variant="h5">Liquidity Provisions </Typography>
                         </Grid>
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <JoinExitsTable joinExits={joinExits} />
                         </Grid>
                     </Grid>

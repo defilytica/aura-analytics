@@ -16,7 +16,7 @@ export default function Financials() {
                 spacing={2}
                 sx={{ justifyContent: 'center' }}
             >
-                <Grid item mt={1} xs={11} >
+                <Grid item mt={1} xs={11} sm={9} >
                 <Card sx={{
                     maxWidth: '250px',
                     minHeight: '100px'
@@ -37,7 +37,7 @@ export default function Financials() {
                 </Card>
                 </Grid>
             </Grid>
-            
+
         </Box>
     );
 }

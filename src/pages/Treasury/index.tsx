@@ -105,13 +105,13 @@ export default function Treasury() {
                     spacing={1}
                     sx={{ justifyContent: 'center' }}
                 >
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <NavCrumbs crumbSet={navCrumbs} destination={activeNetwork.name} />
                         </Box>
 
                     </Grid>
-                    <Grid mt={2} item xs={11}>
+                    <Grid mt={2} item xs={11} sm={9}>
                         <Box display="flex" alignItems="center">
                             <Box>
                                 <Typography variant={"h5"}>Treasury Metrics on {activeNetwork.name}</Typography>
@@ -120,7 +120,7 @@ export default function Treasury() {
                     </Grid>
 
                     {totalBalances && portfolio ?
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{ xs: 4, sm: 8, md: 12 }}
@@ -167,8 +167,8 @@ export default function Treasury() {
                             <Grid
                                 item
                                 mt={2}
-                                xs={11}
-                                md={5.5}
+                                xs={11} sm={4.5}
+                                md={4.5}
                             >
                                 <Box mb={1}>
                                     <Card
@@ -190,9 +190,9 @@ export default function Treasury() {
                             {tokenPieChartData && tokenPieChartData.length > 0 ?
                                 <Grid
                                     item
-                                    xs={11}
+                                    xs={11} sm={4.5}
                                     mt={2}
-                                    md={5.5}
+                                    md={4.5}
                                 >
                                     <Card sx={{ boxShadow: 3 }}>
                                         <Box p={1}>
@@ -212,7 +212,7 @@ export default function Treasury() {
                     <Grid
                         item
                         mt={1}
-                        xs={11}
+                        xs={11} sm={9}
                     >
                         <Box display="flex" justifyContent="space-between" alignItems="row">
                             <Box display="flex" alignItems='center'>
@@ -225,19 +225,19 @@ export default function Treasury() {
                     </Grid>
 
                     {totalBalances && totalBalances.length > 0 ?
-                        <Grid item xs={11}>
+                        <Grid item xs={11} sm={9}>
                             <FeeCollectorTokenTable tokenBalances={totalBalances} />
                             <Grid
                                 mt={2}
                                 item
-                                xs={11}
+                                xs={11} sm={9}
                             >
                                 <Typography variant="h6">Liquidity Provisions</Typography>
                             </Grid>
                         </Grid> : null}
                     <Grid
                         item
-                        xs={11}
+                        xs={11} sm={9}
                     >
                         <Card
                             sx={{ boxShadow: 3 }}

@@ -45,8 +45,8 @@ export default function PoolsOverview() {
     //Load Aura pools
     const auraPools = useAuraPools();
     //Filter aura pools / gauges exclusively
-    const filteredPoolDatas = poolData.filter((x) => 
-        !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1 
+    const filteredPoolDatas = poolData.filter((x) =>
+        !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1
         && auraPools.some(auraPool => auraPool.balancerPoolId === x.id));
 
     //Create bar chart data for pool distribution
@@ -111,14 +111,14 @@ export default function PoolsOverview() {
                 spacing={2}
                 sx={{ justifyContent: 'center' }}
             >
-                <Grid item xs={11} mb={2}>
+                <Grid item xs={11} sm={9} mb={2}>
                     <Box display="flex" alignItems="center" justifyContent="space-between">
                         <NavCrumbs crumbSet={navCrumbs} destination={activeNetwork.name} />
                     </Box>
 
                 </Grid>
                 {topTVLPool.address && topFeePool.address ?
-                    <Grid item xs={11}>
+                    <Grid item xs={11} sm={9}>
                         <Grid
                             container
                             columns={{ xs: 4, sm: 8, md: 12 }}
@@ -158,7 +158,7 @@ export default function PoolsOverview() {
                         ml={1}
                         mt={1}
                         mb={1}
-                        xs={11}
+                        xs={11} sm={9}
                     >
                         <Typography variant='h5'>Top 20 Aura Pools by TVL</Typography>
                     </Grid> : null}
@@ -177,8 +177,8 @@ export default function PoolsOverview() {
                         {filteredPoolBarChartData.length > 1 ?
                             <Grid
                                 item
-                                xs={10}
-                                md={5}
+                                xs={11}
+                                md={4.5}
                             >
                                 <Card
                                     sx={{ boxShadow: 3 }}
@@ -193,8 +193,8 @@ export default function PoolsOverview() {
                             </Grid> : null}
                         <Grid
                             item
-                            xs={10}
-                            md={5}
+                            xs={11}
+                            md={4.5}
                         >
                             <Card
                                 sx={{ boxShadow: 3 }}
@@ -206,7 +206,7 @@ export default function PoolsOverview() {
                     </Grid> : null}
                 <Grid
                     item
-                    xs={11}
+                    xs={11} sm={9}
                     mt={1}
                     mb={1}>
                     <Typography variant="h5" mb={1}>

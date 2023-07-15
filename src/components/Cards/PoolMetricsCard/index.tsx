@@ -29,11 +29,11 @@ export default function PoolMetricsCard({
         <Card
         sx={{
           maxWidth: '275px',
-          minWidth: '250px',
+          minWidth: '200px',
           boxShadow: 3,
         }}
         >
-          <CardContent>
+          <CardContent sx={{p: '10px'}}>
             <Grid
               container
               spacing={1}
@@ -64,9 +64,9 @@ export default function PoolMetricsCard({
                 alignItems: 'center'
               }}
             >
-              {mainMetricChange && mainMetricChange > 0 ? 
-                <ArrowUpwardIcon fontSize="small" sx={{color: green[500]}} /> 
-                : 
+              {mainMetricChange && mainMetricChange > 0 ?
+                <ArrowUpwardIcon fontSize="small" sx={{color: green[500]}} />
+                :
                 mainMetricChange ? <ArrowDownwardIcon fontSize="small" color="error" /> : null}
               {mainMetricChange ?
               <Typography

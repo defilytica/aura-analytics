@@ -110,10 +110,10 @@ export default function Protocol() {
                 spacing={2}
                 sx={{justifyContent: 'center'}}
             >
-                <Grid item xs={11} mt={1}>
+                <Grid item xs={11} sm={9} mt={1}>
                     <Typography variant="h5" mb={1}>Global Aura Stats</Typography>
                 </Grid>
-                <Grid item xs={11}>
+                <Grid item xs={11} sm={9}>
                     <Grid
                         container
                         columns={{xs: 4, sm: 8, md: 12}}
@@ -178,12 +178,12 @@ export default function Protocol() {
                 spacing={1}
                 sx={{justifyContent: 'center'}}
             >
-                <Grid item mt={1} xs={11}>
+                <Grid item mt={1} xs={11} sm={9}>
                     <Typography variant='h5'>Historical Staking TVL</Typography>
                 </Grid>
 
                 {sortedTvlData ?
-                    <Grid item mt={1} xs={11}>
+                    <Grid item mt={1} xs={11} sm={9}>
                         <Card sx={{boxShadow: 3}}>
                             <FinancialAreaChart
                                 chartData={displayPoolData}
@@ -194,12 +194,12 @@ export default function Protocol() {
                     </Grid>
                     : <CircularProgress/>
                 }
-                <Grid item mt={1} xs={11}>
+                <Grid item mt={1} xs={11} sm={9}>
                     <Typography variant='h5'>Historical Staking Volume</Typography>
                 </Grid>
 
                 {sortedPoolTransactions ?
-                    <Grid item mt={1} mb={2} xs={11}>
+                    <Grid item mt={1} mb={2} xs={11} sm={9}>
                         <Card sx={{boxShadow: 3}}>
                             <FinancialAreaChart
                                 chartData={displayTransactions}
