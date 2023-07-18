@@ -1,5 +1,5 @@
-// Assumed pattern in seconds (2 weeks ~ 1,210,000 seconds)
-export const PATTERN = 1210000;
+// Assumed pattern in seconds (2 weeks ~ 1'209'600 seconds)
+export const PATTERN = 1209600;
 
 // One week in seconds
 export const ONE_WEEK = 7 * 24 * 60 * 60;
@@ -33,6 +33,7 @@ let auraTimeStamps = [
     1685390400,
     1686600000,
     1687809600,
+    1689019200
 ];
 
 // get current time in seconds
