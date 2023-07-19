@@ -19,6 +19,10 @@ import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHid
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
 import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
+import { BalancerStakingGauges } from "../../data/balancer/balancerTypes";
+import { decorateGaugesWithIncentives } from "./helpers";
+import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
+import IncentivesTable from "../../components/Tables/IncentivesTable";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -74,6 +78,17 @@ export default function VotingIncentives() {
     const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
     const hiddenHandData = useGetHiddenHandVotingIncentives(String(currentRoundNew));
+    const gaugeData = useGetBalancerStakingGauges();
+
+    // Decorate gauge data with HH incentives for overview tables
+    let fullyDecoratedGauges: BalancerStakingGauges[] = [];
+
+    // TODO: improve logic, adjust hook?
+    if (hiddenHandData && hiddenHandData.incentives && hiddenHandData.incentives.data) {
+        fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
+    }
+
+    console.log("fullyDecoratedGauges", fullyDecoratedGauges)
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -102,6 +117,7 @@ export default function VotingIncentives() {
 
 
     }, [currentRoundNew, hiddenHandData.incentives]);
+
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
         setCurrentRoundNew(Number(event.target.value));
@@ -180,7 +196,15 @@ export default function VotingIncentives() {
     }
 
     return (<>
-            {(!roundsData?.rounds && !historicalData && !hiddenHandData.incentives) ? (
+            {(!roundsData?.rounds
+                && !historicalData
+                && !hiddenHandData.incentives
+                && bribeRewardsNew.length < 1
+                && !totalAmountDollarsSum
+                && ! dashboardData
+                && incentivePerVote === 0
+                && roundIncentives === 0
+            ) ? (
                 <Grid
                     container
                     spacing={2}
@@ -307,6 +331,13 @@ export default function VotingIncentives() {
                             </Grid>
                         )}
 
+                            <Grid item mt={1} xs={11} sm={9}>
+                                {fullyDecoratedGauges && fullyDecoratedGauges.length > 0 ?
+                                    <IncentivesTable
+                                        gaugeDatas={fullyDecoratedGauges}
+                                       />
+                                    : <CircularProgress/>}
+                            </Grid>
                     </Grid>
                 </Box>
             )}
