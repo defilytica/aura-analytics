@@ -4,15 +4,12 @@ import { Box } from "@mui/system"
 import {
     ArbitrumNetworkInfo,
     EthereumNetworkInfo,
-    GnosisNetworkInfo, NetworkInfo,
-    PolygonNetworkInfo,
-    SupportedNetwork
+    NetworkInfo, OptimismNetworkInfo,
 } from "../../constants/networks"
 import { useActiveNetworkVersion } from "../../state/application/hooks"
 import ArbitrumLogo from '../../assets/svg/arbitrum.svg'
 import EtherLogo from '../../assets/svg/ethereum.svg'
-import PolygonLogo from '../../assets/svg/polygon.svg'
-import GnosisLogo from '../../assets/svg/gnosis.svg'
+import OpLogo from '../../assets/svg/optimism.svg'
 import {useLocation, useNavigate} from "react-router-dom";
 import { useSwitchNetwork } from 'wagmi'
 
@@ -50,8 +47,10 @@ export default function NetworkSelector() {
             update(ArbitrumNetworkInfo)
             const newPath = updatePathForNetwork(ArbitrumNetworkInfo, location.pathname)
             navigate(newPath)
-        }
 
+        } else if (chainId === OptimismNetworkInfo.chainId) {
+        update(OptimismNetworkInfo)
+    }
     };
 
     return (
@@ -104,6 +103,22 @@ export default function NetworkSelector() {
                         </Box>
                         <Box>
                             Arbitrum
+                        </Box>
+                    </Box>
+                </MenuItem>
+                <MenuItem value={OptimismNetworkInfo.chainId} key="optimism">
+                    <Box display="flex" alignItems="center">
+                        <Box mr={0.5}>
+                            <Avatar
+                                sx={{
+                                    height: 20,
+                                    width: 20
+                                }}
+                                src={OpLogo}
+                            />
+                        </Box>
+                        <Box>
+                            Optimism
                         </Box>
                     </Box>
                 </MenuItem>

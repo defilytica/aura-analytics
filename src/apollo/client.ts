@@ -1,5 +1,5 @@
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
-import {ArbitrumNetworkInfo, EthereumNetworkInfo} from "../constants/networks";
+import {ArbitrumNetworkInfo, EthereumNetworkInfo, OptimismNetworkInfo} from "../constants/networks";
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
@@ -55,6 +55,35 @@ export const auraClient = new ApolloClient({
 export const auraArbitrumClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://aura-arbitrum.stellate.sh',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraOptimismClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -138,7 +167,7 @@ export const arbitrumClient = new ApolloClient({
       },
     },
   })
-  
+
   export const arbitrumBlockClient = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/arbitrum-one-blocks',
     cache: new InMemoryCache(),
@@ -182,7 +211,7 @@ export const arbitrumClient = new ApolloClient({
       },
     },
   })
-  
+
   export const polygonBlockClient = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/polygon-blocks',
     cache: new InMemoryCache(),
@@ -242,13 +271,73 @@ export const arbitrumClient = new ApolloClient({
     },
   })
 
+export const optimismClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/beethovenxfi/beethovenx-optimism',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+})
+
+export const optimismBlockClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/beethovenxfi/optimism-blocks',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
 export function getAuraNetworkClient(networkId: string): ApolloClient<NormalizedCacheObject> {
     switch (networkId) {
         case EthereumNetworkInfo.chainId:
             return auraClient;
         case ArbitrumNetworkInfo.chainId:
             return auraArbitrumClient;
+        case OptimismNetworkInfo.chainId:
+            return auraOptimismClient;
         default:
             return auraClient;
     }
 }
+
+export const tokenClient = new ApolloClient({
+    uri: 'https://backend-v3.beets-ftm-node.com/',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
