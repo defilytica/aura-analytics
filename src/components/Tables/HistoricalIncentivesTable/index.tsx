@@ -29,33 +29,25 @@ import {BalancerStakingGauges, SimplePoolData} from "../../../data/balancer/bala
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import GaugeComposition from "../../GaugeComposition";
 import ClearIcon from '@mui/icons-material/Clear';
+import { HiddenHandData } from '../../../data/hidden-hand/hiddenHandTypes';
 
 
 
 interface Data {
-    gaugeAddress: string;
-    network: string;
-    isKilled: boolean;
-    poolData: SimplePoolData,
+    title: string,
     totalVotes: number,
     votingIncentives: number,
     totalRewards: number,
 }
 
 function createData(
-    gaugeAddress: string,
-    network: string,
-    isKilled: boolean,
-    poolData: SimplePoolData,
+    title: string,
     totalVotes: number,
     votingIncentives: number,
     totalRewards: number,
 ): Data {
     return {
-        gaugeAddress,
-        network,
-        isKilled,
-        poolData,
+        title,
         totalVotes,
         votingIncentives,
         totalRewards,
@@ -109,18 +101,11 @@ interface HeadCell {
 
 const headCells: readonly HeadCell[] = [
     {
-        id: 'network',
+        id: 'title',
         numeric: false,
         disablePadding: false,
-        label: 'Network',
+        label: 'Gauge',
         isMobileVisible: true,
-    },
-    {
-        id: 'poolData',
-        numeric: false,
-        disablePadding: false,
-        label: 'Composition',
-        isMobileVisible: false,
     },
     {
         id: 'totalRewards',
@@ -193,8 +178,8 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
-export default function IncentivesTable({gaugeDatas}: {
-    gaugeDatas: BalancerStakingGauges[],
+export default function HistoricalIncentivesTable({gaugeDatas}: {
+    gaugeDatas: HiddenHandData[],
 }) {
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('totalRewards');
@@ -203,24 +188,16 @@ export default function IncentivesTable({gaugeDatas}: {
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
 
-    const seen = new Set();
 
-    const filteredPoolDatas = gaugeDatas.filter((x) => {
-        return !!x && !x.isKilled && !seen.has(x.address) && seen.add(x.pool.address);
-    });
+    const originalRows = gaugeDatas.map(el =>
+        createData(
+            el.title,
+            el.voteCount ? el.voteCount : 0,
+            el.valuePerVote ? el.valuePerVote : 0,
+            el.totalValue ? el.totalValue : 0,
 
-    const originalRows = filteredPoolDatas.map(el =>
-            createData(
-                el.address,
-                el.network,
-                el.isKilled,
-                el.pool,
-                el.voteCount ? el.voteCount : 0,
-                el.valuePerVote ? el.valuePerVote : 0,
-                el.totalRewards ? el.totalRewards : 0,
-
-            )
         )
+    )
         .sort((a, b) => b.totalRewards - a.totalRewards);
 
 
@@ -259,10 +236,8 @@ export default function IncentivesTable({gaugeDatas}: {
     const requestSearch = (searchedVal: string) => {
         const filteredRows = originalRows.filter((row) => {
             const lowerCaseSearchedVal = searchedVal.toLowerCase();
-            const hasPartialMatchInAddress = row.poolData.address.toLowerCase().includes(lowerCaseSearchedVal);
-            const hasPartialMatchInSymbol = row.poolData.symbol.toLowerCase().includes(lowerCaseSearchedVal);
-            const hasPartialMatchInTokens = row.poolData.tokens.some((token) => token.symbol.toLowerCase().includes(lowerCaseSearchedVal));
-            return hasPartialMatchInAddress || hasPartialMatchInSymbol || hasPartialMatchInTokens;
+            const hasPartialMatchinTitle = row.title.toLowerCase().includes(lowerCaseSearchedVal);
+            return hasPartialMatchinTitle
         });
         setRows(filteredRows);
         setSearched(searchedVal)
@@ -327,34 +302,11 @@ export default function IncentivesTable({gaugeDatas}: {
                                             hover
                                             role="number"
                                             tabIndex={-1}
-                                            key={row.gaugeAddress + Math.random() * 10}
+                                            key={row.title + Math.random() * 10}
                                             sx={{cursor: 'pointer'}}
                                         >
                                             <TableCell sx={{maxWidth: '10px'}}>
-                                                <Avatar
-                                                    sx={{
-                                                        height: 20,
-                                                        width: 20
-                                                    }}
-                                                    src={networkLogoMap[Number(row.network)]}
-                                                />
-                                            </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
-                                            >
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Box mr={1}>
-                                                        <PoolCurrencyLogo
-                                                            tokens={row.poolData.tokens.map(token => ({address: token.address ? token.address.toLowerCase() : ''}))}
-                                                            size={'25px'}/>
-                                                    </Box>
-                                                    <Box>
-                                                        <GaugeComposition poolData={row.poolData} />
-                                                    </Box>
-                                                </Box>
+                                                {row.title}
                                             </TableCell>
                                             <TableCell align="right">
                                                 {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0),  3)}
