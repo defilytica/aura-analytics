@@ -3,11 +3,12 @@ import ARBITRUM_LOGO_URL from '../assets/svg/arbitrum.svg'
 import ETHEREUM_LOGO_URL from '../assets/svg/ethereum.svg'
 import POLYGON_LOGO_URL from '../assets/svg/polygon.svg'
 import GNOSIS_LOGO_URL from '../assets/svg/gnosis.svg'
+import OPTIMISM_LOGO_URL from '../assets/svg/optimism.svg';
 
 import {
   ALCHEMY_KEY,
-  ALCHEMY_KEY_ARBITRUM, ALCHEMY_KEY_POLYGON, 
-  ALCHEMY_URL, ALCHEMY_URL_ARBITRUM, ALCHEMY_URL_POLYGON, 
+  ALCHEMY_KEY_ARBITRUM, ALCHEMY_KEY_POLYGON,
+  ALCHEMY_URL, ALCHEMY_URL_ARBITRUM, ALCHEMY_URL_POLYGON,
   BALANCER_PRIMARY_COLOR,
   BALANCER_SECONDARY_COLOR, PERSONAL_GRAPH_KEY
 } from '../data/balancer/constants';
@@ -17,6 +18,7 @@ export enum SupportedNetwork {
   ARBITRUM,
   POLYGON,
   GNOSIS,
+  OPTIMISM
 }
 
 export type NetworkInfo = {
@@ -132,9 +134,32 @@ export const GnosisNetworkInfo: NetworkInfo = {
   blurb: 'Beta',
 }
 
+export const OptimismNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.OPTIMISM,
+  chainId: '10',
+  coingeckoId: 'optimistic-ethereum',
+  debankId: 'op',
+  balAddress: '0xf24bcf4d1e507740041c9cfd2dddb29585adce1e',
+  decentralicedClientUri: '',
+  route: 'optimism',
+  name: 'OΞ (Optimism)',
+  startTimeStamp: 1654034400,
+  appUri: 'https://op.beets.fi',
+  clientUri: 'https://beethovenxfi-op-analytics.stellate.sh',
+  alchemyKey: '',
+  alchemyRPCUrl: '',
+  feeCollectorThreshold: 1000,
+  bgColor: '#F01B36',
+  primaryColor: '#F01B36',
+  secondaryColor: '#FB7876',
+  imageURL: OPTIMISM_LOGO_URL,
+  blurb: 'L2 Beta',
+};
+
 export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
   EthereumNetworkInfo,
   ArbitrumNetworkInfo,
   PolygonNetworkInfo,
   GnosisNetworkInfo,
+  OptimismNetworkInfo
 ]
