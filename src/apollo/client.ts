@@ -54,7 +54,7 @@ export const auraClient = new ApolloClient({
 //Aura client
 export const auraArbitrumClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
-    uri: 'https://aura-arbitrum.stellate.sh',
+    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-arbitrum',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -83,7 +83,7 @@ export const auraArbitrumClient = new ApolloClient({
 
 export const auraOptimismClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
-    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism/',
+    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -255,6 +255,50 @@ export const arbitrumClient = new ApolloClient({
       },
     },
   })
+
+export const polygonZKEVMClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
+    uri: 'https://balancer-polygon-zkevm-v2-analytics.stellate.sh',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
+export const polygonZKEVMBlockClient = new ApolloClient({
+    uri: 'https://api.studio.thegraph.com/query/48427/bleu-polygon-zkevm-blocks/version/latest',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
 
   export const gnosisBlockClient = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/x0swapsubgraph/xdai-blocks',
