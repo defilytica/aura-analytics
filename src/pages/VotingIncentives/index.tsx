@@ -23,6 +23,7 @@ import { BalancerStakingGauges } from "../../data/balancer/balancerTypes";
 import { decorateGaugesWithIncentives } from "./helpers";
 import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
+import HistoricalIncentivesTable from "../../components/Tables/HistoricalIncentivesTable";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -77,18 +78,12 @@ export default function VotingIncentives() {
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
     const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
+    const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
     const hiddenHandData = useGetHiddenHandVotingIncentives(String(currentRoundNew));
     const gaugeData = useGetBalancerStakingGauges();
 
-    // Decorate gauge data with HH incentives for overview tables
-    let fullyDecoratedGauges: BalancerStakingGauges[] = [];
+    console.log("hiddenHandData", hiddenHandData)
 
-    // TODO: improve logic, adjust hook?
-    if (hiddenHandData && hiddenHandData.incentives && hiddenHandData.incentives.data) {
-        fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
-    }
-
-    console.log("fullyDecoratedGauges", fullyDecoratedGauges)
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -113,10 +108,10 @@ export default function VotingIncentives() {
             setIncentivePerVote(incentiveEfficency)
             setEmissionPerVote(emissionEff)
             setRoundIncentives(totalValue)
+            const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
+            setDecoratedGagues(fullyDecoratedGauges)
         }
-
-
-    }, [currentRoundNew, hiddenHandData.incentives]);
+    }, [currentRoundNew, gaugeData, hiddenHandData.incentives]);
 
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
@@ -331,13 +326,17 @@ export default function VotingIncentives() {
                             </Grid>
                         )}
 
-                            <Grid item mt={1} xs={11} sm={9}>
-                                {fullyDecoratedGauges && fullyDecoratedGauges.length > 0 ?
-                                    <IncentivesTable
-                                        gaugeDatas={fullyDecoratedGauges}
-                                       />
-                                    : <CircularProgress/>}
-                            </Grid>
+                        <Grid item mt={1} xs={11} sm={9}>
+                            {currentRoundNew !== timestamps[timestamps.length - 1] && hiddenHandData.incentives !== null ? (
+                                <HistoricalIncentivesTable
+                                    key={currentRoundNew}
+                                    gaugeDatas={hiddenHandData.incentives.data} />
+                            ) : decoratedGauges && decoratedGauges.length > 0 ? (
+                                <IncentivesTable gaugeDatas={decoratedGauges} />
+                            ) : (
+                                <CircularProgress />
+                            )}
+                        </Grid>
                     </Grid>
                 </Box>
             )}
