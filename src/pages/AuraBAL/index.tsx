@@ -39,15 +39,16 @@ export default function AuraBAL() {
     const theme = useTheme();
     const [activeNetwork] = useActiveNetworkVersion();
     //TODO: add to auraConstants
+    const auraBALMainnet = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d'
     let auraBALAddress = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d';
     let auraBALVaultAddress = "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6";
     let startTimeStamp = 1655276813;
     if (activeNetwork === ArbitrumNetworkInfo) {
-        auraBALAddress = '0x223738a747383d6F9f827d95964e4d8E8AC754cE'
+        auraBALAddress = '0x223738a747383d6f9f827d95964e4d8e8ac754ce'
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
         startTimeStamp = 1686811327
     }
-    const coinData = useCoinGeckoSimpleTokenPrices([auraBALAddress]);
+    const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
     const auraBalBannerLight = require('../../assets/png/aurabal-light.png');
@@ -221,12 +222,12 @@ export default function AuraBAL() {
                         sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
-                            {coinData && coinData[auraBALAddress] && coinData[auraBALAddress].usd ?
+                            {coinData && coinData[auraBALMainnet] && coinData[auraBALMainnet].usd ?
                                 <CoinCard
-                                    tokenAddress={auraBALAddress}
+                                    tokenAddress={auraBALMainnet}
                                     tokenName='auraBAL'
-                                    tokenPrice={coinData[auraBALAddress].usd}
-                                    tokenPriceChange={coinData[auraBALAddress].usd_24h_change}
+                                    tokenPrice={coinData[auraBALMainnet].usd}
+                                    tokenPriceChange={coinData[auraBALMainnet].usd_24h_change}
 
                                 />
                                 : <CircularProgress/>}
