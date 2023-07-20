@@ -11,11 +11,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Avatar, IconButton, InputBase} from '@mui/material';
+import {Avatar, IconButton, InputBase, Typography} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {visuallyHidden} from '@mui/utils';
-import PoolCurrencyLogo from '../../PoolCurrencyLogo';
 import TokensWhite from '../../../assets/svg/tokens_white.svg';
 import TokensBlack from '../../../assets/svg/tokens_black.svg';
 import {useTheme} from '@mui/material/styles'
@@ -25,40 +24,36 @@ import PolygonLogo from '../../../assets/svg/polygon.svg'
 import GnosisLogo from '../../../assets/svg/gnosis.svg'
 //import zkevmLogo from '../../../assets/svg/zkevm.svg'
 import OpLogo from '../../../assets/svg/optimism.svg'
-import {BalancerStakingGauges, SimplePoolData} from "../../../data/balancer/balancerTypes";
+
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
-import GaugeComposition from "../../GaugeComposition";
+
 import ClearIcon from '@mui/icons-material/Clear';
+import { HiddenHandRewards } from '../../../data/hidden-hand/hiddenHandTypes';
+import CurrencyLogo from "../../CurrencyLogo";
 
 
 
 interface Data {
-    gaugeAddress: string;
-    network: string;
-    isKilled: boolean;
-    poolData: SimplePoolData,
-    totalVotes: number,
-    votingIncentives: number,
-    totalRewards: number,
+    network: number,
+    token: string,
+    decimals: number,
+    claimable: number,
+    value: number,
 }
 
 function createData(
-    gaugeAddress: string,
-    network: string,
-    isKilled: boolean,
-    poolData: SimplePoolData,
-    totalVotes: number,
-    votingIncentives: number,
-    totalRewards: number,
+    network: number,
+    token: string,
+    decimals: number,
+    claimable: number,
+    value: number,
 ): Data {
     return {
-        gaugeAddress,
         network,
-        isKilled,
-        poolData,
-        totalVotes,
-        votingIncentives,
-        totalRewards,
+        token,
+        decimals,
+        claimable,
+        value,
     };
 }
 
@@ -78,8 +73,8 @@ function getComparator<Key extends keyof any>(
     order: Order,
     orderBy: Key,
 ): (
-    a: { [key in Key]: number | string | SimplePoolData | boolean },
-    b: { [key in Key]: number | string | SimplePoolData | boolean },
+    a: { [key in Key]: number | string  },
+    b: { [key in Key]: number | string  },
 ) => number {
     return order === 'desc'
         ? (a, b) => descendingComparator(a, b, orderBy)
@@ -116,31 +111,24 @@ const headCells: readonly HeadCell[] = [
         isMobileVisible: true,
     },
     {
-        id: 'poolData',
+        id: 'token',
         numeric: false,
         disablePadding: false,
-        label: 'Composition',
-        isMobileVisible: false,
-    },
-    {
-        id: 'totalRewards',
-        numeric: true,
-        disablePadding: false,
-        label: 'Rewards',
+        label: 'Token',
         isMobileVisible: true,
     },
     {
-        id: 'totalVotes',
+        id: 'claimable',
         numeric: true,
         disablePadding: false,
-        label: 'Votes',
-        isMobileVisible: false,
+        label: 'Claimable Amount',
+        isMobileVisible: true,
     },
     {
-        id: 'votingIncentives',
+        id: 'value',
         numeric: true,
         disablePadding: false,
-        label: '$/vlAura',
+        label: 'Value ($)',
         isMobileVisible: true,
     },
 ];
@@ -193,60 +181,27 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
-export default function IncentivesTable({gaugeDatas}: {
-    gaugeDatas: BalancerStakingGauges[],
+export default function HiddenHandAddressRewards({rewardData}: {
+    rewardData: HiddenHandRewards[],
 }) {
     const [order, setOrder] = React.useState<Order>('desc');
-    const [orderBy, setOrderBy] = React.useState<keyof Data>('totalRewards');
+    const [orderBy, setOrderBy] = React.useState<keyof Data>('value');
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
 
-    const seen = new Set();
-    const filteredPoolDatas = gaugeDatas.filter((x) => {
-        return !!x && !x.isKilled && !seen.has(x.address) && seen.add(x.pool.address);
-    });
-
-    const originalRows = filteredPoolDatas.map(el =>
-            createData(
-                el.address,
-                el.network,
-                el.isKilled,
-                el.pool,
-                el.voteCount ? el.voteCount : 0,
-                el.valuePerVote ? el.valuePerVote : 0,
-                el.totalRewards ? el.totalRewards : 0,
-
-            )
-        )
-        .sort((a, b) => b.totalRewards - a.totalRewards);
-
-
     const [rows, setRows] = useState<Data[]>([]);
-    const [searched, setSearched] = useState<string>("");
 
     useEffect(() => {
-        const seen = new Set();
-        const filteredPoolDatas = gaugeDatas.filter((x) => {
-            return !!x && !x.isKilled && !seen.has(x.address) && seen.add(x.pool.address);
-        });
+        const originalRows = rewardData
+            .filter(el => el.protocol === "aura")
+            .map(el => createData(el.chainId, el.token, el.decimals, Number(el.claimable), el.value))
+            .sort((a, b) => b.value - a.value);
 
-        const originalRows = filteredPoolDatas.map(el =>
-            createData(
-                el.address,
-                el.network,
-                el.isKilled,
-                el.pool,
-                el.voteCount ? el.voteCount : 0,
-                el.valuePerVote ? el.valuePerVote : 0,
-                el.totalRewards ? el.totalRewards : 0,
-
-            )
-        )
-            .sort((a, b) => b.totalRewards - a.totalRewards);
         setRows(originalRows)
-    }, [gaugeDatas])
+
+    }, [rewardData])
 
 
 
@@ -277,21 +232,6 @@ export default function IncentivesTable({gaugeDatas}: {
     const emptyRows =
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
-    const requestSearch = (searchedVal: string) => {
-        const filteredRows = originalRows.filter((row) => {
-            const lowerCaseSearchedVal = searchedVal.toLowerCase();
-            const hasPartialMatchInAddress = row.poolData.address.toLowerCase().includes(lowerCaseSearchedVal);
-            const hasPartialMatchInSymbol = row.poolData.symbol.toLowerCase().includes(lowerCaseSearchedVal);
-            const hasPartialMatchInTokens = row.poolData.tokens.some((token) => token.symbol.toLowerCase().includes(lowerCaseSearchedVal));
-            return hasPartialMatchInAddress || hasPartialMatchInSymbol || hasPartialMatchInTokens;
-        });
-        setRows(filteredRows);
-        setSearched(searchedVal)
-    };
-    const clearSearch = (): void => {
-        setSearched("");
-        setRows(originalRows)
-    };
 
     interface NetworkLogoMap {
         [networkNumber: number]: string;
@@ -310,23 +250,12 @@ export default function IncentivesTable({gaugeDatas}: {
 
     return (
         <Box sx={{width: '100%'}}>
-            <Paper
-                component="form"
-                sx={{ mb: '10px', p: '2px 4px', display: 'flex', alignItems: 'center', maxWidth: 500 }}
-            >
-                <InputBase
-                    sx={{ ml: 1, flex: 1 }}
-                    placeholder="Search for Gauge"
-                    inputProps={{ 'aria-label': 'search Balancer gauges' }}
-                    value={searched}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => requestSearch(event.target.value)}
-                />
-                <IconButton onClick={clearSearch} type="button" sx={{ p: '10px' }} aria-label="search">
-                    {searched !== "" ? <ClearIcon /> : <SearchIcon />}
-                </IconButton>
-            </Paper>
+            {rows.length === 0 ?
+                <Box mb={2}>
+                    <Typography>No unclaimed rewards found for this address</Typography>
+                </Box>
+                    :
             <Paper sx={{mb: 2, boxShadow: 3}}>
-
                 <TableContainer>
                     <Table
                         aria-labelledby="tableTitle"
@@ -348,7 +277,7 @@ export default function IncentivesTable({gaugeDatas}: {
                                             hover
                                             role="number"
                                             tabIndex={-1}
-                                            key={row.gaugeAddress + Math.random() * 10}
+                                            key={row.token + Math.random() * 10}
                                             sx={{cursor: 'pointer'}}
                                         >
                                             <TableCell sx={{maxWidth: '10px'}}>
@@ -360,31 +289,15 @@ export default function IncentivesTable({gaugeDatas}: {
                                                     src={networkLogoMap[Number(row.network)]}
                                                 />
                                             </TableCell>
-                                            <TableCell
-                                                component="th"
-                                                id={labelId}
-                                                scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
-                                            >
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                                                    <Box mr={1}>
-                                                        <PoolCurrencyLogo
-                                                            tokens={row.poolData.tokens.map(token => ({address: token.address ? token.address.toLowerCase() : ''}))}
-                                                            size={'25px'}/>
-                                                    </Box>
-                                                    <Box>
-                                                        <GaugeComposition poolData={row.poolData} />
-                                                    </Box>
-                                                </Box>
+                                            <TableCell align="right">
+                                                <CurrencyLogo address={row.token} />
                                             </TableCell>
                                             <TableCell align="right">
-                                                {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0),  3)}
+                                                {formatNumber(Number(row.claimable),  3)}
                                             </TableCell>
+
                                             <TableCell align="right">
-                                                {formatNumber(Number(row.totalVotes ? row.totalVotes : 0),  3)}
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                {formatDollarAmount(Number(row.votingIncentives ? row.votingIncentives : 0),  3)}
+                                                {formatDollarAmount(Number(row.value),  2)}
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -419,6 +332,7 @@ export default function IncentivesTable({gaugeDatas}: {
                     />
                 </Box>
             </Paper>
+            }
 
         </Box>
     );
