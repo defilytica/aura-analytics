@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import SearchIcon from '@mui/icons-material/Search';
 import TablePagination from '@mui/material/TablePagination';
@@ -201,8 +201,24 @@ export default function HistoricalIncentivesTable({gaugeDatas}: {
         .sort((a, b) => b.totalRewards - a.totalRewards);
 
 
-    const [rows, setRows] = useState<Data[]>(originalRows);
+    const [rows, setRows] = useState<Data[]>([]);
     const [searched, setSearched] = useState<string>("");
+
+    useEffect(() => {
+        const originalRows = gaugeDatas.map(el =>
+            createData(
+                el.title,
+                el.voteCount ? el.voteCount : 0,
+                el.valuePerVote ? el.valuePerVote : 0,
+                el.totalValue ? el.totalValue : 0,
+
+            )
+        )
+            .sort((a, b) => b.totalRewards - a.totalRewards);
+
+        setRows(originalRows)
+
+    }, [gaugeDatas])
 
 
 

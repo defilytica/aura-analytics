@@ -35,37 +35,26 @@ export const getTokenLogoURL = (address: string, networkId: SupportedNetwork) =>
     }
 }
 
-export default function CurrencyLogo({
-                                         address,
-                                         size = '24px',
-                                     }: {
+export default function CurrencyLogo({ address, size = '24px' }: {
     address?: string
     size?: string
 }) {
-
     const [activeNetwork] = useActiveNetworkVersion();
     const theme = useTheme();
     const optimismTokenList = useLatestTokenList(tokenClient, OptimismNetworkInfo.chainId)
 
-    //Secondary assets are loaded through Balancer
-    const tempSources: { [address: string]: string } = useMemo(() => {
-        return {
-            [`${address}`]:
-                `https://raw.githubusercontent.com/balancer/tokenlists/main/src/assets/images/tokens/${address}.png`,
-        }
-    }, [address])
-
-    //Token image sources
+    // Token image sources
     const srcs: string[] = useMemo(() => {
-        const checkSummed = isAddress(address)
-
+        const checkSummed = isAddress(address);
 
         if (checkSummed && address) {
-            const override = tempSources[address]
-            return [getTokenLogoURL(checkSummed, activeNetwork.id), override]
+            return [
+                `https://raw.githubusercontent.com/balancer/tokenlists/main/src/assets/images/tokens/${address}.png`,
+                getTokenLogoURL(checkSummed, activeNetwork.id),
+            ];
         }
-        return []
-    }, [address, tempSources, activeNetwork.id])
+        return [];
+    }, [address, activeNetwork.id]);
 
     const newSrc = optimismTokenList.tokenList?.find(el => el.address === address);
 
