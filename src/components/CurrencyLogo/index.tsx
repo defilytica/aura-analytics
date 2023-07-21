@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useActiveNetworkVersion } from "../../state/application/hooks";
 import { useTheme } from '@mui/material/styles'
-import {EthereumNetworkInfo, OptimismNetworkInfo, SupportedNetwork} from "../../constants/networks";
+import {OptimismNetworkInfo, SupportedNetwork} from "../../constants/networks";
 import { isAddress } from '../../utils';
 import { Avatar } from '@mui/material';
 import {useLatestTokenList} from "../../data/tokens/useLatestTokenList";
