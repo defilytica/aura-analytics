@@ -2,10 +2,12 @@ schema:
   - 'https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks'
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
+  - 'https://backend-v3.beets-ftm-node.com/'
 documents:
   - 'src/data/blocks/*.gql'
   - 'src/data/balancer/*.gql'
   - 'src/data/aura/*.gql'
+  - 'src/data/tokens/*gql'
 hooks:
   afterAllFileWrite:
     - 'prettier --write'
