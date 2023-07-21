@@ -1,9 +1,7 @@
-import {Box, Card, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
+import {Box, Card, CardContent, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
 import CustomLinearProgress from '../../components/Progress/CustomLinearProgress';
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
 import {
-    BribeResponse,
-    GetBribingStatsForRound,
     GetBribingStatsForRounds
 } from "../../data/llamaairforce/getBribingStatsForRound";
 import * as React from "react";
@@ -19,6 +17,16 @@ import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHid
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
 import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
+import { BalancerStakingGauges } from "../../data/balancer/balancerTypes";
+import { decorateGaugesWithIncentives } from "./helpers";
+import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
+import IncentivesTable from "../../components/Tables/IncentivesTable";
+import HistoricalIncentivesTable from "../../components/Tables/HistoricalIncentivesTable";
+import {useGetHiddenHandRewards} from "../../data/hidden-hand/useGetHiddenHandRewards";
+import {useAccount} from "wagmi";
+import HiddenHandCard from "../../components/Cards/HiddenHandCard";
+import HiddenHandAddressRewards from "../../components/Tables/HiddenHandAddressRewards";
+import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -64,7 +72,6 @@ export default function VotingIncentives() {
     const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
 
-
     // New Hidden Hand API
     const timestamps = AURA_TIMESTAMPS;
     const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 1]); // Default timestamp
@@ -73,7 +80,12 @@ export default function VotingIncentives() {
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
     const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
+    const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
     const hiddenHandData = useGetHiddenHandVotingIncentives(String(currentRoundNew));
+    const { isConnected, address } = useAccount();
+    const addressRewards = useGetHiddenHandRewards(address ? address : '')
+    console.log("addressRewards", addressRewards)
+    const gaugeData = useGetBalancerStakingGauges();
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -98,15 +110,14 @@ export default function VotingIncentives() {
             setIncentivePerVote(incentiveEfficency)
             setEmissionPerVote(emissionEff)
             setRoundIncentives(totalValue)
+            const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
+            setDecoratedGagues(fullyDecoratedGauges)
         }
-
-
-    }, [currentRoundNew, hiddenHandData.incentives]);
+    }, [currentRoundNew, gaugeData, hiddenHandData.incentives]);
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
         setCurrentRoundNew(Number(event.target.value));
     };
-
 
     //Historical data
     const historicalData = useGetHiddenHandHistoricalIncentives();
@@ -114,17 +125,8 @@ export default function VotingIncentives() {
 
     // LLAMA API
     const roundsData = GetBribingRounds();
-    const roundsNumbers = roundsData ? roundsData.rounds : [];
-    const [currentRound, setCurrentRound] = useState(roundsNumbers[-0] || 25); // Select the first round by default
-
     let allRoundsBribes = GetBribingStatsForRounds()
-    console.log(allRoundsBribes);
-    const bribes = GetBribingStatsForRound(currentRound);
-    console.log(bribes);
-
-
     let dashboardData = allRoundsBribes?.dashboard;
-
     let dollarPerVlAssetData;
     let totalAmountDollarsData;
     let xAxisData;
@@ -138,49 +140,16 @@ export default function VotingIncentives() {
         xAxisData = [...dashboardData.epochs.slice(0, -1).map(item => unixToDate(item.end)), ...historicalData.xAxisData];
     }
 
-
-    let xAxisDataRound;
-    let bribeRewards;
-    let bribeRewardsRatio;
-    if (bribes) {
-        console.log(bribes);
-        xAxisDataRound = bribes.epoch.bribes.map(item => item.pool);
-        bribeRewards = bribes.epoch.bribes.reduce((acc: PoolReward[], item) => {
-            // find the existing pool object
-            let pool = acc.find(pool => pool.pool === item.pool);
-
-            // if the pool does not exist yet, create it
-            if (!pool) {
-                pool = {pool: item.pool};
-                acc.push(pool);
-            }
-
-            // if the pool already has this token, add to its amountDollars
-            // otherwise, set it to the current bribe's amountDollars
-            pool[item.token] = (pool[item.token] as number || 0) + item.amountDollars;
-
-            return acc;
-        }, []);
-
-        const calculateRatios = (response: BribeResponse): number[] => {
-            return response.epoch.bribes.map(bribe => {
-                const correspondingBribedValue = response.epoch.bribed[bribe.pool];
-                if (correspondingBribedValue !== undefined && correspondingBribedValue !== 0) {
-                    return bribe.amountDollars / correspondingBribedValue;
-                }
-                return 0; // Return 0 or throw an error if there is no corresponding bribed value or it is zero
-            });
-        }
-
-        console.log("emission / vote", emissionPerVote)
-        console.log("incentive / vote", incentivePerVote)
-        bribeRewardsRatio = calculateRatios(bribes);
-        //console.log("bribeRewardsRatio", bribeRewardsRatio);
-        //console.log("bribeRewards", bribeRewards);
-    }
-
     return (<>
-            {(!roundsData?.rounds && !historicalData && !hiddenHandData.incentives) ? (
+            {(!roundsData?.rounds
+                && !historicalData
+                && !hiddenHandData.incentives
+                && bribeRewardsNew.length < 1
+                && !totalAmountDollarsSum
+                && ! dashboardData
+                && incentivePerVote === 0
+                && roundIncentives === 0
+            ) ? (
                 <Grid
                     container
                     spacing={2}
@@ -202,23 +171,23 @@ export default function VotingIncentives() {
                             </Box>
                         </Grid>
                         <Grid item xs={11} sm={9}>
+
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
-                                sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
-                                <Box m={1}>
+
+                                <Box mt={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={totalAmountDollarsSum}
                                                      metricName={"All time incentives"} mainMetricInUSD={true}
                                                      MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                { /*<Box m={1}>
-                                    {dashboardData ?
-                                        <MetricsCard mainMetric={dashboardData.rewardPerDollarBribe} metricName={"Emissions per $1"} mainMetricInUSD={true} MetricIcon={Handshake}/>
-                                        : <CircularProgress/>}
-                                </Box> */}
+                                    <Box sx={{ mt: { xs: 1 } }}>
+                                <HiddenHandCard />
+                                    </Box>
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
@@ -296,7 +265,7 @@ export default function VotingIncentives() {
                             <CircularProgress/>
                         ) : (
                             <Grid item mt={1} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3, marginBottom: 5}}>
+                                <Card sx={{boxShadow: 3}}>
 
                                     <SingleRoundBarChart
                                         rewardData={bribeRewardsNew}
@@ -307,6 +276,42 @@ export default function VotingIncentives() {
                             </Grid>
                         )}
 
+                        <Grid item xs={11} sm={9}>
+                            {currentRoundNew !== timestamps[timestamps.length - 1] && hiddenHandData.incentives !== null ? (
+                                <HistoricalIncentivesTable
+                                    key={currentRoundNew}
+                                    gaugeDatas={hiddenHandData.incentives.data} />
+                            ) : decoratedGauges && decoratedGauges.length > 0 ? (
+                                <IncentivesTable gaugeDatas={decoratedGauges} />
+                            ) : (
+                                <CircularProgress />
+                            )}
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography variant="h5" mb={1}>Unclaimed Personal Rewards</Typography>
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            {address && addressRewards && addressRewards.data ?
+                            <HiddenHandAddressRewards rewardData={addressRewards?.data} /> :
+                                <Card sx={{
+                                    maxWidth: '250px',
+                                    minHeight: '100px'
+                                }}><CardContent>
+                                    <Box
+                                        display="flex"
+                                        flexDirection="column"
+                                        alignItems="center"
+                                        justifyContent="center"
+                                        height="100%"
+                                    >
+                                        <SelfImprovementIcon sx={{ fontSize: 48 }} />
+                                        <Typography variant="h5" align="center">
+                                            Please connect your Wallet
+                                        </Typography>
+                                    </Box>
+                                </CardContent>
+                                </Card>}
+                        </Grid>
                     </Grid>
                 </Box>
             )}

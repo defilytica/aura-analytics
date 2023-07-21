@@ -1,17 +1,12 @@
-
-import { FormControl, Select, MenuItem, Avatar, Divider, SelectChangeEvent } from "@mui/material"
-import { Box } from "@mui/system"
-import {
-    ArbitrumNetworkInfo,
-    EthereumNetworkInfo,
-    NetworkInfo, OptimismNetworkInfo,
-} from "../../constants/networks"
-import { useActiveNetworkVersion } from "../../state/application/hooks"
+import {Avatar, Divider, FormControl, MenuItem, Select, SelectChangeEvent} from "@mui/material"
+import {Box} from "@mui/system"
+import {ArbitrumNetworkInfo, EthereumNetworkInfo, NetworkInfo, OptimismNetworkInfo,} from "../../constants/networks"
+import {useActiveNetworkVersion} from "../../state/application/hooks"
 import ArbitrumLogo from '../../assets/svg/arbitrum.svg'
 import EtherLogo from '../../assets/svg/ethereum.svg'
 import OpLogo from '../../assets/svg/optimism.svg'
 import {useLocation, useNavigate} from "react-router-dom";
-import { useSwitchNetwork } from 'wagmi'
+import {useSwitchNetwork} from 'wagmi'
 
 const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
     const pathParts = currentPath.split('/');
@@ -21,6 +16,8 @@ const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
 
     if (network === EthereumNetworkInfo) {
         newPath = `/${pathParts[pathParts.length - 1]}`;
+    } else if (network === OptimismNetworkInfo) {
+        newPath = `/optimism/${pathParts[pathParts.length - 1]}`;
     } else {
         newPath = `/${network.name.toLowerCase()}/${pathParts[pathParts.length - 1]}`;
     }
@@ -34,7 +31,7 @@ export default function NetworkSelector() {
     const navigate = useNavigate();
     const location = useLocation();
     console.log("location", location)
-    const { switchNetwork } = useSwitchNetwork()
+    const {switchNetwork} = useSwitchNetwork()
 
     const handleNetworkChange = (evt: SelectChangeEvent) => {
         const chainId = evt.target.value as string;
@@ -47,10 +44,10 @@ export default function NetworkSelector() {
             update(ArbitrumNetworkInfo)
             const newPath = updatePathForNetwork(ArbitrumNetworkInfo, location.pathname)
             navigate(newPath)
-
         } else if (chainId === OptimismNetworkInfo.chainId) {
-        update(OptimismNetworkInfo)
-    }
+            const newPath = updatePathForNetwork(OptimismNetworkInfo, location.pathname)
+            navigate(newPath)
+        }
     };
 
     return (
