@@ -44,7 +44,7 @@ const MetricsCard = ({
                 {mainMetricInUSD ? formatDollarAmount(mainMetric, metricDecimals) : formatNumber(mainMetric, metricDecimals) + metricUnit}
               </Typography>
             </Grid>
-            <Grid item>{svgContent ? <img src={svgContent} alt="Svg Icon" width="30" /> :
+              <Grid item>{svgContent ? <Box ml={1}><img src={svgContent} alt="Svg Icon" width="30" /></Box> :
                 <Box ml={1}>
                 <MetricIcon />
                 </Box>}

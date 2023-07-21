@@ -19,6 +19,9 @@ query AuraGlobalStats{
   tokens(first: 1000) {
     ...AllToken
   }
+  auraLockers {
+    lockedSupply
+  }
 }
 
 # Aura Pools with Convex pool ids and gauge information -> TODO: expand
