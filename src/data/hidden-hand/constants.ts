@@ -1,9 +1,6 @@
 // Assumed pattern in seconds (2 weeks ~ 1'209'600 seconds)
 export const PATTERN = 1209600;
 
-// One week in seconds
-export const ONE_WEEK = 7 * 24 * 60 * 60;
-
 //First 25 rounds
 let auraTimeStamps = [
     1656378000,
