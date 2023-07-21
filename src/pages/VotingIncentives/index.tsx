@@ -81,10 +81,10 @@ export default function VotingIncentives() {
     const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
-    const hiddenHandData = useGetHiddenHandVotingIncentives(String(currentRoundNew));
-    const { isConnected, address } = useAccount();
+    const hiddenHandData = useGetHiddenHandVotingIncentives(currentRoundNew === 0 ? '' : String(currentRoundNew));
+    const currentHiddenHandData = useGetHiddenHandVotingIncentives();
+    const { address } = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
-    console.log("addressRewards", addressRewards)
     const gaugeData = useGetBalancerStakingGauges();
 
     useEffect(() => {
@@ -121,7 +121,6 @@ export default function VotingIncentives() {
 
     //Historical data
     const historicalData = useGetHiddenHandHistoricalIncentives();
-
 
     // LLAMA API
     const roundsData = GetBribingRounds();
@@ -225,7 +224,7 @@ export default function VotingIncentives() {
                                     {timestamps.map((roundNumber, index) => (
                                         <MenuItem
                                             value={roundNumber}
-                                            key={index}>{unixToDate(roundNumber)}
+                                            key={index}>{roundNumber === 0 ? 'Current' : unixToDate(roundNumber)}
                                         </MenuItem>
                                     ))}
                                 </Select>

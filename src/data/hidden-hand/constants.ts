@@ -48,4 +48,9 @@ while (auraTimeStamps[auraTimeStamps.length - 1] < now) {
     }
 }
 
+//Add current 0 entry if we fall between Thursday 02:00 and the following end date
+if (now > (auraTimeStamps[auraTimeStamps.length-1] + PATTERN - 562800000)) {
+    auraTimeStamps.push(0)
+}
+
 export const AURA_TIMESTAMPS = auraTimeStamps
