@@ -20,9 +20,8 @@ import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
 import KeyOffIcon from '@mui/icons-material/KeyOff';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
-import MixedLineBarChart from "../../components/Echarts/MixedLineBarChart";
-import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
+import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -32,6 +31,7 @@ export default function AuraLocks() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    const auraGlobalStats = useAuraGlobalStats();
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []
 
@@ -136,7 +136,7 @@ export default function AuraLocks() {
     }
 
 
-    let totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
+    const totalLockedAmount = auraGlobalStats ? auraGlobalStats?.auraTotalLockedAmount : 0;
 
     let tokenBarChartData: BalancerChartDataItem[] = [];
     lockers.map((locker) =>
