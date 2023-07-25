@@ -50,15 +50,14 @@ const CoinCard = ({
         >
           <Grid item>
             <Typography
-              color="textSecondary"
               gutterBottom
-              variant="h6"
+              sx={{fontSize: '18px',}}
             >
               {tokenName}
             </Typography>
             <Typography
               color="textPrimary"
-              variant="h6"
+              sx={{fontSize: '22px',}}
             >
               {formatDollarAmount(tokenPrice)}
             </Typography>

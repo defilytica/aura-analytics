@@ -104,19 +104,19 @@ export default function Protocol() {
         <Box sx={{flexGrow: 2}}>
             <Grid
                 container
-                spacing={2}
+                spacing={1}
                 sx={{justifyContent: 'center'}}
             >
                 <Grid item xs={11} sm={9} mt={1}>
-                    <Typography variant="h5" mb={1}>Global Aura Stats</Typography>
+                    <Typography sx={{fontSize: '24px'}}>Global Aura Stats</Typography>
                 </Grid>
                 <Grid item xs={11} sm={9}>
                     <Grid
                         container
                         columns={{xs: 4, sm: 8, md: 12}}
-                        sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                        sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                     >
-                        <Box m={1}>
+                        <Box >
                             {coinData && coinData[auraAddress] && coinData[auraAddress].usd ?
                                 <CoinCard
                                     tokenAddress={auraAddress}
@@ -128,7 +128,7 @@ export default function Protocol() {
                                 : <CircularProgress/>}
                         </Box>
 
-                        <Box m={1}>
+                        <Box >
                             {tvlChange && tvlDollar ?
                                 <MetricsCard
                                     mainMetric={tvlDollar}
@@ -138,7 +138,7 @@ export default function Protocol() {
                                     metricName={"Protocol TVL"}/>
                                 : <CircularProgress/>}
                         </Box>
-                        <Box m={1}>
+                        <Box >
                             {volumeChange && volumeDollar ?
                                 <MetricsCard
                                     mainMetric={volumeDollar}
@@ -148,7 +148,7 @@ export default function Protocol() {
                                     metricName={"Protocol Volume"}/>
                                 : <CircularProgress/>}
                         </Box>
-                        <Box m={1}>
+                        <Box >
                             <MetricsCard
                                 mainMetric={totalLockedAmount}
                                 mainMetricInUSD={false}
@@ -156,7 +156,7 @@ export default function Protocol() {
                                 MetricIcon={SelfImprovementIcon}
                                 svgContent={AuraIcon}/>
                         </Box>
-                        <Box m={1}>
+                        <Box >
                             {auraGlobalStats ?
                                 <MetricsCard
                                     mainMetric={auraGlobalStats ? auraGlobalStats.auraBALTotalSupply : 0}
@@ -175,12 +175,12 @@ export default function Protocol() {
                 spacing={1}
                 sx={{justifyContent: 'center'}}
             >
-                <Grid item mt={1} xs={11} sm={9}>
-                    <Typography variant='h5'>Historical Staking TVL</Typography>
+                <Grid item mt={2} xs={11} sm={9}>
+                    <Typography sx={{fontSize: '24px'}}>Historical Staking TVL</Typography>
                 </Grid>
 
                 {sortedTvlData ?
-                    <Grid item mt={1} xs={11} sm={9}>
+                    <Grid item xs={11} sm={9}>
                         <Card sx={{boxShadow: 3}}>
                             <FinancialAreaChart
                                 chartData={displayPoolData}
@@ -191,12 +191,12 @@ export default function Protocol() {
                     </Grid>
                     : <CircularProgress/>
                 }
-                <Grid item mt={1} xs={11} sm={9}>
-                    <Typography variant='h5'>Historical Staking Volume</Typography>
+                <Grid item mt={2} xs={11} sm={9}>
+                    <Typography sx={{fontSize: '24px'}}>Historical Staking Volume</Typography>
                 </Grid>
 
                 {sortedPoolTransactions ?
-                    <Grid item mt={1} mb={2} xs={11} sm={9}>
+                    <Grid item mb={2} xs={11} sm={9}>
                         <Card sx={{boxShadow: 3}}>
                             <FinancialAreaChart
                                 chartData={displayTransactions}

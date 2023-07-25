@@ -43,7 +43,7 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
         legend: {
             data:['$/vlAURA', 'Voting Incentives'],
             textStyle: {
-                color: '#FFFFFF',
+                color: theme.palette.secondary
             }
         },
         xAxis: [
@@ -64,7 +64,7 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
                 position: 'right',
                 axisLine: {
                     lineStyle: {
-                        color: '#5793f3'
+                        color: 'rgb(255, 204, 0)'
                     }
                 },
                 axisLabel: {
@@ -99,6 +99,9 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
             {
                 name:'$/vlAURA',
                 type:'line',
+                itemStyle: {
+                    color: 'rgb(255, 204, 0)'
+                },
                 data:dollarPerVlAssetData,
                 yAxisIndex: 0,
             },
@@ -108,7 +111,7 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
                 data:totalAmountDollarsData,
                 yAxisIndex: 1,
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: 'rgb(32, 129, 240)'
                 },
             }
         ]

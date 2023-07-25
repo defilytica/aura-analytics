@@ -112,14 +112,14 @@ const headCells: readonly HeadCell[] = [
         id: 'network',
         numeric: false,
         disablePadding: false,
-        label: 'Network',
+        label: 'Chain',
         isMobileVisible: true,
     },
     {
         id: 'poolData',
         numeric: false,
         disablePadding: false,
-        label: 'Composition',
+        label: '',
         isMobileVisible: false,
     },
     {
@@ -170,7 +170,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
-                        sx={{display: {xs: headCell.isMobileVisible ? 'table-cell' : 'none', md: 'table-cell'}}}
+                        sx={{
+                            display: {xs: headCell.isMobileVisible ? 'table-cell' : 'none', md: 'table-cell'
+                            },
+                            paddingLeft: '16px',
+                    }}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -351,7 +355,7 @@ export default function IncentivesTable({gaugeDatas}: {
                                             key={row.gaugeAddress + Math.random() * 10}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell sx={{maxWidth: '10px'}}>
+                                            <TableCell sx={{width: '10px'}}>
                                                 <Avatar
                                                     sx={{
                                                         height: 20,
