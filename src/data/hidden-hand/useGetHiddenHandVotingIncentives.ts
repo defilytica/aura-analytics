@@ -14,7 +14,6 @@ export const useGetHiddenHandVotingIncentives = (timestamp =''): { incentives: H
         timestamp = ''
     }
     const requestURL = timestamp ? API_URL + '/' + timestamp : API_URL
-    console.log("requestURL", requestURL)
     useEffect(() => {
         const fetchBalancerIncentives = () => {
             axios

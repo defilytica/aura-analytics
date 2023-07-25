@@ -39,7 +39,6 @@ const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => 
 
             if (bribes.length > 0) {
                 const poolReward: PoolReward = {pool: title};
-
                 bribes.forEach((bribe) => {
                     const {symbol, value} = bribe;
                     const tokenKey = `${symbol.toUpperCase()}`;
@@ -56,7 +55,6 @@ const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => 
             }
         });
     }
-    console.log("poolRewards", poolRewards)
     return poolRewards;
 };
 
@@ -84,7 +82,7 @@ export default function VotingIncentives() {
     const [emissionVotesTotal, setEmissionVotesTotal] = useState<number>(0);
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
     const hiddenHandData = useGetHiddenHandVotingIncentives(currentRoundNew === 0 ? '' : String(currentRoundNew));
-    const currentHiddenHandData = useGetHiddenHandVotingIncentives();
+    // const currentHiddenHandData = useGetHiddenHandVotingIncentives();
     const { address } = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerStakingGauges();
@@ -124,7 +122,6 @@ export default function VotingIncentives() {
 
     //Historical data
     const historicalData = useGetHiddenHandHistoricalIncentives();
-    console.log("currentRoundNew", currentRoundNew)
 
     // LLAMA API
     const roundsData = GetBribingRounds();
@@ -314,7 +311,7 @@ export default function VotingIncentives() {
                                         height="100%"
                                     >
                                         <SelfImprovementIcon sx={{ fontSize: 48 }} />
-                                        <Typography variant="h5" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             Please connect your Wallet
                                         </Typography>
                                     </Box>
