@@ -15,11 +15,7 @@ interface TooltipParam {
     seriesName: string;
 }
 
-export default function DashboardOverviewChart({
-                                                   dollarPerVlAssetData,
-                                                   totalAmountDollarsData,
-                                                   xAxisData,
-                                                   height
+export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmountDollarsData, xAxisData, height
                                                }: BribesProps) {
     const theme = useTheme()
 
@@ -36,7 +32,7 @@ export default function DashboardOverviewChart({
                 let res = params[0].name;
                 params.forEach(param => {
                     if (param.seriesName === '$/vlAURA') {
-                        res += `<br/>${param.seriesName}: ${formatDollarAmount(param.value)}`
+                        res += `<br/>${param.seriesName}: ${formatDollarAmount(param.value, 3)}`
                     } else if (param.seriesName === 'Voting Incentives') {
                         res += `<br/>${param.seriesName}: ${formatDollarAmount(param.value)}`
                     }
