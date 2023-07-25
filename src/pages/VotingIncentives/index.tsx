@@ -191,7 +191,7 @@ export default function VotingIncentives() {
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            <Typography variant="h5">Overview</Typography>
+                            <Typography variant="body1">Overview</Typography>
                         </Grid>
                         {dashboardData && dollarPerVlAssetData && totalAmountDollarsData && xAxisData ?
                             <Grid item mt={1} xs={11} sm={9}>

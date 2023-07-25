@@ -36,19 +36,19 @@ const LockedAuraCard = ({totalLockedAmount, coinData}: LockedAuraCardProps) => {
                             <Typography
                                 color="textSecondary"
                                 gutterBottom
-                                variant="h6"
+                                sx={{fontSize: '18px',}}
                             >
                                 Total Locked
                             </Typography>
                             <Typography
                                 color="textPrimary"
-                                variant="h6"
+                                sx={{fontSize: '22px',}}
                             >
                                 {formatNumber(totalLockedAmount)} AURA
                             </Typography>
                             <Typography
                                 color="textPrimary"
-                                variant="h6"
+                                sx={{fontSize: '22px',}}
                             >
                                 {formatDollarAmount(totalLockedAmount * coinData[auraAddress].usd)}
                             </Typography>
