@@ -6,6 +6,7 @@ import { green } from '@mui/material/colors';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
 import DiscordIconDark from '../../../assets/svg/discord-dark.svg';
+import {AppColors} from "../../../assets/auraTheme/colors";
 
 export type CoinCardProps = {
   mainMetric: number;
@@ -32,15 +33,17 @@ const MetricsCard = ({
                      }: CoinCardProps) => {
   const metricUnit = mainMetricUnit ? mainMetricUnit : '';
 
+
   return (
-      <Card sx={{maxWidth: '275px', minWidth: '200px', minHeight: '110px', boxShadow: 3}}>
+      <Card sx={{maxWidth: '275px', minWidth: '200px', minHeight: '110px', boxShadow: 3, p: '0px'}}>
         <CardContent sx={{p: '10px'}}>
           <Grid container justifyContent="space-between">
             <Grid item>
-              <Typography color="textSecondary" gutterBottom variant="h6">
+              <Typography sx={{fontSize: '18px',}}
+                          gutterBottom>
                 {metricName}
               </Typography>
-              <Typography color="textPrimary" variant="h6">
+              <Typography  sx={{fontSize: '22px',}}>
                 {mainMetricInUSD ? formatDollarAmount(mainMetric, metricDecimals) : formatNumber(mainMetric, metricDecimals) + metricUnit}
               </Typography>
             </Grid>
@@ -62,7 +65,7 @@ const MetricsCard = ({
                 </Typography>
             ) : null}
             {mainMetricChange ? (
-                <Typography color="textSecondary" variant="caption">
+                <Typography variant="caption">
                   {mainMetricChangeRange ? mainMetricChangeRange : '(24h)'}
                 </Typography>
             ) : null}

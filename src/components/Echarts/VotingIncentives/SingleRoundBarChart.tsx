@@ -1,4 +1,5 @@
 import ReactEcharts from 'echarts-for-react';
+import { graphic, color } from 'echarts';
 import {useTheme} from '@mui/material/styles';
 import {formatDollarAmount} from "../../../utils/numbers";
 import {PoolReward} from "../../../pages/VotingIncentives";
@@ -15,6 +16,14 @@ interface TooltipParam {
     seriesName: string;
     dataIndex: number;
 }
+
+const rainbowColors = [
+    'rgb(32, 129, 240)',
+    'rgb(255, 204, 0)',
+    'rgb(126, 217, 87)',
+    'rgb(255, 87, 87)',
+    'rgb(140, 82, 255)',
+];
 
 export default function SingleRoundBarChart({rewardData, xAxisData, height }: BribesProps) {
 
@@ -125,9 +134,13 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height }: Br
                 data: sortedRewardDataArray,
                 yAxisIndex: 0,
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: function (params: any) {
+                        // Use the rainbowColors array to set colors based on the index
+                        const colorIndex = params.dataIndex % rainbowColors.length;
+                        return rainbowColors[colorIndex];
+                    },
                 },
-            }
+            },
         ]
     };
 

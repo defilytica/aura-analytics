@@ -13,6 +13,7 @@ import {createTheme, styled, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
 import {getThemeDesignTokens} from '../../assets/theme';
+import { themes } from '../../assets/auraTheme/theme'
 import {useActiveNetworkVersion} from '../../state/application/hooks';
 import {EthereumNetworkInfo, SUPPORTED_NETWORK_VERSIONS} from '../../constants/networks';
 import NetworkSelector from '../NetworkSelector';
@@ -133,7 +134,7 @@ function Dashboard() {
     );
 
     //Theme
-    const theme = React.useMemo(() => createTheme(getThemeDesignTokens(mode)), [mode]);
+    const theme = React.useMemo(() => createTheme(mode === 'light' ? themes.light : themes.dark), [mode]);
 
     //Network hook
     const location = useLocation();

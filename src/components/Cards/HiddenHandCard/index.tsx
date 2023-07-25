@@ -6,7 +6,6 @@ import OrbBg from '../../../assets/png/orbz.png';
 const StyledCard = styled(Card)(({ theme }) => ({
     position: 'relative',
     maxWidth: 400,
-    border: '1px solid grey',
     padding: theme.spacing(1),
 
     pointerEvents: 'auto',
