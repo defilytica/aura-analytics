@@ -208,13 +208,13 @@ export default function Protocol() {
                         sx={{justifyContent: 'center'}}
                     >
                         <Grid item xs={11} sm={9} mt={1}>
-                            <Typography variant="h5" mb={1}>Global Aura Stats</Typography>
+                            <Typography sx={{fontSize: '24px'}} mb={1}>Global Aura Stats</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
-                                sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
                                 <Box m={1}>
                                     {coinData && coinData[auraAddress] && coinData[auraAddress].usd ?
@@ -276,12 +276,12 @@ export default function Protocol() {
                         sx={{justifyContent: 'center'}}
                     >
                         <Grid item mt={1} xs={11} sm={9}>
-                            <Typography variant='h5'>Historical Staking TVL</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Historical Staking TVL</Typography>
                         </Grid>
 
                         {sortedTvlData ?
-                            <Grid item mt={1} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3}}>
+                            <Grid item xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
                                     <ProtocolMultiAreaChart
                                         mainnetProtocolData={displayPoolData}
                                         arbitrumProtocolData={displayPoolDataArb}
@@ -293,12 +293,12 @@ export default function Protocol() {
                             : <CircularProgress/>
                         }
                         <Grid item mt={1} xs={11} sm={9}>
-                            <Typography variant='h5'>Historical Staking Volume</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Historical Staking Volume</Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?
-                            <Grid item mt={1} mb={2} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3}}>
+                            <Grid item mb={2} xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
                                     <ProtocolMultiBarChart
                                         mainnetProtocolData={displayTransactions}
                                         arbitrumProtocolData={displayTransactionsArb}
@@ -311,12 +311,12 @@ export default function Protocol() {
                         }
 
                         <Grid item mt={1} xs={11} sm={9}>
-                            <Typography variant='h5'>Historical Balancer TVL captured</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Historical Balancer TVL captured</Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?
-                            <Grid item mt={1} mb={2} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3}}>
+                            <Grid item mb={2} xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
                                     <ProtocolMultiLineChart
                                         dataSets={[
                                             { name: 'Ethereum', data: capturedTVLEth },

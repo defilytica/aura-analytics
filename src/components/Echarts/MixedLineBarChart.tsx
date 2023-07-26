@@ -4,6 +4,7 @@ import { CircularProgress } from '@mui/material';
 import { BalancerChartDataItem } from '../../data/balancer/balancerTypes';
 import {formatDollarAmount, formatNumber} from '../../utils/numbers';
 import { pink, blue } from '@mui/material/colors';
+import {AppColors} from "../../assets/auraTheme/colors";
 
 export interface GenericBarChartProps {
     barChartData: BalancerChartDataItem[],
@@ -84,7 +85,7 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
                 data: yDataBar,
                 type: 'bar',
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
@@ -96,12 +97,15 @@ export default function MixedLineBarChart({ barChartData, barChartName, lineChar
             {
                 emphasis: {
                     itemStyle: {
-                        color: blue[500]
+                        color: AppColors.purple[500]
                     }
                 },
                 yAxisIndex: 1,
                 data: yDataLine,
                 type: 'line',
+                itemStyle: {
+                    color: AppColors.purple[500]
+                },
                 tooltip: {
                     valueFormatter: function (value: number) {
                         return formatDollarAmount(value)

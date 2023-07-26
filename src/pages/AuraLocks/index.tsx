@@ -3,7 +3,7 @@ import {Card, CircularProgress, Grid, Typography} from '@mui/material';
 import {useGetLeadingLockers} from "../../data/aura/useAuraLockers";
 import LockerTable from "../../components/Tables/LockerTable";
 import TopLockerCard from "../../components/Cards/TopLockerCard";
-import {BalancerChartDataItem, BalancerPieChartDataItem} from "../../data/balancer/balancerTypes";
+import {BalancerChartDataItem} from "../../data/balancer/balancerTypes";
 import {shortenAddress} from "../../utils";
 import {useCoinGeckoSimpleTokenPrices} from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
 import * as React from "react";
@@ -149,10 +149,6 @@ export default function AuraLocks() {
     )
 
     tokenBarChartData = tokenBarChartData.slice(0, 19);
-    const filteredPieChartData: BalancerPieChartDataItem[] = tokenBarChartData.map(({value, time}) => ({
-        value: value,
-        name: time,
-    }))
 
 // Generate the dailyUnlocks array
     const dailyUnlocks: BalancerChartDataItem[] = [];
@@ -211,13 +207,13 @@ export default function AuraLocks() {
 
                         </Grid>
                         <Grid item xs={11} sm={9} mt={1}>
-                            <Typography variant="h6" mb={1}>Global Aura Locking Stats</Typography>
+                            <Typography sx={{fontSize: '24px',}} mb={1}>Global Aura Locking Stats</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
-                                sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
                                 <Box m={1}>
                                     <MetricsCard mainMetric={totalLockedAmount} mainMetricInUSD={false}
@@ -267,7 +263,7 @@ export default function AuraLocks() {
                 */}
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography variant="h6">Cumulative Daily Unlocks</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Cumulative Daily Unlocks</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <AuraDailyUnlocksChart
@@ -279,7 +275,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography variant="h6">Weekly Aura Unlocks</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Weekly Aura Unlocks</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <GenericBarChart data={unlockAmounts} customUnit={'vlAura'}/>
@@ -287,7 +283,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography variant="h6">Weekly Aura Unlocks vs Re-Locks vs Withdrawals</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Weekly Aura Unlocks vs Re-Locks vs Withdrawals</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
@@ -295,7 +291,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography variant="h6">Weekly Percentage Aura Unlocks vs Re-Locks vs
+                                <Typography sx={{fontSize: '24px'}}>Weekly Percentage Aura Unlocks vs Re-Locks vs
                                     Withdrawals</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
@@ -304,7 +300,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography variant="h6">Top Depositors</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Top Depositors</Typography>
                             </Box>
                             <Grid item xs={11} sm={9}>
                                 <Grid

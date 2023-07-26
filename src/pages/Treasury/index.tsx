@@ -114,7 +114,7 @@ export default function Treasury() {
                     <Grid mt={2} item xs={11} sm={9}>
                         <Box display="flex" alignItems="center">
                             <Box>
-                                <Typography variant={"h5"}>Treasury Metrics on {activeNetwork.name}</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Treasury Metrics on {activeNetwork.name}</Typography>
                             </Box>
                         </Box>
                     </Grid>
@@ -126,7 +126,7 @@ export default function Treasury() {
                                 columns={{ xs: 4, sm: 8, md: 12 }}
                                 sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
                             >
-                                <Box m={1}>
+                                <Box>
                                     <MetricsCard
                                         mainMetric={netWorth}
                                         mainMetricInUSD={true}
@@ -135,7 +135,7 @@ export default function Treasury() {
                                         MetricIcon={AccountBalanceIcon}
                                     />
                                 </Box>
-                                <Box m={1}>
+                                <Box ml={1}>
                                     <MetricsCard
                                         mainMetric={walletTokenNetworth}
                                         mainMetricInUSD={true}
@@ -144,7 +144,7 @@ export default function Treasury() {
                                         MetricIcon={WalletIcon}
                                     />
                                 </Box>
-                                <Box m={1}>
+                                <Box ml={1}>
                                     <MetricsCard
                                         mainMetric={totalUSDCReserves ? totalUSDCReserves : 0}
                                         mainMetricInUSD={true}
@@ -175,9 +175,8 @@ export default function Treasury() {
                                         sx={{ boxShadow: 3 }}>
                                         <Box p={1}>
                                             <Typography
-                                                color="textSecondary"
+                                                sx={{fontSize: '24px'}}
                                                 gutterBottom
-                                                variant="h6"
                                             >
                                                 Asset Distribution
                                             </Typography>
@@ -197,9 +196,8 @@ export default function Treasury() {
                                     <Card sx={{ boxShadow: 3 }}>
                                         <Box p={1}>
                                             <Typography
-                                                color="textSecondary"
+                                                sx={{fontSize: '24px'}}
                                                 gutterBottom
-                                                variant="h6"
                                             >
                                                 Token distribution
                                             </Typography>
@@ -216,7 +214,7 @@ export default function Treasury() {
                     >
                         <Box display="flex" justifyContent="space-between" alignItems="row">
                             <Box display="flex" alignItems='center'>
-                                <Typography variant="h6">Tokens in Treasury Wallet</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Tokens in Treasury Wallet</Typography>
                                 <Box ml={1}>
                                     <StyledExternalLink address={TREASURY_CONFIG.treasury} type={'address'} activeNetwork={activeNetwork} />
                                 </Box>
@@ -232,7 +230,7 @@ export default function Treasury() {
                                 item
                                 xs={11} sm={9}
                             >
-                                <Typography variant="h6">Liquidity Provisions</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Liquidity Provisions</Typography>
                             </Grid>
                         </Grid> : null}
                     <Grid

@@ -68,7 +68,7 @@ export default function CoinPriceCard({ mainMetric, mainMetricChange, chartData,
               </Box>
               <Typography
                 color="textPrimary"
-                variant="h5"
+                sx={{fontSize: '18px',}}
               >
                 {formatDollarAmount(price)}
               </Typography>
@@ -86,7 +86,8 @@ export default function CoinPriceCard({ mainMetric, mainMetricChange, chartData,
               <Typography
                 color={tokenPriceChange > 0 ? 'green' : 'error'}
                 sx={{
-                  mr: 1
+                  mr: 1,
+                  fontSize: '12px'
                 }}
                 variant="body2"
               >
@@ -94,19 +95,19 @@ export default function CoinPriceCard({ mainMetric, mainMetricChange, chartData,
               </Typography>
               <Typography
                 color="textSecondary"
-                variant="caption"
+                sx={{fontSize: '14px',}}
               >
                 (24h)
               </Typography>
             </Box >
             </Box>
             <Box>
-            <Link 
-              color={theme.palette.mode === 'dark' ? 'white' : 'black'} 
-              target="_blank" rel="noopener noreferrer" 
-              variant="caption" 
-              display="block" 
-              underline="none" 
+            <Link
+              color={theme.palette.mode === 'dark' ? 'white' : 'black'}
+              target="_blank" rel="noopener noreferrer"
+              variant="caption"
+              display="block"
+              underline="none"
               href={"https://coingecko.com/en/coins/" + tokenAddress}>
             <Box
               sx={{ display: { xs: 'none', md: 'flex' }, ml: 1 }} >
