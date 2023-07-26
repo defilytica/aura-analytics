@@ -27,19 +27,18 @@ export interface ToolTipParams {
 interface ProtocolAreaChartProps {
     mainnetData: number[],
     arbitrumData: number[],
-    polygonData: number[],
-    gnosisData: number[],
+    optimismData: number[],
     xAxis: string[],
 }
 
 
-export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonData, gnosisData,  xAxis }: ProtocolAreaChartProps) {
+export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismData,  xAxis }: ProtocolAreaChartProps) {
 
 
     const theme = useTheme()
 
     const option = {
-        color: ['#00DDFF','#80FFA5', '#37A2FF', '#0d8e74'],
+        color: ['#b300ff','#37A2FF', '#f50202'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -48,11 +47,9 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
                     backgroundColor: '#6a7985',
                 }
             },
-
-
         },
         legend: {
-            data: ['Mainnet', 'Arbitrum', 'Polygon', 'Gnosis'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -84,7 +81,39 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
         ],
         series: [
             {
-                name: 'Mainnet',
+                name: 'Ethereum',
+                type: 'line',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                areaStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(93, 36, 198)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(156, 78, 214)'
+                        }
+                    ])
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value)
+                    }
+                },
+                data: mainnetData
+            },
+            {
+                name: 'Arbitrum',
                 type: 'line',
                 stack: 'Total',
                 smooth: true,
@@ -113,42 +142,10 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
                         return formatDollarAmount(value)
                     }
                 },
-                data: mainnetData
-            },
-            {
-                name: 'Arbitrum',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.95,
-                    color: new graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(1, 191, 236)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(128, 255, 165)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                tooltip: {
-                    valueFormatter: function (value: number) {
-                        return formatDollarAmount(value)
-                    }
-                },
                 data: arbitrumData
             },
             {
-                name: 'Polygon',
+                name: 'Optimism',
                 type: 'line',
                 stack: 'Total',
                 smooth: true,
@@ -161,11 +158,11 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
                     color: new graphic.LinearGradient(0, 0, 0, 1, [
                         {
                             offset: 0,
-                            color: 'rgb(116, 21, 219)'
+                            color: 'rgb(245, 2, 2)'
                         },
                         {
                             offset: 1,
-                            color: 'rgb(55, 162, 255)'
+                            color: 'rgb(214, 79, 79)'
                         }
                     ])
                 },
@@ -177,39 +174,7 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
                         return formatDollarAmount(value)
                     }
                 },
-                data: polygonData
-            },
-            {
-                name: 'Gnosis',
-                type: 'line',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                areaStyle: {
-                    opacity: 0.95,
-                    color: new graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(13, 142, 116)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(13, 100, 116)'
-                        }
-                    ])
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                tooltip: {
-                    valueFormatter: function (value: number) {
-                        return formatDollarAmount(value)
-                    }
-                },
-                data: gnosisData
+                data: optimismData
             },
         ]
     };
@@ -223,7 +188,7 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, polygonDa
       };
 
     return (
-        mainnetData.length > 1 && arbitrumData.length > 1 && polygonData.length > 1 && xAxis ?
+        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && xAxis ?
             <ReactEcharts
                 option={option}
                 style={{ height: '350px' }}

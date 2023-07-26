@@ -9,6 +9,11 @@ export interface GlobalAuraStats{
     auraTotalLockedAmount: number,
 }
 
+export type CapturedTVL = {
+    capturedPercentage: number;
+    time: string;
+};
+
 export interface PositionInfo{
     stakedAmount: number,
     accountId: string,
