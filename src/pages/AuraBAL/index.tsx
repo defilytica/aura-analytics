@@ -203,7 +203,7 @@ export default function AuraBAL() {
                                     transform: "translateX(-50%)"
                                 }}>
                                 <Typography
-                                    variant='h4'
+                                    sx={{fontSize: '24px'}}
                                     color={theme.palette.mode === 'dark' ? 'white' : '#9C4ED6'}
                                 >
                                     AuraBAL on {activeNetwork.name}
@@ -214,7 +214,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h5">Global Metrics</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Global Metrics</Typography>
                     </Box>
                     <Grid
                         container
@@ -249,7 +249,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">Historical auraBAL Supply</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Historical auraBAL Supply</Typography>
                     </Box>
                     <Card>
                         <AuraBALMultiAreaChart
@@ -262,7 +262,7 @@ export default function AuraBAL() {
                 {tokenData ?
                     <Grid item xs={11} sm={9}>
                         <Box mb={1}>
-                            <Typography variant="h5">Balancer Metrics</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Balancer Metrics</Typography>
                         </Box>
                         <Grid
                             container
@@ -315,7 +315,7 @@ export default function AuraBAL() {
             >
                 <Grid item xs={11} sm={9} mt={2}>
                     <Box mb={1}>
-                        <Typography variant="h6">Deployed Liquidity Metrics</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Deployed Liquidity Metrics</Typography>
                     </Box>
                     <Box>
                         <Card>
@@ -325,7 +325,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">auraBAL: Deployed Balancer Pools</Typography>
+                        <Typography sx={{fontSize: '24px'}}>auraBAL: Deployed Balancer Pools</Typography>
                     </Box>
                     <PoolTable poolDatas={poolData}/>
                 </Grid>
@@ -338,7 +338,7 @@ export default function AuraBAL() {
 
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">Daily AuraBAL Mints</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Daily AuraBAL Mints</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
@@ -359,7 +359,7 @@ export default function AuraBAL() {
                 */}
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">Top Depositors</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Top Depositors</Typography>
                     </Box>
 
                     <Box p={1} display="flex" alignItems='center'>
@@ -377,7 +377,7 @@ export default function AuraBAL() {
             >
                 <Grid item xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h5">auraBAL Compounder Stats</Typography>
+                        <Typography sx={{fontSize: '24px'}}>auraBAL Compounder Stats</Typography>
                     </Box>
                 </Grid>
                 <Grid item xs={11} sm={9}>
@@ -440,7 +440,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">Daily Vault Harvests</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Daily Vault Harvests</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
@@ -451,7 +451,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography variant="h6">Historical auraBAL in Compounder</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Historical auraBAL in Compounder</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>

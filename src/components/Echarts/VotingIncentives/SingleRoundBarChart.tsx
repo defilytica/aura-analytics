@@ -1,6 +1,4 @@
 import ReactEcharts from 'echarts-for-react';
-import { graphic, color } from 'echarts';
-import {useTheme} from '@mui/material/styles';
 import {formatDollarAmount} from "../../../utils/numbers";
 import {PoolReward} from "../../../pages/VotingIncentives";
 
@@ -27,7 +25,6 @@ const rainbowColors = [
 
 export default function SingleRoundBarChart({rewardData, xAxisData, height }: BribesProps) {
 
-    const theme = useTheme()
     const rewardDataArray = rewardData.map(obj => {
         return Object.entries(obj).reduce((total: number, [key, value]) => {
             if (key !== 'pool' && typeof value === 'number') {

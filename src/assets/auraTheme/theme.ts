@@ -454,7 +454,7 @@ export const dark: ThemeOptions = {
     },
     background: {
       default: AppColors.slate[900],
-      paper: AppColors.slate[800],
+      paper: AppColors.slate[900],
     },
     border: {
       main: AppColors.slate[700],
@@ -647,7 +647,7 @@ export const dark: ThemeOptions = {
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: AppColors.slate[800],
+          backgroundColor: AppColors.slate[900],
         },
       },
     },
@@ -672,7 +672,7 @@ export const dark: ThemeOptions = {
     MuiTableCell: {
       styleOverrides: {
         root: {
-          borderColor: AppColors.slate[700],
+          borderColor: AppColors.slate[900],
         },
       },
     },

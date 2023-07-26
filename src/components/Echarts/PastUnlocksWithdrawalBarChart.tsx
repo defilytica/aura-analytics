@@ -3,6 +3,7 @@ import {graphic} from 'echarts';
 import ReactEcharts from 'echarts-for-react';
 import {useTheme} from "@mui/material/styles";
 import {formatNumber} from "../../utils/numbers";
+import {AppColors} from "../../assets/auraTheme/colors";
 
 export type ChartDataItem = {
     date: string;
@@ -72,7 +73,7 @@ export function PastUnlocksWithdrawalsChart({
                 type: 'bar',
                 data: filteredChartData.map(item => item.unlock),
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
                 },
                 areaStyle: {
                     color: new graphic.LinearGradient(0, 0, 0, 1, [

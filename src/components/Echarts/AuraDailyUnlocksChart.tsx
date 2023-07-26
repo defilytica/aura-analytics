@@ -1,6 +1,7 @@
 import ReactEcharts from 'echarts-for-react';
 import { useTheme } from '@mui/material/styles';
 import {formatDollarAmount, formatNumber} from "../../utils/numbers";
+import {AppColors} from "../../assets/auraTheme/colors";
 
 export interface BribesProps {
     dollarPerVlAssetData: number[],
@@ -65,7 +66,7 @@ export default function AuraDailyUnlocksChart({dollarPerVlAssetData, totalAmount
                 position: 'right',
                 axisLine: {
                     lineStyle: {
-                        color: '#5793f3'
+                        color: AppColors.purple[500]
                     }
                 },
                 axisLabel: {
@@ -82,14 +83,14 @@ export default function AuraDailyUnlocksChart({dollarPerVlAssetData, totalAmount
                 position: 'left',
                 axisLine: {
                     lineStyle: {
-                        color: '#FFFFFF'
+                        color: theme.palette.mode === "dark" ? AppColors.purple[50] : AppColors.gray[500]
                     }
                 },
                 axisLabel: {
                     formatter: function (value:number) {
                         return formatNumber(value);
                     },
-                    color: '#FFFFFF'
+                    color: theme.palette.mode === "dark" ? AppColors.purple[50] : AppColors.gray[500]
                 },
                 splitLine: {
                     show: false  // This removes the split lines
@@ -100,6 +101,9 @@ export default function AuraDailyUnlocksChart({dollarPerVlAssetData, totalAmount
             {
                 name:'Cumulative vlAura',
                 type:'line',
+                itemStyle: {
+                    color: AppColors.purple[500]
+                },
                 data:dollarPerVlAssetData,
                 yAxisIndex: 0,
             },
@@ -109,7 +113,7 @@ export default function AuraDailyUnlocksChart({dollarPerVlAssetData, totalAmount
                 data:totalAmountDollarsData,
                 yAxisIndex: 1,
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: theme.palette.mode === "dark" ? AppColors.purple[50] : AppColors.gray[500]
                 },
             }
         ]
