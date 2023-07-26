@@ -60,8 +60,6 @@ export default function Protocol() {
     const poolTransactions = usePoolTransactions('eth');
     const poolTransactionsArb = usePoolTransactions('arb');
     const poolTransactionsOpt = usePoolTransactions('opt');
-    const lockers = useGetLeadingLockers();
-
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
 
     const handleChange = (event: SelectChangeEvent) => {
