@@ -27,6 +27,7 @@ import {useAccount} from "wagmi";
 import HiddenHandCard from "../../components/Cards/HiddenHandCard";
 import HiddenHandAddressRewards from "../../components/Tables/HiddenHandAddressRewards";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -38,7 +39,6 @@ const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => 
 
             if (bribes.length > 0) {
                 const poolReward: PoolReward = {pool: title};
-
                 bribes.forEach((bribe) => {
                     const {symbol, value} = bribe;
                     const tokenKey = `${symbol.toUpperCase()}`;
@@ -55,7 +55,6 @@ const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => 
             }
         });
     }
-    console.log("poolRewards", poolRewards)
     return poolRewards;
 };
 
@@ -80,11 +79,12 @@ export default function VotingIncentives() {
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
     const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
+    const [emissionVotesTotal, setEmissionVotesTotal] = useState<number>(0);
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
-    const hiddenHandData = useGetHiddenHandVotingIncentives(String(currentRoundNew));
-    const { isConnected, address } = useAccount();
+    const hiddenHandData = useGetHiddenHandVotingIncentives(currentRoundNew === 0 ? '' : String(currentRoundNew));
+    // const currentHiddenHandData = useGetHiddenHandVotingIncentives();
+    const { address } = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
-    console.log("addressRewards", addressRewards)
     const gaugeData = useGetBalancerStakingGauges();
 
     useEffect(() => {
@@ -107,6 +107,7 @@ export default function VotingIncentives() {
             });
             const incentiveEfficency = totalValue / totalVotes;
             const emissionEff = emissionValue / emissionVotes
+            setEmissionVotesTotal(emissionVotes)
             setIncentivePerVote(incentiveEfficency)
             setEmissionPerVote(emissionEff)
             setRoundIncentives(totalValue)
@@ -121,7 +122,6 @@ export default function VotingIncentives() {
 
     //Historical data
     const historicalData = useGetHiddenHandHistoricalIncentives();
-
 
     // LLAMA API
     const roundsData = GetBribingRounds();
@@ -225,7 +225,7 @@ export default function VotingIncentives() {
                                     {timestamps.map((roundNumber, index) => (
                                         <MenuItem
                                             value={roundNumber}
-                                            key={index}>{unixToDate(roundNumber)}
+                                            key={index}>{roundNumber === 0 ? 'Current' : unixToDate(roundNumber)}
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -244,8 +244,14 @@ export default function VotingIncentives() {
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={1}>
+                                    {emissionVotesTotal ?
+                                        <MetricsCard mainMetric={emissionVotesTotal} metricName={"Total Incentive Votes"}
+                                                     mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
+                                        : <CircularProgress/>}
+                                </Box>
+                                <Box m={1}>
                                     {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={incentivePerVote} metricName={"Incentives per Vote"}
+                                        <MetricsCard mainMetric={emissionPerVote} metricName={"Incentive $/Vote"}
                                                      metricDecimals={4}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
@@ -277,7 +283,7 @@ export default function VotingIncentives() {
                         )}
 
                         <Grid item xs={11} sm={9}>
-                            {currentRoundNew !== timestamps[timestamps.length - 1] && hiddenHandData.incentives !== null ? (
+                            {currentRoundNew < 1689019200 && currentRoundNew !== 0 && hiddenHandData.incentives !== null ? (
                                 <HistoricalIncentivesTable
                                     key={currentRoundNew}
                                     gaugeDatas={hiddenHandData.incentives.data} />
@@ -305,7 +311,7 @@ export default function VotingIncentives() {
                                         height="100%"
                                     >
                                         <SelfImprovementIcon sx={{ fontSize: 48 }} />
-                                        <Typography variant="h5" align="center">
+                                        <Typography variant="subtitle1" align="center">
                                             Please connect your Wallet
                                         </Typography>
                                     </Box>

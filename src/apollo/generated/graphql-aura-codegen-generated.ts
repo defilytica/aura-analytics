@@ -13535,6 +13535,7 @@ export type AuraGlobalStatsQuery = {
     symbol: string;
     name: string;
   }>;
+  auraLockers: Array<{ __typename?: "AuraLocker"; lockedSupply: any }>;
 };
 
 export type AuraPoolsQueryVariables = Exact<{
@@ -15630,6 +15631,9 @@ export const AuraGlobalStatsDocument = gql`
     }
     tokens(first: 1000) {
       ...AllToken
+    }
+    auraLockers {
+      lockedSupply
     }
   }
   ${AllTokenFragmentDoc}

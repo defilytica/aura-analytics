@@ -10,7 +10,6 @@ import {usePoolTransactions, Volume} from "../../data/aura/usePoolTransactions";
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import AuraIcon from "../../assets/png/AURA_ISO_colors.png";
-import {useGetLeadingLockers} from "../../data/aura/useAuraLockers";
 import TokenIcon from "@mui/icons-material/Token";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 import {TVL, useAuraPoolsHistorically} from "../../data/aura/useAuraPools";
@@ -51,6 +50,7 @@ export default function Protocol() {
     // Hooks to fetch data
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
     const auraGlobalStats = useAuraGlobalStats();
+
     const balancerPools = useBalancerPoolsHistorically('eth');
     const balancerPoolsArb = useBalancerPoolsHistorically('arb')
     const balancerPoolsOpt = useBalancerPoolsHistorically('opt')
@@ -62,7 +62,7 @@ export default function Protocol() {
     const poolTransactionsOpt = usePoolTransactions('opt');
     const lockers = useGetLeadingLockers();
 
-    const totalLockedAmount = lockers.reduce((a, b) => a + Number(b.balanceLocked), 0);
+    const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
 
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(Number(event.target.value));

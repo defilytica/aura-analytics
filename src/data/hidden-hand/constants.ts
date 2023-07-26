@@ -36,7 +36,7 @@ let auraTimeStamps = [
 // get current time in seconds
 const now = Math.floor(Date.now() / 1000);
 
-//add additional rounds
+// add additional rounds
 while (auraTimeStamps[auraTimeStamps.length - 1] < now) {
     let lastTimestamp = auraTimeStamps[auraTimeStamps.length - 1];
 
@@ -44,6 +44,13 @@ while (auraTimeStamps[auraTimeStamps.length - 1] < now) {
     if (lastTimestamp + PATTERN < now) {
         auraTimeStamps.push(lastTimestamp + PATTERN);
     } else {
+        // Calculate Monday 20:00 timestamp
+        const nextMondayTimestamp = lastTimestamp + PATTERN + 604800; // Adding 604800 seconds (7 days) for Monday 20:00
+
+        // Check if we are between Thursday 02:00 and the following Monday 20:00
+        if (now >= (lastTimestamp + 180000) && now < nextMondayTimestamp) {
+            auraTimeStamps.push(0);
+        }
         break;
     }
 }

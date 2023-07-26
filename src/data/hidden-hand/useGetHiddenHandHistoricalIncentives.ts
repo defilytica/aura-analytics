@@ -44,7 +44,9 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
                         let totalVotes = 0;
                         hiddenHandData.data.forEach((item) => {
                             totalValue += item.totalValue;
-                            totalVotes += item.voteCount;
+                            if (item.totalValue > 0) {
+                                totalVotes += item.voteCount;
+                            }
                         });
 
                         const valuePerVote = totalVotes > 0 ? totalValue / totalVotes : 0;
