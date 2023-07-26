@@ -64,14 +64,14 @@ export type TVL = {
     blockNumber: number;
 }
 
-export function useAuraPoolsHistorically(): TVL[] {
+export function useAuraPoolsHistorically(networkId:string): TVL[] {
     const [activeNetwork] = useActiveNetworkVersion();
     const [auraPoolsData, setAuraPoolsData] = useState<TVL[]>([]);
 
     const fetchPoolDataFromDB = useCallback(async () => {
         const dbRef = ref(getDatabase());
         console.log(activeNetwork)
-        get(child(dbRef, `poolData/` + activeNetwork.debankId + '/')).then((snapshot) => {
+        get(child(dbRef, `poolData/` + networkId + '/')).then((snapshot) => {
             if (snapshot.exists()) {
                 const object = snapshot.val();
                 const array = Object.keys(object).map(key => object[key]);
