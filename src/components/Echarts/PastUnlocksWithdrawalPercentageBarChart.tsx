@@ -2,6 +2,7 @@ import React from 'react';
 import {graphic} from 'echarts';
 import ReactEcharts from 'echarts-for-react';
 import {useTheme} from "@mui/material/styles";
+import {AppColors} from "../../assets/auraTheme/colors";
 
 export type ChartDataItem = {
     date: string;
@@ -98,7 +99,7 @@ export function PastUnlocksWithdrawalPercentageBarChart({
                 stack: 'percentage',
                 data: transformedData.map((item: TransformedDataItem) => item.unlockPercentage),
                 itemStyle: {
-                    color: theme.palette.secondary.main
+                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
                 },
                 areaStyle: {
                     color: new graphic.LinearGradient(0, 0, 0, 1, [

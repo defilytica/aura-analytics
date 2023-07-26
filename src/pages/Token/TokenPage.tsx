@@ -117,7 +117,7 @@ export default function TokenPage() {
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
                     <Grid item xs={11} sm={9}>
                         <Box mt={2}>
-                            <Typography variant="h5">{tokenData.symbol} - Historical Data </Typography>
+                            <Typography sx={{fontSize: '24px',}}>{tokenData.symbol} - Historical Data </Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={11} sm={9}>
@@ -131,7 +131,7 @@ export default function TokenPage() {
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
                     <Grid item xs={11} sm={9}>
                         <Box mt={2}>
-                            <Typography variant="h5">{tokenData.symbol} - Deployed Liquidity Pools </Typography>
+                            <Typography sx={{fontSize: '24px',}}>{tokenData.symbol} - Deployed Liquidity Pools </Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={11} sm={9}>
@@ -141,7 +141,7 @@ export default function TokenPage() {
                 <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
                     <Grid item xs={11} sm={9}>
                         <Box mt={2} mb={1}>
-                            <Typography variant="h5">Historical Swaps </Typography>
+                            <Typography sx={{fontSize: '24px',}}>Historical Swaps </Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={11} sm={9} >
@@ -149,7 +149,7 @@ export default function TokenPage() {
                     </Grid>
                     <Grid item xs={11} sm={9}>
                         <Box mt={2} mb={1}>
-                            <Typography variant="h5">Liquidity Provisions </Typography>
+                            <Typography sx={{fontSize: '24px',}}>Liquidity Provisions </Typography>
                         </Box>
                         <JoinExitsTable joinExits={joinExits} />
                     </Grid>

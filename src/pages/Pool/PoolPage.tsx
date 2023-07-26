@@ -134,7 +134,7 @@ export default function PoolPage() {
                                     alignItems: { xs: 'left', md: "center" }
                                 }}>
                                 <Box mr={1}>
-                                    <Typography variant={"h5"}>{poolData.poolType} Pool - </Typography>
+                                    <Typography sx={{fontSize: '24px',}}>{poolData.poolType} Pool - </Typography>
                                 </Box>
                                 <PoolCompositionWithLogos poolData={poolData} size={35} />
                                 <Box ml={1}>
@@ -202,7 +202,7 @@ export default function PoolPage() {
                         </Grid>
                     </Grid>
                     <Grid mt={2} item xs={11} sm={9}>
-                        <Typography variant="h5">Historical Performance </Typography>
+                        <Typography sx={{fontSize: '24px',}}>Historical Performance </Typography>
                     </Grid>
                     <Grid item xs={11} sm={9}>
                         <Card>
@@ -244,7 +244,7 @@ export default function PoolPage() {
                             mt={1}
                             xs={11} sm={9}
                         >
-                            <Typography variant="h5">Historical Swaps </Typography>
+                            <Typography sx={{fontSize: '24px',}}>Historical Swaps </Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <SwapsTable swaps={swaps} />

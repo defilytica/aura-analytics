@@ -54,7 +54,7 @@ export default function GenericBarChart({ data, customUnit = '' }: GenericBarCha
                 data: yData,
                 type: 'bar',
                 itemStyle: {
-                    color: AppColors.purple[50]
+                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {

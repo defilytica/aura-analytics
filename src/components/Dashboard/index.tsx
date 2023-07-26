@@ -12,7 +12,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {createTheme, styled, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
-import {getThemeDesignTokens} from '../../assets/theme';
 import { themes } from '../../assets/auraTheme/theme'
 import {useActiveNetworkVersion} from '../../state/application/hooks';
 import {EthereumNetworkInfo, SUPPORTED_NETWORK_VERSIONS} from '../../constants/networks';
@@ -130,7 +129,7 @@ function Dashboard() {
                 cookies.set('storedTheme', (mode === 'light' ? 'dark' : 'light'));
             },
         }),
-        [],
+        [cookies, mode],
     );
 
     //Theme
@@ -200,11 +199,12 @@ function Dashboard() {
                                             <img src={AuraLogo} alt="Aura Logo" width="30"/>
                                         </Box>
                                         <Typography
-                                            variant="h6"
+
                                             noWrap
                                             component="a"
                                             href="/"
                                             sx={{
+                                                fontSize: '20px',
                                                 mr: 0.5,
                                                 display: {xs: 'none', md: 'flex'},
                                                 fontWeight: 700,
@@ -214,8 +214,8 @@ function Dashboard() {
                                         >
                                             Analytics
                                         </Typography>
-                                        <Typography variant="caption"
-                                                    sx={{color: (mode === 'dark') ? 'white' : 'black',}}>Alpha</Typography>
+                                        <Typography
+                                                    sx={{fontSize: '12px', color: (mode === 'dark') ? 'white' : 'black',}}>Beta</Typography>
                                         <Box position="absolute" right="10px">
                                             <Box display="flex" alignItems="center" alignContent="center"
                                                  justifyContent='flex-end'>
@@ -228,7 +228,7 @@ function Dashboard() {
                                                         height: 35,
                                                         borderRadius: 2,
                                                         backgroundColor: "background.paper",
-                                                        boxShadow: 2,
+                                                        boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
                                                     }}
                                                     onClick={colorMode.toggleColorMode}>
                                                     <img src={(mode === 'dark') ? MoonIcon : SunIcon} alt="Theme Icon"

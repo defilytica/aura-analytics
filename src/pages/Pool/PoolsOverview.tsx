@@ -160,7 +160,7 @@ export default function PoolsOverview() {
                         mb={1}
                         xs={11} sm={9}
                     >
-                        <Typography variant='h5'>Top 20 Aura Pools by TVL</Typography>
+                        <Typography sx={{fontSize: '22px',}}>Top 20 Aura Pools by TVL</Typography>
                     </Grid> : null}
                 {filteredPoolBarChartData.length > 1 ?
                     <Grid
@@ -178,7 +178,7 @@ export default function PoolsOverview() {
                             <Grid
                                 item
                                 xs={11}
-                                md={4.5}
+                                md={4}
                             >
                                 <Card
                                     sx={{ boxShadow: 3 }}
@@ -194,7 +194,7 @@ export default function PoolsOverview() {
                         <Grid
                             item
                             xs={11}
-                            md={4.5}
+                            md={4}
                         >
                             <Card
                                 sx={{ boxShadow: 3 }}
@@ -209,7 +209,7 @@ export default function PoolsOverview() {
                     xs={11} sm={9}
                     mt={1}
                     mb={1}>
-                    <Typography variant="h5" mb={1}>
+                    <Typography sx={{fontSize: '22px',}} mb={1}>
                         Balancer Pools with Aura Staking Gauges
                     </Typography>
                     {poolData.length > 10 ?

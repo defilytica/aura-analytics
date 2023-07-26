@@ -5,6 +5,7 @@ import { formatDollarAmount } from '../../../utils/numbers';
 import { green } from '@mui/material/colors';
 import PoolCurrencyLogo from "../../PoolCurrencyLogo";
 import { PoolTokenData } from '../../../data/balancer/balancerTypes'
+import {AppColors} from "../../../assets/auraTheme/colors";
 
 interface PoolMetricsCardProps {
     mainMetric: number,
@@ -26,13 +27,10 @@ export default function PoolMetricsCard({
     const metricUnit = mainMetricUnit ? mainMetricUnit : '';
 
     return (
-        <Card
-        sx={{
-          maxWidth: '275px',
-          minWidth: '200px',
-          boxShadow: 3,
-        }}
-        >
+        <Card sx={{
+            boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
+            minHeight: '110px',
+            p: '1px'}}>
           <CardContent sx={{p: '10px'}}>
             <Grid
               container
@@ -41,16 +39,13 @@ export default function PoolMetricsCard({
             >
               <Grid item>
                 <Typography
-                  color="textSecondary"
+                    color={AppColors.purple[600]}
                   gutterBottom
-                  variant="h6"
+                    sx={{fontSize: '18px',}}
                 >
                   {metricName}
                 </Typography>
-                <Typography
-                  color="textPrimary"
-                  variant="h6"
-                >
+                  <Typography   sx={{fontSize: '22px',}}>
                   {mainMetricInUSD ? formatDollarAmount(mainMetric) : Number(mainMetric).toFixed(0) + metricUnit}
                 </Typography>
               </Grid>

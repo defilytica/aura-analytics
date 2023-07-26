@@ -5,8 +5,7 @@ import { formatDollarAmount, formatNumber } from '../../../utils/numbers';
 import { green } from '@mui/material/colors';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
-import DiscordIconDark from '../../../assets/svg/discord-dark.svg';
-import {AppColors} from "../../../assets/auraTheme/colors";
+import { AppColors } from '../../../assets/auraTheme/colors';
 
 export type CoinCardProps = {
   mainMetric: number;
@@ -35,17 +34,37 @@ const MetricsCard = ({
 
 
   return (
-      <Card sx={{maxWidth: '275px', minWidth: '200px', minHeight: '110px', boxShadow: 3, p: '0px'}}>
+      <Card sx={{
+          boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
+          minHeight: '110px',
+          p: '1px'}}>
         <CardContent sx={{p: '10px'}}>
           <Grid container justifyContent="space-between">
             <Grid item>
-              <Typography sx={{fontSize: '18px',}}
+              <Typography color={AppColors.purple[600]} sx={{fontSize: '18px',}}
                           gutterBottom>
                 {metricName}
               </Typography>
-              <Typography  sx={{fontSize: '22px',}}>
+              <Typography   sx={{fontSize: '22px',}}>
                 {mainMetricInUSD ? formatDollarAmount(mainMetric, metricDecimals) : formatNumber(mainMetric, metricDecimals) + metricUnit}
               </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    {mainMetricChange && mainMetricChange > 0 ? (
+                        <ArrowUpwardIcon fontSize="small" sx={{ color: green[500] }} />
+                    ) : mainMetricChange ? (
+                        <ArrowDownwardIcon fontSize="small" color="error" />
+                    ) : null}
+                    {mainMetricChange ? (
+                        <Typography color={mainMetricChange > 0 ? 'green' : 'error'} sx={{ mr: 1 }} variant="caption">
+                            {Number(mainMetricChange).toFixed(2)} %
+                        </Typography>
+                    ) : null}
+                    {mainMetricChange ? (
+                        <Typography variant="caption">
+                            {mainMetricChangeRange ? mainMetricChangeRange : '(24h)'}
+                        </Typography>
+                    ) : null}
+                </Box>
             </Grid>
               <Grid item>{svgContent ? <Box ml={1}><img src={svgContent} alt="Svg Icon" width="30" /></Box> :
                 <Box ml={1}>
@@ -53,23 +72,7 @@ const MetricsCard = ({
                 </Box>}
             </Grid>
           </Grid>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            {mainMetricChange && mainMetricChange > 0 ? (
-                <ArrowUpwardIcon fontSize="small" sx={{ color: green[500] }} />
-            ) : mainMetricChange ? (
-                <ArrowDownwardIcon fontSize="small" color="error" />
-            ) : null}
-            {mainMetricChange ? (
-                <Typography color={mainMetricChange > 0 ? 'green' : 'error'} sx={{ mr: 1 }} variant="body2">
-                  {Number(mainMetricChange).toFixed(2)} %
-                </Typography>
-            ) : null}
-            {mainMetricChange ? (
-                <Typography variant="caption">
-                  {mainMetricChangeRange ? mainMetricChangeRange : '(24h)'}
-                </Typography>
-            ) : null}
-          </Box>
+
         </CardContent>
       </Card>
   );
