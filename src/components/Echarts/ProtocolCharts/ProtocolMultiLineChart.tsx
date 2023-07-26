@@ -49,9 +49,10 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
             formatter: function (params: any[]) {
                 let result = params[0].axisValueLabel + '<br/>';
                 params.forEach(param => {
-                    const value = param.data;
-                    const marker = param.marker; // circle marker using series color
-                    result += `${marker} ${param.seriesName}: ${parseFloat(value).toFixed(2)}%<br/>`;
+                    let value = param.data;
+                    value = (typeof value !== 'number' || isNaN(value)) ? "0.00" : value.toFixed(2);
+                    const marker = param.marker;
+                    result += `${marker} ${param.seriesName}: ${value}%<br/>`;
                 });
                 return result;
             },
