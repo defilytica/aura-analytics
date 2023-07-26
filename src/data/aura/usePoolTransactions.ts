@@ -7,13 +7,13 @@ export type Volume = {
     date: number;
 }
 
-export function usePoolTransactions(): Volume[] {
+export function usePoolTransactions(networkId:string): Volume[] {
     const [activeNetwork] = useActiveNetworkVersion();
     const [poolTransactionEntries, setPoolTransactionEntries] = useState<Volume[]>([]);
 
     const fetchTransactionDataFromDB = useCallback(async () => {
         const dbRef = ref(getDatabase());
-        get(child(dbRef, `poolTransactions/` + activeNetwork.debankId + '/')).then((snapshot) => {
+        get(child(dbRef, `poolTransactions/` + networkId + '/')).then((snapshot) => {
             if (snapshot.exists()) {
                 let poolTransactions = snapshot.val();
                 const array = Object.keys(poolTransactions).map(key => poolTransactions[key]);

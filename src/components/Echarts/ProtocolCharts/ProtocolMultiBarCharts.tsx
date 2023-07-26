@@ -1,8 +1,9 @@
 import ReactEcharts from 'echarts-for-react';
-import { formatDollarAmount, formatNumber } from '../../../utils/numbers';
+import { formatDollarAmount} from '../../../utils/numbers';
 import { Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles'
 import CustomLinearProgress from '../../Progress/CustomLinearProgress';
+import {graphic} from "echarts";
 
 export interface Normal {
     color: string;
@@ -26,15 +27,13 @@ export interface ToolTipParams {
 interface ProtocolBarChartProps {
     mainnetData: number[],
     arbitrumData: number[],
-    polygonData: number[],
-    gnosisData: number[],
+    optimismData: number[],
     xAxis: string[],
-    isUSD: boolean,
 }
 
 
 
-export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polygonData, gnosisData, xAxis, isUSD}: ProtocolBarChartProps) {
+export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, optimismData, xAxis}: ProtocolBarChartProps) {
 
     const theme = useTheme();
 
@@ -48,11 +47,11 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
                     backgroundColor: '#6a7985',
                 }
             },
-            
-            
+
+
         },
         legend: {
-            data: ['Mainnet', 'Arbitrum', 'Polygon', 'Gnosis'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism'],
             inactiveColor: "red",
             textStyle:{
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -76,14 +75,14 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
                 type: 'value',
                 axisLabel: {
                     formatter: function(d: number) {
-                        return isUSD ? formatDollarAmount(d) : formatNumber(d);
+                        return formatDollarAmount(d)
                     }
                 }
             }
         ],
         series: [
             {
-                name: 'Mainnet',
+                name: 'Ethereum',
                 type: 'bar',
                 stack: 'Total',
                 smooth: true,
@@ -91,17 +90,25 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
                     width: 0
                 },
                 showSymbol: false,
-                areaStyle: {
+                itemStyle: {
                     opacity: 0.95,
-                    color: 'rgb(0, 221, 255)'
-                    
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(93, 36, 198)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(156, 78, 214)'
+                        }
+                    ])
                 },
                 emphasis: {
                     focus: 'series'
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return isUSD ? formatDollarAmount(value) : formatNumber(value);
+                        return formatDollarAmount(value);
                     }
                 },
                 data: mainnetData
@@ -115,23 +122,31 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
                     width: 0
                 },
                 showSymbol: false,
-                areaStyle: {
+                itemStyle: {
                     opacity: 0.95,
-                    color: 'rgb(128, 255, 165)'
-                    
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(77, 119, 255)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(0, 221, 255)'
+                        }
+                    ])
                 },
                 emphasis: {
                     focus: 'series'
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return isUSD ? formatDollarAmount(value) : formatNumber(value);
+                        return formatDollarAmount(value);
                     }
                 },
                 data: arbitrumData
             },
             {
-                name: 'Polygon',
+                name: 'Optimism',
                 type: 'bar',
                 stack: 'Total',
                 smooth: true,
@@ -141,40 +156,26 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
                 showSymbol: false,
                 itemStyle: {
                     opacity: 0.95,
-                    color: 'rgb(155, 10, 255)'
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(245, 2, 2)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(214, 79, 79)'
+                        }
+                    ])
                 },
                 emphasis: {
                     focus: 'series'
                 },
                 tooltip: {
                     valueFormatter: function (value: number) {
-                        return isUSD ? formatDollarAmount(value) : formatNumber(value);
+                        return formatDollarAmount(value);
                     }
                 },
-                data: polygonData
-            },
-            {
-                name: 'Gnosis',
-                type: 'bar',
-                stack: 'Total',
-                smooth: true,
-                lineStyle: {
-                    width: 0
-                },
-                showSymbol: false,
-                itemStyle: {
-                    opacity: 0.95,
-                    color: 'rgb(13, 142, 116)'
-                },
-                emphasis: {
-                    focus: 'series'
-                },
-                tooltip: {
-                    valueFormatter: function (value: number) {
-                        return isUSD ? formatDollarAmount(value) : formatNumber(value);
-                    }
-                },
-                data: gnosisData
+                data: optimismData
             },
         ]
     };
@@ -188,7 +189,7 @@ export default function ProtocolMultiBarCharts({mainnetData, arbitrumData, polyg
       };
 
     return (
-        mainnetData.length > 1 && arbitrumData.length > 1 && polygonData.length > 1 && xAxis ?
+        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && xAxis ?
             <ReactEcharts
                 option={option}
                 theme='my_theme'
