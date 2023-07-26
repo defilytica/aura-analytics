@@ -30,14 +30,14 @@ export interface ToolTipParams {
 interface ProtocolAreaChartProps {
     mainnetProtocolData: BalancerChartDataItem[],
     arbitrumProtocolData: BalancerChartDataItem[],
-    polygonProtocolData: BalancerChartDataItem[],
-    gnosisProtocolData: BalancerChartDataItem[],
-    isUSD : boolean
+    optimismProtocolData: BalancerChartDataItem[],
+    changeHandler: (event: SelectChangeEvent) => void,
+    timeRange: number,
 }
 
 
 
-export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, polygonProtocolData, gnosisProtocolData, isUSD}: ProtocolAreaChartProps) {
+export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
 
     const mainnetData = mainnetProtocolData.map(el => Number(el.value.toFixed(2)));
     let arbitrumData = arbitrumProtocolData.map(el => Number(el.value.toFixed(2)));
@@ -50,67 +50,19 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
         arbitrumData = zeroArray.concat(arbitrumData);
     }
 
-    let polygonData = polygonProtocolData.map(el => Number(el.value.toFixed(2)));
+    let optimismData = optimismProtocolData.map(el => Number(el.value.toFixed(2)));
 
-    if (mainnetData && polygonData) {
-        const diffSize = mainnetData.length - polygonData.length;
+    if (mainnetData && optimismData) {
+        const diffSize = mainnetData.length - optimismData.length;
         const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
-        polygonData = zeroArray.concat(polygonData);
-    }
-
-    let gnosisData = gnosisProtocolData.map(el => Number(el.value.toFixed(2)));
-
-    if (mainnetData && gnosisData) {
-        const diffSize = mainnetData.length - gnosisData.length;
-        const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
-        gnosisData = zeroArray.concat(gnosisData);
+        optimismData = zeroArray.concat(optimismData);
     }
 
     //Generic x-Axis
     const mainnetxAxisData = mainnetProtocolData.map(el => el.time);
 
-    //---Hooks for custom time ranges---
-    const [timeRange, setTimeRange] = React.useState('365');
-    //data state
-    const [rangedMainnetData, setrangedMainnetData] = React.useState(mainnetData)
-    const [rangedArbitrumData, setrangedArbitrumData] = React.useState(arbitrumData);
-    const [rangedPolygonData, setrangedPolygonData] = React.useState(polygonData);
-    const [rangedGnosisData, setrangedGnosisnData] = React.useState(gnosisData);
-    const [rangedxAxis, setRangedxAxis] = React.useState(mainnetxAxisData);
-
-    React.useEffect(() => {
-        if (mainnetData.length < Number(timeRange) || timeRange === '0') {
-            setrangedMainnetData(mainnetData);
-            setrangedArbitrumData(arbitrumData);
-            setrangedPolygonData(polygonData);
-            setrangedGnosisnData(gnosisData)
-            setRangedxAxis(mainnetxAxisData)
-        } else {
-            setrangedMainnetData(mainnetData.slice(mainnetData.length - Number(timeRange)))
-            setrangedArbitrumData(arbitrumData.slice(arbitrumData.length - Number(timeRange)))
-            setrangedPolygonData(polygonData.slice(polygonData.length - Number(timeRange)))
-            setrangedGnosisnData(gnosisData.slice(gnosisData.length - Number(timeRange)))
-            setRangedxAxis(mainnetxAxisData.slice(mainnetxAxisData.length - Number(timeRange)))
-        }
-    }, [timeRange]);
-
-    const handleChange = (event: SelectChangeEvent) => {
-        setTimeRange(event.target.value as string);
-        if (mainnetData.length < Number(event.target.value) || event.target.value === '0') {
-            setrangedMainnetData(mainnetData);
-            setrangedArbitrumData(arbitrumData);
-            setrangedPolygonData(polygonData);
-            setrangedGnosisnData(gnosisData);
-        } else if (mainnetData.length >= Number(event.target.value)) {
-            setrangedMainnetData(mainnetData.slice(mainnetData.length - Number(event.target.value)))
-            setrangedArbitrumData(arbitrumData.slice(arbitrumData.length - Number(event.target.value)))
-            setrangedPolygonData(polygonData.slice(polygonData.length - Number(event.target.value)))
-            setrangedGnosisnData(gnosisData.slice(gnosisData.length - Number(event.target.value)))
-        }
-    };
-
     return (
-        polygonData.length > 10 ?
+        optimismData.length > 10 ?
         <Card sx={{boxShadow: 3}}>
             <Box m={1}>
             <FormControl size="small">
@@ -124,8 +76,8 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
                         color="primary"
                         labelId="timeRangeSelectLabel"
                         id="timeRangeSelect"
-                        onChange={handleChange}
-                        value={timeRange}
+                        onChange={changeHandler}
+                        value={String(timeRange)}
                         inputProps={{
                             name: 'timeRange',
                             id: 'timeRangeId-native-simple',
@@ -135,19 +87,16 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
                         <Divider />
                         <MenuItem value={'30'}> 30 days</MenuItem>
                         <MenuItem value={'90'}>90 days</MenuItem>
-                        <MenuItem value={'180'}>180 days</MenuItem>
-                        <MenuItem value={'365'}>365 days</MenuItem>
-                        <MenuItem value={'0'}>All time</MenuItem>
+                        <MenuItem value={'120'}>120 days</MenuItem>
+                        <MenuItem value={'360'}>All time</MenuItem>
                     </Select>
                 </FormControl>
                 </Box>
             <ProtocolMultiBarCharts  
-                mainnetData={rangedMainnetData} 
-                arbitrumData={rangedArbitrumData} 
-                polygonData={rangedPolygonData} 
-                gnosisData={rangedGnosisData}
-                xAxis={rangedxAxis}
-                isUSD={isUSD}
+                mainnetData={mainnetData}
+                arbitrumData={arbitrumData}
+                optimismData={optimismData}
+                xAxis={mainnetxAxisData}
                 />
             </Card> : <Grid
             container
