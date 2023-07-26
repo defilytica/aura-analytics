@@ -4,6 +4,7 @@ import { useTheme } from '@mui/material/styles'
 import {OptimismNetworkInfo, SupportedNetwork} from "../../constants/networks";
 import { isAddress } from '../../utils';
 import { Avatar } from '@mui/material';
+import useGetTokenLists, {TokenList} from "../../data/balancer/useGetTokenList";
 import {useLatestTokenList} from "../../data/tokens/useLatestTokenList";
 import {tokenClient} from "../../apollo/client";
 
@@ -24,6 +25,8 @@ export const getTokenLogoURL = (address: string, networkId: SupportedNetwork) =>
             } else {
                 return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygon/assets/${address}/logo.png`
             }
+        case SupportedNetwork.ZKEVM:
+            return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/polygonzkevm/assets/${address}/logo.png`
         case SupportedNetwork.GNOSIS:
             if (address === '0x7eF541E2a22058048904fE5744f9c7E4C57AF717') {
                 return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xba100000625a3754423978a60c9317c58a424e3D/logo.png`
@@ -35,26 +38,51 @@ export const getTokenLogoURL = (address: string, networkId: SupportedNetwork) =>
     }
 }
 
-export default function CurrencyLogo({ address, size = '24px' }: {
+const getLogoURIByAddressAndChainId = (
+    tokenList: TokenList | undefined,
+    address: string,
+): string  => {
+    if (tokenList) {
+        const foundToken = tokenList.tokens.find((token) => token.address === address);
+        //VeBAL:
+        //veBAL:
+        if (address.toLowerCase() === '0xc128a9954e6c874ea3d62ce62b468ba073093f25') {
+            return 'https://raw.githubusercontent.com/balancer/assets/master/assets/0x5c6ee304399dbdb9c8ef030ab642b10820db8f56.png'
+        }
+        return foundToken?.logoURI ? foundToken?.logoURI : '';
+    }
+    return '';
+};
+
+export default function CurrencyLogo({address, size = '24px',}: {
     address?: string
     size?: string
 }) {
+
     const [activeNetwork] = useActiveNetworkVersion();
     const theme = useTheme();
+    const tokenList = useGetTokenLists();
     const optimismTokenList = useLatestTokenList(tokenClient, OptimismNetworkInfo.chainId)
 
-    // Token image sources
+    //Secondary assets are loaded through Balancer
+    const tempSources: { [address: string]: string } = useMemo(() => {
+        return {
+            [`${address}`]:
+                `https://raw.githubusercontent.com/balancer/tokenlists/main/src/assets/images/tokens/${address}.png`,
+        }
+    }, [address])
+
+    //Token image sources
     const srcs: string[] = useMemo(() => {
-        const checkSummed = isAddress(address);
+        const checkSummed = isAddress(address)
+
 
         if (checkSummed && address) {
-            return [
-                `https://raw.githubusercontent.com/balancer/tokenlists/main/src/assets/images/tokens/${address}.png`,
-                getTokenLogoURL(checkSummed, activeNetwork.id),
-            ];
+            const override = tempSources[address]
+            return [getLogoURIByAddressAndChainId(tokenList, checkSummed), override]
         }
-        return [];
-    }, [address, activeNetwork.id]);
+        return []
+    }, [address, tempSources, tokenList, activeNetwork.id])
 
     const newSrc = optimismTokenList.tokenList?.find(el => el.address === address);
 
@@ -64,7 +92,7 @@ export default function CurrencyLogo({ address, size = '24px' }: {
             height: size,
             width: size,
             backgroundColor: theme.palette.mode === 'dark' ? 'white' : 'rgb(226, 232, 240)',
-            color: 'black',
+            color: theme.palette.mode === 'dark' ? 'white' : 'black',
             fontSize: '15px',
         }}
         src={srcs[1]}

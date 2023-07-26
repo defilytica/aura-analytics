@@ -17,7 +17,7 @@ export function useAuraGlobalStats(chainId = EthereumNetworkInfo.chainId): Globa
         return null;
     }
 
-    let { global } = data;
+    let { global, auraLockers } = data;
 
     if (global){
         return {
@@ -28,6 +28,7 @@ export function useAuraGlobalStats(chainId = EthereumNetworkInfo.chainId): Globa
             auraMaxSupply: global.auraMaxSupply / 1e18,
             auraReductionPerCliff: global.auraReductionPerCliff / 1e18,
             auraTotalCliffs: global.auraTotalCliffs / 1e18,
+            auraTotalLockedAmount: auraLockers[0].lockedSupply / 1e18
         }
     }
 

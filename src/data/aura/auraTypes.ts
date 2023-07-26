@@ -6,6 +6,7 @@ export interface GlobalAuraStats{
     auraMaxSupply: number,
     auraReductionPerCliff: number,
     auraTotalCliffs: number,
+    auraTotalLockedAmount: number,
 }
 
 export type CapturedTVL = {
