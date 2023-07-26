@@ -5,9 +5,9 @@ import OrbBg from '../../../assets/png/orbz.png';
 
 const StyledCard = styled(Card)(({ theme }) => ({
     position: 'relative',
-    maxWidth: 400,
-    padding: theme.spacing(1),
-
+    maxWidth: 500,
+    padding: theme.spacing(2),
+    boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
     pointerEvents: 'auto',
 }));
 
@@ -16,6 +16,7 @@ const ContentContainer = styled(Grid)(({ theme }) => ({
     alignItems: 'flex-start',
     justifyContent: 'space-between', // Add this line to distribute items evenly along the horizontal axis
     marginBottom: theme.spacing(2),
+
 }));
 
 const Title = styled(Typography)(({ theme }) => ({

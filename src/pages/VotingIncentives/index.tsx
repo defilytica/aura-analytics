@@ -191,11 +191,11 @@ export default function VotingIncentives() {
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            <Typography variant="body1">Overview</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Overview</Typography>
                         </Grid>
                         {dashboardData && dollarPerVlAssetData && totalAmountDollarsData && xAxisData ?
-                            <Grid item mt={1} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3}}>
+                            <Grid item xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
                                     <DashboardOverviewChart
                                         dollarPerVlAssetData={dollarPerVlAssetData}
                                         totalAmountDollarsData={totalAmountDollarsData}
@@ -206,10 +206,10 @@ export default function VotingIncentives() {
                             </Grid>
                             : <CircularProgress/>}
                         <Grid item xs={11} sm={9} mt={1}>
-                            <Typography variant="h5" mb={1}>Voting Epoch Metrics</Typography>
+                            <Typography sx={{fontSize: '24px'}} mb={1}>Voting Epoch Metrics</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            <Box m={1}>
+                            <Box>
                                 <Select
                                     sx={{
                                         backgroundColor: "background.paper",
@@ -235,28 +235,28 @@ export default function VotingIncentives() {
                             <Grid
                                 container
                                 columns={{xs: 4, sm: 8, md: 12}}
-                                sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
-                                <Box m={1}>
+                                <Box mr={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box m={1}>
+                                <Box mr={1}>
                                     {emissionVotesTotal ?
                                         <MetricsCard mainMetric={emissionVotesTotal} metricName={"Total Incentive Votes"}
                                                      mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box m={1}>
+                                <Box mr={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={emissionPerVote} metricName={"Incentive $/Vote"}
                                                      metricDecimals={4}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box m={1}>
+                                <Box mr={1}>
                                     {dashboardData ?
                                         <MetricsCard
                                             mainMetric={1 + (emissionPerVote - incentivePerVote) / emissionPerVote}
@@ -271,7 +271,7 @@ export default function VotingIncentives() {
                             <CircularProgress/>
                         ) : (
                             <Grid item mt={1} xs={11} sm={9}>
-                                <Card sx={{boxShadow: 3}}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
 
                                     <SingleRoundBarChart
                                         rewardData={bribeRewardsNew}
