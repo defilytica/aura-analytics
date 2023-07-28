@@ -14,30 +14,33 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
 
 
     const paddedDataSets = dataSets.map(dataSet => {
-        const padding = Array(maxLength - dataSet.data.length).fill({ time: null, capturedPercentage: null });
-        return { ...dataSet, data: [...padding, ...dataSet.data] };
+        const padding = Array(maxLength - dataSet.data.length).fill({time: null, capturedPercentage: null});
+        return {...dataSet, data: [...padding, ...dataSet.data]};
     });
 
-    // Define a color for each data set (replace with your own colors)
     const gradients = [
         new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgb(93, 36, 198)' },
-            { offset: 1, color: 'rgb(156, 78, 214)' },
+            {offset: 0, color: 'rgb(134,142,148)'},
+            {offset: 1, color: 'rgb(93,36,198)'}
         ]),
         new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgb(77, 119, 255)' },
-            { offset: 1, color: 'rgb(0, 221, 255)' },
+            {offset: 0, color: 'rgb(77, 119, 255)'},
+            {offset: 1, color: 'rgb(0, 221, 255)'},
         ]),
         new graphic.LinearGradient(0, 0, 0, 1, [
-            { offset: 0, color: 'rgb(245, 2, 2)' },
-            { offset: 1, color: 'rgb(214, 79, 79)' },
+            {offset: 0, color: 'rgb(245, 2, 2)'},
+            {offset: 1, color: 'rgb(214, 79, 79)'},
+        ]),
+        new graphic.LinearGradient(0, 0, 0, 1, [
+            {offset: 0, color: 'rgb(93, 36, 198)'},
+            {offset: 1, color: 'rgb(156, 78, 214)'},
         ]),
     ];
 
     const option = {
-        color: ['#b300ff','#37A2FF', '#f50202'],
+        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff'],
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -78,8 +81,8 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
             name: dataSet.name,
             type: 'line',
             data: dataSet.data.map((item) => item.capturedPercentage),
-            areaStyle: { color: gradients[index % gradients.length] },
-            lineStyle: { color: gradients[index % gradients.length], width: 0 },
+            areaStyle: {color: gradients[index % gradients.length]},
+            lineStyle: {color: gradients[index % gradients.length], width: 0},
             connectNulls: true,
             smooth: true,
             showSymbol: false,

@@ -1,5 +1,4 @@
 import React from 'react';
-import { ProtocolData } from '../../../data/balancer/useProtocolDataWithClientOverride';
 import { Card, Grid, Box } from '@mui/material';
 import CustomLinearProgress from '../../Progress/CustomLinearProgress';
 import MenuItem from '@mui/material/MenuItem';
@@ -32,17 +31,19 @@ interface ProtocolAreaChartProps {
     mainnetProtocolData: BalancerChartDataItem[],
     arbitrumProtocolData: BalancerChartDataItem[],
     optimismProtocolData: BalancerChartDataItem[],
+    polygonProtocolData: BalancerChartDataItem[],
     changeHandler: (event: SelectChangeEvent) => void,
     timeRange: number,
 }
 
 
 
-export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
+export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
 
     const mainnetData = mainnetProtocolData.map(el => Number(el.value.toFixed(2)));
     let arbitrumData = arbitrumProtocolData.map(el => Number(el.value.toFixed(2)));
     let optimismData = optimismProtocolData.map(el => Number(el.value.toFixed(2)));
+    let polygonData = polygonProtocolData.map(el => Number(el.value.toFixed(2)));
     
     //add preceeding zero values based on mainnet size to later deployed chains
     if (mainnetData && arbitrumData) {
@@ -55,6 +56,12 @@ export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumPro
         const diffSize = mainnetData.length - optimismData.length;
         const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
         optimismData = zeroArray.concat(optimismData);
+    }
+
+    if (mainnetData && polygonData) {
+        const diffSize = mainnetData.length - polygonData.length;
+        const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
+        polygonData = zeroArray.concat(polygonData);
     }
 
     const mainnetxAxisData = mainnetProtocolData.map(el => el.time);
@@ -94,6 +101,7 @@ export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumPro
                 mainnetData={mainnetData}
                 arbitrumData={arbitrumData}
                 optimismData={optimismData}
+                polygonData={polygonData}
                 xAxis={mainnetxAxisData}/>
             </Card> : <Grid
             container

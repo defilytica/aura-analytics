@@ -31,17 +31,20 @@ interface ProtocolAreaChartProps {
     mainnetProtocolData: BalancerChartDataItem[],
     arbitrumProtocolData: BalancerChartDataItem[],
     optimismProtocolData: BalancerChartDataItem[],
+    polygonProtocolData: BalancerChartDataItem[],
     changeHandler: (event: SelectChangeEvent) => void,
     timeRange: number,
 }
 
 
 
-export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
+export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
 
     const mainnetData = mainnetProtocolData.map(el => Number(el.value.toFixed(2)));
     let arbitrumData = arbitrumProtocolData.map(el => Number(el.value.toFixed(2)));
-    
+    let optimismData = optimismProtocolData.map(el => Number(el.value.toFixed(2)));
+    let polygonData = polygonProtocolData.map(el => Number(el.value.toFixed(2)));
+
 
     //add preceeding zero values based on mainnet size to later deployed chains
     if (mainnetData && arbitrumData) {
@@ -50,13 +53,18 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
         arbitrumData = zeroArray.concat(arbitrumData);
     }
 
-    let optimismData = optimismProtocolData.map(el => Number(el.value.toFixed(2)));
-
     if (mainnetData && optimismData) {
         const diffSize = mainnetData.length - optimismData.length;
         const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
         optimismData = zeroArray.concat(optimismData);
     }
+
+    if (mainnetData && polygonData) {
+        const diffSize = mainnetData.length - polygonData.length;
+        const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
+        polygonData = zeroArray.concat(polygonData);
+    }
+
 
     //Generic x-Axis
     const mainnetxAxisData = mainnetProtocolData.map(el => el.time);
@@ -96,6 +104,7 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
                 mainnetData={mainnetData}
                 arbitrumData={arbitrumData}
                 optimismData={optimismData}
+                polygonData={polygonData}
                 xAxis={mainnetxAxisData}
                 />
             </Card> : <Grid

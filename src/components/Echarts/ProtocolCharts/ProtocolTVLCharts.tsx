@@ -1,9 +1,9 @@
 import ReactEcharts from 'echarts-for-react';
-import { graphic } from 'echarts'
-import { Grid } from '@mui/material';
-import { useTheme } from '@mui/material/styles'
+import {graphic} from 'echarts'
+import {Grid} from '@mui/material';
+import {useTheme} from '@mui/material/styles'
 import CustomLinearProgress from '../../Progress/CustomLinearProgress';
-import { formatDollarAmount } from '../../../utils/numbers';
+import {formatDollarAmount} from '../../../utils/numbers';
 
 export interface Normal {
     color: string;
@@ -28,17 +28,24 @@ interface ProtocolAreaChartProps {
     mainnetData: number[],
     arbitrumData: number[],
     optimismData: number[],
+    polygonData: number[],
     xAxis: string[],
 }
 
 
-export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismData,  xAxis }: ProtocolAreaChartProps) {
+export default function ProtocolTVLCharts({
+                                              mainnetData,
+                                              arbitrumData,
+                                              optimismData,
+                                              polygonData,
+                                              xAxis
+                                          }: ProtocolAreaChartProps) {
 
 
     const theme = useTheme()
 
     const option = {
-        color: ['#b300ff','#37A2FF', '#f50202'],
+        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -49,7 +56,7 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismD
             },
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -92,15 +99,9 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismD
                 areaStyle: {
                     opacity: 0.95,
                     color: new graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(93, 36, 198)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(156, 78, 214)'
-                        }
-                    ])
+                        {offset: 0, color: 'rgb(134,142,148)'},
+                        {offset: 1, color: 'rgb(93,36,198)'}
+                    ]),
                 },
                 emphasis: {
                     focus: 'series'
@@ -176,22 +177,48 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismD
                 },
                 data: optimismData
             },
+            {
+                name: 'Polygon',
+                type: 'line',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                areaStyle: {
+                    opacity: 0.95,
+                    color:new graphic.LinearGradient(0, 0, 0, 1, [
+                        {offset: 0, color: 'rgb(93, 36, 198)'},
+                        {offset: 1, color: 'rgb(156, 78, 214)'},
+                    ]),
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value)
+                    }
+                },
+                data: polygonData
+            },
         ]
     };
 
     const onChartHover = (params: any) => {
         console.log('Chart mouse trigger params:', params);
-      };
-    
-      const onEvents = {
+    };
+
+    const onEvents = {
         mousemove: onChartHover,
-      };
+    };
 
     return (
-        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && xAxis ?
+        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && polygonData.length > 1 && xAxis ?
             <ReactEcharts
                 option={option}
-                style={{ height: '350px' }}
+                style={{height: '350px'}}
                 className={'react_for_echarts'}
                 //onEvents={onEvents}
             /> : <Grid
@@ -199,9 +226,9 @@ export default function ProtocolTVLCharts({ mainnetData, arbitrumData, optimismD
                 spacing={2}
                 mt='10%'
                 mb='10%'
-                sx={{ justifyContent: 'center' }}
+                sx={{justifyContent: 'center'}}
             >
-                <CustomLinearProgress />
+                <CustomLinearProgress/>
             </Grid>
     )
 }
