@@ -196,6 +196,8 @@ export default function TreasuryTransactionTable({ txnHistory }:
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [activeNetwork] = useActiveNetworkVersion();
 
+    console.log(txnHistory);
+
     if (!txnHistory) {
         return <CircularProgress />;
     }

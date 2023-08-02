@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { KARPATKEY_SAFE, SERVICE_PROVIDER_WALLETS } from '../../constants/wallets';
 import { BalancerChartDataItem } from '../../data/balancer/balancerTypes';
 import { TransactionHistory } from '../../data/debank/debankTypes';
 
@@ -30,13 +29,10 @@ export function extractTransactionsByTokenAndType(txnHistory: TransactionHistory
         if (type === 'send') {
             el.sends.forEach(
                 send => {
-                    
-                    //Only list taxations that happened between the DAO and SP wallets
-                    const wallet = SERVICE_PROVIDER_WALLETS.find( el => el.walletId.toLowerCase() === send.to_addr)
-                    if (tokenAddress === send.token_id && wallet) {
+                    if (tokenAddress === send.token_id) {
                         tnxChartData.push(
                             {
-                                value: send.amount < 0 ? send.amount : - send.amount,
+                                value: send.amount,
                                 time: date.format("YYYY-MM-DD"),
                             }
                         )

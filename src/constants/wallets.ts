@@ -8,7 +8,23 @@ export const FEE_STREAMER = '0xe649b71783d5008d10a96b6871e3840a398d4f06';
 export const FEE_STREAMER_2 = '0x7c68c42de679ffb0f16216154c996c354cf1161b';
 
 //Service Providers
-export const SERVICE_PROVIDER_WALLETS = [
+export const WALLETS = [
+    {
+        name: 'Aura Sidechain Distributor',
+        walletId: '0x96D15D08538A17A03B0210FD1626D5f42bdba9a4',
+    },
+    {
+        name: 'Aura Proxy OFT',
+        walletId: '0xB401f0cff9F05d10699c0e2c88a81dD923c1FFFf',
+    },
+    {
+        name: 'Aura Treasury',
+        walletId: '0xfc78f8e1Af80A3bF5A1783BB59eD2d1b10f78cA9',
+    },
+    {
+        name: 'Aura L1 Coordinator',
+        walletId: '0xaA54f3b282805822419265208e669d12372a3811',
+    },
     {
         name: 'Orb Collective Safe',
         walletId: '0x3b8910f378034fd6e103df958863e5c684072693',
@@ -44,7 +60,7 @@ export const SERVICE_PROVIDER_WALLETS = [
 ]
 
 export function getSPWalletName(walletId: string) {
-    const targetWallet = SERVICE_PROVIDER_WALLETS.find(wallet => wallet.walletId.toLowerCase() === walletId)
+    const targetWallet = WALLETS.find(wallet => wallet.walletId.toLowerCase() === walletId)
     return targetWallet ? targetWallet.name : '-';
 }
 
@@ -58,6 +74,8 @@ const COPPER_LAUNCH_PROXY_ARBITRUM = '0x22D15E202538e90d6fDaE5044A4D6a28453aA4C5
 const COPPER_LAUNCH_PROXY_POLYGON ='0x7388feB5a04990bb4c7570e68F1b37aB06C1aafD';
 export const DAO_FEE_MULTISIG  = '0xe649b71783d5008d10a96b6871e3840a398d4f06';
 export const KARPATKEY_SAFE = '0x0EFcCBb9E2C09Ea29551879bd9Da32362b32fc89'
+
+export const AEF = '0x388a09a28e7d56dc61dcb1bb356251fe0c46fe8c';
 
 export const TREASURY_ADDRESS_CONFIG = [
     {
