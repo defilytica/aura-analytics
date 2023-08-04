@@ -57,7 +57,7 @@ const HiddenHandCard = () => {
 
             </ContentContainer>
             <Link
-                href="https://hiddenhand.finance/balancer"
+                href="https://hiddenhand.finance/aura"
                 underline="none"
                 target="_blank"
                 rel="noopener noreferrer"

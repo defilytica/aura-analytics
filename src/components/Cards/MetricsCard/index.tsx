@@ -37,8 +37,9 @@ const MetricsCard = ({
       <Card sx={{
           boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
           minHeight: '110px',
-          p: '1px'}}>
-        <CardContent sx={{p: '10px'}}>
+          pb: '0px'
+      }}>
+        <CardContent sx={{p: '10px', pb: '0px'}}>
           <Grid container justifyContent="space-between">
             <Grid item>
               <Typography color={AppColors.purple[600]} sx={{fontSize: '18px',}}

@@ -15,7 +15,6 @@ export function useAuraBalTransactions(chainId = EthereumNetworkInfo.chainId): A
         deposits: [],
         withdrawals: [],
     };
-    //TODO: Dynamically call Aura client depending on network!
     const [getAuraTransactions, {data}] = useAuraBalTransactionsLazyQuery({client: getAuraNetworkClient(chainId)});
 
     useEffect(() => {

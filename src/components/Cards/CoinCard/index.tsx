@@ -36,13 +36,14 @@ const CoinCard = ({
       minWidth: '200px',
       minHeight: '110px',
       cursor: 'pointer',
-      boxShadow: 3,
+      pb: '0px',
+      boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
     }}
     >
       <CardActionArea
       onClick={() => { navigate(`${getLink(activeNetwork, tokenAddress)}/`); }}
       >
-      <CardContent sx={{p: '10px'}}>
+      <CardContent sx={{p: '10px', pb: '0px'}}>
         <Grid
           container
           spacing={1}
@@ -53,7 +54,7 @@ const CoinCard = ({
               gutterBottom
               sx={{fontSize: '18px',}}
             >
-              {tokenName}
+              {tokenName} Price
             </Typography>
             <Typography
               color="textPrimary"

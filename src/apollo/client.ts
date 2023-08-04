@@ -1,5 +1,5 @@
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
-import {ArbitrumNetworkInfo, EthereumNetworkInfo, OptimismNetworkInfo} from "../constants/networks";
+import {ArbitrumNetworkInfo, EthereumNetworkInfo, OptimismNetworkInfo, PolygonNetworkInfo} from "../constants/networks";
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
@@ -84,6 +84,35 @@ export const auraArbitrumClient = new ApolloClient({
 export const auraOptimismClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraPolygonClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-polygon',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -364,6 +393,8 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
             return auraClient;
         case ArbitrumNetworkInfo.chainId:
             return auraArbitrumClient;
+        case PolygonNetworkInfo.chainId:
+            return auraPolygonClient;
         case OptimismNetworkInfo.chainId:
             return auraOptimismClient;
         default:

@@ -138,7 +138,7 @@ export default function Financials() {
                     <Grid
                         container
                         columns={{xs: 4, sm: 8, md: 12}}
-                        sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
+                        sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
                             <MetricsCard
@@ -203,6 +203,8 @@ export default function Financials() {
                     alignItems="left"
                     alignContent="left"
                     spacing={2}
+                    mt={0.5}
+                    mb={1}
                 >
                     <Grid item xs={11} sm={4.5}>
                         <Card sx={{boxShadow: 3}}>
@@ -244,10 +246,10 @@ export default function Financials() {
                         </Card>
                     </Grid>
                 </Grid>
-                <Grid item xs={11} sm={9}>
+                <Grid item xs={11} sm={9} mt={1}>
                     <Box display="flex" justifyContent="space-between" alignItems="row">
                         <Box display="flex" alignItems='center'>
-                            <Box mb={1}>
+                            <Box>
                                 <Typography sx={{fontSize: '24px'}}>Treasury Transaction History</Typography>
                             </Box>
                         </Box>

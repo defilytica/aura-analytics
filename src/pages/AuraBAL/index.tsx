@@ -31,7 +31,7 @@ import {cumulativeTokenSupply} from "./helpers";
 import {AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
 import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
-import {ArbitrumNetworkInfo, EthereumNetworkInfo} from "../../constants/networks";
+import {ArbitrumNetworkInfo, EthereumNetworkInfo, PolygonNetworkInfo} from "../../constants/networks";
 
 
 export default function AuraBAL() {
@@ -47,6 +47,10 @@ export default function AuraBAL() {
         auraBALAddress = '0x223738a747383d6f9f827d95964e4d8e8ac754ce'
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
         startTimeStamp = 1686811327
+    } else if (activeNetwork === PolygonNetworkInfo) {
+        auraBALAddress = '0x223738a747383d6f9f827d95964e4d8e8ac754ce'
+        auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
+        startTimeStamp = 1690495200
     }
     const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
     //Image banner resources
@@ -101,7 +105,7 @@ export default function AuraBAL() {
     const auraBalDailyHarvestSeries: BalancerChartDataItem[] = Object.keys(dailyHarvestSums).map((date) => {
         return {
             time: date,
-            value: dailySums[date],
+            value: dailyHarvestSums[date],
         };
     });
 
@@ -114,10 +118,9 @@ export default function AuraBAL() {
     const auraBalDailyDepositSeries: BalancerChartDataItem[] = Object.keys(dailyDepositSums).map((date) => {
         return {
             time: date,
-            value: dailySums[date],
+            value: dailyDepositSums[date],
         };
     });
-    console.log("auraBalDailyDepositSeries", auraBalDailyDepositSeries)
 
     //Daily auraBAL withdrawal chart
     const dailyWithdrawalSums: { [date: string]: number } = auraBALTransactions.withdrawals.reduce((acc, item) => {
@@ -128,7 +131,7 @@ export default function AuraBAL() {
     const auraBalDailyWithdrawalSeries: BalancerChartDataItem[] = Object.keys(dailyWithdrawalSums).map((date) => {
         return {
             time: date,
-            value: dailySums[date],
+            value: dailyWithdrawalSums[date],
         };
     });
 
@@ -440,17 +443,6 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Daily Vault Harvests</Typography>
-                    </Box>
-                    <Card sx={{boxShadow: 3}}>
-                        <Box p={1} display="flex" alignItems='center'>
-
-                        </Box>
-                        <GenericBarChart data={auraBalDailyHarvestSeries} customUnit={'auraBAL'}/>
-                    </Card>
-                </Grid>
-                <Grid item mt={1} xs={11} sm={9}>
-                    <Box mb={1}>
                         <Typography sx={{fontSize: '24px'}}>Historical auraBAL in Compounder</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
@@ -464,6 +456,40 @@ export default function AuraBAL() {
                         />
                     </Card>
                 </Grid>
+                <Grid item mt={1} xs={11} sm={9}>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '24px'}}>Daily Vault Deposits</Typography>
+                    </Box>
+                    <Card sx={{boxShadow: 3}}>
+                        <Box p={1} display="flex" alignItems='center'>
+
+                        </Box>
+                        <GenericBarChart data={auraBalDailyDepositSeries} customUnit={'auraBAL'}/>
+                    </Card>
+                </Grid>
+                <Grid item mt={1} xs={11} sm={9}>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '24px'}}>Daily Vault Withdrawals</Typography>
+                    </Box>
+                    <Card sx={{boxShadow: 3}}>
+                        <Box p={1} display="flex" alignItems='center'>
+
+                        </Box>
+                        <GenericBarChart data={auraBalDailyWithdrawalSeries} customUnit={'auraBAL'}/>
+                    </Card>
+                </Grid>
+                <Grid item mt={1} xs={11} sm={9}>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '24px'}}>Daily Vault Harvests</Typography>
+                    </Box>
+                    <Card sx={{boxShadow: 3}}>
+                        <Box p={1} display="flex" alignItems='center'>
+
+                        </Box>
+                        <GenericBarChart data={auraBalDailyHarvestSeries} customUnit={'auraBAL'}/>
+                    </Card>
+                </Grid>
+
 
                 {/* <Grid item mt={1} xs={11}>
                     <Box mb={1}>
