@@ -28,6 +28,9 @@ import HiddenHandCard from "../../components/Cards/HiddenHandCard";
 import HiddenHandAddressRewards from "../../components/Tables/HiddenHandAddressRewards";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import {useBalancerTokenPageData} from "../../data/balancer/useTokens";
+import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
+import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/AuraIncentiveAPRChart";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -86,6 +89,8 @@ export default function VotingIncentives() {
     const { address } = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerStakingGauges();
+    //APR chart data
+    const { tvlData, volumeData, priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -127,9 +132,9 @@ export default function VotingIncentives() {
     const roundsData = GetBribingRounds();
     let allRoundsBribes = GetBribingStatsForRounds()
     let dashboardData = allRoundsBribes?.dashboard;
-    let dollarPerVlAssetData;
+    let dollarPerVlAssetData: number[] = [];
     let totalAmountDollarsData;
-    let xAxisData;
+    let xAxisData: string[] = [];
     let totalAmountDollarsSum;
     if (dashboardData && historicalData) {
         //Remove the last element of the Llama data as the new API needs at least that data point as a starting element.
@@ -139,6 +144,25 @@ export default function VotingIncentives() {
         totalAmountDollarsSum = totalAmountDollarsData.slice(0, -1).reduce((accumulator, currentValue) => accumulator + currentValue, 0) + historicalData.totalAmountDollarsSum;
         xAxisData = [...dashboardData.epochs.slice(0, -1).map(item => unixToDate(item.end)), ...historicalData.xAxisData];
     }
+    // APR chart: match the dollarPerVLAssetData with price Data to calculate APR
+    let historicalAPR = xAxisData.map((el) => {
+        const price = priceData.find(price => el === price.time);
+        if (price && price.value) {
+            return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / price.value;
+        } else {
+            return 0; // Fallback value
+        }
+    });
+
+    let historicalPrice = xAxisData.map((el) => {
+        const price = priceData.find(price => el === price.time);
+        if (price) {
+            return price.value;
+        } else {
+            return 0; // Fallback value
+        }
+    });
+
 
     return (<>
             {(!roundsData?.rounds
@@ -191,7 +215,7 @@ export default function VotingIncentives() {
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '24px'}}>Overview</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Historical Incentives Overview</Typography>
                         </Grid>
                         {dashboardData && dollarPerVlAssetData && totalAmountDollarsData && xAxisData ?
                             <Grid item xs={11} sm={9}>
@@ -205,6 +229,20 @@ export default function VotingIncentives() {
                                 </Card>
                             </Grid>
                             : <CircularProgress/>}
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '24px'}}>Historical Aura Price vs. Incentive APR</Typography>
+                        </Grid>
+                        {historicalPrice && historicalPrice.length > 0 && historicalAPR ?
+                        <Grid item xs={11} sm={9}>
+                            <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                <AuraIncentiveAPRChart
+                                    auraPrice={historicalPrice}
+                                    auraAPR={historicalAPR}
+                                    xAxisData={xAxisData}
+                                    height={"400px"} />
+                            </Card>
+                        </Grid>:
+                            <CircularProgress />}
                         <Grid item xs={11} sm={9} mt={1}>
                             <Typography sx={{fontSize: '24px'}} mb={1}>Voting Epoch Metrics</Typography>
                         </Grid>

@@ -1,6 +1,5 @@
 import { useBalancerChartTokenPricesQuery } from '../../apollo/generated/graphql-codegen-generated';
 import { groupBy, head, map, orderBy, sumBy } from 'lodash';
-//import { OHLC } from '../../components/Chart/OHLC';
 import { PriceChartEntry } from '../../types';
 
 import { useActiveNetworkVersion } from '../../state/application/hooks';
