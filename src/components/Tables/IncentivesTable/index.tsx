@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Avatar, IconButton, InputBase} from '@mui/material';
+import {Avatar, Button, IconButton, InputBase} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {visuallyHidden} from '@mui/utils';
@@ -29,9 +29,17 @@ import {BalancerStakingGauges, SimplePoolData} from "../../../data/balancer/bala
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import GaugeComposition from "../../GaugeComposition";
 import ClearIcon from '@mui/icons-material/Clear';
+import {CSVLink} from "react-csv";
+import {Download} from "@mui/icons-material";
+import {unixToDate} from "../../../utils/date";
 
-
-
+interface DownloadData {
+    network: string;
+    poolName: string,
+    votes: number,
+    $vlAura: string,
+    rewards: number,
+}
 interface Data {
     gaugeAddress: string;
     network: string;
@@ -171,10 +179,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                         padding={headCell.disablePadding ? 'none' : 'normal'}
                         sortDirection={orderBy === headCell.id ? order : false}
                         sx={{
-                            display: {xs: headCell.isMobileVisible ? 'table-cell' : 'none', md: 'table-cell'
+                            display: {
+                                xs: headCell.isMobileVisible ? 'table-cell' : 'none', md: 'table-cell'
                             },
                             paddingLeft: '16px',
-                    }}
+                        }}
                     >
                         <TableSortLabel
                             active={orderBy === headCell.id}
@@ -197,15 +206,16 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     );
 }
 
-export default function IncentivesTable({gaugeDatas}: {
+export default function IncentivesTable({gaugeDatas, currentRound}: {
     gaugeDatas: BalancerStakingGauges[],
+    currentRound: number
 }) {
+    const theme = useTheme();
     const [order, setOrder] = React.useState<Order>('desc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('totalRewards');
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
-
 
     const seen = new Set();
     const filteredPoolDatas = gaugeDatas.filter((x) => {
@@ -213,22 +223,22 @@ export default function IncentivesTable({gaugeDatas}: {
     });
 
     const originalRows = filteredPoolDatas.map(el =>
-            createData(
-                el.address,
-                el.network,
-                el.isKilled,
-                el.pool,
-                el.voteCount ? el.voteCount : 0,
-                el.valuePerVote ? el.valuePerVote : 0,
-                el.totalRewards ? el.totalRewards : 0,
-
-            )
+        createData(
+            el.address,
+            el.network,
+            el.isKilled,
+            el.pool,
+            el.voteCount ? el.voteCount : 0,
+            el.valuePerVote ? el.valuePerVote : 0,
+            el.totalRewards ? el.totalRewards : 0,
         )
+    )
         .sort((a, b) => b.totalRewards - a.totalRewards);
 
 
     const [rows, setRows] = useState<Data[]>([]);
     const [searched, setSearched] = useState<string>("");
+    const [downloadData, setDownloadData] = useState<DownloadData[]>([]);
 
     useEffect(() => {
         const seen = new Set();
@@ -245,13 +255,20 @@ export default function IncentivesTable({gaugeDatas}: {
                 el.voteCount ? el.voteCount : 0,
                 el.valuePerVote ? el.valuePerVote : 0,
                 el.totalRewards ? el.totalRewards : 0,
-
             )
         )
             .sort((a, b) => b.totalRewards - a.totalRewards);
         setRows(originalRows)
-    }, [gaugeDatas])
 
+        const downloadRows= originalRows.map(data => ({
+            poolName: data.poolData.symbol,
+            network: networkStringMap[Number(data.network)],
+            rewards: parseFloat(data.totalRewards.toFixed(3)),
+            votes: parseFloat(data.totalVotes.toFixed(3)),
+            $vlAura: "$" + parseFloat(data.votingIncentives.toFixed(3))
+        }));
+        setDownloadData(downloadRows)
+    }, [gaugeDatas])
 
 
     const handleRequestSort = (
@@ -309,25 +326,39 @@ export default function IncentivesTable({gaugeDatas}: {
         42161: ArbitrumLogo
     };
 
+    const networkStringMap :NetworkLogoMap = {
+        1: "Ethereum",
+        10: "Optimism",
+        137: "Polygon",
+        100: "Gnosis",
+        42161: "Arbitrum"
+    };
 
+    let filename = "Aura-VotingIncentives-" + unixToDate(currentRound) + ".csv";
     //Table generation
 
     return (
         <Box sx={{width: '100%'}}>
             <Paper
                 component="form"
-                sx={{ mb: '10px', p: '2px 4px', display: 'flex', alignItems: 'center', maxWidth: 500 }}
+                sx={{mb: '10px', p: '2px 4px', display: 'flex', alignItems: 'center', maxWidth: 500}}
             >
                 <InputBase
-                    sx={{ ml: 1, flex: 1 }}
+                    sx={{ml: 1, flex: 1}}
                     placeholder="Search for Gauge"
-                    inputProps={{ 'aria-label': 'search Balancer gauges' }}
+                    inputProps={{'aria-label': 'search Balancer gauges'}}
                     value={searched}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => requestSearch(event.target.value)}
                 />
-                <IconButton onClick={clearSearch} type="button" sx={{ p: '10px' }} aria-label="search">
-                    {searched !== "" ? <ClearIcon /> : <SearchIcon />}
+                <IconButton onClick={clearSearch} type="button" sx={{p: '10px'}} aria-label="search">
+                    {searched !== "" ? <ClearIcon/> : <SearchIcon/>}
                 </IconButton>
+
+
+                <CSVLink data={downloadData} filename={filename}><Button sx={{
+                    backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
+                }}><Download/> CSV</Button></CSVLink>
+
             </Paper>
             <Paper sx={{mb: 2, boxShadow: 3}}>
 
@@ -370,25 +401,25 @@ export default function IncentivesTable({gaugeDatas}: {
                                                 scope="row"
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}
                                             >
-                                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                                <Box sx={{display: 'flex', alignItems: 'center'}}>
                                                     <Box mr={1}>
                                                         <PoolCurrencyLogo
                                                             tokens={row.poolData.tokens.map(token => ({address: token.address ? token.address.toLowerCase() : ''}))}
                                                             size={'25px'}/>
                                                     </Box>
                                                     <Box>
-                                                        <GaugeComposition poolData={row.poolData} />
+                                                        <GaugeComposition poolData={row.poolData}/>
                                                     </Box>
                                                 </Box>
                                             </TableCell>
                                             <TableCell align="right">
-                                                {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0),  3)}
+                                                {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0), 3)}
                                             </TableCell>
                                             <TableCell align="right">
-                                                {formatNumber(Number(row.totalVotes ? row.totalVotes : 0),  3)}
+                                                {formatNumber(Number(row.totalVotes ? row.totalVotes : 0), 3)}
                                             </TableCell>
                                             <TableCell align="right">
-                                                {formatDollarAmount(Number(row.votingIncentives ? row.votingIncentives : 0),  3)}
+                                                {formatDollarAmount(Number(row.votingIncentives ? row.votingIncentives : 0), 3)}
                                             </TableCell>
                                         </TableRow>
                                     );

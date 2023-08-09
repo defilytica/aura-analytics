@@ -92,7 +92,6 @@ export default function VotingIncentives() {
     //APR chart data
     const { tvlData, volumeData, priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
 
-    console.log(currentRoundNew);
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
         setBribeRewardsNew(data);
@@ -163,7 +162,6 @@ export default function VotingIncentives() {
             return 0; // Fallback value
         }
     });
-
 
     return (<>
             {(!roundsData?.rounds
@@ -326,9 +324,10 @@ export default function VotingIncentives() {
                             {currentRoundNew < 1689019200 && currentRoundNew !== 0 && hiddenHandData.incentives !== null ? (
                                 <HistoricalIncentivesTable
                                     key={currentRoundNew}
+                                    currentRound={currentRoundNew}
                                     gaugeDatas={hiddenHandData.incentives.data} />
                             ) : decoratedGauges && decoratedGauges.length > 0 ? (
-                                <IncentivesTable gaugeDatas={decoratedGauges} />
+                                <IncentivesTable gaugeDatas={decoratedGauges} currentRound={currentRoundNew} />
                             ) : (
                                 <CircularProgress />
                             )}
