@@ -10,6 +10,10 @@ export const FEE_STREAMER_2 = '0x7c68c42de679ffb0f16216154c996c354cf1161b';
 //Service Providers
 export const WALLETS = [
     {
+        name: 'AEF',
+        walletId: '0x388a09a28e7d56dc61dcb1bb356251fe0c46fe8c',
+    },
+    {
         name: 'Aura Sidechain Distributor',
         walletId: '0x96D15D08538A17A03B0210FD1626D5f42bdba9a4',
     },

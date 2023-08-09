@@ -300,7 +300,6 @@ export default function TreasuryTransactionTable({ txnHistory }:
         page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
     //Table generation
-
     return (
         <Box sx={{ width: '100%' }}>
             <Paper elevation={1} sx={{ mb: 2, boxShadow: 3}}>
