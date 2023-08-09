@@ -92,6 +92,7 @@ export default function VotingIncentives() {
     //APR chart data
     const { tvlData, volumeData, priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
 
+    console.log(currentRoundNew);
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
         setBribeRewardsNew(data);
@@ -315,6 +316,7 @@ export default function VotingIncentives() {
                                         rewardData={bribeRewardsNew}
                                         xAxisData={xAxisDataRoundNew}
                                         height="500px"
+                                        currentRound={currentRoundNew}
                                     />
                                 </Card>
                             </Grid>

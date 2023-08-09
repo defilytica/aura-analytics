@@ -1,11 +1,18 @@
 import ReactEcharts from 'echarts-for-react';
 import {formatDollarAmount} from "../../../utils/numbers";
 import {PoolReward} from "../../../pages/VotingIncentives";
+import {Box, Button, Grid} from "@mui/material";
+import {Download} from "@mui/icons-material";
+import React from "react";
+import {useTheme} from "@mui/material/styles";
+import { CSVLink } from "react-csv";
+import {unixToDate} from "../../../utils/date";
 
 interface BribesProps {
     rewardData: PoolReward[],
     xAxisData: string[],
     height: string,
+    currentRound: number
 }
 
 interface TooltipParam {
@@ -23,7 +30,8 @@ const rainbowColors = [
     'rgb(140, 82, 255)',
 ];
 
-export default function SingleRoundBarChart({rewardData, xAxisData, height }: BribesProps) {
+export default function SingleRoundBarChart({rewardData, xAxisData, height, currentRound }: BribesProps) {
+    const theme = useTheme();
 
     const rewardDataArray = rewardData.map(obj => {
         return Object.entries(obj).reduce((total: number, [key, value]) => {
@@ -141,11 +149,20 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height }: Br
         ]
     };
 
+    let filename = "Aura-VotingIncentives-" + unixToDate(currentRound) + ".csv";
+
     return (
+        <div>
+            <Box mt={1} ml={1} display="flex" alignItems="center">
+                <CSVLink data={rewardData} filename={filename}><Button sx={{
+                    backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
+                }}><Download/> CSV</Button></CSVLink>
+            </Box>
         <ReactEcharts
             option={option}
             style={{height: height, width: '100%'}}
             className="graph"
         />
+        </div>
     );
 }
