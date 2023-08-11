@@ -60,8 +60,8 @@ export default function AuraEcosystemFund(){
         }
     })?.amount : 0;
 
-    const walletCTokenNetworth = totalBalancesB ?
-        totalBalancesB.reduce((acc, el) => acc + el.amount * el.price, 0) : 0;
+    const walletCTokenNetworth = totalBalancesC ?
+        totalBalancesC.reduce((acc, el) => acc + el.amount * el.price, 0) : 0;
 
     const usdcReservesC = totalBalancesC ? totalBalancesC.find(el => {
         if (el.symbol === 'USDC') {
