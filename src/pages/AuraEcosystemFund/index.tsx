@@ -36,7 +36,7 @@ export default function AuraEcosystemFund(){
 
     const [activeNetwork] = useActiveNetworkVersion()
     const ecosystemFundAAddress = '0x196bda3808A7Af322AaD6384103C1E6Adb40AFa7'
-    const ecosystemFundBAddress = '3A0x3BC0Cb287f74504347D50fe3aDA6d90214E6F512'
+    const ecosystemFundBAddress = '0x3BC0Cb287f74504347D50fe3aDA6d90214E6F512'
     const ecosystemFundCAddress = '0x388a09A28e7D56dc61dcb1bb356251Fe0C46fe8C'
     const { totalBalances: totalBalancesA } = useGetTotalBalances(ecosystemFundAAddress);
     const { totalBalances: totalBalancesB } = useGetTotalBalances(ecosystemFundBAddress);
