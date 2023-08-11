@@ -2063,6 +2063,7 @@ export interface GqlBalancePoolAprSubItem {
 export enum GqlChain {
   Arbitrum = "ARBITRUM",
   Avalanche = "AVALANCHE",
+  Base = "BASE",
   Fantom = "FANTOM",
   Gnosis = "GNOSIS",
   Mainnet = "MAINNET",
@@ -2113,81 +2114,6 @@ export interface GqlLatestSyncedBlocks {
   poolSyncBlock: Scalars["BigInt"]["output"];
   userStakeSyncBlock: Scalars["BigInt"]["output"];
   userWalletSyncBlock: Scalars["BigInt"]["output"];
-}
-
-export interface GqlLge {
-  __typename?: "GqlLge";
-  address: Scalars["String"]["output"];
-  adminAddress: Scalars["String"]["output"];
-  adminIsMultisig: Scalars["Boolean"]["output"];
-  bannerImageUrl: Scalars["String"]["output"];
-  collateralAddress: Scalars["String"]["output"];
-  collateralAmount: Scalars["String"]["output"];
-  collateralDecimals: Scalars["Int"]["output"];
-  collateralEndWeight: Scalars["Int"]["output"];
-  collateralStartWeight: Scalars["Int"]["output"];
-  description: Scalars["String"]["output"];
-  discordUrl: Scalars["String"]["output"];
-  endTimestamp: Scalars["Int"]["output"];
-  id: Scalars["ID"]["output"];
-  mediumUrl: Scalars["String"]["output"];
-  name: Scalars["String"]["output"];
-  startTimestamp: Scalars["Int"]["output"];
-  swapFee: Scalars["String"]["output"];
-  telegramUrl: Scalars["String"]["output"];
-  tokenAddress: Scalars["String"]["output"];
-  tokenAmount: Scalars["String"]["output"];
-  tokenDecimals: Scalars["Int"]["output"];
-  tokenEndWeight: Scalars["Int"]["output"];
-  tokenIconUrl: Scalars["String"]["output"];
-  tokenStartWeight: Scalars["Int"]["output"];
-  tokenSymbol: Scalars["String"]["output"];
-  twitterUrl: Scalars["String"]["output"];
-  websiteUrl: Scalars["String"]["output"];
-}
-
-export interface GqlLgeCreateInput {
-  address: Scalars["String"]["input"];
-  bannerImageUrl: Scalars["String"]["input"];
-  collateralAddress: Scalars["String"]["input"];
-  collateralAmount: Scalars["String"]["input"];
-  collateralEndWeight: Scalars["Int"]["input"];
-  collateralStartWeight: Scalars["Int"]["input"];
-  description: Scalars["String"]["input"];
-  discordUrl: Scalars["String"]["input"];
-  endTimestamp: Scalars["Int"]["input"];
-  id: Scalars["ID"]["input"];
-  mediumUrl: Scalars["String"]["input"];
-  name: Scalars["String"]["input"];
-  startTimestamp: Scalars["Int"]["input"];
-  swapFee: Scalars["String"]["input"];
-  telegramUrl: Scalars["String"]["input"];
-  tokenAddress: Scalars["String"]["input"];
-  tokenAmount: Scalars["String"]["input"];
-  tokenEndWeight: Scalars["Int"]["input"];
-  tokenIconUrl: Scalars["String"]["input"];
-  tokenStartWeight: Scalars["Int"]["input"];
-  twitterUrl: Scalars["String"]["input"];
-  websiteUrl: Scalars["String"]["input"];
-}
-
-export interface GqlLgePriceData {
-  __typename?: "GqlLgePriceData";
-  price: Scalars["Float"]["output"];
-  timestamp: Scalars["Int"]["output"];
-  type: Scalars["String"]["output"];
-}
-
-export interface GqlLgeUpdateInput {
-  description: Scalars["String"]["input"];
-  discordUrl: Scalars["String"]["input"];
-  id: Scalars["ID"]["input"];
-  mediumUrl: Scalars["String"]["input"];
-  name: Scalars["String"]["input"];
-  telegramUrl: Scalars["String"]["input"];
-  tokenIconUrl: Scalars["String"]["input"];
-  twitterUrl: Scalars["String"]["input"];
-  websiteUrl: Scalars["String"]["input"];
 }
 
 export interface GqlPoolApr {
@@ -3261,6 +3187,33 @@ export interface GqlUserSwapVolumeFilter {
   poolIdIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
   tokenInIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
   tokenOutIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
+}
+
+export interface GqlVotingGauge {
+  __typename?: "GqlVotingGauge";
+  addedTimestamp?: Maybe<Scalars["Int"]["output"]>;
+  address: Scalars["Bytes"]["output"];
+  isKilled: Scalars["Boolean"]["output"];
+  relativeWeightCap?: Maybe<Scalars["String"]["output"]>;
+}
+
+export interface GqlVotingGaugeToken {
+  __typename?: "GqlVotingGaugeToken";
+  address: Scalars["String"]["output"];
+  logoURI: Scalars["String"]["output"];
+  symbol: Scalars["String"]["output"];
+  weight?: Maybe<Scalars["String"]["output"]>;
+}
+
+export interface GqlVotingPool {
+  __typename?: "GqlVotingPool";
+  address: Scalars["Bytes"]["output"];
+  chain: GqlChain;
+  gauge: GqlVotingGauge;
+  id: Scalars["ID"]["output"];
+  symbol: Scalars["String"]["output"];
+  tokens: Array<GqlVotingGaugeToken>;
+  type: GqlPoolMinimalType;
 }
 
 export interface GradualWeightUpdate {
@@ -5020,14 +4973,14 @@ export enum MerkleDrop_OrderBy {
 
 export interface Mutation {
   __typename?: "Mutation";
+  balancerMutationTest: Scalars["String"]["output"];
   beetsPoolLoadReliquarySnapshotsForAllFarms: Scalars["String"]["output"];
   beetsSyncFbeetsRatio: Scalars["String"]["output"];
   cacheAverageBlockTime: Scalars["String"]["output"];
-  lgeCreate: GqlLge;
-  lgeSyncFromSanity: Scalars["String"]["output"];
   poolBlackListAddPool: Scalars["String"]["output"];
   poolBlackListRemovePool: Scalars["String"]["output"];
   poolDeletePool: Scalars["String"]["output"];
+  poolInitOnChainDataForAllPools: Scalars["String"]["output"];
   poolInitializeSnapshotsForPool: Scalars["String"]["output"];
   poolLoadOnChainDataForAllPools: Scalars["String"]["output"];
   poolLoadOnChainDataForPoolsWithActiveUpdates: Scalars["String"]["output"];
@@ -5072,10 +5025,6 @@ export interface Mutation {
   userSyncChangedWalletBalancesForAllPools: Scalars["String"]["output"];
   veBalSyncAllUserBalances: Scalars["String"]["output"];
   veBalSyncTotalSupply: Scalars["String"]["output"];
-}
-
-export interface MutationLgeCreateArgs {
-  lge: GqlLgeCreateInput;
 }
 
 export interface MutationPoolBlackListAddPoolArgs {
@@ -8271,6 +8220,7 @@ export interface Query {
   auraLockerUserLocks: Array<AuraLockerUserLock>;
   auraLockers: Array<AuraLocker>;
   balancer?: Maybe<Balancer>;
+  balancerQueryTest: Scalars["String"]["output"];
   balancerSnapshot?: Maybe<BalancerSnapshot>;
   balancerSnapshots: Array<BalancerSnapshot>;
   balancers: Array<Balancer>;
@@ -8298,9 +8248,6 @@ export interface Query {
   latestPrice?: Maybe<LatestPrice>;
   latestPrices: Array<LatestPrice>;
   latestSyncedBlocks: GqlLatestSyncedBlocks;
-  lge: GqlLge;
-  lgeGetChartData: Array<Maybe<GqlLgePriceData>>;
-  lges: Array<GqlLge>;
   lockerDelegateChangedTransaction?: Maybe<LockerDelegateChangedTransaction>;
   lockerDelegateChangedTransactions: Array<LockerDelegateChangedTransaction>;
   lockerKickRewardTransaction?: Maybe<LockerKickRewardTransaction>;
@@ -8429,6 +8376,7 @@ export interface Query {
   vaults: Array<Vault>;
   veBalGetTotalSupply: Scalars["AmountHumanReadable"]["output"];
   veBalGetUserBalance: Scalars["AmountHumanReadable"]["output"];
+  veBalGetVotingList: Array<GqlVotingPool>;
 }
 
 export interface Query_MetaArgs {
@@ -8726,14 +8674,6 @@ export interface QueryLatestPricesArgs {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<LatestPrice_Filter>;
-}
-
-export interface QueryLgeArgs {
-  id: Scalars["ID"]["input"];
-}
-
-export interface QueryLgeGetChartDataArgs {
-  id: Scalars["ID"]["input"];
 }
 
 export interface QueryLockerDelegateChangedTransactionArgs {

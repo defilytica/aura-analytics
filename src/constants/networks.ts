@@ -27,7 +27,8 @@ export type NetworkInfo = {
   chainId: string
   coingeckoId: string
   debankId: string
-  balAddress: string,
+  dbNetworkId: string
+  balAddress: string
   feeCollectorThreshold: number
   decentralicedClientUri: string
   alchemyRPCUrl: string
@@ -49,6 +50,7 @@ export const EthereumNetworkInfo: NetworkInfo = {
   chainId: '1',
   coingeckoId: 'ethereum',
   debankId: 'eth',
+  dbNetworkId: 'eth',
   balAddress: '0xba100000625a3754423978a60c9317c58a424e3d',
   feeCollectorThreshold: 10000,
   route: '',
@@ -71,6 +73,7 @@ export const ArbitrumNetworkInfo: NetworkInfo = {
   chainId: '42161',
   coingeckoId: 'arbitrum-one',
   debankId: 'arb',
+  dbNetworkId: 'arb',
   balAddress: '0x040d1EdC9569d4Bab2D15287Dc5A4F10F56a56B8',
   feeCollectorThreshold: 5000,
   route: 'arbitrum',
@@ -94,6 +97,7 @@ export const PolygonNetworkInfo: NetworkInfo = {
   chainId: '137',
   coingeckoId: 'polygon-pos',
   debankId: 'matic',
+  dbNetworkId: 'poly',
   balAddress: '0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3',
   feeCollectorThreshold: 5000,
   route: 'polygon',
@@ -117,6 +121,7 @@ export const GnosisNetworkInfo: NetworkInfo = {
   chainId: '100',
   coingeckoId: 'xdai-ecosystem',
   debankId: 'gnosis',
+  dbNetworkId: 'gnosis',
   balAddress: '0x7eF541E2a22058048904fE5744f9c7E4C57AF717',
   feeCollectorThreshold: 5000,
   route: 'gnosis',
@@ -140,6 +145,7 @@ export const PolygonZkEVMNetworkInfo: NetworkInfo = {
   chainId: '1101',
   coingeckoId: 'polygon-zkevm',
   debankId: 'pze',
+  dbNetworkId: '',
   balAddress: '0x120eF59b80774F02211563834d8E3b72cb1649d6',
   feeCollectorThreshold: 5000,
   route: 'zkevm',
@@ -163,6 +169,7 @@ export const OptimismNetworkInfo: NetworkInfo = {
   chainId: '10',
   coingeckoId: 'optimistic-ethereum',
   debankId: 'op',
+  dbNetworkId: 'opt',
   balAddress: '0xf24bcf4d1e507740041c9cfd2dddb29585adce1e',
   decentralicedClientUri: '',
   route: 'optimism',

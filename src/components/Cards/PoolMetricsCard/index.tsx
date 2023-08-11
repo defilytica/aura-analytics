@@ -30,8 +30,9 @@ export default function PoolMetricsCard({
         <Card sx={{
             boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
             minHeight: '110px',
-            p: '1px'}}>
-          <CardContent sx={{p: '10px'}}>
+            paddingBottom: '0px',
+        }}>
+            <CardContent sx={{pl: '10px', pr: '10px', pt: '10px', paddingBottom: '0px !important'}}>
             <Grid
               container
               spacing={1}

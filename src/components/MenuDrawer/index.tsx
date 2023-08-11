@@ -33,6 +33,7 @@ import { EthereumNetworkInfo, NetworkInfo } from '../../constants/networks';
 import { networkPrefix } from '../../utils/networkPrefix';
 import {Handshake} from "@mui/icons-material";
 import {AURA_TOKEN_ARBITRUM, AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
+import FoundationIcon from '@mui/icons-material/Foundation';
 
 export type MenuDrawerProps = {
     drawerWidth: number,
@@ -138,6 +139,12 @@ const MenuDrawer = ({
                         <AccountBalanceWalletIcon />
                     </ListItemIcon>
                     <ListItemText primary={'DAO Treasury'} />
+                </ListItemButton>
+                <ListItemButton key={'Aura Ecosystem Fund'} component={NavLink} to={networkPrefix(activeNetwork) + 'aef'}>
+                    <ListItemIcon>
+                        <FoundationIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Aura Ecosystem Fund'} />
                 </ListItemButton>
                 <ListItemButton key={'DAO Financials'} component={NavLink} to={'financials'}>
                     <ListItemIcon>

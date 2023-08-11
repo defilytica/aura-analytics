@@ -16,6 +16,7 @@ export default function StyledLinkButton({ href, name }: StyledButtonProps) {
             <Button
             sx={{
                 backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
+                boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
             }}
                 variant="contained"
                 href={href}

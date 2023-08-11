@@ -44,7 +44,7 @@ export default function AuraIncentiveAPRChart({auraPrice, auraAPR, xAxisData, he
         legend: {
             data:['vlAura APR', 'Aura Price'],
             textStyle: {
-                color: theme.palette.secondary
+                color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
             }
         },
         xAxis: [
@@ -89,7 +89,7 @@ export default function AuraIncentiveAPRChart({auraPrice, auraAPR, xAxisData, he
                     formatter: function (value:number) {
                         return formatPercentageAmount(value * 100) + ' %';
                     },
-                    color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.black[600]
+                    color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
                 },
                 splitLine: {
                     show: false  // This removes the split lines

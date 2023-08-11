@@ -150,9 +150,6 @@ export default function PoolInfoTable({
     if (!poolData) {
         return <CircularProgress />;
     }
-
-
-    console.log("poolData", poolData)
     //Statically create data elements
     const rows = [
         createData('Pool Name', poolData.name),

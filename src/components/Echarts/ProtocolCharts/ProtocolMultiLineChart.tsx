@@ -99,5 +99,8 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
         })),
     };
 
-    return <ReactEcharts option={option}/>;
+    return <ReactEcharts
+        option={option}
+        style={{height: '350px'}}
+    />;
 }

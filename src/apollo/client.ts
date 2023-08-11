@@ -1,5 +1,11 @@
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
-import {ArbitrumNetworkInfo, EthereumNetworkInfo, OptimismNetworkInfo, PolygonNetworkInfo} from "../constants/networks";
+import {
+    ArbitrumNetworkInfo,
+    EthereumNetworkInfo,
+    GnosisNetworkInfo,
+    OptimismNetworkInfo,
+    PolygonNetworkInfo
+} from "../constants/networks";
 
 export const healthClient = new ApolloClient({
     uri: 'https://api.thegraph.com/index-node/graphql',
@@ -113,6 +119,35 @@ export const auraOptimismClient = new ApolloClient({
 export const auraPolygonClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-polygon',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraGnosisClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-gnosis-chain',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -397,6 +432,8 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
             return auraPolygonClient;
         case OptimismNetworkInfo.chainId:
             return auraOptimismClient;
+        case GnosisNetworkInfo.chainId:
+            return auraGnosisClient;
         default:
             return auraClient;
     }
@@ -404,6 +441,21 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
 
 export const tokenClient = new ApolloClient({
     uri: 'https://backend-v3.beets-ftm-node.com/',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const balancerV3APIClient = new ApolloClient({
+    uri: 'https://api-v3.balancer.fi/',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {

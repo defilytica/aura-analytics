@@ -19,7 +19,6 @@ import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGe
 import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
 import { BalancerStakingGauges } from "../../data/balancer/balancerTypes";
 import { decorateGaugesWithIncentives } from "./helpers";
-import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
 import HistoricalIncentivesTable from "../../components/Tables/HistoricalIncentivesTable";
 import {useGetHiddenHandRewards} from "../../data/hidden-hand/useGetHiddenHandRewards";
@@ -31,6 +30,7 @@ import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import {useBalancerTokenPageData} from "../../data/balancer/useTokens";
 import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/AuraIncentiveAPRChart";
+import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -88,14 +88,14 @@ export default function VotingIncentives() {
     // const currentHiddenHandData = useGetHiddenHandVotingIncentives();
     const { address } = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
-    const gaugeData = useGetBalancerStakingGauges();
+    const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
-    const { tvlData, volumeData, priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    const { priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
         setBribeRewardsNew(data);
-        if (hiddenHandData.incentives && hiddenHandData.incentives.data.length > 1) {
+        if (hiddenHandData.incentives && hiddenHandData.incentives.data.length > 1 && gaugeData.length > 1) {
             setXAxisDataRoundNew(data.map((el) => el.pool));
             //calculate inventives and emission per vote Metrics for a given round
             let totalVotes = 0;
@@ -116,10 +116,13 @@ export default function VotingIncentives() {
             setIncentivePerVote(incentiveEfficency)
             setEmissionPerVote(emissionEff)
             setRoundIncentives(totalValue)
+            console.log("gaugeData", gaugeData)
             const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
             setDecoratedGagues(fullyDecoratedGauges)
         }
-    }, [currentRoundNew, gaugeData, hiddenHandData.incentives]);
+    }, [currentRoundNew, JSON.stringify(gaugeData), hiddenHandData.incentives]);
+
+
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
         setCurrentRoundNew(Number(event.target.value));

@@ -5,7 +5,7 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { NavElement } from '../../components/NavCrumbs';
 import NavCrumbs from '../../components/NavCrumbs';
 import { useActiveNetworkVersion } from "../../state/application/hooks";
-import { getTreasuryConfig, KARPATKEY_SAFE } from "../../constants/wallets";
+import { getTreasuryConfig } from "../../constants/wallets";
 import { useGetTotalBalances } from "../../data/debank/useGetTotalBalances";
 import { useGetPortfolio } from '../../data/debank/useGetPortfolio';
 import StyledExternalLink from '../../components/StyledExternalLink';
@@ -15,8 +15,6 @@ import LiquidityPosition from '../../components/LiquidityPosition';
 import { BalancerPieChartDataItem } from '../../data/balancer/balancerTypes';
 import GenericPieChart from '../../components/Echarts/GenericPieChart';
 import CustomLinearProgress from '../../components/Progress/CustomLinearProgress';
-import { mergeArrays } from "./helpers";
-import { EthereumNetworkInfo } from "../../constants/networks";
 
 export default function Treasury() {
 
@@ -124,7 +122,7 @@ export default function Treasury() {
                             <Grid
                                 container
                                 columns={{ xs: 4, sm: 8, md: 12 }}
-                                sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
+                                sx={{ justifyContent: { md: 'space-between', xs: 'center' }, alignContent: 'center' }}
                             >
                                 <Box>
                                     <MetricsCard
@@ -158,11 +156,14 @@ export default function Treasury() {
                     {ratioPieChartData && ratioPieChartData.length > 0 ?
                         <Grid
                             container
-                            sx={{ direction: { xs: 'column', sm: 'row' } }}
+                            sx={{
+                                direction: { xs: 'column', sm: 'row' },
+                                mx: -1,  // Counteract the spacing's outer margin
+                            }}
                             justifyContent="center"
-                            alignItems="left"
-                            alignContent="left"
-                            spacing={1}
+                            alignItems="flex-start" // Changed from "left" which is not a valid value for alignItems
+                            alignContent="flex-start" // Changed from "left" which is not a valid value for alignContent
+                            spacing={2}
                         >
                             <Grid
                                 item
@@ -172,7 +173,7 @@ export default function Treasury() {
                             >
                                 <Box mb={1}>
                                     <Card
-                                        sx={{ boxShadow: 3 }}>
+                                        sx={{ boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px", }}>
                                         <Box p={1}>
                                             <Typography
                                                 sx={{fontSize: '24px'}}
@@ -193,7 +194,7 @@ export default function Treasury() {
                                     mt={2}
                                     md={4.5}
                                 >
-                                    <Card sx={{ boxShadow: 3 }}>
+                                    <Card sx={{ boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px", }}>
                                         <Box p={1}>
                                             <Typography
                                                 sx={{fontSize: '24px'}}

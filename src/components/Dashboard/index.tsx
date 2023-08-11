@@ -35,6 +35,7 @@ import {ConnectButton, darkTheme, lightTheme, RainbowKitProvider} from "@rainbow
 import {WagmiConfig} from "wagmi";
 import {chains, wagmiConfig} from "../../wagmi/wagmiConfig";
 import {alpha} from "@mui/material";
+import AuraEcosystemFund from "../../pages/AuraEcosystemFund";
 
 
 interface AppBarProps extends MuiAppBarProps {
@@ -269,6 +270,7 @@ function Dashboard() {
                                     <Route path={"/fees"} element={<Fees/>}/>
                                     <Route path={"/:networkID/treasury"} element={<Treasury/>}/>
                                     <Route path={"/treasury"} element={<Treasury/>}/>
+                                    <Route path={"/aef"} element={<AuraEcosystemFund/>}/>
                                     <Route path={"/:networkID/financials"} element={<Financials/>}/>
                                     <Route path={"/financials"} element={<Financials/>}/>
                                 </Routes>

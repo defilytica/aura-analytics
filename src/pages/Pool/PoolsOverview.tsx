@@ -15,6 +15,7 @@ import MixedLineBarChart from '../../components/Echarts/MixedLineBarChart';
 import NavCrumbs from '../../components/NavCrumbs';
 import { NavElement } from '../../components/NavCrumbs';
 import { useAuraPools } from '../../data/aura/useAuraPools';
+import AuraPoolTable from "../../components/Tables/AuraPoolTable";
 
 export default function PoolsOverview() {
 
@@ -121,8 +122,8 @@ export default function PoolsOverview() {
                     <Grid item xs={11} sm={9}>
                         <Grid
                             container
-                            columns={{ xs: 4, sm: 8, md: 12 }}
-                            sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
+                            columns={{xs: 4, sm: 8, md: 12}}
+                            sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                         >
                             <Box m={1}>
                                 <PoolMetricsCard
@@ -166,11 +167,12 @@ export default function PoolsOverview() {
                     <Grid
                         container
                         sx={{
-                            direction: { xs: 'column', sm: 'row' }
+                            direction: { xs: 'column', sm: 'row' },
+                            mx: -1,  // Counteract the spacing's outer margin
                         }}
                         justifyContent="center"
-                        alignItems="left"
-                        alignContent="left"
+                        alignItems="flex-start" // Changed from "left" which is not a valid value for alignItems
+                        alignContent="flex-start" // Changed from "left" which is not a valid value for alignContent
                         spacing={2}
                     >
 
@@ -178,10 +180,10 @@ export default function PoolsOverview() {
                             <Grid
                                 item
                                 xs={11}
-                                md={4}
+                                md={4.45}
                             >
                                 <Card
-                                    sx={{ boxShadow: 3 }}
+                                    sx={{ boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px", }}
                                 >
                                     < MixedLineBarChart
                                         barChartData={filteredPoolBarChartData}
@@ -194,10 +196,10 @@ export default function PoolsOverview() {
                         <Grid
                             item
                             xs={11}
-                            md={4}
+                            md={4.45}
                         >
                             <Card
-                                sx={{ boxShadow: 3 }}
+                                sx={{ boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px", }}
                             >
                                 <GenericPieChart data={filteredPieChartData} height='350px' />
                             </Card>
@@ -213,7 +215,7 @@ export default function PoolsOverview() {
                         Balancer Pools with Aura Staking Gauges
                     </Typography>
                     {poolData.length > 10 ?
-                        <PoolTable poolDatas={filteredPoolDatas} /> :
+                        <AuraPoolTable poolDatas={filteredPoolDatas} auraPools={auraPools} /> :
                         <Grid
                             container
                             spacing={2}

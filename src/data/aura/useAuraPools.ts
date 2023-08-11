@@ -88,3 +88,28 @@ export function useAuraPoolsHistorically(networkId:string): TVL[] {
 
     return auraPoolsData;
 }
+
+export function useAuraPoolHistorically(networkId:string, poolId:string): TVL[] {
+    const [activeNetwork] = useActiveNetworkVersion();
+    const [auraPoolsData, setAuraPoolsData] = useState<TVL[]>([]);
+
+    const fetchPoolDataFromDB = useCallback(async () => {
+        const dbRef = ref(getDatabase());
+        console.log(activeNetwork)
+        get(child(dbRef, `poolDetailData/` + networkId + '/' + poolId)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const object = snapshot.val();
+                const array = Object.keys(object).map(key => object[key]);
+                setAuraPoolsData(array);
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    }, []);
+
+    useEffect(() => {
+        fetchPoolDataFromDB();
+    }, [fetchPoolDataFromDB]);
+
+    return auraPoolsData;
+}

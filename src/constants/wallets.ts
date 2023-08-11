@@ -30,36 +30,16 @@ export const WALLETS = [
         walletId: '0xaA54f3b282805822419265208e669d12372a3811',
     },
     {
-        name: 'Orb Collective Safe',
-        walletId: '0x3b8910f378034fd6e103df958863e5c684072693',
+        name: 'Aura Ecosystem Wallet (A)',
+        walletId: '0x196bda3808A7Af322AaD6384103C1E6Adb40AFa7',
     },
     {
-        name: 'Balancer Grants Safe',
-        walletId: '0xE2c91f3409Ad6d8cE3a2E2eb330790398CB23597',
+        name: 'Aura Ecosystem Wallet (B)',
+        walletId: '3A0x3BC0Cb287f74504347D50fe3aDA6d90214E6F512',
     },
     {
-        name: 'Balancer Maxis Safe',
-        walletId: '0x166f54F44F271407f24AA1BE415a730035637325',
-    },
-    {
-        name: 'Fjord Proxy',
-        walletId: '0x9a74cbff3f36ff1e433ef88d0ec1cdcd1eb79afa'
-    },
-    {
-        name: 'Ribbon Vault',
-        walletId: '0x2a6b048eb15c7d4ddca27db4f9a454196898a0fe'
-    },
-    {
-        name: 'Fee Collector Relayer',
-        walletId: '0xe649B71783d5008d10a96b6871e3840a398d4F06'
-    },
-    {
-        name: 'DAO Fee Sweeper',
-        walletId: '0x7c68c42De679ffB0f16216154C996C354cF1161B'
-    },
-    {
-        name: 'Aave Collector V2',
-        walletId: '0x464c71f6c2f760dda6093dcb91c24c39e5d6e18c'
+        name: 'Aura Ecosystem Wallet (C)',
+        walletId: '0x388a09A28e7D56dc61dcb1bb356251Fe0C46fe8C',
     }
 ]
 

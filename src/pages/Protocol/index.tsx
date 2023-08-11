@@ -243,10 +243,10 @@ export default function Protocol() {
                 <Box sx={{flexGrow: 2}}>
                     <Grid
                         container
-                        spacing={2}
+                        spacing={1}
                         sx={{justifyContent: 'center'}}
                     >
-                        <Grid item xs={11} sm={9} mt={1}>
+                        <Grid item xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}} mb={1}>Global Aura Stats</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
@@ -255,7 +255,7 @@ export default function Protocol() {
                                 columns={{xs: 4, sm: 8, md: 12}}
                                 sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
-                                <Box m={1}>
+                                <Box m={{ xs: 0, sm: 1 }}>
                                     {coinData && coinData[auraAddress] && coinData[auraAddress].usd ?
                                         <CoinCard
                                             tokenAddress={auraAddress}
@@ -267,7 +267,7 @@ export default function Protocol() {
                                         : <CircularProgress/>}
                                 </Box>
 
-                                <Box m={1}>
+                                <Box m={{ xs: 0, sm: 1 }}>
                                     {tvlChange && tvlDollar ?
                                         <MetricsCard
                                             mainMetric={tvlDollar}
@@ -277,7 +277,7 @@ export default function Protocol() {
                                             metricName={"Protocol TVL"}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box m={1}>
+                                <Box m={{ xs: 0, sm: 1 }}>
                                     {volumeChange && volumeDollar ?
                                         <MetricsCard
                                             mainMetric={volumeDollar}
@@ -287,7 +287,7 @@ export default function Protocol() {
                                             metricName={"Protocol Volume"}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box m={1}>
+                                <Box m={{ xs: 0, sm: 1 }}>
                                     <MetricsCard
                                         mainMetric={totalLockedAmount}
                                         mainMetricInUSD={false}
@@ -295,7 +295,7 @@ export default function Protocol() {
                                         MetricIcon={SelfImprovementIcon}
                                         svgContent={AuraIcon}/>
                                 </Box>
-                                <Box m={1}>
+                                <Box m={{ xs: 0, sm: 1 }}>
                                     {auraGlobalStats ?
                                         <MetricsCard
                                             mainMetric={auraGlobalStats ? auraGlobalStats.auraBALTotalSupply : 0}
@@ -314,7 +314,7 @@ export default function Protocol() {
                         spacing={1}
                         sx={{justifyContent: 'center'}}
                     >
-                        <Grid item mt={1} xs={11} sm={9}>
+                        <Grid item mt={2} xs={11} sm={9} >
                             <Typography sx={{fontSize: '24px'}}>Historical Staking TVL</Typography>
                         </Grid>
 
@@ -333,7 +333,7 @@ export default function Protocol() {
                             </Grid>
                             : <CircularProgress/>
                         }
-                        <Grid item mt={1} xs={11} sm={9}>
+                        <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Staking Volume</Typography>
                         </Grid>
 
@@ -353,7 +353,7 @@ export default function Protocol() {
                             : <CircularProgress/>
                         }
 
-                        <Grid item mt={1} xs={11} sm={9}>
+                        <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Balancer TVL captured</Typography>
                         </Grid>
 

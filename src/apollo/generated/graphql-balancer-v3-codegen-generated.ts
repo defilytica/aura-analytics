@@ -13911,6 +13911,36 @@ export type LockerLeaderboardQuery = {
   } | null;
 };
 
+export type VeBalGetVotingGaugesQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type VeBalGetVotingGaugesQuery = {
+  __typename?: "Query";
+  veBalGetVotingList: Array<{
+    __typename?: "GqlVotingPool";
+    id: string;
+    address: any;
+    chain: GqlChain;
+    type: GqlPoolMinimalType;
+    symbol: string;
+    gauge: {
+      __typename?: "GqlVotingGauge";
+      address: any;
+      isKilled: boolean;
+      relativeWeightCap?: string | null;
+      addedTimestamp?: number | null;
+    };
+    tokens: Array<{
+      __typename?: "GqlVotingGaugeToken";
+      address: string;
+      logoURI: string;
+      symbol: string;
+      weight?: string | null;
+    }>;
+  }>;
+};
+
 export type GetProtocolDataQueryVariables = Exact<{
   startTimestamp: Scalars["Int"]["input"];
   block24: Block_Height;
@@ -16083,6 +16113,79 @@ export type LockerLeaderboardLazyQueryHookResult = ReturnType<
 export type LockerLeaderboardQueryResult = Apollo.QueryResult<
   LockerLeaderboardQuery,
   LockerLeaderboardQueryVariables
+>;
+export const VeBalGetVotingGaugesDocument = gql`
+  query VeBalGetVotingGauges {
+    veBalGetVotingList {
+      id
+      address
+      chain
+      type
+      symbol
+      gauge {
+        address
+        isKilled
+        relativeWeightCap
+        addedTimestamp
+      }
+      tokens {
+        address
+        logoURI
+        symbol
+        weight
+      }
+    }
+  }
+`;
+
+/**
+ * __useVeBalGetVotingGaugesQuery__
+ *
+ * To run a query within a React component, call `useVeBalGetVotingGaugesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVeBalGetVotingGaugesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVeBalGetVotingGaugesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useVeBalGetVotingGaugesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    VeBalGetVotingGaugesQuery,
+    VeBalGetVotingGaugesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    VeBalGetVotingGaugesQuery,
+    VeBalGetVotingGaugesQueryVariables
+  >(VeBalGetVotingGaugesDocument, options);
+}
+export function useVeBalGetVotingGaugesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    VeBalGetVotingGaugesQuery,
+    VeBalGetVotingGaugesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    VeBalGetVotingGaugesQuery,
+    VeBalGetVotingGaugesQueryVariables
+  >(VeBalGetVotingGaugesDocument, options);
+}
+export type VeBalGetVotingGaugesQueryHookResult = ReturnType<
+  typeof useVeBalGetVotingGaugesQuery
+>;
+export type VeBalGetVotingGaugesLazyQueryHookResult = ReturnType<
+  typeof useVeBalGetVotingGaugesLazyQuery
+>;
+export type VeBalGetVotingGaugesQueryResult = Apollo.QueryResult<
+  VeBalGetVotingGaugesQuery,
+  VeBalGetVotingGaugesQueryVariables
 >;
 export const GetProtocolDataDocument = gql`
   query GetProtocolData(

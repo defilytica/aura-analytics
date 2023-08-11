@@ -1,6 +1,7 @@
 import ReactEcharts from 'echarts-for-react';
 import { useTheme } from '@mui/material/styles';
 import {formatDollarAmount} from "../../../utils/numbers";
+import {AppColors} from "../../../assets/auraTheme/colors";
 
 export interface BribesProps {
     dollarPerVlAssetData: number[],
@@ -43,7 +44,7 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
         legend: {
             data:['$/vlAURA', 'Voting Incentives'],
             textStyle: {
-                color: theme.palette.secondary
+                color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
             }
         },
         xAxis: [
@@ -81,14 +82,14 @@ export default function DashboardOverviewChart({dollarPerVlAssetData, totalAmoun
                 position: 'left',
                 axisLine: {
                     lineStyle: {
-                        color: '#FFFFFF'
+                        color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
                     }
                 },
                 axisLabel: {
                     formatter: function (value:number) {
                         return formatDollarAmount(value);
                     },
-                    color: '#FFFFFF'
+                    color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
                 },
                 splitLine: {
                     show: false  // This removes the split lines

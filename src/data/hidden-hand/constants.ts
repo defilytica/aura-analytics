@@ -47,8 +47,8 @@ while (auraTimeStamps[auraTimeStamps.length - 1] < now) {
         // Calculate Monday 20:00 timestamp
         const nextMondayTimestamp = lastTimestamp + PATTERN + 604800; // Adding 604800 seconds (7 days) for Monday 20:00
 
-        // Check if we are between Thursday 02:00 and the following Monday 20:00
-        if (now >= (lastTimestamp + 180000) && now < nextMondayTimestamp) {
+        // Check if we are between Thursday 02:00 and the following Monday 20:00 as seen from the next voting round deadline
+        if (now >= (lastTimestamp + PATTERN - 410000) && now < nextMondayTimestamp) {
             auraTimeStamps.push(0);
         }
         break;

@@ -11,7 +11,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Avatar, Button, IconButton, InputBase} from '@mui/material';
+import {Avatar, Button, Grid, IconButton, InputBase} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {visuallyHidden} from '@mui/utils';
@@ -315,23 +315,23 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
     };
 
     interface NetworkLogoMap {
-        [networkNumber: number]: string;
+        [networkNumber: string]: string;
     }
 
     const networkLogoMap: NetworkLogoMap = {
-        1: EtherLogo,
-        10: OpLogo,
-        137: PolygonLogo,
-        100: GnosisLogo,
-        42161: ArbitrumLogo
+        MAINNET: EtherLogo,
+        OPTIMISM: OpLogo,
+        POLYGON: PolygonLogo,
+        GNOSIS: GnosisLogo,
+        ARBITRUM: ArbitrumLogo
     };
 
     const networkStringMap :NetworkLogoMap = {
-        1: "Ethereum",
-        10: "Optimism",
-        137: "Polygon",
-        100: "Gnosis",
-        42161: "Arbitrum"
+        MAINNET: "Ethereum",
+        OPTIMISM: "Optimism",
+        POLYGON: "Polygon",
+        GNOSIS: "Gnosis",
+        ARBITRUM: "Arbitrum"
     };
 
     let filename = "Aura-VotingIncentives-" + unixToDate(currentRound) + ".csv";
@@ -339,27 +339,39 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
 
     return (
         <Box sx={{width: '100%'}}>
-            <Paper
-                component="form"
-                sx={{mb: '10px', p: '2px 4px', display: 'flex', alignItems: 'center', maxWidth: 500}}
+            <Grid
+                container
+                columns={{xs: 4, sm: 8, md: 12}}
+                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
             >
-                <InputBase
-                    sx={{ml: 1, flex: 1}}
-                    placeholder="Search for Gauge"
-                    inputProps={{'aria-label': 'search Balancer gauges'}}
-                    value={searched}
-                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => requestSearch(event.target.value)}
-                />
-                <IconButton onClick={clearSearch} type="button" sx={{p: '10px'}} aria-label="search">
-                    {searched !== "" ? <ClearIcon/> : <SearchIcon/>}
-                </IconButton>
+                <Box>
+                    <Paper
+                        component="form"
+                        sx={{mb: '10px', p: '2px 4px', display: 'flex', alignItems: 'center', maxWidth: 500, minWidth: 300}}
+                    >
+                        <InputBase
+                            sx={{ml: 1, flex: 1}}
+                            placeholder="Search for Gauge"
+                            inputProps={{'aria-label': 'search Balancer gauges'}}
+                            value={searched}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => requestSearch(event.target.value)}
+                        />
+                        <IconButton onClick={clearSearch} type="button" sx={{p: '10px'}} aria-label="search">
+                            {searched !== "" ? <ClearIcon/> : <SearchIcon/>}
+                        </IconButton>
 
-
-                <CSVLink data={downloadData} filename={filename}><Button sx={{
-                    backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
-                }}><Download/> CSV</Button></CSVLink>
-
-            </Paper>
+                    </Paper>
+                </Box>
+                <Box>
+                    <CSVLink data={downloadData} filename={filename}>
+                        <Button sx={{
+                            backgroundColor: "background.paper",
+                            boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
+                    }}>
+                            <Download/> CSV</Button>
+                    </CSVLink>
+                </Box>
+            </Grid>
             <Paper sx={{mb: 2, boxShadow: 3}}>
 
                 <TableContainer>
@@ -392,7 +404,7 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
                                                         height: 20,
                                                         width: 20
                                                     }}
-                                                    src={networkLogoMap[Number(row.network)]}
+                                                    src={networkLogoMap[row.network]}
                                                 />
                                             </TableCell>
                                             <TableCell

@@ -7,6 +7,7 @@ import React from "react";
 import {useTheme} from "@mui/material/styles";
 import { CSVLink } from "react-csv";
 import {unixToDate} from "../../../utils/date";
+import {AppColors} from "../../../assets/auraTheme/colors";
 
 interface BribesProps {
     rewardData: PoolReward[],
@@ -87,7 +88,7 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height, curr
         legend: {
             data: ['Voting Incentives'],
             textStyle: {
-                color: '#FFFFFF',
+                color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
             }
         },
         xAxis: [
@@ -121,14 +122,14 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height, curr
                 position: 'left',
                 axisLine: {
                     lineStyle: {
-                        color: '#FFFFFF'
+                        color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
                     }
                 },
                 axisLabel: {
                     formatter: function (value: number) {
                         return formatDollarAmount(value);
                     },
-                    color: '#FFFFFF'
+                    color: theme.palette.mode === 'dark' ? '#FFFFFF' : AppColors.gray[800]
                 },
             },
         ],
@@ -153,10 +154,20 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height, curr
 
     return (
         <div>
-            <Box mt={1} ml={1} display="flex" alignItems="center">
-                <CSVLink data={rewardData} filename={filename}><Button sx={{
-                    backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
-                }}><Download/> CSV</Button></CSVLink>
+            <Box
+                mt={1}
+                ml={1}
+                display="flex"
+                alignItems="center"
+
+            >
+                <CSVLink data={rewardData} filename={filename}>
+                    <Button sx={{
+                    backgroundColor: "background.paper",
+                    boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",
+                }}>
+                        <Download/> CSV</Button>
+                </CSVLink>
             </Box>
         <ReactEcharts
             option={option}

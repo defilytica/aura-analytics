@@ -21,21 +21,62 @@ import PoolInfoTable from '../../components/Tables/PoolInfoTable';
 import StyledLinkButton from '../../components/Buttons/StyledLinkButton';
 import SwapsTable from '../../components/Tables/SwapsTable';
 import JoinExitsTable from '../../components/Tables/JoinExitsTable';
+import {useAuraPoolLeaderboardInfo} from "../../data/aura/useAuraPoolLeaderboard";
+import {TVL, useAuraPoolHistorically, useAuraPools} from "../../data/aura/useAuraPools";
+import AuraPoolStakerTable from "../../components/Tables/AuraPoolStakerTable";
+import {BalancerChartDataItem} from "../../data/balancer/balancerTypes";
+import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
+import {unixToDate} from "../../utils/date";
+import GenericAreaChartWithTimePicker from "../../components/Echarts/GenericAreaChartWithTimePicker";
+import PieChartIcon from '@mui/icons-material/PieChart';
+import PersonIcon from '@mui/icons-material/Person';
 
 
 
 export default function PoolPage() {
     const params = useParams();
+    console.log("params", params)
     const [activeNetwork] = useActiveNetworkVersion();
     const poolId = params.poolId ? params.poolId : '';
     const poolData = useBalancerPoolSingleData(poolId);
+    const auraPools = useAuraPools();
+    const auraPoolMatch = poolId ? auraPools.find((auraPool) => auraPool.balancerPoolId === poolId) : '';
+    let auraPoolLeaderBoard = useAuraPoolLeaderboardInfo(auraPoolMatch ? auraPoolMatch.id : '')
+    let auraPoolTvlHistorically = useAuraPoolHistorically(activeNetwork.dbNetworkId, poolId);
+    const historicalTVLData: BalancerChartDataItem[] = auraPoolTvlHistorically.map((item: TVL) => {
+        return {
+            value: item.tvl,
+            time: unixToDate(item.date / 1000) // Assuming 'date' is in seconds since UNIX epoch
+        };
+    });
     const { tvlData, volumeData, feesData, tokenDatas } = useBalancerPoolPageData(poolId);
-    const { swaps, joinExits, swapPairVolumes } = useBalancerTransactionData(
+    const { swaps, joinExits } = useBalancerTransactionData(
         (poolData?.tokens || []).map((token) => token.address),
         poolData ? [poolData.id] : [],
     );
-    console.log("swaps", swaps);
-    console.log("joinExits", joinExits);
+
+    //Aura specific stats
+    let auraTVL = 0
+    let auraTVLChange = 0
+    let auraStakeDominance = 0
+    if ( auraPoolTvlHistorically && auraPoolTvlHistorically.length > 1 && poolData) {
+        auraTVL = historicalTVLData[historicalTVLData.length -1].value;
+        auraTVLChange =  100 / historicalTVLData[historicalTVLData.length - 2].value * historicalTVLData[historicalTVLData.length - 1].value - 100
+        auraStakeDominance = 100 / poolData.tvlUSD * historicalTVLData[historicalTVLData.length -1].value
+        if (auraStakeDominance > 100) {
+            auraStakeDominance = 0
+        }
+    }
+    let auraStakers = 0;
+    if (auraPoolLeaderBoard.leaderboard) {
+        auraStakers = auraPoolLeaderBoard.leaderboard.length
+    }
+
+
+
+
+
+
     //Navigation
     const homeNav: NavElement = {
         name: 'Home',
@@ -49,9 +90,6 @@ export default function PoolPage() {
     navCrumbs.push(homeNav)
     navCrumbs.push(poolNav);
 
-    console.log("swapPairVolumes: ", swapPairVolumes)
-
-    //TODO: Refactor in own function calls (geSwaps, getSwapsChange etc?)
     //Swaps
     let swaps24h = 0;
     let swaps24hChange = 0;
@@ -108,7 +146,7 @@ export default function PoolPage() {
     //Ideas to show richer data:
     //24h swaps / biggest swap / 24h joins / show token price data stacked / poolinfo?
     return (
-        poolData ?
+        poolData && auraPoolMatch ?
             <Box sx={{ flexGrow: 2 }}>
                 <Grid
                     container
@@ -147,11 +185,75 @@ export default function PoolPage() {
                             </Box>
                         </Box>
                     </Grid>
+                    <Grid mt={2} item xs={11} sm={9}>
+                        <Typography sx={{fontSize: '24px',}}>Aura Pool Metrics</Typography>
+                    </Grid>
                     <Grid item xs={11} sm={9}>
                         <Grid
                             container
                             columns={{ xs: 4, sm: 8, md: 12 }}
-                            sx={{ justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center' }}
+                            sx={{ justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center' }}
+                        >
+                            <Box
+                                m={1}
+                            >
+                                <MetricsCard
+                                    mainMetric={auraTVL}
+                                    mainMetricInUSD={true}
+                                    metricName='Aura Pool TVL'
+                                    mainMetricChange={auraTVLChange }
+                                    MetricIcon={MonetizationOnIcon}
+                                />
+                            </Box>
+                            <MetricsCard
+                                mainMetric={auraStakers}
+                                mainMetricInUSD={false}
+                                metricName='Number of Stakers'
+                                metricDecimals={0}
+                                MetricIcon={PersonIcon}
+                            />
+                            <Box
+                                m={1}
+                            >
+                                <MetricsCard
+                                    mainMetric={auraStakeDominance}
+                                    mainMetricInUSD={false}
+                                    mainMetricUnit={'%'}
+                                    metricName='Aura Stake Ratio'
+                                    MetricIcon={PieChartIcon}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                    <Grid mt={2} item xs={11} sm={9}>
+                        <Typography sx={{fontSize: '24px',}}>Aura Pool: Historical TVL</Typography>
+                    </Grid>
+                    <Grid item mt={1} xs={11} sm={9}>
+                        <Card sx={{boxShadow: 3}}>
+                            <Box p={1} display="flex" alignItems='center'>
+
+                            </Box>
+                            <GenericAreaChartWithTimePicker
+                                chartData={historicalTVLData}
+                                dataTitle={"TVL"}
+
+                            />
+                        </Card>
+                    </Grid>
+                    <Grid mt={2} item xs={11} sm={9}>
+                        <Typography sx={{fontSize: '24px',}}>Top Aura Stakers</Typography>
+                    </Grid>
+                    <Grid mt={2} item xs={11} sm={9}>
+                        <AuraPoolStakerTable leaderboardInfo={auraPoolLeaderBoard} pricePerBPT={poolData.tvlUSD / poolData.totalShares}/>
+                    </Grid>
+                    <Grid mt={2} item xs={11} sm={9}>
+                        <Typography sx={{fontSize: '24px',}}>Balancer: Pool Metrics</Typography>
+                    </Grid>
+                    <Grid item xs={11} sm={9}>
+                        <Grid
+                            container
+                            columns={{ xs: 4, sm: 8, md: 12 }}
+                            sx={{ justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center' }}
                         >
                             <Box
                             m={1}
@@ -202,7 +304,7 @@ export default function PoolPage() {
                         </Grid>
                     </Grid>
                     <Grid mt={2} item xs={11} sm={9}>
-                        <Typography sx={{fontSize: '24px',}}>Historical Performance </Typography>
+                        <Typography sx={{fontSize: '24px',}}>Balancer: Historical Performance </Typography>
                     </Grid>
                     <Grid item xs={11} sm={9}>
                         <Card>
@@ -244,7 +346,7 @@ export default function PoolPage() {
                             mt={1}
                             xs={11} sm={9}
                         >
-                            <Typography sx={{fontSize: '24px',}}>Historical Swaps </Typography>
+                            <Typography sx={{fontSize: '24px',}}>Balancer: Historical Swaps </Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <SwapsTable swaps={swaps} />
@@ -253,7 +355,7 @@ export default function PoolPage() {
 
                     <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
                         <Grid item mt={1} xs={11} sm={9}>
-                            <Typography variant="h5">Liquidity Provisions </Typography>
+                            <Typography variant="h5">Balancer: Liquidity Provisions </Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <JoinExitsTable joinExits={joinExits} />

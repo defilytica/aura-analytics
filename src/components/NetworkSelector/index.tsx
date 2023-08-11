@@ -1,11 +1,19 @@
 import {Avatar, Divider, FormControl, MenuItem, Select, SelectChangeEvent} from "@mui/material"
 import {Box} from "@mui/system"
-import {ArbitrumNetworkInfo, EthereumNetworkInfo, NetworkInfo, OptimismNetworkInfo, PolygonNetworkInfo,} from "../../constants/networks"
+import {
+    ArbitrumNetworkInfo,
+    EthereumNetworkInfo,
+    GnosisNetworkInfo,
+    NetworkInfo,
+    OptimismNetworkInfo,
+    PolygonNetworkInfo,
+} from "../../constants/networks"
 import {useActiveNetworkVersion} from "../../state/application/hooks"
 import ArbitrumLogo from '../../assets/svg/arbitrum.svg'
 import PolygonLogo from '../../assets/svg/polygon.svg'
 import EtherLogo from '../../assets/svg/ethereum.svg'
 import OpLogo from '../../assets/svg/optimism.svg'
+import GnosisLogo from '../../assets/svg/gnosis.svg'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useSwitchNetwork} from 'wagmi'
 
@@ -48,6 +56,10 @@ export default function NetworkSelector() {
         } else if (chainId === PolygonNetworkInfo.chainId) {
             update(PolygonNetworkInfo)
             const newPath = updatePathForNetwork(PolygonNetworkInfo, location.pathname)
+            navigate(newPath)
+        } else if (chainId === GnosisNetworkInfo.chainId) {
+            update(GnosisNetworkInfo)
+            const newPath = updatePathForNetwork(GnosisNetworkInfo, location.pathname)
             navigate(newPath)
         } else if (chainId === OptimismNetworkInfo.chainId) {
             const newPath = updatePathForNetwork(OptimismNetworkInfo, location.pathname)
@@ -137,6 +149,22 @@ export default function NetworkSelector() {
                         </Box>
                         <Box>
                             Optimism
+                        </Box>
+                    </Box>
+                </MenuItem>
+                <MenuItem value={GnosisNetworkInfo.chainId} key="optimism">
+                    <Box display="flex" alignItems="center">
+                        <Box mr={0.5}>
+                            <Avatar
+                                sx={{
+                                    height: 20,
+                                    width: 20
+                                }}
+                                src={GnosisLogo}
+                            />
+                        </Box>
+                        <Box>
+                            Gnosis
                         </Box>
                     </Box>
                 </MenuItem>

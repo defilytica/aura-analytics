@@ -21,9 +21,9 @@ export function useAuraPoolLeaderboardInfo(poolId: string): AuraLeaderboardInfo 
                 poolId: poolId
             }
         });
-    }, []);
+    }, [poolId]);
 
-    if (!data) {
+    if (!data || poolId === '') {
         return auraPoolLeaderboardInfo;
     }
 
