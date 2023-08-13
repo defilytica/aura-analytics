@@ -11,6 +11,30 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CI: false
+      GENERATE_SOURCEMAP: false
+      REACT_APP_BALANCER_SUBGRAPH_START_TIMESTAMP: 1623004158
+      REACT_APP_SUBGRAPH_URL: "https://aura-v2-1-analytics.stellate.sh/"
+      REACT_APP_SUBGRAPH_ARBITRUM_URL: "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2"
+      REACT_APP_SUBGRAPH_POLYGON_URL: "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2"
+      REACT_APP_BLOCKS_SUBGRAPH_URL: "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks"
+      REACT_APP_DOCS_LINK: "https://docs.aura.finance/"
+      REACT_APP_APP_LINK: "https://app.aura.finance/"
+      REACT_APP_PROJECT_NAME: "Aura"
+      REACT_APP_SITE_TITLE: "Aura Analytics"
+      REACT_APP_SITE_DESCRIPTION: "Aura analytics dashboard for the leading yToken aggregator"
+      REACT_APP_PRIMARY_COLOR: "#0095E5"
+      REACT_APP_SECONDARY_COLOR: "#FF0000"
+      REACT_APP_APP_LOGO: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_LOADING_IMAGE: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_BACKGROUND_IMAGE: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_APPLE_TOUCH_192: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_APPLE_TOUCH_512: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_SOCIAL_IMAGE: "https://raw.githubusercontent.com/aurafinance/aura-docs/main/.gitbook/assets/AURA-CIRCLE.png"
+      REACT_APP_FAVICON: "https://balancer.tools/favicon-32x32.png"
+      REACT_APP_MANIFEST: "https://raw.githubusercontent.com/balancer-labs/frontend-v2/develop/public/manifest.json"
+      REACT_APP_INFURA_KEY: '${{ secrets.REACT_APP_INFURA_KEY }}'
+      REACT_APP_ALCHEMY_KEY: '${{ secrets.REACT_APP_ALCHEMY_KEY }}'
+      REACT_APP_ALCHEMY_URL: '${{ secrets.REACT_APP_ALCHEMY_URL }}'
     strategy:
       matrix:
         node-version: [ 16.x ]
