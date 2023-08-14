@@ -144,7 +144,7 @@ const MenuDrawer = ({
                     <ListItemIcon>
                         <FoundationIcon />
                     </ListItemIcon>
-                    <ListItemText primary={'Aura Ecosystem Fund'} />
+                    <ListItemText primary={'Ecosystem Fund'} />
                 </ListItemButton>
                 <ListItemButton key={'DAO Financials'} component={NavLink} to={'financials'}>
                     <ListItemIcon>
@@ -168,7 +168,7 @@ const MenuDrawer = ({
                         <TwitterIcon />
                     </Link>
                     <Link href="https://discord.gg/aurafinance" target="_blank" rel="noopener noreferrer">
-                    {theme.palette.mode === 'dark' ? 
+                    {theme.palette.mode === 'dark' ?
                         <img src={DiscordIconDark} alt="Discord Icon" width="25" /> :
                         <img src={DiscordIconLight} alt="Discord Icon" width="25" />
                     }
@@ -197,7 +197,7 @@ const MenuDrawer = ({
                             href="https://coingecko.com">
                             <Box display="flex" alignItems="center" alignContent="center">
                                 <Box
-                                    //sx={{ display: { xs: 'none', md: 'flex' } }} 
+                                    //sx={{ display: { xs: 'none', md: 'flex' } }}
                                     >
                                     <img src={CoingeckoColor} alt="Coingecko Logo" width="25" />
                                 </Box>
@@ -248,7 +248,7 @@ const MenuDrawer = ({
                             </Box>
                         </Link>
                     </ IconButton>
-                    
+
                 </Box>
             </Box>
         </Drawer>

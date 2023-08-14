@@ -19,7 +19,6 @@ import {useSwitchNetwork} from 'wagmi'
 
 const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
     const pathParts = currentPath.split('/');
-    console.log("currentPath", currentPath)
 
     let newPath;
 

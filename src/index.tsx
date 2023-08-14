@@ -9,6 +9,7 @@ import reportWebVitals from './reportWebVitals';
 import {auraClient, client} from './apollo/client';
 import store from './state';
 import { initializeApp } from "firebase/app";
+import {FIREBASE_API_KEY} from "./data/balancer/constants";
 
 
 
@@ -20,7 +21,7 @@ function Updaters() {
   );
 }
 const firebaseConfig = {
-    apiKey: "AIzaSyBj0D4TOgDpKfv_daj7MD3u8x4JAv65SAI",
+    apiKey: FIREBASE_API_KEY,
     authDomain: "aura-analytics-1c4b3.firebaseapp.com",
     databaseURL: "https://aura-analytics-1c4b3-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "aura-analytics-1c4b3",
