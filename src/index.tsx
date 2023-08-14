@@ -22,13 +22,13 @@ function Updaters() {
 }
 const firebaseConfig = {
     apiKey: FIREBASE_API_KEY,
-    authDomain: "aura-analytics-1c4b3.firebaseapp.com",
-    databaseURL: "https://aura-analytics-1c4b3-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "aura-analytics-1c4b3",
-    storageBucket: "aura-analytics-1c4b3.appspot.com",
-    messagingSenderId: "1086945417593",
-    appId: "1:1086945417593:web:8ef6c8fa5aa484205e37a8",
-    measurementId: "G-8YYQH414HC"
+    authDomain: "aura-analytics-backend.firebaseapp.com",
+    databaseURL: "https://aura-analytics-backend-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "aura-analytics-backend",
+    storageBucket: "aura-analytics-backend.appspot.com",
+    messagingSenderId: "331682703662",
+    appId: "1:331682703662:web:059e942c66d50c07af72bf",
+    measurementId: "G-CP46H3FVPR"
 };
 
 initializeApp(firebaseConfig);
