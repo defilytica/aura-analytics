@@ -48,7 +48,9 @@ export default function PoolsOverview() {
     //Filter aura pools / gauges exclusively
     const filteredPoolDatas = poolData.filter((x) =>
         !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1
-        && auraPools.some(auraPool => auraPool.balancerPoolId === x.id));
+        && auraPools.some(auraPool => auraPool.balancerPoolId === x.id && !auraPool.isShutdown));
+
+    const filteredAuraPools = auraPools.filter((x) => !x.isShutdown);
 
     //Create bar chart data for pool distribution
     const poolBarChartData: BalancerChartDataItem[] = [];
@@ -215,7 +217,7 @@ export default function PoolsOverview() {
                         Balancer Pools with Aura Staking Gauges
                     </Typography>
                     {poolData.length > 10 ?
-                        <AuraPoolTable poolDatas={filteredPoolDatas} auraPools={auraPools} /> :
+                        <AuraPoolTable poolDatas={filteredPoolDatas} auraPools={filteredAuraPools} /> :
                         <Grid
                             container
                             spacing={2}

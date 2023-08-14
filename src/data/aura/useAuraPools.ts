@@ -7,7 +7,7 @@ import {AuraPoolData} from './auraTypes';
 import {useBlocksFromTimestamps} from "../../hooks/useBlocksFromTimestamps";
 import {useDeltaTimestamps} from "../../utils/queries";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
-import {auraClient, getAuraNetworkClient} from "../../apollo/client";
+import {getAuraNetworkClient} from "../../apollo/client";
 import { getDatabase, ref, child, get} from "firebase/database";
 
 export function useAuraPools(): AuraPoolData[] {
@@ -42,7 +42,7 @@ export function useAuraPools(): AuraPoolData[] {
                 id: pool.id,
                 gaugeId: pool.gauge ? pool.gauge.id : '',
                 balancerPoolId: pool.gauge?.pool?.factoryPoolData ? pool.gauge.pool.factoryPoolData.balancerPoolId : '',
-                isShutdown: pool.gauge?.pool?.factoryPoolData ? pool.gauge.pool.factoryPoolData?.isShutdown : false,
+                isShutdown: pool.factoryPoolData ?  pool.factoryPoolData?.isShutdown : false,
                 gaugeTotalSupply: pool.gauge ? pool.gauge.totalSupply / 1e18 : 0,
                 gaugeWorkingSupply: pool.gauge ? pool.gauge.workingSupply / 1e18 : 0,
             }
@@ -65,12 +65,10 @@ export type TVL = {
 }
 
 export function useAuraPoolsHistorically(networkId:string): TVL[] {
-    const [activeNetwork] = useActiveNetworkVersion();
     const [auraPoolsData, setAuraPoolsData] = useState<TVL[]>([]);
 
     const fetchPoolDataFromDB = useCallback(async () => {
         const dbRef = ref(getDatabase());
-        console.log(activeNetwork)
         get(child(dbRef, `poolData/` + networkId + '/')).then((snapshot) => {
             if (snapshot.exists()) {
                 const object = snapshot.val();
@@ -90,12 +88,10 @@ export function useAuraPoolsHistorically(networkId:string): TVL[] {
 }
 
 export function useAuraPoolHistorically(networkId:string, poolId:string): TVL[] {
-    const [activeNetwork] = useActiveNetworkVersion();
     const [auraPoolsData, setAuraPoolsData] = useState<TVL[]>([]);
 
     const fetchPoolDataFromDB = useCallback(async () => {
         const dbRef = ref(getDatabase());
-        console.log(activeNetwork)
         get(child(dbRef, `poolDetailData/` + networkId + '/' + poolId)).then((snapshot) => {
             if (snapshot.exists()) {
                 const object = snapshot.val();

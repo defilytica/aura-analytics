@@ -29,6 +29,10 @@ query AuraPools($block: Block_height) {
   pools(block: $block) {
     totalStaked
     id
+    factoryPoolData {
+      balancerPoolId
+      isShutdown
+    }
     gauge {
       id
       pool {
@@ -46,7 +50,7 @@ query AuraPools($block: Block_height) {
 }
 
 
-#Leaderboard of accounts for a specific Aura Pool (not balancer pool!), e.g. "auraBal", "0", etc 
+#Leaderboard of accounts for a specific Aura Pool (not balancer pool!), e.g. "auraBal", "0", etc
 query PoolLeaderboard($poolId: ID!) {
   leaderboard: pool(id: $poolId) {
     accounts(

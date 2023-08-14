@@ -40,7 +40,7 @@ export default function PoolPage() {
     const poolId = params.poolId ? params.poolId : '';
     const poolData = useBalancerPoolSingleData(poolId);
     const auraPools = useAuraPools();
-    const auraPoolMatch = poolId ? auraPools.find((auraPool) => auraPool.balancerPoolId === poolId) : '';
+    const auraPoolMatch = poolId ? auraPools.find((auraPool) => auraPool.balancerPoolId === poolId && !auraPool.isShutdown) : '';
     let auraPoolLeaderBoard = useAuraPoolLeaderboardInfo(auraPoolMatch ? auraPoolMatch.id : '')
     let auraPoolTvlHistorically = useAuraPoolHistorically(activeNetwork.dbNetworkId, poolId);
     const historicalTVLData: BalancerChartDataItem[] = auraPoolTvlHistorically.map((item: TVL) => {

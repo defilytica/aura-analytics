@@ -38,7 +38,6 @@ export default function NetworkSelector() {
     const [activeNetwork, update] = useActiveNetworkVersion();
     const navigate = useNavigate();
     const location = useLocation();
-    console.log("location", location)
     const {switchNetwork} = useSwitchNetwork()
 
     const handleNetworkChange = (evt: SelectChangeEvent) => {

@@ -13488,6 +13488,11 @@ export type AuraPoolsQuery = {
     __typename?: "Pool";
     totalStaked: any;
     id: string;
+    factoryPoolData?: {
+      __typename?: "FactoryPoolData";
+      balancerPoolId?: any | null;
+      isShutdown: boolean;
+    } | null;
     gauge?: {
       __typename?: "Gauge";
       id: string;
@@ -15633,6 +15638,10 @@ export const AuraPoolsDocument = gql`
     pools(block: $block) {
       totalStaked
       id
+      factoryPoolData {
+        balancerPoolId
+        isShutdown
+      }
       gauge {
         id
         pool {

@@ -52,6 +52,7 @@ export default function Protocol() {
     const [tvlChange, setTvlChange] = useState<number | undefined>();
     const [volumeChange, setVolumeChange] = useState<number | undefined>();
     const [volumeDollar, setVolumeDollar] = useState<number | undefined>();
+    const [dataLoaded, setDataLoaded] = useState(false);
 
 
     // Constants
@@ -171,8 +172,16 @@ export default function Protocol() {
 
 
     React.useEffect(() => {
-        if (auraPools && auraPools.length > 0 && auraPoolsArb && auraPoolsArb.length > 0 && auraPoolsOpt && auraPoolsOpt.length > 0 && auraPoolsPoly && auraPoolsPoly.length > 0 && auraPoolsGnosis && auraPoolsGnosis.length > 0 && poolTransactions && poolTransactions.length > 0 && poolTransactionsArb && poolTransactionsArb.length > 0 && poolTransactionsOpt && poolTransactionsOpt.length > 0 && balancerPools && balancerPools.length > 0 && balancerPoolsArb && balancerPoolsArb.length > 0 && balancerPoolsOpt && balancerPoolsOpt.length > 0 && balancerPoolsPoly && balancerPoolsPoly.length > 0 && balancerPoolsGnosis && balancerPoolsGnosis.length > 0 && coinData) {
-            const tempSortedTvlData = processTVLData(auraPools);
+        if (
+            totalLockedAmount &&
+            auraPools.length > 0 && auraPoolsArb.length > 0 && auraPoolsOpt.length > 0 &&
+            auraPoolsPoly.length > 0 && auraPoolsGnosis.length > 0 &&
+            poolTransactions.length > 0 && poolTransactionsArb.length > 0 && poolTransactionsOpt.length > 0 &&
+            poolTransactionsPoly.length > 0 && poolTransactionsGnosis.length > 0 &&
+            coinData && auraGlobalStats && balancerPools.length > 0 && balancerPoolsArb.length > 0 &&
+            balancerPoolsOpt.length > 0 && balancerPoolsPoly.length > 0 && balancerPoolsGnosis.length > 0
+        ) {
+         const tempSortedTvlData = processTVLData(auraPools);
             setSortedTvlData(tempSortedTvlData);
 
             const tempSortedTvlDataArb = processTVLData(auraPoolsArb);
@@ -234,12 +243,13 @@ export default function Protocol() {
 
             let tempVolumeChange = (tempVolumeDollar - tempVolumeDollarForChange) / tempVolumeDollarForChange * 100;
             setVolumeChange(tempVolumeChange);
+            setDataLoaded(true);
         }
-    }, [auraPools, poolTransactions, coinData]);
+    }, [auraPools.length, poolTransactions.length, coinData, totalLockedAmount, poolTransactionsArb.length]);
 
 
     return (
-        tvlDollar && tvlChange && volumeChange && volumeDollar && displayPoolData && displayTransactions && displayTransactionsArb && displayTransactionsOpt && displayTransactionsPoly && displayTransactionsGnosis && totalLockedAmount && capturedTVLEth && capturedTVLArb && capturedTVLOpt && capturedTVLPoly && capturedTVLGnosis ? (
+        dataLoaded && totalLockedAmount ? (
                 <Box sx={{flexGrow: 2}}>
                     <Grid
                         container
