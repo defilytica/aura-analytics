@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -27,6 +26,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import JoinExitChip, { JoinExitChipProps } from "../JoinExitsTable/JoinExitChip";
 import { TransactionHistory, Send2, TokenDict } from "../../../data/debank/debankTypes";
 import { getSPWalletName } from "../../../constants/wallets";
+import StyledTableCell from '../StyledTableCell';
 
 
 interface Data {
@@ -160,7 +160,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -179,7 +179,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -263,11 +263,11 @@ export default function TreasuryTransactionTable({ txnHistory }:
     //Create Rows
     const rows = txnHistory.history_list.map(el =>
         createData(
-            el.cate_id === 'receive' ? 'Receive' : 'Send', 
-            obtainSendReceives(el.sends, el.receives), 
+            el.cate_id === 'receive' ? 'Receive' : 'Send',
+            obtainSendReceives(el.sends, el.receives),
             el.sends.length > 0 && el.receives.length > 0 ? 'Multicall' : getSPWalletName(obtainSPsSendsReceives(el.sends, el.receives)),
-            obtainValue(el.sends, el.receives, txnHistory.token_dict), 
-            el.time_at, 
+            obtainValue(el.sends, el.receives, txnHistory.token_dict),
+            el.time_at,
             el.id)
 
     ).filter(row => row.value > 0)
@@ -326,38 +326,38 @@ export default function TreasuryTransactionTable({ txnHistory }:
                                             tabIndex={-1}
                                             key={row.txId + Math.random() * 10}
                                         >
-                                            <TableCell>
+                                            <StyledTableCell>
                                                 <Box display='flex' alignItems='center' alignContent='center'>
                                                     <Box mr={1}>
-                                                {row.action === 'Receive' ? <LoginIcon fontSize='small' color='success' /> : <LogoutIcon fontSize='small' color='error' />} 
+                                                {row.action === 'Receive' ? <LoginIcon fontSize='small' color='success' /> : <LogoutIcon fontSize='small' color='error' />}
                                                 </Box>
                                                 <Typography variant='body1' color={row.action === 'Send' ? red[500] : green[500]}>
                                                     {row.action}
                                                 </Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="left"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
                                                 <JoinExitChip key={row.value + row.txId} amounts={row.sendReceiveProps.amounts} tokenList={row.sendReceiveProps.tokenList} size={35} />
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                             sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
                                                 {row.target}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {row.value ? formatDollarAmount(row.value) : '-'}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 <Box display='flex' alignItems='center' alignContent='center' justifyContent='flex-end'>
                                                     {formatTime(`${row.time}`)}
                                                     <Box ml={1}>
                                                         <StyledExternalLink address={row.txId} type={'transaction'} activeNetwork={activeNetwork} />
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -367,7 +367,7 @@ export default function TreasuryTransactionTable({ txnHistory }:
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

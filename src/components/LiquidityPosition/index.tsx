@@ -6,10 +6,10 @@ import { formatDollarAmount, formatNumber } from "../../utils/numbers";
 import PoolCurrencyLogo from "../PoolCurrencyLogo";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import StyledTableCell from "../Tables/StyledTableCell";
 
 interface LiquidityPositionProps {
     position: ChainPortfolio
@@ -64,14 +64,14 @@ export default function LiquidityPosition({ position }: LiquidityPositionProps) 
                 <Table size={'small'} aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <TableCell>Pool</TableCell>
-                            <TableCell 
+                            <StyledTableCell>Pool</StyledTableCell>
+                            <StyledTableCell
                                 align="right"
                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                 >
                                     Balances
-                                </TableCell>
-                            <TableCell align="right">USD Value</TableCell>
+                                </StyledTableCell>
+                            <StyledTableCell align="right">USD Value</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -80,7 +80,7 @@ export default function LiquidityPosition({ position }: LiquidityPositionProps) 
                                 key={row.totalAmount + row.description}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                                <TableCell sx={{ maxWidth: '50px' }} align="right">
+                                <StyledTableCell sx={{ maxWidth: '50px' }} align="right">
                                     <Box display="flex" alignItems="center">
                                         <PoolCurrencyLogo tokens={row.tokens} />
                                         <Box ml={1}
@@ -91,8 +91,8 @@ export default function LiquidityPosition({ position }: LiquidityPositionProps) 
                                             </Typography>
                                         </Box>
                                     </Box>
-                                </TableCell>
-                                <TableCell
+                                </StyledTableCell>
+                                <StyledTableCell
                                     sx={{ maxWidth: '100px', display: {xs: 'none', md: 'table-cell' }}}
                                     align="right"
                                 >
@@ -105,11 +105,11 @@ export default function LiquidityPosition({ position }: LiquidityPositionProps) 
                                             </Typography>
                                         )}
                                     </Box>
-                                </TableCell>
-                                <TableCell
+                                </StyledTableCell>
+                                <StyledTableCell
                                     align="right">
                                     {formatDollarAmount(row.totalAmount)}
-                                </TableCell>
+                                </StyledTableCell>
                             </TableRow>
                         ))}
                     </TableBody>

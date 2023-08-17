@@ -3,7 +3,6 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
-import { SupportedChainId } from '@uniswap/sdk-core';
 import {
     ArbitrumNetworkInfo,
     GnosisNetworkInfo,
@@ -199,14 +198,3 @@ export function notEmpty<TValue>(value: TValue | null | undefined): value is TVa
     return value !== null && value !== undefined;
 }
 
-/**
- * Returns chain id if chain from chainId supports WETH
- * if not, return undefined
- * @param chainId
- */
-export function supportedChainId(chainId: number): SupportedChainId | undefined {
-    if (chainId in SupportedChainId) {
-        return chainId;
-    }
-    return undefined;
-}

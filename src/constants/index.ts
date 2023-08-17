@@ -1,6 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
-import { SupportedChainId, Token, WETH9 } from '@uniswap/sdk-core';
+import { Token, WETH9 } from '@uniswap/sdk-core';
 import process from "process";
+import {SupportedChainId} from "./chains";
 
 const development: boolean = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 

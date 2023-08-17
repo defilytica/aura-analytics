@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -25,6 +24,7 @@ import { networkPrefix } from '../../../utils/networkPrefix';
 import { useActiveNetworkVersion } from '../../../state/application/hooks';
 import { NetworkInfo } from '../../../constants/networks';
 import SwapFee from '../../SwapFee'
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -163,37 +163,37 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     };
 
     const theme = useTheme()
-    
+
   return (
     <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
-          <TableCell
+          <StyledTableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{ display: {xs: headCell.isMobileVisible ? 'table-cell' : 'none', md: 'table-cell' }}}
-            
+
           >
             <TableSortLabel
               active={orderBy === headCell.id}
               direction={orderBy === headCell.id ? order : 'asc'}
               onClick={createSortHandler(headCell.id)}
               //sx={{ display: {xs: headCell.isMobileVisible ? 'block' : 'none', md: 'block' }}}
-              
+
             >
-              {headCell.label === '' ? <img 
-                  src={(theme.palette.mode === 'dark') ? TokensWhite : TokensBlack} 
+              {headCell.label === '' ? <img
+                  src={(theme.palette.mode === 'dark') ? TokensWhite : TokensBlack}
                   alt="Theme Icon" width="25" />: headCell.label}
               {orderBy === headCell.id ? (
-                <Box 
+                <Box
                 component="span" sx={visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
                 </Box>
               ) : null}
             </TableSortLabel>
-          </TableCell>
+          </StyledTableCell>
         ))}
       </TableRow>
     </TableHead>
@@ -223,7 +223,7 @@ export default function PoolTableCompact({
       </Grid>
     );
   }
-  
+
   const filteredPoolDatas = poolDatas.filter((x) => !!x && !POOL_HIDE.includes(x.id) && x.tvlUSD > 1);
 
   const rows = filteredPoolDatas.map(el =>
@@ -277,33 +277,33 @@ export default function PoolTableCompact({
                       tabIndex={-1}
                       key={row.name}
                       sx={{cursor: 'pointer'}}
-                      
+
                     >
-                      <TableCell >
+                      <StyledTableCell >
                         <PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} />
-                      </TableCell>
-                      <TableCell
+                      </StyledTableCell>
+                      <StyledTableCell
                         component="th"
                         id={labelId}
                         scope="row"
                         sx={{ display: {xs: 'none', md: 'table-cell' }}}
                       >
                         <PoolComposition key={row.poolData.id} poolData={row.poolData} size={35} />
-                      </TableCell>
-                      <TableCell 
+                      </StyledTableCell>
+                      <StyledTableCell
                         align="left"
                         sx={{ display: {xs: 'none', md: 'table-cell' }}}
                         >
                         <SwapFee swapFee={row.swapFee} size={35} />
-                      </TableCell>
-                      <TableCell align="right">{formatDollarAmount(row.volume24)}</TableCell>
-                      <TableCell 
+                      </StyledTableCell>
+                      <StyledTableCell align="right">{formatDollarAmount(row.volume24)}</StyledTableCell>
+                      <StyledTableCell
                         align="right"
                         sx={{ display: {xs: 'none', md: 'table-cell' }}}
                         >
                           {formatDollarAmount(row.fees)}
-                        </TableCell>
-                      <TableCell align="right">{formatDollarAmount(row.tvl)}</TableCell>
+                        </StyledTableCell>
+                      <StyledTableCell align="right">{formatDollarAmount(row.tvl)}</StyledTableCell>
                     </TableRow>
                   );
                 })}
@@ -313,7 +313,7 @@ export default function PoolTableCompact({
                     height: (33) * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={6} />
+                  <StyledTableCell colSpan={6} />
                 </TableRow>
               )}
             </TableBody>

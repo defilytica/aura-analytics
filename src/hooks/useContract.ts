@@ -1,5 +1,6 @@
 import { Contract } from '@ethersproject/contracts';
-import { SupportedChainId, WETH9 } from '@uniswap/sdk-core';
+import { WETH9 } from '@uniswap/sdk-core';
+import { SupportedChainId } from '../constants/chains'
 import { useMemo } from 'react';
 import ENS_PUBLIC_RESOLVER_ABI from '../constants/abis/ens-public-resolver.json';
 import ENS_ABI from '../constants/abis/ens-registrar.json';

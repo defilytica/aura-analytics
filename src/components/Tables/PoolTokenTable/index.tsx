@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -22,6 +21,7 @@ import { NetworkInfo } from '../../../constants/networks';
 import {PoolTokenData } from '../../../data/balancer/balancerTypes'
 import CurrencyLogo from '../../CurrencyLogo';
 import { STABLE_POOLS } from '../../../constants';
+import StyledTableCell from "../StyledTableCell";
 
 interface Data {
     token: PoolTokenData;
@@ -138,7 +138,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
             <TableRow>
                 {headCells.map((headCell) => (
                     headCell.id === 'weight' && ! props.isWeightEnabled ? null :
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -156,7 +156,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -244,7 +244,7 @@ export default function PoolTokenTable({
                                             key={row.token.address}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell
+                                            <StyledTableCell
                                                 align="left"
                                             >
                                                 <Box display="flex" alignItems="center">
@@ -253,21 +253,21 @@ export default function PoolTokenTable({
                                                 </Box>
                                                 <Typography>{row.token.symbol}</Typography>
                                                 </Box>
-                                            </TableCell>
-                                            {(! STABLE_POOLS.includes(poolType)) ? 
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            {(! STABLE_POOLS.includes(poolType)) ?
+                                            <StyledTableCell align="right">
                                                 {formatPercentageAmount(row.weight * 100) +' %'}
-                                            </TableCell> : null }
-                                            <TableCell align="right">
+                                            </StyledTableCell> : null }
+                                            <StyledTableCell align="right">
                                                 {Number(row.balance).toFixed(2)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                {row.tvl === 0 ? '-' : formatDollarAmount(row.tvl)}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
-                            
+
                         </TableBody>
                     </Table>
                 </TableContainer>

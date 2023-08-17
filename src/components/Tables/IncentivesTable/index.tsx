@@ -32,6 +32,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import {CSVLink} from "react-csv";
 import {Download} from "@mui/icons-material";
 import {unixToDate} from "../../../utils/date";
+import StyledTableCell from "../StyledTableCell";
 
 interface DownloadData {
     network: string;
@@ -173,7 +174,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -199,7 +200,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -372,12 +373,14 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
                     </CSVLink>
                 </Box>
             </Grid>
-            <Paper sx={{mb: 2, boxShadow: 3}}>
+            <Paper sx={{mb: 2, boxShadow: theme.palette.table.light}}>
 
                 <TableContainer>
                     <Table
                         aria-labelledby="tableTitle"
                         size={dense ? 'small' : 'medium'}
+                        sx={{borderColor: theme.palette.table.light}}
+
                     >
                         <EnhancedTableHead
                             order={order}
@@ -396,9 +399,14 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
                                             role="number"
                                             tabIndex={-1}
                                             key={row.gaugeAddress + Math.random() * 10}
-                                            sx={{cursor: 'pointer'}}
+                                            sx={{
+                                                cursor: 'pointer',
+                                                borderBottom: `0.5px solid ${theme.palette.table.light}`,
+                                                borderTop: `0.5px solid ${theme.palette.table.light}`,
+
+                                            }}
                                         >
-                                            <TableCell sx={{width: '10px'}}>
+                                            <StyledTableCell sx={{width: '10px'}}>
                                                 <Avatar
                                                     sx={{
                                                         height: 20,
@@ -406,12 +414,13 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
                                                     }}
                                                     src={networkLogoMap[row.network]}
                                                 />
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
+                                                sx={{display: {xs: 'none', md: 'table-cell'},
+                                            }}
                                             >
                                                 <Box sx={{display: 'flex', alignItems: 'center'}}>
                                                     <Box mr={1}>
@@ -423,16 +432,16 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
                                                         <GaugeComposition poolData={row.poolData}/>
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0), 3)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatNumber(Number(row.totalVotes ? row.totalVotes : 0), 3)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(Number(row.votingIncentives ? row.votingIncentives : 0), 3)}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}

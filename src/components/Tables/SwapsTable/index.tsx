@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -24,6 +23,7 @@ import { useActiveNetworkVersion } from '../../../state/application/hooks';
 import { formatTime } from "../../../utils/date";
 import { getEtherscanLink } from "../../../utils";
 import StyledExternalLink from "../../StyledExternalLink";
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -144,7 +144,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -164,7 +164,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -259,21 +259,21 @@ export default function SwapsTable({ swaps }:
                                             tabIndex={-1}
                                             key={row.swap.timestamp * Math.random()}
                                         >
-                                            <TableCell
+                                            <StyledTableCell
                                                 align="left"
                                             >
                                                 <TokenChip swap={row.swap} size={35} />
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {Number(row.value) ? formatDollarAmount(parseInt(row.value)) : '-'}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                             sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
                                                 <Link href={getEtherscanLink(row.swapper, 'address', activeNetwork)} target='_blank'>{row.swapper}</Link>
 
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                                 >
@@ -283,7 +283,7 @@ export default function SwapsTable({ swaps }:
                                                         <StyledExternalLink address={row.swap.tx} type={'transaction'} activeNetwork={activeNetwork} />
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -293,7 +293,7 @@ export default function SwapsTable({ swaps }:
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

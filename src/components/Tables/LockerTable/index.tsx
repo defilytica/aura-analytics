@@ -1,7 +1,6 @@
 import {Avatar, Box, CircularProgress, Link} from "@mui/material";
 import Paper from '@mui/material/Paper';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import * as React from "react";
@@ -23,6 +22,7 @@ import {generateIdenticon} from "../../../utils/generateIdenticon";
 import {deepPurple} from "@mui/material/colors";
 import {ethers} from "ethers";
 import isDev from "../../../constants";
+import StyledTableCell from "../StyledTableCell";
 
 interface Data {
     id: number;
@@ -162,7 +162,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -184,7 +184,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -310,10 +310,10 @@ export default function LockerTable({
                                             key={row.id}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell align="left">
+                                            <StyledTableCell align="left">
                                                 {row.id}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 sx={{display: {xs: 'none', md: 'table-cell'}}}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
@@ -331,8 +331,8 @@ export default function LockerTable({
                                                     <Link href={getEtherscanLink(row.address, 'address', activeNetwork)}
                                                           target='_blank'>     {localEnsMap[row.address] ? localEnsMap[row.address] : row.address}</Link>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
@@ -344,8 +344,8 @@ export default function LockerTable({
                                                     </Box>
                                                 </Box>
 
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
@@ -355,8 +355,8 @@ export default function LockerTable({
                                                         {formatDollarAmount(row.lockedUSD)}
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
@@ -366,8 +366,8 @@ export default function LockerTable({
                                                         {row.poolShare.toFixed(2)}%
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
@@ -377,7 +377,7 @@ export default function LockerTable({
                                                         {row.nrOfLocks}
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -387,7 +387,7 @@ export default function LockerTable({
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6}/>
+                                    <StyledTableCell colSpan={6}/>
                                 </TableRow>
                             )}
                         </TableBody>

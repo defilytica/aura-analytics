@@ -4,7 +4,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -28,6 +27,7 @@ import { networkPrefix } from '../../../utils/networkPrefix';
 import { useActiveNetworkVersion } from '../../../state/application/hooks';
 import { NetworkInfo } from '../../../constants/networks';
 import SwapFee from '../../SwapFee'
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -170,7 +170,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
     <TableHead>
       <TableRow>
         {headCells.map((headCell) => (
-          <TableCell
+          <StyledTableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -190,7 +190,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                 </Box>
               ) : null}
             </TableSortLabel>
-          </TableCell>
+          </StyledTableCell>
         ))}
       </TableRow>
     </TableHead>
@@ -296,30 +296,30 @@ export default function PoolTable({
                       key={row.poolData.address}
                       sx={{ cursor: 'pointer' }}
                     >
-                      <TableCell ><PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} /> </TableCell>
-                      <TableCell
+                      <StyledTableCell ><PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} /> </StyledTableCell>
+                      <StyledTableCell
                         component="th"
                         id={labelId}
                         scope="row"
                         sx={{ display: { xs: 'none', md: 'table-cell' } }}
                       >
                         <PoolComposition key={row.poolData.id} poolData={row.poolData} size={35} />
-                      </TableCell>
-                      <TableCell
+                      </StyledTableCell>
+                      <StyledTableCell
                         align="right"
                         sx={{ display: { xs: 'none', md: 'table-cell' } }}
                       >
                         <SwapFee swapFee={row.swapFee} size={35} />
-                      </TableCell>
-                      <TableCell align="right">{formatDollarAmount(row.volume24)}</TableCell>
-                      <TableCell
+                      </StyledTableCell>
+                      <StyledTableCell align="right">{formatDollarAmount(row.volume24)}</StyledTableCell>
+                      <StyledTableCell
                         align="right"
                         sx={{ display: { xs: 'none', md: 'table-cell' } }}
                       >{formatDollarAmount(row.fees)}
-                      </TableCell>
-                      <TableCell align="right">
+                      </StyledTableCell>
+                      <StyledTableCell align="right">
                         {formatDollarAmount(row.tvl)}
-                      </TableCell>
+                      </StyledTableCell>
                     </TableRow>
                   );
                 })}
@@ -329,7 +329,7 @@ export default function PoolTable({
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={6} />
+                  <StyledTableCell colSpan={6} />
                 </TableRow>
               )}
             </TableBody>

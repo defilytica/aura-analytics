@@ -1,17 +1,15 @@
 import * as React from 'react';
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
-import SearchIcon from '@mui/icons-material/Search';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import {Avatar, IconButton, InputBase, Typography} from '@mui/material';
+import {Avatar, Typography} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {visuallyHidden} from '@mui/utils';
@@ -22,14 +20,11 @@ import ArbitrumLogo from '../../../assets/svg/arbitrum.svg'
 import EtherLogo from '../../../assets/svg/ethereum.svg'
 import PolygonLogo from '../../../assets/svg/polygon.svg'
 import GnosisLogo from '../../../assets/svg/gnosis.svg'
-//import zkevmLogo from '../../../assets/svg/zkevm.svg'
 import OpLogo from '../../../assets/svg/optimism.svg'
-
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
-
-import ClearIcon from '@mui/icons-material/Clear';
 import { HiddenHandRewards } from '../../../data/hidden-hand/hiddenHandTypes';
 import CurrencyLogo from "../../CurrencyLogo";
+import StyledTableCell from "../StyledTableCell";
 
 
 
@@ -153,7 +148,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -174,7 +169,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -280,7 +275,7 @@ export default function HiddenHandAddressRewards({rewardData}: {
                                             key={row.token + Math.random() * 10}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell sx={{maxWidth: '10px'}}>
+                                            <StyledTableCell sx={{maxWidth: '10px'}}>
                                                 <Avatar
                                                     sx={{
                                                         height: 20,
@@ -288,17 +283,17 @@ export default function HiddenHandAddressRewards({rewardData}: {
                                                     }}
                                                     src={networkLogoMap[Number(row.network)]}
                                                 />
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 <CurrencyLogo address={row.token} />
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatNumber(Number(row.claimable),  3)}
-                                            </TableCell>
+                                            </StyledTableCell>
 
-                                            <TableCell align="right">
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(Number(row.value),  2)}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -308,7 +303,7 @@ export default function HiddenHandAddressRewards({rewardData}: {
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6}/>
+                                    <StyledTableCell colSpan={6}/>
                                 </TableRow>
                             )}
                         </TableBody>

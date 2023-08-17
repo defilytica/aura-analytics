@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -26,6 +25,7 @@ import { generateIdenticon } from '../../../utils/generateIdenticon';
 import {useContractRead, useEnsName} from "wagmi";
 import {ethers} from "ethers";
 import isDev from "../../../constants";
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -146,7 +146,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -166,7 +166,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -288,10 +288,10 @@ export default function AuraPoolStakerTable({ leaderboardInfo, pricePerBPT }: { 
                                             tabIndex={-1}
                                             key={row.accountId}
                                         >
-                                            <TableCell align="left">
+                                            <StyledTableCell align="left">
                                                 {row.id}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
@@ -309,19 +309,19 @@ export default function AuraPoolStakerTable({ leaderboardInfo, pricePerBPT }: { 
                                                     <Link href={getEtherscanLink(row.accountId, 'address', activeNetwork)}
                                                           target='_blank'>     {localEnsMap[row.accountId] ? localEnsMap[row.accountId] : row.accountId}</Link>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 {formatDollarAmount(row.amount * pricePerBPT, 2)}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 {formatAmount(row.fraction, 2) + ' %'}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -331,7 +331,7 @@ export default function AuraPoolStakerTable({ leaderboardInfo, pricePerBPT }: { 
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

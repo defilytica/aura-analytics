@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -26,6 +25,7 @@ import StyledExternalLink from "../../StyledExternalLink";
 import JoinExitChip from "./JoinExitChip";
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -147,7 +147,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -166,7 +166,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -261,7 +261,7 @@ export default function JoinExitsTable({ joinExits }:
                                             tabIndex={-1}
                                             key={row.joinExit.tx + Math.random() * 100}
                                         >
-                                            <TableCell>
+                                            <StyledTableCell>
                                                 <Box display='flex' alignItems='center' alignContent='center'>
                                                     <Box mr={1}>
                                                         {row.action === 'Join' ? <LoginIcon fontSize='small' color='success' /> : <LogoutIcon fontSize='small' color='error' />}
@@ -270,18 +270,18 @@ export default function JoinExitsTable({ joinExits }:
                                                         {row.action}
                                                     </Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                                 align="left"
                                             >
                                                 <JoinExitChip  amounts={row.joinExit.amounts} tokenList={row.joinExit.pool.tokensList} size={35} />
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {Number(row.value) ? formatDollarAmount(parseInt(row.value)) : '-'}
-                                            </TableCell>
+                                            </StyledTableCell>
 
-                                            <TableCell
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
@@ -291,7 +291,7 @@ export default function JoinExitsTable({ joinExits }:
                                                         <StyledExternalLink address={row.joinExit.tx} type={'transaction'} activeNetwork={activeNetwork} />
                                                     </Box>
                                                 </Box>
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -301,7 +301,7 @@ export default function JoinExitsTable({ joinExits }:
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

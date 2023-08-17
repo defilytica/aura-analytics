@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -18,6 +17,7 @@ import { useTheme } from '@mui/material/styles'
 import { PoolData, } from '../../../data/balancer/balancerTypes'
 import { STABLE_POOLS } from '../../../constants';
 import dayjs from 'dayjs';
+import StyledTableCell from "../StyledTableCell";
 
 interface Data {
     attribute: string;
@@ -115,7 +115,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -133,7 +133,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -206,22 +206,22 @@ export default function PoolInfoTable({
                                             tabIndex={-1}
                                             key={row.attribute}
                                         >
-                                            <TableCell align="left">
+                                            <StyledTableCell align="left">
                                                 <Typography
                                                     sx={{
                                                         fontWeight: 'bold'
                                                     }}>
                                                     {row.attribute}
                                                 </Typography>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="left"
                                             >
                                                 <Box
                                                 sx={{
-                                                    overflow: 'auto', 
+                                                    overflow: 'auto',
                                                     maxWidth: {xs: '250px', md: '900px'} }}
-                                                
+
                                                 >
                                                     <Typography
                                                         variant='body2'
@@ -229,7 +229,7 @@ export default function PoolInfoTable({
                                                         {row.value}
                                                     </Typography>
                                                 </Box>
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}

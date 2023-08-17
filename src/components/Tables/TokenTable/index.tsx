@@ -4,7 +4,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -27,6 +26,7 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { TokenData } from '../../../data/balancer/balancerTypes'
 import CurrencyLogo from '../../CurrencyLogo';
 import { green } from '@mui/material/colors';
+import StyledTableCell from '../StyledTableCell';
 
 
 interface Data {
@@ -156,7 +156,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -175,7 +175,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -277,7 +277,7 @@ export default function TokenTable({
                                             tabIndex={-1}
                                             key={row.token.address}
                                         >
-                                            <TableCell >
+                                            <StyledTableCell >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         <CurrencyLogo address={row.token.address} size={'25px'} />
@@ -287,9 +287,9 @@ export default function TokenTable({
                                                     </Box>
                                                     <Typography variant="caption" >({row.token.name})</Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell align="right">{formatDollarAmount(row.price)}</TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">{formatDollarAmount(row.price)}</StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
@@ -309,14 +309,14 @@ export default function TokenTable({
                                                         {Number(formatPercentageAmount(row.priceChange)).toFixed(2)} %
                                                     </Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                                 >
                                                     {formatDollarAmount(row.volume24)}
-                                                </TableCell>
-                                            <TableCell align="right">{formatDollarAmount(row.tvl)}</TableCell>
+                                                </StyledTableCell>
+                                            <StyledTableCell align="right">{formatDollarAmount(row.tvl)}</StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -326,7 +326,7 @@ export default function TokenTable({
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

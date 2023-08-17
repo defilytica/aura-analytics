@@ -4,7 +4,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -26,6 +25,7 @@ import CurrencyLogo from '../../CurrencyLogo';
 
 import { TokenBalance, TotalTokenBalances } from "../../../data/debank/debankTypes";
 import { getWethTokenAddress } from '../../../data/balancer/useLatestPrices';
+import StyledTableCell from "../StyledTableCell";
 
 interface FeeCollectorTableProps {
     tokenBalances: TotalTokenBalances
@@ -159,7 +159,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -178,7 +178,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -216,12 +216,12 @@ export default function FeeCollectorTokenTable({tokenBalances}: FeeCollectorTabl
     const sortedTokenDatas = filteredTokenDatas.sort(function (a, b) {
         return b.amount * b.price - a.amount * a.price;
     });
-    
+
     //Overwrite ETH id with WETH id
     let eth = sortedTokenDatas.find(el => el.symbol === 'ETH')
     if(eth){
         eth.id = getWethTokenAddress(activeNetwork.id)
-    } 
+    }
 
     //Calculate TVL to obtain relative ratio
     const tvl = sortedTokenDatas.reduce((acc, el) => acc + el.amount * el.price, 0)
@@ -292,7 +292,7 @@ export default function FeeCollectorTokenTable({tokenBalances}: FeeCollectorTabl
                                             key={row.token.id + Math.random()}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell >
+                                            <StyledTableCell >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         <CurrencyLogo address={row.token.id} size={'25px'} />
@@ -302,25 +302,25 @@ export default function FeeCollectorTokenTable({tokenBalances}: FeeCollectorTabl
                                                     </Box>
                                                     <Typography variant="caption" >({row.token.name})</Typography>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
                                                 {formatDollarAmount(row.price)}
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                                 >
                                                 {formatNumber(row.balance, 2)}
-                                            </TableCell>
-                                            <TableCell align="right">{formatDollarAmount(row.value)}</TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">{formatDollarAmount(row.value)}</StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                                 >{formatPercentageAmount(row.ratio)}%
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -330,7 +330,7 @@ export default function FeeCollectorTokenTable({tokenBalances}: FeeCollectorTabl
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

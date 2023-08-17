@@ -49,6 +49,8 @@ while (auraTimeStamps[auraTimeStamps.length - 1] < now) {
 
         // Check if we are between Thursday 02:00 and the following Monday 20:00 as seen from the next voting round deadline
         if (now >= (lastTimestamp + PATTERN - 410000) && now < nextMondayTimestamp) {
+            //console.log("timestamp lower:", lastTimestamp + PATTERN - 410000)
+            //console.log("timestamp upper:", nextMondayTimestamp)
             auraTimeStamps.push(0);
         }
         break;

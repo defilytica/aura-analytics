@@ -4,7 +4,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -28,6 +27,7 @@ import { networkPrefix } from '../../../utils/networkPrefix';
 import { useActiveNetworkVersion } from '../../../state/application/hooks';
 import { NetworkInfo } from '../../../constants/networks';
 import { DAO_FEE_FACTOR } from '../../../data/balancer/constants';
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -182,7 +182,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -201,7 +201,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -344,24 +344,24 @@ export default function EmissionsTable({
                                             key={row.poolData.address}
                                             sx={{ cursor: 'pointer' }}
                                         >
-                                            <TableCell >
+                                            <StyledTableCell >
                                                 <PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} />
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
                                                 sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
                                                 <PoolComposition key={row.poolData.id} poolData={row.poolData} size={35} />
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {row.poolRevenue > 0 ?
                                                     formatDollarAmount(row.poolRevenue) :
                                                     0
                                                 }
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                             align="right"
                                             sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
@@ -371,19 +371,19 @@ export default function EmissionsTable({
                                                         0
                                                     : '-'
                                                 }
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {row.protocolRevenue > 0 ?
                                                     formatDollarAmount(row.protocolRevenue) :
                                                     0
                                                 }
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {row.balEmissions > 0 ?
                                                     formatDollarAmount(row.balEmissions) : 0
                                                 }
-                                            </TableCell>
-                                            <TableCell 
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                             align="right"
                                             sx={{ display: {xs: 'none', md: 'table-cell' }}}
                                             >
@@ -391,7 +391,7 @@ export default function EmissionsTable({
                                                     formatAmount(row.contribution, 5) :
                                                     0
                                                 }
-                                            </TableCell>
+                                            </StyledTableCell>
 
                                         </TableRow>
                                     );
@@ -402,7 +402,7 @@ export default function EmissionsTable({
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

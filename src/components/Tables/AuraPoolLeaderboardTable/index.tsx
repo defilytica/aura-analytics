@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -26,6 +25,7 @@ import { generateIdenticon } from '../../../utils/generateIdenticon';
 import {useContractRead, useEnsName} from "wagmi";
 import {ethers} from "ethers";
 import isDev from "../../../constants";
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -146,7 +146,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -166,7 +166,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -289,40 +289,40 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
                                             tabIndex={-1}
                                             key={row.accountId}
                                         >
-                                            <TableCell align="left">
+                                            <StyledTableCell align="left">
                                                 {row.id}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
                                                     <Box mr={1}>
-                                                <Avatar 
-                                                    sx={{ 
+                                                <Avatar
+                                                    sx={{
                                                         bgcolor: deepPurple[500],
                                                         height: 25,
                                                         width: 25,
                                                         boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)'
-                                                        }} 
-                                                    src={generateIdenticon(row.accountId)} 
+                                                        }}
+                                                    src={generateIdenticon(row.accountId)}
                                                 />
                                                 </Box>
                                                     <Link href={getEtherscanLink(row.accountId, 'address', activeNetwork)}
                                                           target='_blank'>     {localEnsMap[row.accountId] ? localEnsMap[row.accountId] : row.accountId}</Link>
                                                 </Box>
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 {formatAmount(row.amount, 2) + ' auraBAL'}
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 {formatAmount(row.fraction, 2) + ' %'}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -332,7 +332,7 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>

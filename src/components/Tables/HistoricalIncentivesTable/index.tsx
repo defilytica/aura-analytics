@@ -6,7 +6,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -15,7 +14,6 @@ import {Avatar, Button, IconButton, InputBase} from '@mui/material';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import {visuallyHidden} from '@mui/utils';
-import PoolCurrencyLogo from '../../PoolCurrencyLogo';
 import TokensWhite from '../../../assets/svg/tokens_white.svg';
 import TokensBlack from '../../../assets/svg/tokens_black.svg';
 import {useTheme} from '@mui/material/styles'
@@ -33,6 +31,7 @@ import {HiddenHandData} from '../../../data/hidden-hand/hiddenHandTypes';
 import {CSVLink} from "react-csv";
 import {Download} from "@mui/icons-material";
 import {unixToDate} from "../../../utils/date";
+import StyledTableCell from "../StyledTableCell";
 
 interface DownloadData {
     gauge: string,
@@ -158,7 +157,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -179,7 +178,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -339,18 +338,18 @@ export default function HistoricalIncentivesTable({gaugeDatas, currentRound}: {
                                             key={row.title + Math.random() * 10}
                                             sx={{cursor: 'pointer'}}
                                         >
-                                            <TableCell sx={{maxWidth: '10px'}}>
+                                            <StyledTableCell sx={{maxWidth: '10px'}}>
                                                 {row.title}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(Number(row.totalRewards ? row.totalRewards : 0), 3)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatNumber(Number(row.totalVotes ? row.totalVotes : 0), 3)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(Number(row.votingIncentives ? row.votingIncentives : 0), 3)}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -360,7 +359,7 @@ export default function HistoricalIncentivesTable({gaugeDatas, currentRound}: {
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6}/>
+                                    <StyledTableCell colSpan={6}/>
                                 </TableRow>
                             )}
                         </TableBody>

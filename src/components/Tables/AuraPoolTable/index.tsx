@@ -4,7 +4,6 @@ import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -18,7 +17,7 @@ import { getShortPoolName } from '../../../utils/getShortPoolName';
 import { CircularProgress } from '@mui/material';
 import {formatDollarAmount, formatPercentageAmount} from '../../../utils/numbers';
 import PoolCurrencyLogo from '../../PoolCurrencyLogo';
-import { POOL_HIDE } from '../../../constants/index'
+import { POOL_HIDE } from '../../../constants'
 import TokensWhite from '../../../assets/svg/tokens_white.svg';
 import TokensBlack from '../../../assets/svg/tokens_black.svg';
 import { useTheme } from '@mui/material/styles'
@@ -29,6 +28,7 @@ import { useActiveNetworkVersion } from '../../../state/application/hooks';
 import { NetworkInfo } from '../../../constants/networks';
 import SwapFee from '../../SwapFee'
 import { AuraPoolData } from '../../../data/aura/auraTypes';
+import StyledTableCell from "../StyledTableCell";
 
 
 interface Data {
@@ -181,7 +181,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         <TableHead>
             <TableRow>
                 {headCells.map((headCell) => (
-                    <TableCell
+                    <StyledTableCell
                         key={headCell.id}
                         align={headCell.numeric ? 'right' : 'left'}
                         padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -201,7 +201,7 @@ function EnhancedTableHead(props: EnhancedTableProps) {
                                 </Box>
                             ) : null}
                         </TableSortLabel>
-                    </TableCell>
+                    </StyledTableCell>
                 ))}
             </TableRow>
         </TableHead>
@@ -310,33 +310,33 @@ export default function AuraPoolTable({poolDatas, auraPools}: PoolTableProps) {
                                             key={row.poolData.address}
                                             sx={{ cursor: 'pointer' }}
                                         >
-                                            <TableCell ><PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} /> </TableCell>
-                                            <TableCell
+                                            <StyledTableCell ><PoolCurrencyLogo tokens={row.poolTokens} size={'25px'} /> </StyledTableCell>
+                                            <StyledTableCell
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 <PoolComposition key={row.poolData.id} poolData={row.poolData} size={35} />
-                                            </TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >
                                                 <SwapFee swapFee={row.swapFee} size={35} />
-                                            </TableCell>
-                                            <TableCell align="right">{formatDollarAmount(row.volume24)}</TableCell>
-                                            <TableCell
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">{formatDollarAmount(row.volume24)}</StyledTableCell>
+                                            <StyledTableCell
                                                 align="right"
                                                 sx={{ display: { xs: 'none', md: 'table-cell' } }}
                                             >{formatDollarAmount(row.fees)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatDollarAmount(row.tvl)}
-                                            </TableCell>
-                                            <TableCell align="right">
+                                            </StyledTableCell>
+                                            <StyledTableCell align="right">
                                                 {formatPercentageAmount(row.tvlCapture) + '%'}
-                                            </TableCell>
+                                            </StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -346,7 +346,7 @@ export default function AuraPoolTable({poolDatas, auraPools}: PoolTableProps) {
                                         height: (dense ? 33 : 53) * emptyRows,
                                     }}
                                 >
-                                    <TableCell colSpan={6} />
+                                    <StyledTableCell colSpan={6} />
                                 </TableRow>
                             )}
                         </TableBody>
