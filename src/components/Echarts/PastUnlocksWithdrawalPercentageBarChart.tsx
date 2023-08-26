@@ -25,7 +25,7 @@ type TransformedDataItem = {
 
 const transformData = (data: ChartDataItem[]) => {
     return data.map(({ date, unlock, withdraw, relocked }) => {
-        const total = unlock + withdraw + relocked;
+        const total = withdraw + relocked;
         return {
             date,
             unlockPercentage: parseFloat(((unlock / total) * 100).toFixed(1)),
@@ -68,7 +68,7 @@ export function PastUnlocksWithdrawalPercentageBarChart({
             containLabel: true
         },
         legend: {
-            data: ['Unlocked', 'Withdrawn', 'Relocked', 'Locked'],
+            data: ['Withdrawn', 'Relocked'],
             inactiveColor: "red",
             textStyle: {
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -93,27 +93,6 @@ export function PastUnlocksWithdrawalPercentageBarChart({
             max: 100,
         },
         series: [
-            {
-                name: 'Unlocked',
-                type: 'bar',
-                stack: 'percentage',
-                data: transformedData.map((item: TransformedDataItem) => item.unlockPercentage),
-                itemStyle: {
-                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
-                },
-                areaStyle: {
-                    color: new graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(255, 158, 68)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(255, 70, 131)'
-                        }
-                    ])
-                },
-            },
             {
                 name: 'Withdrawn',
                 type: 'bar',

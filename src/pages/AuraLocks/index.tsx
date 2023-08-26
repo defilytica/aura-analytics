@@ -94,7 +94,6 @@ export default function AuraLocks() {
                 }
             });
 
-            // Process past withdrawn transactions
             account.withdrawnTransactions.forEach(transaction => {
                 const withdrawDate = new Date(transaction.timestamp * 1000);
                 if (withdrawDate < today) {
@@ -127,7 +126,7 @@ export default function AuraLocks() {
         const chartData = Object.keys(pastUnlockAmounts).map(dateKey => ({
             date: dateKey,
             unlock: pastUnlockAmounts[dateKey].unlock,
-            withdraw: pastUnlockAmounts[dateKey].withdraw,
+            withdraw: pastUnlockAmounts[dateKey].withdraw - pastUnlockAmounts[dateKey].relocked,
             relocked: pastUnlockAmounts[dateKey].relocked,
         }));
 
@@ -150,7 +149,7 @@ export default function AuraLocks() {
 
     tokenBarChartData = tokenBarChartData.slice(0, 19);
 
-// Generate the dailyUnlocks array
+    // Generate the dailyUnlocks array
     const dailyUnlocks: BalancerChartDataItem[] = [];
     lockers.forEach((locker) => {
         locker.withdrawnTransactions.forEach((transaction) => {
@@ -283,7 +282,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography sx={{fontSize: '24px'}}>Weekly Aura Unlocks vs Re-Locks vs Withdrawals</Typography>
+                                <Typography sx={{fontSize: '24px'}}>Weekly Aura Re-Locks vs Withdrawals</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
@@ -291,7 +290,7 @@ export default function AuraLocks() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
-                                <Typography sx={{fontSize: '24px'}}>Weekly Percentage Aura Unlocks vs Re-Locks vs
+                                <Typography sx={{fontSize: '24px'}}>Weekly Percentage Aura Re-Locks vs
                                     Withdrawals</Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>

@@ -79,6 +79,8 @@ export default function Protocol() {
     const poolTransactionsGnosis = usePoolTransactions('gnosis');
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
 
+    console.log(auraPools);
+
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(Number(event.target.value));
 

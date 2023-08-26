@@ -47,7 +47,7 @@ export function PastUnlocksWithdrawalsChart({
             containLabel: true
         },
         legend: {
-            data: ['Unlocked', 'Withdrawn', 'Relocked', 'Locked'],
+            data: ['Withdrawn', 'Relocked',],
             inactiveColor: "red",
             textStyle: {
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -68,26 +68,6 @@ export function PastUnlocksWithdrawalsChart({
             type: 'value',
         },
         series: [
-            {
-                name: 'Unlocked',
-                type: 'bar',
-                data: filteredChartData.map(item => item.unlock),
-                itemStyle: {
-                    color: theme.palette.mode === "dark" ? AppColors.gray[400] : AppColors.gray[500]
-                },
-                areaStyle: {
-                    color: new graphic.LinearGradient(0, 0, 0, 1, [
-                        {
-                            offset: 0,
-                            color: 'rgb(255, 158, 68)'
-                        },
-                        {
-                            offset: 1,
-                            color: 'rgb(255, 70, 131)'
-                        }
-                    ])
-                },
-            },
             {
                 name: 'Withdrawn',
                 type: 'bar',
