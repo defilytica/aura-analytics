@@ -12,7 +12,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {createTheme, styled, ThemeProvider} from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from '@mui/material/AppBar';
-import { themes } from '../../assets/auraTheme/theme'
+import {themes} from '../../assets/auraTheme/theme'
 import {useActiveNetworkVersion} from '../../state/application/hooks';
 import {EthereumNetworkInfo, SUPPORTED_NETWORK_VERSIONS} from '../../constants/networks';
 import NetworkSelector from '../NetworkSelector';
@@ -34,7 +34,8 @@ import VotingIncentives from "../../pages/VotingIncentives";
 import {ConnectButton, darkTheme, lightTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
 import {WagmiConfig} from "wagmi";
 import {chains, wagmiConfig} from "../../wagmi/wagmiConfig";
-import {alpha} from "@mui/material";
+import {Alert, alpha, Button, Collapse} from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import AuraEcosystemFund from "../../pages/AuraEcosystemFund";
 
 
@@ -101,6 +102,7 @@ const DrawerHeader = styled('div')(({theme}) => ({
 
 
 function Dashboard() {
+    const [openAlert, setOpenAlert] = React.useState(true);
 
     //Drawer logic
     const [open, setOpen] = React.useState(isMobile ? false : true);
@@ -157,12 +159,12 @@ function Dashboard() {
                 chains={chains}
                 theme={
                     mode === 'dark' ? darkTheme(
-                        {
-                            borderRadius: 'small',
-                            accentColor: alpha('#0F172A', 0.8),
-                            overlayBlur: "large"
+                            {
+                                borderRadius: 'small',
+                                accentColor: alpha('#0F172A', 0.8),
+                                overlayBlur: "large"
 
-                        }) :
+                            }) :
                         lightTheme(
                             {
                                 borderRadius: 'small',
@@ -216,7 +218,10 @@ function Dashboard() {
                                             Analytics
                                         </Typography>
                                         <Typography
-                                                    sx={{fontSize: '12px', color: (mode === 'dark') ? 'white' : 'black',}}>Beta</Typography>
+                                            sx={{
+                                                fontSize: '12px',
+                                                color: (mode === 'dark') ? 'white' : 'black',
+                                            }}>Beta</Typography>
                                         <Box position="absolute" right="10px">
                                             <Box display="flex" alignItems="center" alignContent="center"
                                                  justifyContent='flex-end'>
@@ -235,7 +240,7 @@ function Dashboard() {
                                                     <img src={(mode === 'dark') ? MoonIcon : SunIcon} alt="Theme Icon"
                                                          width="25"/>
                                                 </IconButton>
-                                                <NetworkSelector />
+                                                <NetworkSelector/>
                                                 <Box ml={1}>
                                                     <ConnectButton chainStatus={"none"} showBalance={false}/>
                                                 </Box>
@@ -243,6 +248,29 @@ function Dashboard() {
                                         </Box>
                                     </Box>
                                 </Toolbar>
+                                <Box sx={{width: '100%'}}>
+                                    <Collapse in={openAlert}>
+                                        <Alert
+                                            style={{backgroundColor:"red",color:"white"}}
+                                            severity="warning"
+                                            action={
+                                                <IconButton
+                                                    aria-label="close"
+                                                    color="inherit"
+                                                    size="small"
+                                                    onClick={() => {
+                                                        setOpenAlert(false);
+                                                    }}
+                                                >
+                                                    <CloseIcon fontSize="inherit"/>
+                                                </IconButton>
+                                            }
+                                            sx={{mb: 2}}
+                                        >
+                                            Due to the recent Balancer boosted pool exploit, TVL data and other metrics are incorrect. The Balancer data team is working on a fix
+                                        </Alert>
+                                    </Collapse>
+                                </Box>
                             </AppBar>
                             <MenuDrawer
                                 open={open}
