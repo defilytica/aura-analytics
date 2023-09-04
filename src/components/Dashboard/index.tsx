@@ -248,29 +248,6 @@ function Dashboard() {
                                         </Box>
                                     </Box>
                                 </Toolbar>
-                                <Box sx={{width: '100%'}}>
-                                    <Collapse in={openAlert}>
-                                        <Alert
-                                            style={{backgroundColor:"red",color:"white"}}
-                                            severity="warning"
-                                            action={
-                                                <IconButton
-                                                    aria-label="close"
-                                                    color="inherit"
-                                                    size="small"
-                                                    onClick={() => {
-                                                        setOpenAlert(false);
-                                                    }}
-                                                >
-                                                    <CloseIcon fontSize="inherit"/>
-                                                </IconButton>
-                                            }
-                                            sx={{mb: 2}}
-                                        >
-                                            Due to the recent Balancer boosted pool exploit, TVL data and other metrics are incorrect. The Balancer data team is working on a fix
-                                        </Alert>
-                                    </Collapse>
-                                </Box>
                             </AppBar>
                             <MenuDrawer
                                 open={open}
