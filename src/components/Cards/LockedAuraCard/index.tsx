@@ -4,6 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import {useActiveNetworkVersion} from '../../../state/application/hooks';
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import {CoingeckoRawData} from "../../../data/coingecko/getCoingecoSimpleTokenPrices";
+import {AURA_TOKEN_MAINNET} from "../../../data/aura/auraConstants";
 
 export type LockedAuraCardProps = {
     totalLockedAmount: number,
@@ -13,7 +14,7 @@ export type LockedAuraCardProps = {
 const LockedAuraCard = ({totalLockedAmount, coinData}: LockedAuraCardProps) => {
     let navigate = useNavigate();
     const [activeNetwork] = useActiveNetworkVersion()
-    const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
+    const auraAddress = AURA_TOKEN_MAINNET;
 
     return (
         <Card

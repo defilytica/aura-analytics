@@ -31,6 +31,7 @@ import {useBalancerTokenPageData} from "../../data/balancer/useTokens";
 import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/AuraIncentiveAPRChart";
 import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
+import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -80,7 +81,6 @@ export default function VotingIncentives() {
     const [bribeRewardsNew, setBribeRewardsNew] = useState<PoolReward[]>([]);
     const [xAxisDataRoundNew, setXAxisDataRoundNew] = useState<string[]>([]);
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
-    const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
     const [emissionVotesTotal, setEmissionVotesTotal] = useState<number>(0);
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
@@ -91,6 +91,7 @@ export default function VotingIncentives() {
     const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
     const { priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    const emissionPerVote = useGetEmissionPerVote(currentRoundNew);
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -111,12 +112,9 @@ export default function VotingIncentives() {
                 }
             });
             const incentiveEfficency = totalValue / totalVotes;
-            const emissionEff = emissionValue / emissionVotes
             setEmissionVotesTotal(emissionVotes)
             setIncentivePerVote(incentiveEfficency)
-            setEmissionPerVote(emissionEff)
             setRoundIncentives(totalValue)
-            console.log("gaugeData", gaugeData)
             const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
             setDecoratedGagues(fullyDecoratedGauges)
         }
@@ -291,13 +289,13 @@ export default function VotingIncentives() {
                                 </Box>
                                 <Box mr={1}>
                                     {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={emissionPerVote} metricName={"Incentive $/Vote"}
+                                        <MetricsCard mainMetric={incentivePerVote} metricName={"Incentive $/Vote"}
                                                      metricDecimals={4}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box mr={1}>
-                                    {dashboardData ?
+                                    {emissionPerVote ?
                                         <MetricsCard
                                             mainMetric={1 + (emissionPerVote - incentivePerVote) / emissionPerVote}
                                             metricName={"Emissions per $1"} mainMetricInUSD={true}

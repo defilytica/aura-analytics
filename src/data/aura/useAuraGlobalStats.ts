@@ -23,11 +23,11 @@ export function useAuraGlobalStats(chainId = EthereumNetworkInfo.chainId): Globa
         return {
             id: global.id,
             aura: global.aura,
-            auraTotalSupply: global.auraBalTotalSupply / 1e18,
+            auraTotalSupply: global.auraTotalSupply / 1e18,
             auraBALTotalSupply: global.auraBalTotalSupply / 1e18,
             auraMaxSupply: global.auraMaxSupply / 1e18,
             auraReductionPerCliff: global.auraReductionPerCliff / 1e18,
-            auraTotalCliffs: global.auraTotalCliffs / 1e18,
+            auraTotalCliffs: global.auraTotalCliffs,
             auraTotalLockedAmount: auraLockers[0].lockedSupply / 1e18
         }
     }
