@@ -17,6 +17,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const timestampPreviousRound = timestamps[indexOfCurrent - 1]
 
     const [emissionValuePerVote, setEmissionValuePerVote] = useState(0);
+    const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
     const auraGlobalStats = useAuraGlobalStats();
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(String(timestampCurrentRound));
@@ -82,9 +83,11 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
 
                     let totalVotesCurrent = 0;
                     let totalVotesPrevious = 0;
+                    let totalEmissionsCurrent = 0;
                     if (hiddenHandDataPrevious.incentives.data.length > 1 && hiddenHandDataCurrent.incentives.data.length > 1) {
                         hiddenHandDataCurrent.incentives.data.forEach((item) => {
                             totalVotesCurrent += item.voteCount;
+                            totalEmissionsCurrent += item.totalValue;
                         });
                         hiddenHandDataPrevious.incentives.data.forEach((item) => {
                             totalVotesPrevious += item.voteCount;
@@ -121,6 +124,11 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         (1 - auraFee) +
                         additionalAuraPerVote;
                     setEmissionValuePerVote(emissionValuePerVote);
+
+                    // Approximate emissions / $ spent
+                    const dollarPervlAura = totalEmissionsCurrent / totalVotesCurrent;
+                    const emissionDollars = (biweeklyBalEmissionPerAura / dollarPervlAura) * (balPrice + auraPerBal * auraPrice) * (1- auraFee)
+                    setEmissionsPerDollarSpent(emissionDollars)
                 }
 
             } catch (error) {
@@ -131,5 +139,8 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
         fetchData();
     }, [coinData, auraGlobalStats, hiddenHandDataCurrent, hiddenHandDataPrevious]);
 
-    return emissionValuePerVote;
+    return{
+        emissionValuePerVote: emissionValuePerVote,
+        emissionsPerDollarSpent: emissionsPerDollarSpent,
+    };
 };

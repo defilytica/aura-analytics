@@ -11,7 +11,7 @@ import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
-import {CurrencyExchange, Handshake} from "@mui/icons-material";
+import {CurrencyExchange, Handshake, AddShoppingCart, ShoppingCartCheckout} from "@mui/icons-material";
 import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
@@ -91,7 +91,7 @@ export default function VotingIncentives() {
     const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
     const { priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
-    const emissionPerVote = useGetEmissionPerVote(currentRoundNew);
+    const { emissionValuePerVote, emissionsPerDollarSpent } = useGetEmissionPerVote(currentRoundNew);
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -111,7 +111,7 @@ export default function VotingIncentives() {
                     emissionVotes += item.voteCount;
                 }
             });
-            const incentiveEfficency = totalValue / totalVotes;
+            const incentiveEfficency = emissionValue / totalVotes;
             setEmissionVotesTotal(emissionVotes)
             setIncentivePerVote(incentiveEfficency)
             setRoundIncentives(totalValue)
@@ -295,12 +295,19 @@ export default function VotingIncentives() {
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box mr={1}>
-                                    {emissionPerVote ?
+                                    {totalAmountDollarsSum ?
+                                        <MetricsCard mainMetric={emissionValuePerVote} metricName={"Emission $/Vote"}
+                                                     metricDecimals={4}
+                                                     mainMetricInUSD={true} MetricIcon={ShoppingCartCheckout}/>
+                                        : <CircularProgress/>}
+                                </Box>
+                                <Box mr={1}>
+                                    {emissionsPerDollarSpent ?
                                         <MetricsCard
-                                            mainMetric={1 + (emissionPerVote - incentivePerVote) / emissionPerVote}
+                                            mainMetric={emissionsPerDollarSpent}
                                             metricName={"Emissions per $1"} mainMetricInUSD={true}
                                             metricDecimals={4}
-                                            MetricIcon={Handshake}/>
+                                            MetricIcon={AddShoppingCart}/>
                                         : <CircularProgress/>}
                                 </Box>
                             </Grid>
