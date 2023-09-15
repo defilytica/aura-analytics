@@ -15,21 +15,25 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const timestamps = AURA_TIMESTAMPS;
     const indexOfCurrent = timestamps.indexOf(timestampCurrentRound);
     const timestampPreviousRound = timestamps[indexOfCurrent - 1]
+    console.log("timestampPreviousRound", timestampPreviousRound)
+    // If a round is currently active we need to set the appropriate pattern
 
     const [emissionValuePerVote, setEmissionValuePerVote] = useState(0);
     const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
     const auraGlobalStats = useAuraGlobalStats();
-    const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(String(timestampCurrentRound));
+    const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
+
     const hiddenHandDataPrevious = useGetHiddenHandVotingIncentives(String(timestampPreviousRound));
+    console.log("timestamp", Date.now())
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (timestampCurrentRound && coinData && auraGlobalStats && hiddenHandDataCurrent.incentives && hiddenHandDataPrevious.incentives) {
+                if ((timestampCurrentRound === 0 || timestampCurrentRound) && coinData && auraGlobalStats && hiddenHandDataCurrent.incentives && hiddenHandDataPrevious.incentives) {
                     const DAY = 86400;
                     const WEEK = 604800;
-                    const currentTime = Date.now();
+                    const currentTime = Date.now() ;
 
 
                     const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
@@ -38,7 +42,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     // and instead add additional AURA distributed pro rata based on voting result
                     // starting from August 17th 2023 voting round (epoch at 1692230400)
                     const newEmissionEffectiveAt = 1692230400;
-                    const isNewEmission = timestampCurrentRound > newEmissionEffectiveAt;
+                    const isNewEmission = timestampCurrentRound === 0 ? true : timestampCurrentRound > newEmissionEffectiveAt;
                     const emissionMultiplier = isNewEmission ? 0.4 : 1;
                     const additionalAuraAmount = isNewEmission ? 180000 : 0; // Hardcoded until Aura has updated the data on-chain
 
@@ -96,16 +100,18 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     let approximateTotalVote = 0;
                     // Use the largest of the vote count between the last 2 rounds in the beginning
                     // But use actual current vote near the end
-                    if (
+                    if (timestampCurrentRound !== 0 && (
                         !hiddenHandDataPrevious ||
                         currentTime >= timestampCurrentRound ||
                         timestampCurrentRound - currentTime < DAY
-                    ) {
+                    )) {
                         approximateTotalVote = totalVotesCurrent;
                     } else {
                         approximateTotalVote =
                             totalVotesCurrent > totalVotesPrevious ? totalVotesCurrent : totalVotesPrevious;
                     }
+
+                    console.log("approximateTotalVote", approximateTotalVote)
 
                     const biweeklyBalEmissionPerAura =
                         (parseFloat(ethers.utils.formatEther(biweeklyBalEmission)) * auraBalShare) /
