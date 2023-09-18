@@ -111,7 +111,7 @@ export default function VotingIncentives() {
                     emissionVotes += item.voteCount;
                 }
             });
-            const incentiveEfficency = emissionValue / totalVotes;
+            const incentiveEfficency = emissionValue / emissionVotes;
             setEmissionVotesTotal(emissionVotes)
             setIncentivePerVote(incentiveEfficency)
             setRoundIncentives(totalValue)

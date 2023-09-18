@@ -87,10 +87,14 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
 
                     let totalVotesCurrent = 0;
                     let totalVotesPrevious = 0;
+                    let totalVotesOnEmissions = 0;
                     let totalEmissionsCurrent = 0;
                     if (hiddenHandDataPrevious.incentives.data.length > 1 && hiddenHandDataCurrent.incentives.data.length > 1) {
                         hiddenHandDataCurrent.incentives.data.forEach((item) => {
                             totalVotesCurrent += item.voteCount;
+                            if (item.totalValue > 0) {
+                                totalVotesOnEmissions += item.voteCount;
+                            }
                             totalEmissionsCurrent += item.totalValue;
                         });
                         hiddenHandDataPrevious.incentives.data.forEach((item) => {
@@ -132,8 +136,8 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     setEmissionValuePerVote(emissionValuePerVote);
 
                     // Approximate emissions / $ spent
-                    const dollarPervlAura = totalEmissionsCurrent / totalVotesCurrent;
-                    const emissionDollars = (biweeklyBalEmissionPerAura / dollarPervlAura) * (balPrice + auraPerBal * auraPrice) * (1- auraFee)
+                    const dollarPervlAura = totalEmissionsCurrent / totalVotesOnEmissions;
+                    const emissionDollars = 1 / (dollarPervlAura / emissionValuePerVote)
                     setEmissionsPerDollarSpent(emissionDollars)
                 }
 
