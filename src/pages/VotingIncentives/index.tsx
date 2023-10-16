@@ -1,9 +1,7 @@
 import {Box, Card, CardContent, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
 import CustomLinearProgress from '../../components/Progress/CustomLinearProgress';
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
-import {
-    GetBribingStatsForRounds
-} from "../../data/llamaairforce/getBribingStatsForRound";
+import {GetBribingStatsForRounds} from "../../data/llamaairforce/getBribingStatsForRound";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {SelectChangeEvent} from "@mui/material/Select";
@@ -11,14 +9,14 @@ import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
-import {CurrencyExchange, Handshake, AddShoppingCart, ShoppingCartCheckout} from "@mui/icons-material";
+import {AddShoppingCart, CurrencyExchange, ShoppingCartCheckout} from "@mui/icons-material";
 import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
 import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
-import { BalancerStakingGauges } from "../../data/balancer/balancerTypes";
-import { decorateGaugesWithIncentives } from "./helpers";
+import {BalancerStakingGauges} from "../../data/balancer/balancerTypes";
+import {decorateGaugesWithIncentives} from "./helpers";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
 import HistoricalIncentivesTable from "../../components/Tables/HistoricalIncentivesTable";
 import {useGetHiddenHandRewards} from "../../data/hidden-hand/useGetHiddenHandRewards";
@@ -32,6 +30,7 @@ import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/AuraIncentiveAPRChart";
 import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
+import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -86,12 +85,12 @@ export default function VotingIncentives() {
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
     const hiddenHandData = useGetHiddenHandVotingIncentives(currentRoundNew === 0 ? '' : String(currentRoundNew));
     // const currentHiddenHandData = useGetHiddenHandVotingIncentives();
-    const { address } = useAccount();
+    const {address} = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
-    const { priceData } = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
-    const { emissionValuePerVote, emissionsPerDollarSpent } = useGetEmissionPerVote(currentRoundNew);
+    const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -119,7 +118,6 @@ export default function VotingIncentives() {
             setDecoratedGagues(fullyDecoratedGauges)
         }
     }, [currentRoundNew, JSON.stringify(gaugeData), hiddenHandData.incentives]);
-
 
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
@@ -170,7 +168,7 @@ export default function VotingIncentives() {
                 && !hiddenHandData.incentives
                 && bribeRewardsNew.length < 1
                 && !totalAmountDollarsSum
-                && ! dashboardData
+                && !dashboardData
                 && incentivePerVote === 0
                 && roundIncentives === 0
             ) ? (
@@ -209,9 +207,12 @@ export default function VotingIncentives() {
                                                      MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                    <Box sx={{ mt: { xs: 1 } }}>
-                                <HiddenHandCard />
-                                    </Box>
+                                <Box sx={{mt: {xs: 1}}}>
+                                    <HiddenHandCard/>
+                                </Box>
+                                <Box sx={{mt: {xs: 1}}}>
+                                    <PaladinQuestsCard/>
+                                </Box>
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
@@ -233,16 +234,16 @@ export default function VotingIncentives() {
                             <Typography sx={{fontSize: '24px'}}>Historical Aura Price vs. Incentive APR</Typography>
                         </Grid>
                         {historicalPrice && historicalPrice.length > 0 && historicalAPR ?
-                        <Grid item xs={11} sm={9}>
-                            <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-                                <AuraIncentiveAPRChart
-                                    auraPrice={historicalPrice}
-                                    auraAPR={historicalAPR}
-                                    xAxisData={xAxisData}
-                                    height={"400px"} />
-                            </Card>
-                        </Grid>:
-                            <CircularProgress />}
+                            <Grid item xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                    <AuraIncentiveAPRChart
+                                        auraPrice={historicalPrice}
+                                        auraAPR={historicalAPR}
+                                        xAxisData={xAxisData}
+                                        height={"400px"}/>
+                                </Card>
+                            </Grid> :
+                            <CircularProgress/>}
                         <Grid item xs={11} sm={9} mt={1}>
                             <Typography sx={{fontSize: '24px'}} mb={1}>Voting Epoch Metrics</Typography>
                         </Grid>
@@ -283,7 +284,8 @@ export default function VotingIncentives() {
                                 </Box>
                                 <Box mr={1}>
                                     {emissionVotesTotal ?
-                                        <MetricsCard mainMetric={emissionVotesTotal} metricName={"Total Incentive Votes"}
+                                        <MetricsCard mainMetric={emissionVotesTotal}
+                                                     metricName={"Total Incentive Votes"}
                                                      mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
                                         : <CircularProgress/>}
                                 </Box>
@@ -333,11 +335,11 @@ export default function VotingIncentives() {
                                 <HistoricalIncentivesTable
                                     key={currentRoundNew}
                                     currentRound={currentRoundNew}
-                                    gaugeDatas={hiddenHandData.incentives.data} />
+                                    gaugeDatas={hiddenHandData.incentives.data}/>
                             ) : decoratedGauges && decoratedGauges.length > 0 ? (
-                                <IncentivesTable gaugeDatas={decoratedGauges} currentRound={currentRoundNew} />
+                                <IncentivesTable gaugeDatas={decoratedGauges} currentRound={currentRoundNew}/>
                             ) : (
-                                <CircularProgress />
+                                <CircularProgress/>
                             )}
                         </Grid>
                         <Grid item xs={11} sm={9}>
@@ -345,7 +347,7 @@ export default function VotingIncentives() {
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             {address && addressRewards && addressRewards.data ?
-                            <HiddenHandAddressRewards rewardData={addressRewards?.data} /> :
+                                <HiddenHandAddressRewards rewardData={addressRewards?.data}/> :
                                 <Card sx={{
                                     maxWidth: '250px',
                                     minHeight: '100px'
@@ -357,7 +359,7 @@ export default function VotingIncentives() {
                                         justifyContent="center"
                                         height="100%"
                                     >
-                                        <SelfImprovementIcon sx={{ fontSize: 48 }} />
+                                        <SelfImprovementIcon sx={{fontSize: 48}}/>
                                         <Typography variant="subtitle1" align="center">
                                             Please connect your Wallet
                                         </Typography>
