@@ -1,24 +1,25 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import {ApolloClient, NormalizedCacheObject} from '@apollo/client'
 import {
   arbitrumBlockClient,
-  arbitrumClient,
+  arbitrumClient, baseBlockClient,
+  baseClient,
   blockClient,
   client,
-  polygonBlockClient,
-  polygonClient,
   gnosisBlockClient,
   gnosisClient,
-  polygonZKEVMClient, optimismClient, polygonZKEVMBlockClient, optimismBlockClient,
+  optimismBlockClient,
+  optimismClient,
+  polygonBlockClient,
+  polygonClient,
+  polygonZKEVMBlockClient,
+  polygonZKEVMClient,
 } from '../../apollo/client'
-import { NetworkInfo, SupportedNetwork } from '../../constants/networks'
-import { useCallback } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useActiveWeb3React } from '../../hooks'
-import { AppState } from '../index'
-import {
-  updateActiveNetworkVersion,
-  updateSubgraphStatus,
-} from './actions'
+import {NetworkInfo, SupportedNetwork} from '../../constants/networks'
+import {useCallback} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {useActiveWeb3React} from '../../hooks'
+import {AppState} from '../index'
+import {updateActiveNetworkVersion, updateSubgraphStatus,} from './actions'
 
 export function useBlockNumber(): number | undefined {
   const { chainId } = useActiveWeb3React()
@@ -77,6 +78,8 @@ export function useDataClient(): ApolloClient<NormalizedCacheObject> {
       return gnosisClient
     case SupportedNetwork.OPTIMISM:
       return optimismClient;
+    case SupportedNetwork.BASE:
+      return baseClient;
     default:
       return client
   }
@@ -98,6 +101,8 @@ export function useBlockClient(): ApolloClient<NormalizedCacheObject> {
       return gnosisBlockClient
     case SupportedNetwork.OPTIMISM:
       return optimismBlockClient
+    case SupportedNetwork.BASE:
+      return baseBlockClient;
     default:
       return blockClient
   }

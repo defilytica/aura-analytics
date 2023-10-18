@@ -1,6 +1,6 @@
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
 import {
-    ArbitrumNetworkInfo,
+    ArbitrumNetworkInfo, BaseNetworkInfo,
     EthereumNetworkInfo,
     GnosisNetworkInfo,
     OptimismNetworkInfo,
@@ -148,6 +148,35 @@ export const auraPolygonClient = new ApolloClient({
 export const auraGnosisClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-gnosis-chain',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraBaseClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-base',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -422,6 +451,50 @@ export const optimismBlockClient = new ApolloClient({
     },
 })
 
+export const baseBlockClient = new ApolloClient({
+    uri: 'https://api.studio.thegraph.com/query/48427/bleu-base-blocks/version/latest',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
+export const baseClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
+    uri: 'https://api.studio.thegraph.com/query/24660/balancer-base-v2/version/latest',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
 export function getAuraNetworkClient(networkId: string): ApolloClient<NormalizedCacheObject> {
     switch (networkId) {
         case EthereumNetworkInfo.chainId:
@@ -434,6 +507,8 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
             return auraOptimismClient;
         case GnosisNetworkInfo.chainId:
             return auraGnosisClient;
+        case BaseNetworkInfo.chainId:
+            return auraBaseClient;
         default:
             return auraClient;
     }

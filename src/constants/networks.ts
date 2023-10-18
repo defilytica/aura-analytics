@@ -4,6 +4,7 @@ import POLYGON_LOGO_URL from '../assets/svg/polygon.svg'
 import GNOSIS_LOGO_URL from '../assets/svg/gnosis.svg'
 import ZKEVM_LOGO_URL from '../assets/svg/zkevm.svg'
 import OPTIMISM_LOGO_URL from '../assets/svg/optimism.svg';
+import BASE_LOGO_URL from '../assets/svg/base.svg'
 
 import {
   ALCHEMY_KEY,
@@ -20,6 +21,7 @@ export enum SupportedNetwork {
   GNOSIS,
   ZKEVM,
   OPTIMISM,
+  BASE,
 }
 
 export type NetworkInfo = {
@@ -194,11 +196,37 @@ export const OptimismNetworkInfo: NetworkInfo = {
   blurb: 'L2 Beta',
 };
 
+export const BaseNetworkInfo: NetworkInfo = {
+  id: SupportedNetwork.BASE,
+  chainId: '8453',
+  v3NetworkID: 'BASE',
+  coingeckoId: 'base',
+  debankId: 'base',
+  dbNetworkId: 'base',
+  balAddress: '0x4158734d47fc9692176b5085e0f52ee0da5d47f1',
+  feeCollectorThreshold: 5000,
+  route: 'base',
+  name: 'Base',
+  startTimeStamp: 1690495200,
+  appUri: 'https://app.balancer.fi/#/avalanche/',
+  //clientUri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-prune-v2',
+  clientUri: 'https://api.studio.thegraph.com/query/24660/balancer-base-v2/version/latest',
+  decentralicedClientUri: '',
+  alchemyRPCUrl: 'https://base.publicnode.com',
+  alchemyKey: '',
+  bgColor: '#0030a6',
+  primaryColor: '#0027a2',
+  secondaryColor: '#005094',
+  imageURL: BASE_LOGO_URL,
+  blurb: 'Beta',
+}
+
 export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
   EthereumNetworkInfo,
   ArbitrumNetworkInfo,
   PolygonNetworkInfo,
   GnosisNetworkInfo,
   PolygonZkEVMNetworkInfo,
-  OptimismNetworkInfo
+  OptimismNetworkInfo,
+    BaseNetworkInfo
 ]

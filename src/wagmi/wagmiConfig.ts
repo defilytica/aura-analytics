@@ -5,7 +5,7 @@ import {
     getDefaultWallets,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig } from 'wagmi';
-import { mainnet, polygon, optimism, arbitrum, gnosis, polygonZkEvm } from 'wagmi/chains';
+import { mainnet, polygon, optimism, arbitrum, gnosis, polygonZkEvm, base } from '@wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import {ALCHEMY_KEY} from "../data/balancer/constants";
@@ -19,7 +19,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 
 export const { chains, publicClient } = configureChains(
-    [mainnet, polygon, polygonZkEvm, arbitrum, gnosis, optimism],
+    [mainnet, polygon, polygonZkEvm, arbitrum, gnosis, optimism, base],
     [
         alchemyProvider({ apiKey: ALCHEMY_KEY }),
         publicProvider()

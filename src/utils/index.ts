@@ -4,7 +4,7 @@ import { AddressZero } from '@ethersproject/constants';
 import { Contract } from '@ethersproject/contracts';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers';
 import {
-    ArbitrumNetworkInfo,
+    ArbitrumNetworkInfo, BaseNetworkInfo,
     GnosisNetworkInfo,
     NetworkInfo, OptimismNetworkInfo,
     PolygonNetworkInfo,
@@ -106,6 +106,25 @@ export function getEtherscanLink(
 
     if (networkVersion === PolygonZkEVMNetworkInfo) {
         prefix = 'https://zkevm.polygonscan.com/';
+        switch (type) {
+            case 'transaction': {
+                return `${prefix}/tx/${data}`;
+            }
+            case 'token': {
+                return `${prefix}/address/${data}`;
+            }
+            case 'block': {
+                return `${prefix}/block/${data}`;
+            }
+            case 'address':
+            default: {
+                return `${prefix}/address/${data}`;
+            }
+        }
+    }
+
+    if (networkVersion === BaseNetworkInfo) {
+        prefix = 'https://basescan.org/';
         switch (type) {
             case 'transaction': {
                 return `${prefix}/tx/${data}`;
