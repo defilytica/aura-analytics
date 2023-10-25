@@ -164,13 +164,13 @@ export default function VotingIncentives() {
 
     return (<>
             {(!roundsData?.rounds
-                && !historicalData
-                && !hiddenHandData.incentives
-                && bribeRewardsNew.length < 1
-                && !totalAmountDollarsSum
-                && !dashboardData
-                && incentivePerVote === 0
-                && roundIncentives === 0
+                || !historicalData
+                || !hiddenHandData.incentives
+                || bribeRewardsNew.length < 1
+                || !totalAmountDollarsSum
+                || !dashboardData
+                || incentivePerVote === 0
+                || roundIncentives === 0
             ) ? (
                 <Grid
                     container
