@@ -23,6 +23,16 @@ const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
 
     let newPath;
 
+    //Redirect from main page to pools overview when changing networks in root
+    console.log("currentPath", currentPath)
+    if (currentPath === '/') {
+        if (network === OptimismNetworkInfo) {
+            newPath = 'optimism/pools';
+        }
+        newPath =`/${network.name.toLowerCase()}/pools`
+        return newPath;
+    }
+
     if (network === EthereumNetworkInfo) {
         newPath = `/${pathParts[pathParts.length - 1]}`;
     } else if (network === OptimismNetworkInfo) {

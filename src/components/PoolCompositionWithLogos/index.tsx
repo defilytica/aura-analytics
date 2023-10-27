@@ -26,16 +26,16 @@ export default function PoolCompositionWithLogos({ poolData, size = 24 }: PoolCo
 
     poolData.tokens = poolData.tokens.filter((tokens) => tokens.balance < 2596140000000000);
     return (
-        <Box 
-        position={"relative"} 
-        display="flex" 
-        alignItems={"center"} 
-        sx={{ 
-            overflow: 'auto', 
+        <Box
+        position={"relative"}
+        display="flex"
+        alignItems={"center"}
+        sx={{
+            overflow: 'auto',
             maxWidth: {xs: '250px', md: '900px'} }}
         >
                 {poolData.tokens.map((token) =>
-                <Box mr={1}>
+                <Box key={token.name + Math.random() * 10} mr={1}>
                     <Avatar
                         key={token.address + Math.random() * 10}
                         onClick={() => { navigate(`${getLink(activeNetwork, token.address)}/`); }}
@@ -50,7 +50,7 @@ export default function PoolCompositionWithLogos({ poolData, size = 24 }: PoolCo
                         }}
                     >
                         <Box ml={1}>
-                            <CurrencyLogo key={token.address} address={token.address} size='20px' />
+                            <CurrencyLogo key={token.address + Math.random() * 10} address={token.address} size='20px' />
                         </Box>
                         <Box m={1} display="flex" justifyContent="space-between">
                             <Typography color={theme.palette.mode === 'dark' ? 'white' : 'black'} mr={0.25} sx={{ fontWeight: 'bold' }} variant="caption">{token.symbol}</Typography>

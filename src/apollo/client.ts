@@ -515,7 +515,7 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
 }
 
 export const tokenClient = new ApolloClient({
-    uri: 'https://backend-v3.beets-ftm-node.com/',
+    uri: 'https://backend-v3-workaround.stellate.sh/',
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
