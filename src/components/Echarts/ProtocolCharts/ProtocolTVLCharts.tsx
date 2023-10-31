@@ -264,7 +264,7 @@ export default function ProtocolTVLCharts({
                         return formatDollarAmount(value)
                     }
                 },
-                data: gnosisData
+                data: baseData
             },
         ]
     };
