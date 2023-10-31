@@ -23,7 +23,6 @@ import ArbitrumLogo from '../../../assets/svg/arbitrum.svg'
 import EtherLogo from '../../../assets/svg/ethereum.svg'
 import PolygonLogo from '../../../assets/svg/polygon.svg'
 import GnosisLogo from '../../../assets/svg/gnosis.svg'
-//import zkevmLogo from '../../../assets/svg/zkevm.svg'
 import OpLogo from '../../../assets/svg/optimism.svg'
 import {BalancerStakingGauges, SimplePoolData} from "../../../data/balancer/balancerTypes";
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";

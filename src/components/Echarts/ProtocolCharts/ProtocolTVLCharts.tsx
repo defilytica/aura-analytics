@@ -30,6 +30,7 @@ interface ProtocolAreaChartProps {
     optimismData: number[],
     polygonData: number[],
     gnosisData: number[],
+    baseData: number[],
     xAxis: string[],
 }
 
@@ -40,6 +41,7 @@ export default function ProtocolTVLCharts({
                                               optimismData,
                                               polygonData,
                                               gnosisData,
+                                              baseData,
                                               xAxis
                                           }: ProtocolAreaChartProps) {
 
@@ -47,7 +49,7 @@ export default function ProtocolTVLCharts({
     const theme = useTheme()
 
     const option = {
-        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D'],
+        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -58,7 +60,7 @@ export default function ProtocolTVLCharts({
             },
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -224,6 +226,36 @@ export default function ProtocolTVLCharts({
                         {
                             offset: 1,
                             color: 'rgb(13, 100, 116)'
+                        }
+                    ])
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value)
+                    }
+                },
+                data: gnosisData
+            },
+
+            {
+                name: 'Base',
+                type: 'line',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                areaStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(15, 81, 252)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(15, 120, 252)'
                         }
                     ])
                 },

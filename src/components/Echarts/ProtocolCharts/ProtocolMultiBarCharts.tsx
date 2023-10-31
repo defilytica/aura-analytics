@@ -30,6 +30,7 @@ interface ProtocolBarChartProps {
     optimismData: number[],
     polygonData: number[],
     gnosisData: number[],
+    baseData: number[],
     xAxis: string[],
 }
 
@@ -40,6 +41,7 @@ export default function ProtocolMultiBarCharts({
                                                    optimismData,
                                                    polygonData,
                                                    gnosisData,
+                                                   baseData,
                                                    xAxis
                                                }: ProtocolBarChartProps) {
 
@@ -58,7 +60,7 @@ export default function ProtocolMultiBarCharts({
 
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base'],
             inactiveColor: "red",
             textStyle: {
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -241,6 +243,39 @@ export default function ProtocolMultiBarCharts({
                     }
                 },
                 data: gnosisData
+            },
+
+            {
+                name: 'Base',
+                type: 'bar',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                itemStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(15, 81, 252)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(15, 120, 252)'
+                        }
+                    ])
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value);
+                    }
+                },
+                data: baseData
             },
         ]
     };
