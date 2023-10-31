@@ -16593,7 +16593,7 @@ export type GetTokenSingleDataQueryResult = Apollo.QueryResult<
 export const GetTokenPageDataDocument = gql`
   query GetTokenPageData($address: String!, $startTimestamp: Int!) {
     tokenSnapshots(
-      first: 500
+      first: 1000
       orderBy: timestamp
       orderDirection: asc
       where: { token: $address, timestamp_gte: $startTimestamp }
