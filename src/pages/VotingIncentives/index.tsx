@@ -153,6 +153,8 @@ export default function VotingIncentives() {
         }
     });
 
+    console.log("xAxisData", xAxisData)
+    console.log("priceData", priceData)
     let historicalPrice = xAxisData.map((el) => {
         const price = priceData.find(price => el === price.time);
         if (price) {

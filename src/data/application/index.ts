@@ -3,7 +3,7 @@ import { healthClient } from '../../apollo/client';
 import { useQuery } from '@apollo/client';
 import gql from 'graphql-tag';
 import {
-    ArbitrumNetworkInfo,
+    ArbitrumNetworkInfo, BaseNetworkInfo,
     EthereumNetworkInfo,
     OptimismNetworkInfo,
     PolygonNetworkInfo,
@@ -66,7 +66,9 @@ export function useFetchedSubgraphStatus(): {
                                 ? 'query/48427/bleu-polygon-zkevm-blocks/version/latest'
                                 : activeNetwork === OptimismNetworkInfo
                                     ? 'danielmkm/optimism-blocks'
-                                    :'x0swapsubgraph/xdai-blocks'
+                                    : activeNetwork === BaseNetworkInfo
+                                        ? 'query/48427/bleu-base-blocks/version/latest'
+                                        : 'x0swapsubgraph/xdai-blocks'
         },
     });
 

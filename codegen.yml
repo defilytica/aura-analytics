@@ -3,7 +3,7 @@ schema:
   - 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2'
   - 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1'
   - 'https://backend-v3.beets-ftm-node.com/'
-  - 'https://api-v3-workaround.stellate.sh/'
+  - 'https://api-v3.balancer.fi/'
 documents:
   - 'src/data/blocks/*.gql'
   - 'src/data/balancer/*.gql'
@@ -46,7 +46,7 @@ generates:
   # Generates query and mutation documents and types for aura subgraphs
   src/apollo/generated/graphql-balancer-v3-codegen-generated.ts:
     schema:
-      - 'https://api-v3-workaround.stellate.sh/'
+      - 'https://backend-v3.beets-ftm-node.com/'
     documents:
       - 'src/data/balancer-api-v3/*.gql'
     plugins:

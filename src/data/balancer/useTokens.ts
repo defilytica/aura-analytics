@@ -311,26 +311,56 @@ export function useBalancerTokenPageData(address: string): {
     });
     const [coingeckoSnapshotData, setCoingeckoSnapshotData] = useState<CoingeckoSnapshotPriceData>();
     const snapshots = data?.tokenSnapshots || [];
+    const DAYS_LIMIT = 300;
 
+    const fetchCoingeckoData = async (address: string, fromTimestamp: number, toTimestamp: number): Promise<CoingeckoSnapshotPriceData> => {
+        const baseURI = 'https://api.coingecko.com/api/v3/coins/';
+        const queryParams = (id: string, from: number, to: number) => `${id}/contract/${address}/market_chart/range?vs_currency=usd&from=${from}&to=${to}`;
+
+        let allPrices: number[][] = [];
+        let allMarketCaps: number[][] = [];
+        let allTotalVolumes: number[][] = [];
+        const numberOfDays = (toTimestamp - fromTimestamp) / (24 * 60 * 60) + 1;
+        const numberOfRequests = Math.ceil(numberOfDays / DAYS_LIMIT);
+
+
+        for (let i = 0; i < numberOfRequests; i++) {
+            const currentFromTimestamp = fromTimestamp + (DAYS_LIMIT * 24 * 60 * 60 * i);
+            const currentToTimestamp = (i === numberOfRequests - 1) ? toTimestamp : currentFromTimestamp + (DAYS_LIMIT * 24 * 60 * 60);
+            console.log("currentToTimestamp", currentToTimestamp)
+
+            try {
+                const coingeckoResponse = await fetch(baseURI + queryParams(activeNetwork.coingeckoId, currentFromTimestamp, currentToTimestamp));
+                const json: CoingeckoSnapshotPriceData = await coingeckoResponse.json();
+
+                if (json.error) {
+                    console.log(`Error for interval ${i}: ${json.error}`);
+                    continue;
+                }
+
+                allPrices = [...allPrices, ...json.prices];
+                allMarketCaps = [...allMarketCaps, ...json.market_caps];
+                allTotalVolumes = [...allTotalVolumes, ...json.total_volumes];
+            } catch (e) {
+                console.log("Coingecko: market_chart API not reachable for interval", i, e);
+            }
+        }
+        console.log("allPrices", allPrices)
+        return {
+            prices: allPrices,
+            market_caps: allMarketCaps,
+            total_volumes: allTotalVolumes
+        };
+    }
 
     useEffect(() => {
-        //V2: repopulate formatted token data with coingecko data
         if (snapshots && snapshots.length > 0) {
             const fromTimestamp = snapshots[0].timestamp;
             const toTimestamp = snapshots[snapshots.length - 1].timestamp;
-            const getTokenSnapshotData = async (address: string, fromTimestamp: number, toTimestamp: number) => {
-                const baseURI = 'https://api.coingecko.com/api/v3/coins/';
-                const queryParams = activeNetwork.coingeckoId + '/contract/' + address + '/market_chart/range?vs_currency=usd&from=' + fromTimestamp.toString() + '&to=' + toTimestamp.toString();
-                try {
-                    const coingeckoResponse = await fetch(baseURI + queryParams);
-                    const json = await coingeckoResponse.json();
-                    setCoingeckoSnapshotData(json);
-                } catch {
-                    console.log("Coingecko: market_chart API not reachable")
-                }
 
-            }
-            getTokenSnapshotData(address, fromTimestamp, toTimestamp);
+            fetchCoingeckoData(address, fromTimestamp, toTimestamp).then(data => {
+                setCoingeckoSnapshotData(data);
+            });
         }
     }, [snapshots]);
 

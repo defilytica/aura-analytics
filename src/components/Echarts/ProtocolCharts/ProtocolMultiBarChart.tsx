@@ -33,19 +33,21 @@ interface ProtocolAreaChartProps {
     optimismProtocolData: BalancerChartDataItem[],
     polygonProtocolData: BalancerChartDataItem[],
     gnosisProtocolData: BalancerChartDataItem[],
+    baseProtocolData: BalancerChartDataItem[],
     changeHandler: (event: SelectChangeEvent) => void,
     timeRange: number,
 }
 
 
 
-export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, gnosisProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
+export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, gnosisProtocolData, baseProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
 
     const mainnetData = mainnetProtocolData.map(el => Number(el.value.toFixed(2)));
     let arbitrumData = arbitrumProtocolData.map(el => Number(el.value.toFixed(2)));
     let optimismData = optimismProtocolData.map(el => Number(el.value.toFixed(2)));
     let polygonData = polygonProtocolData.map(el => Number(el.value.toFixed(2)));
     let gnosisData = gnosisProtocolData.map(el => Number(el.value.toFixed(2)));
+    let baseData = baseProtocolData.map(el => Number(el.value.toFixed(2)));
 
 
     //add preceeding zero values based on mainnet size to later deployed chains
@@ -71,6 +73,13 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
         const diffSize = mainnetData.length - gnosisData.length;
         const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
         gnosisData = zeroArray.concat(gnosisData);
+    }
+
+
+    if (mainnetData && baseData) {
+        const diffSize = mainnetData.length - baseData.length;
+        const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
+        baseData = zeroArray.concat(baseData);
     }
 
 
@@ -114,6 +123,7 @@ export default function ProtocolMultiBarChart({mainnetProtocolData, arbitrumProt
                 optimismData={optimismData}
                 polygonData={polygonData}
                 gnosisData={gnosisData}
+                baseData={baseData}
                 xAxis={mainnetxAxisData}
                 />
             </Card> : <Grid
