@@ -34,13 +34,14 @@ interface ProtocolAreaChartProps {
     polygonProtocolData: BalancerChartDataItem[],
     gnosisProtocolData: BalancerChartDataItem[],
     baseProtocolData: BalancerChartDataItem[],
+    zkevmProtocolData: BalancerChartDataItem[],
     changeHandler: (event: SelectChangeEvent) => void,
     timeRange: number,
 }
 
 
 
-export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, gnosisProtocolData, baseProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
+export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumProtocolData, optimismProtocolData, polygonProtocolData, gnosisProtocolData, baseProtocolData, zkevmProtocolData, changeHandler, timeRange}: ProtocolAreaChartProps) {
 
     const mainnetData = mainnetProtocolData.map(el => Number(el.value.toFixed(2)));
     let arbitrumData = arbitrumProtocolData.map(el => Number(el.value.toFixed(2)));
@@ -48,6 +49,7 @@ export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumPro
     let polygonData = polygonProtocolData.map(el => Number(el.value.toFixed(2)));
     let gnosisData = gnosisProtocolData.map(el => Number(el.value.toFixed(2)));
     let baseData = baseProtocolData.map(el => Number(el.value.toFixed(2)));
+    let zkevmData = zkevmProtocolData.map(el => Number(el.value.toFixed(2)));
     
     //add preceeding zero values based on mainnet size to later deployed chains
     if (mainnetData && arbitrumData) {
@@ -78,6 +80,12 @@ export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumPro
         const diffSize = mainnetData.length - baseData.length;
         const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
         baseData = zeroArray.concat(baseData);
+    }
+
+    if (mainnetData && zkevmData) {
+        const diffSize = mainnetData.length - zkevmData.length;
+        const zeroArray = mainnetData.slice(0, diffSize).map(el => 0);
+        zkevmData = zeroArray.concat(zkevmData);
     }
 
 
@@ -121,6 +129,7 @@ export default function ProtocolMultiAreaChart({mainnetProtocolData, arbitrumPro
                 polygonData={polygonData}
                 gnosisData={gnosisData}
                 baseData={baseData}
+                zkevmData={zkevmData}
                 xAxis={mainnetxAxisData}/>
             </Card> : <Grid
             container

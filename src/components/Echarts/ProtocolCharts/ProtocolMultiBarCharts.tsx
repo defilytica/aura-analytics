@@ -31,6 +31,7 @@ interface ProtocolBarChartProps {
     polygonData: number[],
     gnosisData: number[],
     baseData: number[],
+    zkevmData: number[],
     xAxis: string[],
 }
 
@@ -42,6 +43,7 @@ export default function ProtocolMultiBarCharts({
                                                    polygonData,
                                                    gnosisData,
                                                    baseData,
+                                                   zkevmData,
                                                    xAxis
                                                }: ProtocolBarChartProps) {
 
@@ -60,7 +62,7 @@ export default function ProtocolMultiBarCharts({
 
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base', 'zkEVM'],
             inactiveColor: "red",
             textStyle: {
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -276,6 +278,38 @@ export default function ProtocolMultiBarCharts({
                     }
                 },
                 data: baseData
+            },
+            {
+                name: 'zkEVM',
+                type: 'bar',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                itemStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(46,17,98)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(194,158,246)'
+                        }
+                    ])
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value);
+                    }
+                },
+                data: zkevmData
             },
         ]
     };
