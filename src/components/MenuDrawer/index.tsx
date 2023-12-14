@@ -21,6 +21,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import ListItemButton from '@mui/material/ListItemButton';
 import SelfImprovementIcon from '@mui/icons-material/SelfImprovement';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import CoingeckoColor from '../../assets/svg/coingecko-color.svg'
@@ -132,6 +133,12 @@ const MenuDrawer = ({
                         <Handshake />
                     </ListItemIcon>
                     <ListItemText primary={'Voting Incentives'} />
+                </ListItemButton>
+                <ListItemButton key={'Incentive Simulator'} component={NavLink} to={'/incentiveSimulator'}>
+                    <ListItemIcon>
+                        <HowToVoteIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={'Incentive Simulator'} />
                 </ListItemButton>
                 <Divider />
                 <ListItemButton key={'DAO Treasury'} component={NavLink} to={networkPrefix(activeNetwork) + 'treasury'}>

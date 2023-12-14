@@ -37,6 +37,7 @@ import {chains, wagmiConfig} from "../../wagmi/wagmiConfig";
 import {Alert, alpha, Button, Collapse} from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import AuraEcosystemFund from "../../pages/AuraEcosystemFund";
+import IncentiveSimulator from '../../pages/IncentiveSimulator';
 
 
 interface AppBarProps extends MuiAppBarProps {
@@ -266,6 +267,7 @@ function Dashboard() {
                                     <Route path={networkPrefix(activeNetwork) + 'aurabal'} element={<AuraBAL/>}/>
                                     <Route path={networkPrefix(activeNetwork) + 'voting-incentives'}
                                            element={<VotingIncentives/>}/>
+                                    <Route path={'incentiveSimulator'} element={<IncentiveSimulator/>} />
                                     {/* Router v6: no query searches possible anymore. Provide all possible paths */}
                                     <Route path={"/:networkID/pools/:poolId"} element={<PoolPage/>}/>
                                     <Route path={"/pools/:poolId"} element={<PoolPage/>}/>
