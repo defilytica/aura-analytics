@@ -29,18 +29,24 @@ export default function Protocol() {
     const [displayTransactionsPoly, setDisplayTransactionsPoly] = useState<{ value: number; time: string }[]>([]);
     const [displayTransactionsGnosis, setDisplayTransactionsGnosis] = useState<{ value: number; time: string }[]>([]);
     const [displayTransactionsBase, setDisplayTransactionsBase] = useState<{ value: number; time: string }[]>([]);
+    const [displayTransactionsZkevm, setDisplayTransactionsZkevm] = useState<{ value: number; time: string }[]>([]);
+
     const [displayPoolData, setDisplayPoolData] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataArb, setDisplayPoolDataArb] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataOpt, setDisplayPoolDataOpt] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataPoly, setDisplayPoolDataPoly] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataGnosis, setDisplayPoolDataGnosis] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataBase, setDisplayPoolDataBase] = useState<{ value: number; time: string }[]>([]);
+    const [displayPoolDataZkevm, setDisplayPoolDataZkevm] = useState<{ value: number; time: string }[]>([]);
+
     const [capturedTVLOpt, setCapturedTVLOpt] = useState<CapturedTVL[]>([]);
     const [capturedTVLArb, setCapturedTVLArb] = useState<CapturedTVL[]>([]);
     const [capturedTVLEth, setCapturedTVLEth] = useState<CapturedTVL[]>([]);
     const [capturedTVLPoly, setCapturedTVLPoly] = useState<CapturedTVL[]>([]);
     const [capturedTVLGnosis, setCapturedTVLGnosis] = useState<CapturedTVL[]>([]);
     const [capturedTVLBase, setCapturedTVLBase] = useState<CapturedTVL[]>([]);
+    const [capturedTVLZkevm, setCapturedTVLZkevm] = useState<CapturedTVL[]>([]);
+
     const [sortedPoolTransactions, setSortedPoolTransactions] = useState<{ value: number; time: string }[]>([]);
     const [sortedPoolTransactionsArb, setSortedPoolTransactionsArb] = useState<{ value: number; time: string }[]>([]);
     const [sortedPoolTransactionsOpt, setSortedPoolTransactionsOpt] = useState<{ value: number; time: string }[]>([]);
@@ -50,13 +56,20 @@ export default function Protocol() {
         time: string
     }[]>([]);
     const [sortedPoolTransactionsBase, setSortedPoolTransactionsBase] = useState<{ value: number; time: string }[]>([]);
-    const [tvlDollar, setTvlDollar] = useState<number | undefined>();
+    const [sortedPoolTransactionsZkevm, setSortedPoolTransactionsZkevm] = useState<{
+        value: number;
+        time: string
+    }[]>([]);
+
     const [sortedTvlData, setSortedTvlData] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataArb, setSortedTvlDataArb] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataOpt, setSortedTvlDataOpt] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataPoly, setSortedTvlDataPoly] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataGnosis, setSortedTvlDataGnosis] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataBase, setSortedTvlDataBase] = useState<{ value: number; time: string }[]>([]);
+    const [sortedTvlDataZkevm, setSortedTvlDataZkevm] = useState<{ value: number; time: string }[]>([]);
+
+    const [tvlDollar, setTvlDollar] = useState<number | undefined>();
     const [tvlChange, setTvlChange] = useState<number | undefined>();
     const [volumeChange, setVolumeChange] = useState<number | undefined>();
     const [volumeDollar, setVolumeDollar] = useState<number | undefined>();
@@ -76,21 +89,24 @@ export default function Protocol() {
     const balancerPoolsPoly = useBalancerPoolsHistorically('poly')
     const balancerPoolsGnosis = useBalancerPoolsHistorically('gnosis')
     const balancerPoolsBase = useBalancerPoolsHistorically('base')
+    const balancerPoolsZkevm = useBalancerPoolsHistorically('zkevm')
+
     const auraPools = useAuraPoolsHistorically('eth');
     const auraPoolsArb = useAuraPoolsHistorically('arb');
     const auraPoolsOpt = useAuraPoolsHistorically('opt');
     const auraPoolsPoly = useAuraPoolsHistorically('poly');
     const auraPoolsGnosis = useAuraPoolsHistorically('gnosis');
     const auraPoolsBase = useAuraPoolsHistorically('base');
+    const auraPoolsZkevm = useAuraPoolsHistorically('zkevm');
+
     const poolTransactions = usePoolTransactions('eth');
     const poolTransactionsArb = usePoolTransactions('arb');
     const poolTransactionsOpt = usePoolTransactions('opt');
     const poolTransactionsPoly = usePoolTransactions('poly');
     const poolTransactionsGnosis = usePoolTransactions('gnosis');
     const poolTransactionsBase = usePoolTransactions('base');
+    const poolTransactionsZkevm = usePoolTransactions('zkevm');
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
-
-    console.log(auraPools);
 
     const handleChange = (event: SelectChangeEvent) => {
         setTimeRange(Number(event.target.value));
@@ -121,7 +137,8 @@ export default function Protocol() {
         sliceAndSetData(sortedPoolTransactionsPoly, timeRangeVolume, setDisplayTransactionsPoly);
         sliceAndSetData(sortedPoolTransactionsGnosis, timeRangeVolume, setDisplayTransactionsGnosis);
         sliceAndSetData(sortedPoolTransactionsBase, timeRangeVolume, setDisplayTransactionsBase);
-    }, [sortedPoolTransactions, sortedPoolTransactionsArb, sortedPoolTransactionsOpt, sortedPoolTransactionsPoly, sortedPoolTransactionsGnosis, sortedPoolTransactionsBase, timeRangeVolume]);
+        sliceAndSetData(sortedPoolTransactionsZkevm, timeRangeVolume, setDisplayTransactionsZkevm);
+    }, [sortedPoolTransactions, sortedPoolTransactionsArb, sortedPoolTransactionsOpt, sortedPoolTransactionsPoly, sortedPoolTransactionsGnosis, sortedPoolTransactionsBase, sortedPoolTransactionsZkevm, timeRangeVolume]);
 
     React.useEffect(() => {
         sliceAndSetData(sortedTvlData, timeRange, setDisplayPoolData);
@@ -130,7 +147,8 @@ export default function Protocol() {
         sliceAndSetData(sortedTvlDataPoly, timeRange, setDisplayPoolDataPoly);
         sliceAndSetData(sortedTvlDataGnosis, timeRange, setDisplayPoolDataGnosis);
         sliceAndSetData(sortedTvlDataBase, timeRange, setDisplayPoolDataBase);
-    }, [sortedTvlData, sortedTvlDataArb, sortedTvlDataOpt, sortedTvlDataPoly, sortedTvlDataGnosis, sortedTvlDataBase, timeRange]);
+        sliceAndSetData(sortedTvlDataZkevm, timeRange, setDisplayPoolDataZkevm);
+    }, [sortedTvlData, sortedTvlDataArb, sortedTvlDataOpt, sortedTvlDataPoly, sortedTvlDataGnosis, sortedTvlDataBase, sortedTvlDataZkevm, timeRange]);
 
     const processTransactions = (transactions: Volume[], coinData: CoingeckoRawData) => {
         return transactions
@@ -188,6 +206,8 @@ export default function Protocol() {
         return capturedTVLs;
     }
 
+    console.log(displayPoolDataZkevm)
+    console.log(displayPoolDataBase)
 
     React.useEffect(() => {
         if (
@@ -195,9 +215,9 @@ export default function Protocol() {
             auraPools.length > 0 && auraPoolsArb.length > 0 && auraPoolsOpt.length > 0 &&
             auraPoolsPoly.length > 0 && auraPoolsGnosis.length > 0 && auraPoolsBase.length > 0 &&
             poolTransactions.length > 0 && poolTransactionsArb.length > 0 && poolTransactionsOpt.length > 0 &&
-            poolTransactionsPoly.length > 0 && poolTransactionsGnosis.length > 0 && poolTransactionsBase.length > 0 &&
+            poolTransactionsPoly.length > 0 && poolTransactionsGnosis.length > 0 && poolTransactionsBase.length > 0 && poolTransactionsZkevm.length > 0 &&
             coinData && auraGlobalStats && balancerPools.length > 0 && balancerPoolsArb.length > 0 &&
-            balancerPoolsOpt.length > 0 && balancerPoolsPoly.length > 0 && balancerPoolsGnosis.length > 0 && balancerPoolsBase.length > 0
+            balancerPoolsOpt.length > 0 && balancerPoolsPoly.length > 0 && balancerPoolsGnosis.length > 0 && balancerPoolsBase.length > 0 && balancerPoolsZkevm.length > 0
         ) {
             const tempSortedTvlData = processTVLData(auraPools);
             setSortedTvlData(tempSortedTvlData);
@@ -217,12 +237,16 @@ export default function Protocol() {
             const tempSortedTvlDataBase = processTVLData(auraPoolsBase);
             setSortedTvlDataBase(tempSortedTvlDataBase);
 
+            const tempSortedTvlDataZkevm = processTVLData(auraPoolsZkevm);
+            setSortedTvlDataZkevm(tempSortedTvlDataZkevm);
+
             const tempSortedTvlDataBalancer = processTVLData(balancerPools);
             const tempSortedTvlDataBalancerArb = processTVLData(balancerPoolsArb);
             const tempSortedTvlDataBalancerOpt = processTVLData(balancerPoolsOpt);
             const tempSortedTvlDataBalancerPoly = processTVLData(balancerPoolsPoly);
             const tempSortedTvlDataBalancerGnosis = processTVLData(balancerPoolsGnosis);
             const tempSortedTvlDataBalancerBase = processTVLData(balancerPoolsBase);
+            const tempSortedTvlDataBalancerZkevm = processTVLData(balancerPoolsZkevm);
 
             const tempCalculatedCapturedTVL = calculateCapturedTVL(tempSortedTvlDataBalancer, tempSortedTvlData)
             setCapturedTVLEth(tempCalculatedCapturedTVL);
@@ -236,11 +260,13 @@ export default function Protocol() {
             setCapturedTVLGnosis(tempCalculatedCapturedTVLGnosis);
             const tempCalculatedCapturedTVLBase = calculateCapturedTVL(tempSortedTvlDataBalancerBase, tempSortedTvlDataBase)
             setCapturedTVLBase(tempCalculatedCapturedTVLBase);
+            const tempCalculatedCapturedTVLZkevm = calculateCapturedTVL(tempSortedTvlDataBalancerZkevm, tempSortedTvlDataZkevm)
+            setCapturedTVLZkevm(tempCalculatedCapturedTVLZkevm);
 
-            let tempTvlDollar = tempSortedTvlData[tempSortedTvlData.length - 1].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 1].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 1].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 1].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 1].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 1].value;
+            let tempTvlDollar = tempSortedTvlData[tempSortedTvlData.length - 1].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 1].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 1].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 1].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 1].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 1].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 1].value;
             setTvlDollar(tempTvlDollar);
 
-            let tempTvlDollarForChange = tempSortedTvlData[tempSortedTvlData.length - 2].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 2].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 2].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 2].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 2].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 2].value;
+            let tempTvlDollarForChange = tempSortedTvlData[tempSortedTvlData.length - 2].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 2].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 2].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 2].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 2].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 2].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 2].value;
 
             let tempTvlChange = (tempTvlDollar - tempTvlDollarForChange) / tempTvlDollarForChange * 100;
             setTvlChange(tempTvlChange);
@@ -263,16 +289,19 @@ export default function Protocol() {
             const tempSortedTransactionsBase = processTransactions(poolTransactionsBase, coinData);
             setSortedPoolTransactionsBase(tempSortedTransactionsBase);
 
-            let tempVolumeDollar = tempSortedTransactions[tempSortedTransactions.length - 1].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 1].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 1].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 1].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 1].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 1].value;
+            const tempSortedTransactionsZkevm = processTransactions(poolTransactionsZkevm, coinData);
+            setSortedPoolTransactionsZkevm(tempSortedTransactionsZkevm);
+
+            let tempVolumeDollar = tempSortedTransactions[tempSortedTransactions.length - 1].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 1].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 1].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 1].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 1].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 1].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 1].value;
             setVolumeDollar(tempVolumeDollar);
 
-            let tempVolumeDollarForChange = tempSortedTransactions[tempSortedTransactions.length - 2].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 2].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 2].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 2].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 2].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 2].value;
+            let tempVolumeDollarForChange = tempSortedTransactions[tempSortedTransactions.length - 2].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 2].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 2].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 2].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 2].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 2].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 2].value;
 
             let tempVolumeChange = (tempVolumeDollar - tempVolumeDollarForChange) / tempVolumeDollarForChange * 100;
             setVolumeChange(tempVolumeChange);
             setDataLoaded(true);
         }
-    }, [auraPools.length, poolTransactions.length, coinData, totalLockedAmount, poolTransactionsArb.length]);
+    }, [auraPools.length, poolTransactions.length, coinData, totalLockedAmount, poolTransactionsArb.length, poolTransactionsZkevm.length, poolTransactionsOpt.length]);
 
 
     return (
@@ -365,6 +394,7 @@ export default function Protocol() {
                                         polygonProtocolData={displayPoolDataPoly}
                                         gnosisProtocolData={displayPoolDataGnosis}
                                         baseProtocolData={displayPoolDataBase}
+                                        zkevmProtocolData={displayPoolDataZkevm}
                                         changeHandler={handleChange}
                                         timeRange={timeRange}/>
                                 </Card>
@@ -385,6 +415,7 @@ export default function Protocol() {
                                         polygonProtocolData={displayTransactionsPoly}
                                         gnosisProtocolData={displayTransactionsGnosis}
                                         baseProtocolData={displayTransactionsBase}
+                                        zkevmProtocolData={displayTransactionsZkevm}
                                         changeHandler={handleChangeVolume}
                                         timeRange={timeRangeVolume}/>
                                 </Card>
@@ -407,6 +438,7 @@ export default function Protocol() {
                                             {name: 'Polygon', data: capturedTVLPoly},
                                             {name: 'Gnosis', data: capturedTVLGnosis},
                                             {name: 'Base', data: capturedTVLBase},
+                                            {name: 'zkEVM', data: capturedTVLZkevm},
                                         ]}/>
                                 </Card>
                             </Grid>

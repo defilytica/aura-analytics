@@ -4,7 +4,7 @@ import {
     EthereumNetworkInfo,
     GnosisNetworkInfo,
     OptimismNetworkInfo,
-    PolygonNetworkInfo
+    PolygonNetworkInfo, PolygonZkEVMNetworkInfo
 } from "../constants/networks";
 
 export const healthClient = new ApolloClient({
@@ -119,6 +119,35 @@ export const auraOptimismClient = new ApolloClient({
 export const auraPolygonClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-polygon',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraPolygonZkEVMClient = new ApolloClient({
+    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: 'https://subgraph.satsuma-prod.com/3c56113393d7/1xhub-ltd/aura-finance-zkevm/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -503,6 +532,8 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
             return auraArbitrumClient;
         case PolygonNetworkInfo.chainId:
             return auraPolygonClient;
+        case PolygonZkEVMNetworkInfo.chainId:
+            return auraPolygonZkEVMClient;
         case OptimismNetworkInfo.chainId:
             return auraOptimismClient;
         case GnosisNetworkInfo.chainId:
