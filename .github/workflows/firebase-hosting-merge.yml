@@ -52,3 +52,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_AURA_ANALYTICS_1C4B3 }}'
           channelId: live
           projectId: aura-analytics-1c4b3
+          firebaseToolsVersion: 12.7.0
