@@ -267,6 +267,7 @@ function Dashboard() {
                                     <Route path={networkPrefix(activeNetwork) + 'aurabal'} element={<AuraBAL/>}/>
                                     <Route path={networkPrefix(activeNetwork) + 'voting-incentives'}
                                            element={<VotingIncentives/>}/>
+                                    <Route path={networkPrefix(activeNetwork) + 'incentiveSimulator'} element={<IncentiveSimulator/>} />
                                     <Route path={'incentiveSimulator'} element={<IncentiveSimulator/>} />
                                     {/* Router v6: no query searches possible anymore. Provide all possible paths */}
                                     <Route path={"/:networkID/pools/:poolId"} element={<PoolPage/>}/>

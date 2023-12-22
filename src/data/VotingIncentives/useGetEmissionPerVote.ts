@@ -15,7 +15,6 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const timestamps = AURA_TIMESTAMPS;
     const indexOfCurrent = timestamps.indexOf(timestampCurrentRound);
     const timestampPreviousRound = timestamps[indexOfCurrent - 1]
-    console.log("timestampPreviousRound", timestampPreviousRound)
     // If a round is currently active we need to set the appropriate pattern
 
     const [emissionValuePerVote, setEmissionValuePerVote] = useState(0);
@@ -23,9 +22,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
     const auraGlobalStats = useAuraGlobalStats();
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
-
     const hiddenHandDataPrevious = useGetHiddenHandVotingIncentives(String(timestampPreviousRound));
-    console.log("timestamp", Date.now())
 
     useEffect(() => {
         const fetchData = async () => {

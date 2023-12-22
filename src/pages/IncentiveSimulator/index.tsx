@@ -17,10 +17,7 @@ import {
 import {BalancerSDK, balEmissions} from "@balancer-labs/sdk";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import MetricsCard from "../../components/Cards/MetricsCard";
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import {useGetTotalVeBAL} from "../../data/balancer/useGetTotalVeBAL";
 import {useBalancerPools} from "../../data/balancer/usePools";
-import HiddenHandCard from "../../components/Cards/HiddenHandCard";
 import {useEffect, useState} from "react";
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import { useCoinGeckoSimpleTokenPrices } from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
@@ -31,11 +28,10 @@ import {formatDollarAmount, formatNumber} from "../../utils/numbers";
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
 import { HiddenHandIncentives } from "../../data/hidden-hand/hiddenHandTypes";
-import { calculateAPR, calculateBribeValue } from "./bribeHelpers";
+import {calculateAPR, calculateAPRforAura, calculateBribeValue, calculateBribeValueForAura} from "./bribeHelpers";
 import useGetGaugeRelativeWeights from "../../data/balancer/useGetGaugeEmissions";
 import useDecorateL1Gauges from "../../data/balancer/useDecorateL1Gauges";
 import useDecorateL2Gauges from "../../data/balancer/useDeocrateL2Gauges";
-import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
 import PoolCurrencyLogo from "../../components/PoolCurrencyLogo";
 import Switch from "@mui/material/Switch";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
@@ -44,7 +40,16 @@ import AuraIcon from "../../assets/png/AURA_ISO_colors.png";
 import TokenIcon from "@mui/icons-material/Token";
 import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
-import {AddShoppingCart} from "@mui/icons-material";
+import {AddShoppingCart, ShoppingCartCheckout} from "@mui/icons-material";
+import {unixToDate} from "../../utils/date";
+import TableContainer from "@mui/material/TableContainer";
+import Paper from "@mui/material/Paper";
+import {useTheme} from "@mui/material/styles";
+
+interface TableData {
+    parameter: string;
+    value: string;
+}
 
 // TODO: put somewhere else
 //  Helper functions to parse data types to Llama model
@@ -93,18 +98,16 @@ type Pool = {
 export default function BribeSimulator() {
     // Fetch relevant data
     const [activeNetwork] = useActiveNetworkVersion();
+    const theme = useTheme();
     const balAddress = "0xba100000625a3754423978a60c9317c58a424e3d";
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
-    const totalVeBAL = useGetTotalVeBAL();
     const pools = useBalancerPools();
-    // TODO: take average of historical incentives for estimation
-    const hhIncentives = useGetHiddenHandVotingIncentives('1690416000');
+
     const auraGlobalStats = useAuraGlobalStats();
     const gaugeData = useGetBalancerStakingGauges();
     const l1GaugeData = useDecorateL1Gauges(gaugeData);
     const decoratedGaugeData = useDecorateL2Gauges(l1GaugeData);
     const gaugeRelativeWeights = useGetGaugeRelativeWeights(decoratedGaugeData);
-    console.log(gaugeRelativeWeights);
 
     // New state to hold the checkbox value
     const [useNewPoolValue, setUseNewPoolValue] = useState(false);
@@ -119,7 +122,9 @@ export default function BribeSimulator() {
 
     //Emission stats
     const timestamps = AURA_TIMESTAMPS;
-    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 1]); // Default timestamp
+    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 2]); // Default timestamp
+    // TODO: take average of historical incentives for estimation
+    const hhIncentives = useGetHiddenHandVotingIncentives(currentRoundNew.toString());
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
 
     //States
@@ -144,28 +149,9 @@ export default function BribeSimulator() {
         newValue: Pool | null
     ) => {
         setSelectedPoolId(newValue ? newValue.address : "");
+        setBribeValue(0);
+        setTargetAPR(0);
 
-        if (gaugeRelativeWeights && newValue) {
-            const val = newValue.address.toLowerCase(); // Use toLowerCase() function here
-            const selectedGauge = gaugeRelativeWeights.find(
-                (gauge) => gauge.pool.address.toLowerCase() === val // Use toLowerCase() function here
-            );
-            if (selectedPoolId) {
-                // Otherwise, use the TVL of the selected pool from the pools object
-                const selectedPool = pools.find(
-                    (pool) => pool.address === newValue.address
-                );
-                if (selectedPool) {
-                    setPricePerBPT(selectedPool.tvlUSD / (selectedPool.totalShares));
-                }
-            }
-            if (selectedGauge) {
-                setGaugeRelativeWeight(selectedGauge.gaugeRelativeWeight);
-                setAllocatedVotes(parseFloat(selectedGauge.gaugeVotes.toFixed(2)));
-                const balPrice =
-                    setTargetAPR(selectedGauge.gaugeRelativeWeight * weeklyEmissions * 4.29 * 52 / (pricePerBPT * Number(selectedGauge.totalSupply) / 10e17))
-            }
-        }
     };
 
 
@@ -184,6 +170,19 @@ export default function BribeSimulator() {
         setBribeValue(Number(bribeValue));
     };
 
+    const handleAuraTargetAPRChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setTargetAPR(parseFloat(event.target.value));
+        let bribeValue = calculateBribeValueForAura(
+            emissionValuePerVote,
+            incentivePerVote,
+            Number(event.target.value),
+            customPoolValue,
+        );
+        setBribeValue(Number(bribeValue));
+    };
+
     // Handler for when a project wants to experiment with the amount of their bribe
     const handleBribeValueChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -194,6 +193,19 @@ export default function BribeSimulator() {
             customPoolValue,
             emissionPerVote,
             incentivePerVote
+        );
+        setTargetAPR(Number(newTargetAPR));
+    };
+
+    const handleAuraBribeValuechange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setBribeValue(parseFloat(event.target.value));
+        let newTargetAPR = calculateAPRforAura(
+            emissionValuePerVote,
+            incentivePerVote,
+            Number(event.target.value),
+            customPoolValue,
         );
         setTargetAPR(Number(newTargetAPR));
     };
@@ -228,7 +240,6 @@ export default function BribeSimulator() {
                 setAllocatedVotes(parseFloat(selectedGauge.gaugeVotes.toFixed(2)));
                 const balPrice = coinData ? coinData[balAddress].usd : 0;
                 setTargetAPR(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * balPrice * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)));
-                console.log(selectedGauge.gaugeRelativeWeight)
             }
         }
     }, [gaugeRelativeWeights, selectedPoolId, weeklyEmissions, pricePerBPT]);
@@ -246,6 +257,7 @@ export default function BribeSimulator() {
             } else if (selectedPoolId) {
                 // Otherwise, use the TVL of the selected pool from the pools object
                 const selectedPool = pools.find((pool) => pool.address === selectedPoolId);
+                console.log("selectedPool", selectedPool)
                 if (selectedPool) {
                     setCustomPoolValue(selectedPool.tvlUSD);
                     setPricePerBPT(selectedPool.tvlUSD / selectedPool.totalShares);
@@ -273,6 +285,9 @@ export default function BribeSimulator() {
             const emissionEff = emissionValue / emissionVotes;
 
             setIncentivePerVote(incentiveEfficency);
+            console.log("incentiveEfficiency", incentiveEfficency)
+            console.log("totalValue", totalValue)
+            console.log("totalVotes", totalVotes)
             setEmissionPerVote(emissionEff);
             setRoundIncentives(totalValue);
         }
@@ -283,6 +298,17 @@ export default function BribeSimulator() {
     const selectedGauge = gaugeRelativeWeights.find(
         (gauge) => gauge.pool.address.toLowerCase() === val
     );
+
+    // Display Table POC
+    const rows: TableData[] = [
+            { parameter: 'Incentive Budget (bi-weekly)', value: bribeValue.toString() },
+            { parameter: 'Pool size', value: formatDollarAmount(selectedPool? selectedPool.tvlUSD : 0 )  },
+            { parameter: 'Voting incentive cost per vlAURA', value: '$' + formatNumber(incentivePerVote, 3) },
+            { parameter: 'vlAURA votes', value: formatNumber(bribeValue / incentivePerVote) },
+            { parameter: 'Emission per vlAURA', value: formatDollarAmount(emissionValuePerVote) },
+            { parameter: 'Total Emission (bi-weekly)', value: formatDollarAmount(emissionValuePerVote * bribeValue / incentivePerVote) },
+            { parameter: 'APR', value: targetAPR.toString() + '%' },
+        ];
 
     return (
         <Box
@@ -296,92 +322,9 @@ export default function BribeSimulator() {
             <Grid container spacing={2} sx={{ justifyContent: "center" }}>
                 {/* Voting Incentive Placement Simulator Title */}
                 <Grid item xs={11} md={9}>
-                    <Typography variant={"h5"}>
+                    <Typography variant={"h4"}>
                         Aura Ecosystem Voting Incentive Placement Simulator
                     </Typography>
-                </Grid>
-
-                {/* HiddenHandCard */}
-                <Grid item xs={11} md={9}>
-                    <Grid
-                        container
-                        columns={{ xs: 4, sm: 8, md: 12 }}
-                        sx={{
-                            justifyContent: { md: "space-between", xs: "center" },
-                            alignContent: "center",
-                        }}
-                    >
-                        <Box mr={1}>
-                            <HiddenHandCard />
-
-                        </Box>
-                        <Box>
-                            <PaladinQuestsCard />
-                        </Box>
-                    </Grid>
-                </Grid>
-
-                {/* Ecosystem Configuration */}
-                <Grid item xs={11} md={9}>
-                    <Typography variant={"h5"}>veBAL Tokenomics</Typography>
-                </Grid>
-
-                <Grid item xs={11} md={9}>
-                    <Grid
-                        container
-                        columns={{ xs: 4, sm: 8, md: 12 }}
-                        sx={{
-                            justifyContent: { md: "flex-start", xs: "center" },
-                            alignContent: "center",
-                        }}
-                    >
-                        {coinData && coinData[balAddress] && coinData[balAddress].usd ? (
-                            <Box mr={1}>
-                                <CoinCard
-                                    tokenAddress={balAddress}
-                                    tokenName="BAL"
-                                    tokenPrice={coinData[balAddress].usd}
-                                    tokenPriceChange={coinData[balAddress].usd_24h_change}
-                                />
-                            </Box>
-
-                        ) : (
-                            <CircularProgress />
-                        )}
-                        <Box mr={1}>
-                            <MetricsCard
-                                mainMetric={weeklyEmissions}
-                                mainMetricInUSD={false}
-                                mainMetricUnit={" BAL"}
-                                metricName={"Weekly BAL"}
-                                MetricIcon={AutoAwesomeIcon}
-                            />
-                        </Box>
-                        <Box mr={1}>
-                            <MetricsCard
-                                mainMetric={totalVeBAL}
-                                mainMetricInUSD={false}
-                                mainMetricUnit={" BAL"}
-                                metricName={"Total veBAL"}
-                                MetricIcon={AutoAwesomeIcon}
-                            />
-                        </Box>
-                        {/* <Box ml={1}>
-                {hhIncentives ? (
-                    <MetricsCard
-                        mainMetric={
-                            1 + (emissionPerVote - incentivePerVote) / emissionPerVote
-                        }
-                        metricName={"HH Emissions per $1"}
-                        mainMetricInUSD={true}
-                        metricDecimals={4}
-                        MetricIcon={Handshake}
-                    />
-                ) : (
-                    <CircularProgress />
-                )}
-              </Box> */}
-                    </Grid>
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <Typography variant={"h5"}>AURA Tokenomics</Typography>
@@ -396,7 +339,7 @@ export default function BribeSimulator() {
                         }}
                     >
                         {coinData && coinData[auraAddress] && coinData[auraAddress].usd ? (
-                            <Box mr={1}>
+                            <Box m={{xs: 0, sm: 1}}>
                                 <CoinCard
                                     tokenAddress={auraAddress}
                                     tokenName="AURA"
@@ -427,15 +370,7 @@ export default function BribeSimulator() {
                                 />
                                 : <CircularProgress/>}
                         </Box>
-                        <Box mr={1}>
-                            {emissionsPerDollarSpent ?
-                                <MetricsCard
-                                    mainMetric={emissionsPerDollarSpent}
-                                    metricName={"Emissions per $1"} mainMetricInUSD={true}
-                                    metricDecimals={4}
-                                    MetricIcon={AddShoppingCart}/>
-                                : <CircularProgress/>}
-                        </Box>
+
                         {/* <Box ml={1}>
                 {hhIncentives ? (
                     <MetricsCard
@@ -451,6 +386,36 @@ export default function BribeSimulator() {
                     <CircularProgress />
                 )}
               </Box> */}
+                    </Grid>
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Typography variant={"h5"}>HH Voting Market Metrics as of voting round {unixToDate(currentRoundNew)}</Typography>
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Grid
+                        container
+                        columns={{ xs: 4, sm: 8, md: 12 }}
+                        sx={{
+                            justifyContent: { md: "flex-start", xs: "center" },
+                            alignContent: "center",
+                        }}
+                    >
+                        <Box m={{xs: 0, sm: 1}}>
+                            {emissionValuePerVote ?
+                                <MetricsCard mainMetric={emissionValuePerVote} metricName={"Emission $/Vote"}
+                                             metricDecimals={4}
+                                             mainMetricInUSD={true} MetricIcon={ShoppingCartCheckout}/>
+                                : <CircularProgress/>}
+                        </Box>
+                        <Box m={{xs: 0, sm: 1}}>
+                            {emissionsPerDollarSpent ?
+                                <MetricsCard
+                                    mainMetric={emissionsPerDollarSpent}
+                                    metricName={"Emissions per $1"} mainMetricInUSD={true}
+                                    metricDecimals={4}
+                                    MetricIcon={AddShoppingCart}/>
+                                : <CircularProgress/>}
+                        </Box>
                     </Grid>
                 </Grid>
 
@@ -569,7 +534,7 @@ export default function BribeSimulator() {
                                     label="Target APR (%)"
                                     type="number"
                                     value={targetAPR}
-                                    onChange={handleTargetAPRChange}
+                                    onChange={handleAuraTargetAPRChange}
                                 />
                             </Box>
                             <Box m={1}>
@@ -580,12 +545,41 @@ export default function BribeSimulator() {
                                     label="Bribe Value ($)"
                                     type="number"
                                     value={bribeValue}
-                                    onChange={handleBribeValueChange}
+                                    onChange={handleAuraBribeValuechange}
                                 />
                             </Box>
                         </Box>
 
                     </Grid>
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Typography variant={'h5'}>Target Metrics</Typography>
+                </Grid>
+
+                <Grid item xs={11} md={9} mb={2}>
+                    {bribeValue || targetAPR ?
+                    <TableContainer component={Paper}>
+                        <Table aria-labelledby="tableTitle"
+                               size={'small'}
+                               sx={{borderColor: theme.palette.table.light}}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell style={{ fontWeight: 'bold' }}>Parameter</TableCell>
+                                    <TableCell align="right" style={{ fontWeight: 'bold' }}>Value</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {rows.map((row) => (
+                                    <TableRow key={row.parameter}>
+                                        <TableCell component="th" scope="row">
+                                            {row.parameter}
+                                        </TableCell>
+                                        <TableCell align="right">{row.value}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer> : <Typography>Set parameters</Typography> }
                 </Grid>
             </Grid>
         </Box>

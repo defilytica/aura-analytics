@@ -22,3 +22,23 @@ export function calculateAPR(bribeValue: number, poolTotalValue: number, emissio
 
      return Number(bribeValue).toFixed(2);
  }
+
+ export function calculateAPRforAura(emissionsPerVlAura: number, incentiveCostPerVlAura: number, bribeValue: number, poolTotalValue: number) {
+    let APR = 0.0;
+     const weeklyEmissions = emissionsPerVlAura * bribeValue / incentiveCostPerVlAura;
+     if (Number(bribeValue)) {
+         APR = weeklyEmissions / poolTotalValue * 26 * 100
+     }
+     console.log("Aura APR", APR)
+     return Number(APR).toFixed(2)
+ }
+
+export function calculateBribeValueForAura(emissionsPerVlAura: number, incentiveCostPerVlAura: number, targetAPR: number, poolTotalValue: number) {
+    let bribeValue = 0.0;
+
+    if (Number(targetAPR)) {
+        bribeValue = (targetAPR / (26 * 100) * poolTotalValue * incentiveCostPerVlAura) / emissionsPerVlAura
+    }
+    console.log("bribeValue", bribeValue)
+    return Number(bribeValue).toFixed(2)
+}
