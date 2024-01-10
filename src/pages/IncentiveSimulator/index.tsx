@@ -12,7 +12,7 @@ import {
     TableBody,
     TableHead,
     TableRow,
-    TableCell,
+    TableCell, Divider,
 } from '@mui/material';
 import {BalancerSDK, balEmissions} from "@balancer-labs/sdk";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
@@ -113,6 +113,9 @@ export default function BribeSimulator() {
     const [useNewPoolValue, setUseNewPoolValue] = useState(false);
     const [customPoolValue, setCustomPoolValue] = useState<number>(0); // New state to hold the custom poolValue
     const [hidePoolSelect, setHidePoolSelect] = useState<boolean>(false); // New state to hide the "Select a Pool" component
+
+    //Stats for LPs
+    const [customLPValue, setCustomLPValue] = useState<number>(0); // New state to hold the custom lpValue
 
     //BAL and AURA Stats
     const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
@@ -229,6 +232,13 @@ export default function BribeSimulator() {
         setBribeValue(0)
     };
 
+    const handleLPValueChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const newCustomLPValue = parseFloat(event.target.value);
+        setCustomLPValue(isNaN(newCustomLPValue) ? 0 : newCustomLPValue);
+    };
+
     useEffect(() => {
         if (gaugeRelativeWeights && selectedPoolId) {
             const val = selectedPoolId.toLowerCase();
@@ -239,6 +249,7 @@ export default function BribeSimulator() {
                 setGaugeRelativeWeight(selectedGauge.gaugeRelativeWeight);
                 setAllocatedVotes(parseFloat(selectedGauge.gaugeVotes.toFixed(2)));
                 const balPrice = coinData ? coinData[balAddress].usd : 0;
+                // TODO: what metric do we need here? emission per 1$ spent? gauge weight and aura emissions? Need Aura boost??
                 setTargetAPR(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * balPrice * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)));
             }
         }
@@ -300,15 +311,24 @@ export default function BribeSimulator() {
     );
 
     // Display Table POC
-    const rows: TableData[] = [
-            { parameter: 'Incentive Budget (bi-weekly)', value: bribeValue.toString() },
-            { parameter: 'Pool size', value: formatDollarAmount(selectedPool? selectedPool.tvlUSD : 0 )  },
-            { parameter: 'Voting incentive cost per vlAURA', value: '$' + formatNumber(incentivePerVote, 3) },
-            { parameter: 'vlAURA votes', value: formatNumber(bribeValue / incentivePerVote) },
-            { parameter: 'Emission per vlAURA', value: formatDollarAmount(emissionValuePerVote) },
-            { parameter: 'Total Emission (bi-weekly)', value: formatDollarAmount(emissionValuePerVote * bribeValue / incentivePerVote) },
-            { parameter: 'APR', value: targetAPR.toString() + '%' },
+    const votingIncentiveRows: TableData[] = [
+        { parameter: 'Incentive Budget (bi-weekly)', value: bribeValue.toString() },
+        { parameter: 'Pool size ($)', value: useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool? selectedPool.tvlUSD : 0 )  },
+        { parameter: 'Voting incentive cost per vlAURA', value: '$' + formatNumber(incentivePerVote, 3) },
+        { parameter: 'vlAURA votes', value: formatNumber(bribeValue / incentivePerVote) },
+        { parameter: 'Emission per vlAURA', value: formatDollarAmount(emissionValuePerVote) },
+        { parameter: 'Total Emission (bi-weekly)', value: formatDollarAmount(emissionValuePerVote * bribeValue / incentivePerVote) },
+        { parameter: 'Target APR', value: targetAPR.toString() + '%' },
         ];
+
+    const lpRows : TableData[] = [
+        { parameter: 'Position Value ($)', value: formatDollarAmount(customLPValue)},
+        { parameter: 'Target APR', value: targetAPR.toString() + '%' },
+        { parameter: 'Return (bi-weekly)', value: formatDollarAmount(customLPValue * targetAPR / 100 / 36) },
+        { parameter: 'Annual return', value: formatDollarAmount(customLPValue * targetAPR / 100) },
+
+
+    ];
 
     return (
         <Box
@@ -418,13 +438,12 @@ export default function BribeSimulator() {
                         </Box>
                     </Grid>
                 </Grid>
-
+                <Grid item xs={11} md={9}>
+                    <Divider/>
+                </Grid>
                 {/* Calculator-like layout */}
                 <Grid item xs={11} md={9}>
-                    <Typography variant={'h5'}>Simulator</Typography>
-                </Grid>
-                <Grid item xs={11} md={9}>
-                    <Typography variant={'h6'}>1. TVL Selection</Typography>
+                    <Typography fontWeight={'bold'} variant={'h5'}>TVL Selection</Typography>
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <FormControlLabel
@@ -434,7 +453,7 @@ export default function BribeSimulator() {
                                 onChange={handleUseNewPoolValueChange}
                             />
                         }
-                        label="Use Theoretical Pool Value ($)"
+                        label="Use custom value as pool TVL ($)"
                     />
                 </Grid>
                 {!hidePoolSelect && (
@@ -452,7 +471,7 @@ export default function BribeSimulator() {
                                         minWidth: "500px",
                                         maxWidth: "500px"
                                     }}
-                                    renderInput={(params) => <TextField {...params} label="Select a Pool" />}
+                                    renderInput={(params) => <TextField {...params} label="Select a Pool" size="small" />}
                                 />
                             </FormControl> :
                             <Box>
@@ -495,7 +514,7 @@ export default function BribeSimulator() {
                                                 </TableCell>
                                                 : <TableCell>-</TableCell>
                                             }
-                                            <TableCell>{formatDollarAmount(selectedPool.tvlUSD)}</TableCell>
+                                            <TableCell>{useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool.tvlUSD)}</TableCell>
                                             <TableCell>{formatNumber(allocatedVotes)}</TableCell>
                                             <TableCell>{formatNumber(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * (coinData ? coinData[balAddress].usd : 0) * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)))}</TableCell>
                                         </TableRow>
@@ -509,6 +528,7 @@ export default function BribeSimulator() {
                 {useNewPoolValue && (
                     <Grid item xs={11} md={9}>
                         <TextField
+                            size="small"
                             label="Theoretical Pool Value ($)"
                             type="number"
                             value={customPoolValue}
@@ -517,7 +537,7 @@ export default function BribeSimulator() {
                     </Grid>
                 )}
                 <Grid item xs={11} md={9}>
-                    <Typography variant={'h6'}>2. APR vs Bribe Value Simulation</Typography>
+                    <Typography fontWeight={'bold'} variant={'h5'}>Target APR vs. Voting Incentive Amount</Typography>
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <Grid
@@ -531,6 +551,7 @@ export default function BribeSimulator() {
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <Box mr={1}>
                                 <TextField
+                                    size="small"
                                     label="Target APR (%)"
                                     type="number"
                                     value={targetAPR}
@@ -542,6 +563,7 @@ export default function BribeSimulator() {
                             </Box>
                             <Box m={1}>
                                 <TextField
+                                    size="small"
                                     label="Bribe Value ($)"
                                     type="number"
                                     value={bribeValue}
@@ -553,9 +575,23 @@ export default function BribeSimulator() {
                     </Grid>
                 </Grid>
                 <Grid item xs={11} md={9}>
-                    <Typography variant={'h5'}>Target Metrics</Typography>
+                    <Typography fontWeight={'bold'} variant={'h5'}>Liquidity Provider Inputs</Typography>
                 </Grid>
-
+                <Grid item xs={11} md={9}>
+                    <TextField
+                        size="small"
+                        label="LP TVL ($)"
+                        type="number"
+                        value={customLPValue}
+                        onChange={handleLPValueChange}
+                    />
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Divider/>
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Typography variant={'h5'}>Voting Incentive Metrics</Typography>
+                </Grid>
                 <Grid item xs={11} md={9} mb={2}>
                     {bribeValue || targetAPR ?
                     <TableContainer component={Paper}>
@@ -569,7 +605,7 @@ export default function BribeSimulator() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {rows.map((row) => (
+                                {votingIncentiveRows.map((row) => (
                                     <TableRow key={row.parameter}>
                                         <TableCell component="th" scope="row">
                                             {row.parameter}
@@ -580,6 +616,34 @@ export default function BribeSimulator() {
                             </TableBody>
                         </Table>
                     </TableContainer> : <Typography>Set parameters</Typography> }
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <Typography variant={'h5'}>LP Metrics</Typography>
+                </Grid>
+                <Grid item xs={11} md={9} mb={2}>
+                    {customLPValue || targetAPR ?
+                        <TableContainer component={Paper}>
+                            <Table aria-labelledby="tableTitle"
+                                   size={'small'}
+                                   sx={{borderColor: theme.palette.table.light}}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell style={{ fontWeight: 'bold' }}>Parameter</TableCell>
+                                        <TableCell align="right" style={{ fontWeight: 'bold' }}>Value</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {lpRows.map((row) => (
+                                        <TableRow key={row.parameter}>
+                                            <TableCell component="th" scope="row">
+                                                {row.parameter}
+                                            </TableCell>
+                                            <TableCell align="right">{row.value}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer> : <Typography>Set parameters</Typography> }
                 </Grid>
             </Grid>
         </Box>
