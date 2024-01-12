@@ -117,6 +117,9 @@ export default function BribeSimulator() {
     //Stats for LPs
     const [customLPValue, setCustomLPValue] = useState<number>(0); // New state to hold the custom lpValue
 
+    //Protocol owned liquidity
+    const [isPOL, setIsPOL] = useState<boolean>(false);
+
     //BAL and AURA Stats
     const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
     const now = Math.round(new Date().getTime() / 1000);
@@ -222,6 +225,12 @@ export default function BribeSimulator() {
         setHidePoolSelect(event.target.checked);
     };
 
+    const handlePOLValueChange = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setIsPOL(event.target.checked);
+    };
+
     // Handler for the new custom pool value input field
     const handlePoolValueChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -324,10 +333,22 @@ export default function BribeSimulator() {
     const lpRows : TableData[] = [
         { parameter: 'Position Value ($)', value: formatDollarAmount(customLPValue)},
         { parameter: 'Target APR', value: targetAPR.toString() + '%' },
-        { parameter: 'Return (bi-weekly)', value: formatDollarAmount(customLPValue * targetAPR / 100 / 36) },
+        { parameter: 'Return (bi-weekly)', value: formatDollarAmount(customLPValue * targetAPR / 100 / 26) },
         { parameter: 'Annual return', value: formatDollarAmount(customLPValue * targetAPR / 100) },
 
 
+    ];
+
+    const polRows : TableData[] = [
+        { parameter: 'POL Position Value ($)', value: formatDollarAmount(customLPValue)},
+        { parameter: 'Pool size ($)', value: useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool? selectedPool.tvlUSD : 0 )  },
+        { parameter: 'Target APR', value: targetAPR.toString() + '%' },
+        { parameter: 'Return (bi-weekly)', value: formatDollarAmount(customLPValue * targetAPR / 100 / 26) },
+        { parameter: 'Annual return', value: formatDollarAmount(customLPValue * targetAPR / 100) },
+        { parameter: 'LP size to breakeven (pool %)', value: formatNumber(bribeValue / (emissionValuePerVote * bribeValue / incentivePerVote) * 100) + '%'},
+        { parameter: 'Incentives True Cost (bi-weekly)', value: formatDollarAmount(bribeValue - (customLPValue * targetAPR / 100 / 26))},
+        { parameter: 'Incentives True Cost (yearly)', value: formatDollarAmount(bribeValue - (customLPValue * targetAPR / 100))},
+        { parameter: 'Cost reduction, current LP (%)', value: formatNumber((1- (bribeValue - (customLPValue * targetAPR / 100))) / (bribeValue * 26) * 100) + '%'},
     ];
 
     return (
@@ -443,7 +464,7 @@ export default function BribeSimulator() {
                 </Grid>
                 {/* Calculator-like layout */}
                 <Grid item xs={11} md={9}>
-                    <Typography fontWeight={'bold'} variant={'h5'}>TVL Selection</Typography>
+                    <Typography fontWeight={'bold'} variant={'h5'}>Pool Parameter Selection</Typography>
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <FormControlLabel
@@ -575,7 +596,18 @@ export default function BribeSimulator() {
                     </Grid>
                 </Grid>
                 <Grid item xs={11} md={9}>
-                    <Typography fontWeight={'bold'} variant={'h5'}>Liquidity Provider Inputs</Typography>
+                    <Typography fontWeight={'bold'} variant={'h5'}>Liquidity Provider (LP) Inputs</Typography>
+                </Grid>
+                <Grid item xs={11} md={9}>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={isPOL}
+                                onChange={handlePOLValueChange}
+                            />
+                        }
+                        label="Protocol Owned Liquidity (POL)"
+                    />
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <TextField
@@ -585,6 +617,7 @@ export default function BribeSimulator() {
                         value={customLPValue}
                         onChange={handleLPValueChange}
                     />
+
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <Divider/>
@@ -617,11 +650,13 @@ export default function BribeSimulator() {
                         </Table>
                     </TableContainer> : <Typography>Set parameters</Typography> }
                 </Grid>
+                {!isPOL ?
                 <Grid item xs={11} md={9}>
                     <Typography variant={'h5'}>LP Metrics</Typography>
-                </Grid>
+                </Grid> : null }
+                {!isPOL ?
                 <Grid item xs={11} md={9} mb={2}>
-                    {customLPValue || targetAPR ?
+                    { customLPValue || targetAPR ?
                         <TableContainer component={Paper}>
                             <Table aria-labelledby="tableTitle"
                                    size={'small'}
@@ -644,7 +679,37 @@ export default function BribeSimulator() {
                                 </TableBody>
                             </Table>
                         </TableContainer> : <Typography>Set parameters</Typography> }
-                </Grid>
+                </Grid> : null }
+                {isPOL ?
+                <Grid item xs={11} md={9}>
+                    <Typography variant={'h5'}>POL Metrics</Typography>
+                </Grid> : null  }
+                {isPOL ?
+                <Grid item xs={11} md={9} mb={2}>
+                    {bribeValue ?
+                        <TableContainer component={Paper}>
+                            <Table aria-labelledby="tableTitle"
+                                   size={'small'}
+                                   sx={{borderColor: theme.palette.table.light}}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell style={{ fontWeight: 'bold' }}>Parameter</TableCell>
+                                        <TableCell align="right" style={{ fontWeight: 'bold' }}>Value</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {polRows.map((row) => (
+                                        <TableRow key={row.parameter}>
+                                            <TableCell component="th" scope="row">
+                                                {row.parameter}
+                                            </TableCell>
+                                            <TableCell align="right">{row.value}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer> : <Typography>Set parameters</Typography> }
+                </Grid> : null }
             </Grid>
         </Box>
     );
