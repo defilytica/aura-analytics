@@ -24,6 +24,7 @@ import EtherLogo from '../../../assets/svg/ethereum.svg'
 import PolygonLogo from '../../../assets/svg/polygon.svg'
 import GnosisLogo from '../../../assets/svg/gnosis.svg'
 import OpLogo from '../../../assets/svg/optimism.svg'
+import AvalancheLogo from '../../../assets/svg/avalancheLogo.svg'
 import {BalancerStakingGauges, SimplePoolData} from "../../../data/balancer/balancerTypes";
 import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import GaugeComposition from "../../GaugeComposition";
@@ -323,7 +324,8 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
         OPTIMISM: OpLogo,
         POLYGON: PolygonLogo,
         GNOSIS: GnosisLogo,
-        ARBITRUM: ArbitrumLogo
+        ARBITRUM: ArbitrumLogo,
+        AVALANCHE: AvalancheLogo,
     };
 
     const networkStringMap :NetworkLogoMap = {
@@ -331,7 +333,8 @@ export default function IncentivesTable({gaugeDatas, currentRound}: {
         OPTIMISM: "Optimism",
         POLYGON: "Polygon",
         GNOSIS: "Gnosis",
-        ARBITRUM: "Arbitrum"
+        ARBITRUM: "Arbitrum",
+        AVALANCHE: "Avalanche"
     };
 
     let filename = "Aura-VotingIncentives-" + unixToDate(currentRound) + ".csv";

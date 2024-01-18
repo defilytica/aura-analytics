@@ -276,6 +276,11 @@ export default function AuraLocks() {
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Weekly Aura Unlocks</Typography>
                             </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Aggregated weekly amount of Aura that can be removed from the Aura Locker.
+                                </Typography>
+                            </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <GenericBarChart data={unlockAmounts} customUnit={'vlAura'}/>
                             </Card>
@@ -283,6 +288,11 @@ export default function AuraLocks() {
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Weekly Aura Re-Locks vs Withdrawals</Typography>
+                            </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Relationship analysis of weekly unlocks vs withdrawals to infer Aura locker retention.
+                                </Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
@@ -293,6 +303,11 @@ export default function AuraLocks() {
                                 <Typography sx={{fontSize: '24px'}}>Weekly Percentage Aura Re-Locks vs
                                     Withdrawals</Typography>
                             </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Relative user retention metric to relock Aura
+                                </Typography>
+                            </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalPercentageBarChart filteredChartData={filteredChartData}/>
                             </Card>
@@ -300,6 +315,11 @@ export default function AuraLocks() {
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Top Depositors</Typography>
+                            </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Leaderboard of vlAura holders
+                                </Typography>
                             </Box>
                             <Grid item xs={11} sm={9}>
                                 <Grid

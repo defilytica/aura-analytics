@@ -20,18 +20,18 @@ export default function useGetBalancerV3StakingGauges() {
     const adaptToBalancerStakingGauges = (data: any): BalancerStakingGauges[] => {
         const rawData = data.veBalGetVotingList;
 
-        const noDupes = rawData.filter((e: any) => {
-            return !e.gauge.isKilled;
-        });
+        //const noDupes = rawData.filter((e: any) => {
+        //    return !e.gauge.isKilled;
+        //});
 
         const poolIds = new Map();
-        noDupes.forEach((e: any) => {
+        rawData.forEach((e: any) => {
             const id = e.id;
             poolIds.set(id, (poolIds.get(id) || 0) + 1);
         });
 
         const maxTimestamp = new Map();
-        noDupes.forEach((e: any) => {
+        rawData.forEach((e: any) => {
             const id = e.id;
             if (poolIds.get(id) > 1) {
                 if (!maxTimestamp.has(id) || e.gauge.addedTimestamp > maxTimestamp.get(id)) {
@@ -40,7 +40,7 @@ export default function useGetBalancerV3StakingGauges() {
             }
         });
         //Map to BalancerStakingGauges object
-        const gauges: BalancerStakingGauges[] = noDupes.map(createGauge);
+        const gauges: BalancerStakingGauges[] = rawData.map(createGauge);
          // Filter testnets
         return gauges.filter(gauge => gauge.network !== 'GOERLI');
     };

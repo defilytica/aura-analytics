@@ -340,7 +340,11 @@ export default function Protocol() {
                                             mainMetricInUSD={true}
                                             mainMetricChange={tvlChange}
                                             MetricIcon={MonetizationOnIcon}
-                                            metricName={"Protocol TVL"}/>
+                                            metricName={"Staked TVL"}
+                                            toolTipText={
+                                                "The total value locked (TVL) in all Aura gauges across all networks."
+                                            }
+                                        />
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={{xs: 0, sm: 1}}>
@@ -350,7 +354,13 @@ export default function Protocol() {
                                             mainMetricInUSD={true}
                                             mainMetricChange={volumeChange}
                                             MetricIcon={MonetizationOnIcon}
-                                            metricName={"Protocol Volume"}/>
+                                            metricName={"Staking Volume"}
+                                            toolTipText={
+                                            "The Staking Volume Metric depicts the volume of " +
+                                                "stakes and unstakes in the Aura Gauges"
+                                        }
+                                        />
+
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={{xs: 0, sm: 1}}>
@@ -383,6 +393,9 @@ export default function Protocol() {
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Staking TVL</Typography>
                         </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>Total value locked (TVL) across all Aura staking gauges.</Typography>
+                        </Grid>
 
                         {sortedTvlData ?
                             <Grid item xs={11} sm={9}>
@@ -403,6 +416,12 @@ export default function Protocol() {
                         }
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Staking Volume</Typography>
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>
+                                Relative change of stakes vs. unstakes in Aura gauges.
+                                This is an indirect measure of protocol activity as users move funds into or out of Aura gauges
+                            </Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?
@@ -425,6 +444,11 @@ export default function Protocol() {
 
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Balancer TVL captured</Typography>
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>
+                                The percentage of TVL that is staked in Aura gauges relative to overall TVL in Balancer pools.
+                            </Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?
