@@ -45,6 +45,7 @@ import {unixToDate} from "../../utils/date";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import {useTheme} from "@mui/material/styles";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 interface TableData {
     parameter: string;
@@ -121,7 +122,8 @@ export default function BribeSimulator() {
     const [isPOL, setIsPOL] = useState<boolean>(false);
 
     //BAL and AURA Stats
-    const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
+    //const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
+    const coinData = useGetSimpleTokenPrices([balAddress, auraAddress], activeNetwork.chainId);
     const now = Math.round(new Date().getTime() / 1000);
     const weeklyEmissions = balEmissions.weekly(now);
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
@@ -257,7 +259,7 @@ export default function BribeSimulator() {
             if (selectedGauge) {
                 setGaugeRelativeWeight(selectedGauge.gaugeRelativeWeight);
                 setAllocatedVotes(parseFloat(selectedGauge.gaugeVotes.toFixed(2)));
-                const balPrice = coinData ? coinData[balAddress].usd : 0;
+                const balPrice = coinData ? coinData.data[balAddress].price : 0;
                 // TODO: what metric do we need here? emission per 1$ spent? gauge weight and aura emissions? Need Aura boost??
                 setTargetAPR(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * balPrice * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)));
             }
@@ -379,13 +381,13 @@ export default function BribeSimulator() {
                             alignContent: "center",
                         }}
                     >
-                        {coinData && coinData[auraAddress] && coinData[auraAddress].usd ? (
+                        {coinData && coinData.data[auraAddress] && coinData.data[auraAddress].price ? (
                             <Box m={{xs: 0, sm: 1}}>
                                 <CoinCard
                                     tokenAddress={auraAddress}
                                     tokenName="AURA"
-                                    tokenPrice={coinData[auraAddress].usd}
-                                    tokenPriceChange={coinData[auraAddress].usd_24h_change}
+                                    tokenPrice={coinData.data[auraAddress].price}
+                                    tokenPriceChange={coinData.data[auraAddress].priceChangePercentage24h}
                                 />
                             </Box>
 
@@ -537,7 +539,7 @@ export default function BribeSimulator() {
                                             }
                                             <TableCell>{useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool.tvlUSD)}</TableCell>
                                             <TableCell>{formatNumber(allocatedVotes)}</TableCell>
-                                            <TableCell>{formatNumber(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * (coinData ? coinData[balAddress].usd : 0) * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)))}</TableCell>
+                                            <TableCell>{formatNumber(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * (coinData ? coinData.data[auraAddress].price : 0) * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)))}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>

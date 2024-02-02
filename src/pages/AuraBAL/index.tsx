@@ -33,6 +33,7 @@ import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
 import {ArbitrumNetworkInfo, EthereumNetworkInfo, PolygonNetworkInfo} from "../../constants/networks";
 import React from "react";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 
 export default function AuraBAL() {
@@ -69,7 +70,8 @@ export default function AuraBAL() {
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
         startTimeStamp = 1690495200
     }
-    const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
+    const coinData = useGetSimpleTokenPrices([auraBALMainnet], '1');
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
     const auraBalBannerLight = require('../../assets/png/aurabal-light.png');
@@ -242,12 +244,12 @@ export default function AuraBAL() {
                         sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
-                            {coinData && coinData[auraBALMainnet] && coinData[auraBALMainnet].usd ?
+                            {coinData && coinData.data[auraBALMainnet] && coinData.data[auraBALMainnet].price ?
                                 <CoinCard
                                     tokenAddress={auraBALMainnet}
                                     tokenName='auraBAL'
-                                    tokenPrice={coinData[auraBALMainnet].usd}
-                                    tokenPriceChange={coinData[auraBALMainnet].usd_24h_change}
+                                    tokenPrice={coinData.data[auraBALMainnet].price}
+                                    tokenPriceChange={coinData.data[auraBALMainnet].priceChangePercentage24h}
 
                                 />
                                 : <CircularProgress/>}

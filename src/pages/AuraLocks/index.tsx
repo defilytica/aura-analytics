@@ -22,6 +22,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
 import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -30,7 +31,8 @@ export default function AuraLocks() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
-    const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    const coinData = useGetSimpleTokenPrices([auraAddress], '1');
     const auraGlobalStats = useAuraGlobalStats();
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []
@@ -345,7 +347,7 @@ export default function AuraLocks() {
                                 </Grid>
                             </Grid>
                             <LockerTable lockerAccounts={lockers}
-                                         auraUSD={coinData?.[auraAddress].usd}
+                                         auraUSD={coinData?.data[auraAddress].price}
                                          totalAmountLocked={totalLockedAmount}
                                          page={page}
                                          setPage={setPage}
