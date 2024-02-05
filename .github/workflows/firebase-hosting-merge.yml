@@ -35,6 +35,7 @@ jobs:
       REACT_APP_INFURA_KEY: '${{ secrets.REACT_APP_INFURA_KEY }}'
       REACT_APP_ALCHEMY_KEY: '${{ secrets.REACT_APP_ALCHEMY_KEY }}'
       REACT_APP_ALCHEMY_URL: '${{ secrets.REACT_APP_ALCHEMY_URL }}'
+      REACT_APP_CG_KEY: '${{ secrets.REACT_APP_CG_KEY }}'
     strategy:
       matrix:
         node-version: [ 16.x ]
