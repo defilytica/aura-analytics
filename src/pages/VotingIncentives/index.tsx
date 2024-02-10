@@ -14,7 +14,7 @@ import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/Singl
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
-import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
+import {AURA_TIMESTAMPS, HISTORICAL_AURA_PRICE} from "../../data/hidden-hand/constants";
 import {BalancerStakingGauges} from "../../data/balancer/balancerTypes";
 import {decorateGaugesWithIncentives} from "./helpers";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
@@ -31,6 +31,7 @@ import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/Aur
 import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
+import {useCoinGeckoSingleTokenData} from "../../data/coingecko/useCoinGeckoSingleTokenData";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -89,8 +90,13 @@ export default function VotingIncentives() {
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
-    const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    //const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    const timeStampNow = Math.floor(Date.now() / 1000);
+    const priceData = HISTORICAL_AURA_PRICE
+    //const { priceData } = useCoinGeckoSingleTokenData(AURA_TOKEN_MAINNET, 1652193575, timeStampNow)
+
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
+
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
