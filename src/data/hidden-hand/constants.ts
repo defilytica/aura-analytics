@@ -6259,5 +6259,9 @@ export const HISTORICAL_AURA_PRICE = [
     {
         "value": 0.7006394479902405,
         "time": "2024-02-10"
+    },
+    {
+        "value": 0.7773,
+        "time": "2024-02-19"
     }
 ]
