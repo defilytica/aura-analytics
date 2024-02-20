@@ -28,11 +28,13 @@ const Description = styled(Typography)(({ theme }) => ({
 }));
 
 const LogoImage = styled('img')({
-    height: '80px',
-    objectFit: 'contain',
+    height: '60px',
+    width: 'auto',
     alignSelf: 'flex-end',
-    backgroundImage: `url(${OrbBg})`,
+    background: `url(${OrbBg}) no-repeat center center`,
     backgroundSize: 'cover',
+    overflow: 'hidden',
+    border: 'none',
 });
 
 const LogoContainer = styled(Grid)({
@@ -46,7 +48,7 @@ const HiddenHandCard = () => {
             <ContentContainer container>
                 <Grid item xs={9}>
                     <Title variant="h5">HiddenHand</Title>
-                    <Description variant="body1">
+                    <Description variant="body2">
                         Explore a range of voting incentives available
                     </Description>
                 </Grid>

@@ -22,6 +22,7 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import CustomLinearProgress from "../../components/Progress/CustomLinearProgress";
 import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -30,7 +31,8 @@ export default function AuraLocks() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
-    const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    const coinData = useGetSimpleTokenPrices([auraAddress], '1');
     const auraGlobalStats = useAuraGlobalStats();
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []
@@ -276,6 +278,11 @@ export default function AuraLocks() {
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Weekly Aura Unlocks</Typography>
                             </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Aggregated weekly amount of Aura that can be removed from the Aura Locker.
+                                </Typography>
+                            </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <GenericBarChart data={unlockAmounts} customUnit={'vlAura'}/>
                             </Card>
@@ -283,6 +290,11 @@ export default function AuraLocks() {
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Weekly Aura Re-Locks vs Withdrawals</Typography>
+                            </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Relationship analysis of weekly unlocks vs withdrawals to infer Aura locker retention.
+                                </Typography>
                             </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalsChart filteredChartData={filteredChartData}/>
@@ -293,6 +305,11 @@ export default function AuraLocks() {
                                 <Typography sx={{fontSize: '24px'}}>Weekly Percentage Aura Re-Locks vs
                                     Withdrawals</Typography>
                             </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Relative user retention metric to relock Aura
+                                </Typography>
+                            </Box>
                             <Card sx={{boxShadow: 3}}>
                                 <PastUnlocksWithdrawalPercentageBarChart filteredChartData={filteredChartData}/>
                             </Card>
@@ -300,6 +317,11 @@ export default function AuraLocks() {
                         <Grid item xs={11} sm={9}>
                             <Box mb={1}>
                                 <Typography sx={{fontSize: '24px'}}>Top Depositors</Typography>
+                            </Box>
+                            <Box mb={1}>
+                                <Typography sx={{fontSize: '12px'}}>
+                                    Leaderboard of vlAura holders
+                                </Typography>
                             </Box>
                             <Grid item xs={11} sm={9}>
                                 <Grid
@@ -325,7 +347,7 @@ export default function AuraLocks() {
                                 </Grid>
                             </Grid>
                             <LockerTable lockerAccounts={lockers}
-                                         auraUSD={coinData?.[auraAddress].usd}
+                                         auraUSD={coinData?.data[auraAddress].price}
                                          totalAmountLocked={totalLockedAmount}
                                          page={page}
                                          setPage={setPage}

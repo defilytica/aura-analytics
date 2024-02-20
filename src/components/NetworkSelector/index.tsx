@@ -31,8 +31,9 @@ const updatePathForNetwork = (network: NetworkInfo, currentPath: string) => {
             newPath = 'optimism/pools';
         } else if (network == PolygonZkEVMNetworkInfo) {
             newPath = 'zkevm/pools';
+        } else {
+            newPath = `/${network.name.toLowerCase()}/pools`
         }
-        newPath =`/${network.name.toLowerCase()}/pools`
         return newPath;
     }
 

@@ -19,6 +19,8 @@ import {CoingeckoRawData} from "../../data/coingecko/getCoingecoSimpleTokenPrice
 import {useBalancerPoolsHistorically} from "../../data/balancer/useBalancerPoolsHistorically";
 import {CapturedTVL} from "../../data/aura/auraTypes";
 import {ProtocolMultiLineChart} from '../../components/Echarts/ProtocolCharts/ProtocolMultiLineChart';
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {TokenPrices} from "../../data/balancer/balancerTypes";
 
 export default function Protocol() {
     const [timeRange, setTimeRange] = useState(30);
@@ -80,7 +82,8 @@ export default function Protocol() {
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
 
     // Hooks to fetch data
-    const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
+    const coinData = useGetSimpleTokenPrices([auraAddress], '1');
     const auraGlobalStats = useAuraGlobalStats();
 
     const balancerPools = useBalancerPoolsHistorically('eth');
@@ -150,11 +153,11 @@ export default function Protocol() {
         sliceAndSetData(sortedTvlDataZkevm, timeRange, setDisplayPoolDataZkevm);
     }, [sortedTvlData, sortedTvlDataArb, sortedTvlDataOpt, sortedTvlDataPoly, sortedTvlDataGnosis, sortedTvlDataBase, sortedTvlDataZkevm, timeRange]);
 
-    const processTransactions = (transactions: Volume[], coinData: CoingeckoRawData) => {
+    const processTransactions = (transactions: Volume[], coinData: TokenPrices) => {
         return transactions
             .sort((a, b) => b.date - a.date)
             .map(({volume, date}) => ({
-                value: volume * coinData[auraAddress].usd,
+                value: volume * coinData[auraAddress].price,
                 time: new Date(date * 1000).toLocaleDateString('en-US')
             }))
             .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
@@ -271,25 +274,25 @@ export default function Protocol() {
             let tempTvlChange = (tempTvlDollar - tempTvlDollarForChange) / tempTvlDollarForChange * 100;
             setTvlChange(tempTvlChange);
 
-            const tempSortedTransactions = processTransactions(poolTransactions, coinData);
+            const tempSortedTransactions = processTransactions(poolTransactions, coinData.data);
             setSortedPoolTransactions(tempSortedTransactions);
 
-            const tempSortedTransactionsArb = processTransactions(poolTransactionsArb, coinData);
+            const tempSortedTransactionsArb = processTransactions(poolTransactionsArb, coinData.data);
             setSortedPoolTransactionsArb(tempSortedTransactionsArb);
 
-            const tempSortedTransactionsOpt = processTransactions(poolTransactionsOpt, coinData);
+            const tempSortedTransactionsOpt = processTransactions(poolTransactionsOpt, coinData.data);
             setSortedPoolTransactionsOpt(tempSortedTransactionsOpt);
 
-            const tempSortedTransactionsPoly = processTransactions(poolTransactionsPoly, coinData);
+            const tempSortedTransactionsPoly = processTransactions(poolTransactionsPoly, coinData.data);
             setSortedPoolTransactionsPoly(tempSortedTransactionsPoly);
 
-            const tempSortedTransactionsGnosis = processTransactions(poolTransactionsGnosis, coinData);
+            const tempSortedTransactionsGnosis = processTransactions(poolTransactionsGnosis, coinData.data);
             setSortedPoolTransactionsGnosis(tempSortedTransactionsGnosis);
 
-            const tempSortedTransactionsBase = processTransactions(poolTransactionsBase, coinData);
+            const tempSortedTransactionsBase = processTransactions(poolTransactionsBase, coinData.data);
             setSortedPoolTransactionsBase(tempSortedTransactionsBase);
 
-            const tempSortedTransactionsZkevm = processTransactions(poolTransactionsZkevm, coinData);
+            const tempSortedTransactionsZkevm = processTransactions(poolTransactionsZkevm, coinData.data);
             setSortedPoolTransactionsZkevm(tempSortedTransactionsZkevm);
 
             let tempVolumeDollar = tempSortedTransactions[tempSortedTransactions.length - 1].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 1].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 1].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 1].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 1].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 1].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 1].value;
@@ -301,7 +304,7 @@ export default function Protocol() {
             setVolumeChange(tempVolumeChange);
             setDataLoaded(true);
         }
-    }, [auraPools.length, poolTransactions.length, coinData, totalLockedAmount, poolTransactionsArb.length, poolTransactionsZkevm.length, poolTransactionsOpt.length]);
+    }, [auraPools.length, poolTransactions.length, totalLockedAmount, poolTransactionsArb.length, poolTransactionsZkevm.length, poolTransactionsOpt.length]);
 
 
     return (
@@ -322,12 +325,12 @@ export default function Protocol() {
                                 sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
                                 <Box m={{xs: 0, sm: 1}}>
-                                    {coinData && coinData[auraAddress] && coinData[auraAddress].usd ?
+                                    {coinData && coinData.data[auraAddress] && coinData.data[auraAddress].price ?
                                         <CoinCard
                                             tokenAddress={auraAddress}
                                             tokenName='Aura'
-                                            tokenPrice={coinData[auraAddress].usd}
-                                            tokenPriceChange={coinData[auraAddress].usd_24h_change}
+                                            tokenPrice={coinData.data[auraAddress].price}
+                                            tokenPriceChange={coinData.data[auraAddress].priceChangePercentage24h}
 
                                         />
                                         : <CircularProgress/>}
@@ -340,7 +343,11 @@ export default function Protocol() {
                                             mainMetricInUSD={true}
                                             mainMetricChange={tvlChange}
                                             MetricIcon={MonetizationOnIcon}
-                                            metricName={"Protocol TVL"}/>
+                                            metricName={"Staked TVL"}
+                                            toolTipText={
+                                                "The total value locked (TVL) in all Aura gauges across all networks."
+                                            }
+                                        />
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={{xs: 0, sm: 1}}>
@@ -350,7 +357,13 @@ export default function Protocol() {
                                             mainMetricInUSD={true}
                                             mainMetricChange={volumeChange}
                                             MetricIcon={MonetizationOnIcon}
-                                            metricName={"Protocol Volume"}/>
+                                            metricName={"Staking Volume"}
+                                            toolTipText={
+                                            "The Staking Volume Metric depicts the volume of " +
+                                                "stakes and unstakes in the Aura Gauges"
+                                        }
+                                        />
+
                                         : <CircularProgress/>}
                                 </Box>
                                 <Box m={{xs: 0, sm: 1}}>
@@ -383,6 +396,9 @@ export default function Protocol() {
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Staking TVL</Typography>
                         </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>Total value locked (TVL) across all Aura staking gauges.</Typography>
+                        </Grid>
 
                         {sortedTvlData ?
                             <Grid item xs={11} sm={9}>
@@ -403,6 +419,12 @@ export default function Protocol() {
                         }
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Staking Volume</Typography>
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>
+                                Relative change of stakes vs. unstakes in Aura gauges.
+                                This is an indirect measure of protocol activity as users move funds into or out of Aura gauges
+                            </Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?
@@ -425,6 +447,11 @@ export default function Protocol() {
 
                         <Grid item mt={2} xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Balancer TVL captured</Typography>
+                        </Grid>
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '12px'}}>
+                                The percentage of TVL that is staked in Aura gauges relative to overall TVL in Balancer pools.
+                            </Typography>
                         </Grid>
 
                         {sortedPoolTransactions ?

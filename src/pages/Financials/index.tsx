@@ -19,6 +19,7 @@ import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import {Handshake, HandshakeOutlined} from "@mui/icons-material";
 import {USDC} from "../../constants";
 import {useCoinGeckoSimpleTokenPrices} from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 export default function Financials() {
     const homeNav: NavElement = {
@@ -33,7 +34,8 @@ export default function Financials() {
     const txnHistoryTreasury: TransactionHistory | null = useGetAddressTransactionsHistorically(TREASURY_CONFIG.treasury)
     const txnHistoryAef: TransactionHistory | null = useGetAddressTransactionsHistorically(AEF)
 
-    const coinData = useCoinGeckoSimpleTokenPrices([AURA_TOKEN_MAINNET]);
+    //const coinData = useCoinGeckoSimpleTokenPrices([AURA_TOKEN_MAINNET]);
+    const coinData = useGetSimpleTokenPrices([AURA_TOKEN_MAINNET], '1');
 
     const {totalBalances : totalBalancesTreasury} = useGetTotalBalances(TREASURY_CONFIG.treasury);
     const {totalBalances : totalBalancesAef} = useGetTotalBalances(AEF);
@@ -57,12 +59,12 @@ export default function Financials() {
     let aefSpends;
     let aefAmountSpend : number = 0;
 
-    if(txnHistoryAef && coinData){
+    if(txnHistoryAef && coinData && coinData.data[AURA_TOKEN_MAINNET]){
         let spendAefAura = extractTransactionsByTokenAndType(txnHistoryAef, AURA_TOKEN_MAINNET.toLowerCase(), 'send');
         const spendAefUsdc = extractTransactionsByTokenAndType(txnHistoryAef, USDC.address.toLowerCase(), 'send');
 
         spendAefAura = spendAefAura.map(transaction => {
-            return { ...transaction, value: Number(transaction.value) * coinData[AURA_TOKEN_MAINNET].usd };
+            return { ...transaction, value: Number(transaction.value) * coinData.data[AURA_TOKEN_MAINNET].price };
         });
 
 

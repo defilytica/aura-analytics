@@ -207,7 +207,7 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
         }
     }, [leaderboardInfo.leaderboard.length, page]);
 
-    console.log(localEnsMap);
+    //console.log(localEnsMap);
 
 
 

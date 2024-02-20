@@ -32,9 +32,27 @@ import {AURA_BAL_SUPPLY} from "../../data/aura/auraConstants";
 import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMultiAreaChart";
 import {ArbitrumNetworkInfo, EthereumNetworkInfo, PolygonNetworkInfo} from "../../constants/networks";
+import React from "react";
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 
 export default function AuraBAL() {
+
+    //Mainnet start timestamp:
+    // Get the current date and time
+    const currentDate = new Date();
+
+// Calculate the date one year ago
+    const oneYearAgo = new Date(
+        currentDate.getFullYear() - 1,
+        currentDate.getMonth(),
+        currentDate.getDate(),
+        currentDate.getHours(),
+        currentDate.getMinutes(),
+        currentDate.getSeconds()
+    );
+    const mainnetOneYearAgo = Math.floor(oneYearAgo.getTime() / 1000);
+
 
     const theme = useTheme();
     const [activeNetwork] = useActiveNetworkVersion();
@@ -42,7 +60,7 @@ export default function AuraBAL() {
     const auraBALMainnet = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d'
     let auraBALAddress = '0x616e8bfa43f920657b3497dbf40d6b1a02d4608d';
     let auraBALVaultAddress = "0xfaa2ed111b4f580fcb85c48e6dc6782dc5fcd7a6";
-    let startTimeStamp = 1655276813;
+    let startTimeStamp = mainnetOneYearAgo;
     if (activeNetwork === ArbitrumNetworkInfo) {
         auraBALAddress = '0x223738a747383d6f9f827d95964e4d8e8ac754ce'
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
@@ -52,7 +70,8 @@ export default function AuraBAL() {
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
         startTimeStamp = 1690495200
     }
-    const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
+    const coinData = useGetSimpleTokenPrices([auraBALMainnet], '1');
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
     const auraBalBannerLight = require('../../assets/png/aurabal-light.png');
@@ -225,12 +244,12 @@ export default function AuraBAL() {
                         sx={{justifyContent: {md: 'flex-start', xs: 'center'}, alignContent: 'center'}}
                     >
                         <Box m={1}>
-                            {coinData && coinData[auraBALMainnet] && coinData[auraBALMainnet].usd ?
+                            {coinData && coinData.data[auraBALMainnet] && coinData.data[auraBALMainnet].price ?
                                 <CoinCard
                                     tokenAddress={auraBALMainnet}
                                     tokenName='auraBAL'
-                                    tokenPrice={coinData[auraBALMainnet].usd}
-                                    tokenPriceChange={coinData[auraBALMainnet].usd_24h_change}
+                                    tokenPrice={coinData.data[auraBALMainnet].price}
+                                    tokenPriceChange={coinData.data[auraBALMainnet].priceChangePercentage24h}
 
                                 />
                                 : <CircularProgress/>}
@@ -254,6 +273,11 @@ export default function AuraBAL() {
                     <Box mb={1}>
                         <Typography sx={{fontSize: '24px'}}>Historical auraBAL Supply</Typography>
                     </Box>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '12px'}}>
+                            Historical Supply of AuraBAL and overall AuraBAL staked in the Auto-compounder
+                        </Typography>
+                    </Box>
                     <Card>
                         <AuraBALMultiAreaChart
                             mintedAuraBAL={cumulativeAuraBAL}
@@ -266,6 +290,11 @@ export default function AuraBAL() {
                     <Grid item xs={11} sm={9}>
                         <Box mb={1}>
                             <Typography sx={{fontSize: '24px'}}>Balancer Metrics</Typography>
+                        </Box>
+                        <Box mb={1}>
+                            <Typography sx={{fontSize: '12px'}}>
+                                AuraBAL Liquidity Metrics on Balancer such as liquidity deployed in Balancer pools.
+                            </Typography>
                         </Box>
                         <Grid
                             container
@@ -343,6 +372,11 @@ export default function AuraBAL() {
                     <Box mb={1}>
                         <Typography sx={{fontSize: '24px'}}>Daily AuraBAL Mints</Typography>
                     </Box>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '12px'}}>
+                            Daily mints of auraBAL for the selected network ({activeNetwork.name})
+                        </Typography>
+                    </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
 
@@ -362,7 +396,7 @@ export default function AuraBAL() {
                 */}
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Top Depositors</Typography>
+                        <Typography sx={{fontSize: '24px'}}>Top Depositors in the Legacy Vault</Typography>
                     </Box>
 
                     <Box p={1} display="flex" alignItems='center'>
@@ -381,6 +415,11 @@ export default function AuraBAL() {
                 <Grid item xs={11} sm={9}>
                     <Box mb={1}>
                         <Typography sx={{fontSize: '24px'}}>auraBAL Compounder Stats</Typography>
+                    </Box>
+                    <Box mb={1}>
+                        <Typography sx={{fontSize: '12px'}}>
+                            Statistics for the auraBAL Auto-Compounder vault. Metrics show TVL growth, stakes, unstakes and harvests being recycled to all stakers.
+                        </Typography>
                     </Box>
                 </Grid>
                 <Grid item xs={11} sm={9}>
@@ -443,7 +482,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Historical auraBAL in Compounder</Typography>
+                        <Typography sx={{fontSize: '18px'}}>Historical auraBAL in Compounder</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
@@ -458,7 +497,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Daily Vault Deposits</Typography>
+                        <Typography sx={{fontSize: '18px'}}>Daily Auto-Compounder Vault Deposits</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
@@ -469,7 +508,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Daily Vault Withdrawals</Typography>
+                        <Typography sx={{fontSize: '18px'}}>Daily Auto-Compounder Vault Withdrawals</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>
@@ -480,7 +519,7 @@ export default function AuraBAL() {
                 </Grid>
                 <Grid item mt={1} xs={11} sm={9}>
                     <Box mb={1}>
-                        <Typography sx={{fontSize: '24px'}}>Daily Vault Harvests</Typography>
+                        <Typography sx={{fontSize: '18px'}}>Daily Auto-Compounder Vault Harvests</Typography>
                     </Box>
                     <Card sx={{boxShadow: 3}}>
                         <Box p={1} display="flex" alignItems='center'>

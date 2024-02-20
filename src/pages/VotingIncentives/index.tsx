@@ -14,7 +14,7 @@ import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/Singl
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
-import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
+import {AURA_TIMESTAMPS, HISTORICAL_AURA_PRICE} from "../../data/hidden-hand/constants";
 import {BalancerStakingGauges} from "../../data/balancer/balancerTypes";
 import {decorateGaugesWithIncentives} from "./helpers";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
@@ -31,6 +31,9 @@ import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/Aur
 import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
+import {useCoinGeckoSingleTokenData} from "../../data/coingecko/useCoinGeckoSingleTokenData";
+import useGetHistoricalTokenPrice from "../../data/balancer-api-v3/useGetHistoricalTokenPrice";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -89,8 +92,14 @@ export default function VotingIncentives() {
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerV3StakingGauges();
     //APR chart data
-    const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    //const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
+    const timeStampNow = Math.floor(Date.now() / 1000);
+    const priceData = HISTORICAL_AURA_PRICE
+    const { data: auraHistoricalPrice} = useGetHistoricalTokenPrice(AURA_TOKEN_MAINNET, GqlChain.Mainnet)
+
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
+
+
 
     useEffect(() => {
         const data = extractPoolRewards(hiddenHandData.incentives);
@@ -146,20 +155,28 @@ export default function VotingIncentives() {
     // APR chart: match the dollarPerVLAssetData with price Data to calculate APR
     let historicalAPR = xAxisData.map((el) => {
         const price = priceData.find(price => el === price.time);
+        const fallbackPrice = auraHistoricalPrice ? auraHistoricalPrice.find(price => el === price.time) : 0
         if (price && price.value) {
             return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / price.value;
-        } else {
+        } else if (auraHistoricalPrice && fallbackPrice) {
+            return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / fallbackPrice.value;
+        }
+        else {
             return 0; // Fallback value
         }
     });
 
-    console.log("xAxisData", xAxisData)
-    console.log("priceData", priceData)
+    //console.log("xAxisData", xAxisData)
+    //console.log("priceData", priceData)
     let historicalPrice = xAxisData.map((el) => {
         const price = priceData.find(price => el === price.time);
+        const fallbackPrice = auraHistoricalPrice ? auraHistoricalPrice.find(price => el === price.time) : 0
         if (price) {
             return price.value;
-        } else {
+        } else if (auraHistoricalPrice && fallbackPrice) {
+            return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / fallbackPrice.value;
+        }
+        else {
             return 0; // Fallback value
         }
     });

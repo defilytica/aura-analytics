@@ -58,7 +58,7 @@ export interface PoolData {
     id: string;
     name: string;
     symbol: string;
-    
+
     // basic token info
     address: string;
     feeTier: number;
@@ -149,26 +149,26 @@ export interface AprSet {
     min: number
     max: number
   }
-  
+
   export interface TokenAprs {
     total: number
     breakdown: TokenBreakdown
   }
-  
+
   export interface TokenBreakdown {
     [key: string]: number
   }
-  
+
   export interface StakingApr {
     min: number
     max: number
   }
-  
+
   export interface RewardAprs {
     total: number
     breakdown: RewardsBreakdown
   }
-  
+
   export interface RewardsBreakdown {
     [key: string]: number
   }
@@ -207,6 +207,8 @@ export interface BalancerStakingGauges {
     valuePerVote: number;
     totalRewards: number;
     userValue: number;
+    gaugeRelativeWeight: number;
+    gaugeVotes: number;
 }
 
 export interface SimplePoolTokenData {
@@ -221,4 +223,15 @@ export interface SimplePoolData {
     poolType: string;
     symbol: string;
     tokens: SimplePoolTokenData[];
+}
+
+export interface TokenPriceInfo {
+    price: number;
+    priceChange24h: number;
+    priceChangePercentage24h: number;
+}
+
+
+export interface TokenPrices {
+    [tokenAddress: string]: TokenPriceInfo;
 }

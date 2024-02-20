@@ -25,7 +25,6 @@ import {useAuraPoolLeaderboardInfo} from "../../data/aura/useAuraPoolLeaderboard
 import {TVL, useAuraPoolHistorically, useAuraPools} from "../../data/aura/useAuraPools";
 import AuraPoolStakerTable from "../../components/Tables/AuraPoolStakerTable";
 import {BalancerChartDataItem} from "../../data/balancer/balancerTypes";
-import GenericAreaChart from "../../components/Echarts/GenericAreaChart";
 import {unixToDate} from "../../utils/date";
 import GenericAreaChartWithTimePicker from "../../components/Echarts/GenericAreaChartWithTimePicker";
 import PieChartIcon from '@mui/icons-material/PieChart';

@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import {Box, Card, CardContent, Grid, Tooltip, Typography} from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import { formatDollarAmount, formatNumber } from '../../../utils/numbers';
@@ -6,6 +6,7 @@ import { green } from '@mui/material/colors';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
 import { AppColors } from '../../../assets/auraTheme/colors';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 export type CoinCardProps = {
   mainMetric: number;
@@ -17,6 +18,7 @@ export type CoinCardProps = {
   metricDecimals?: number;
   MetricIcon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>;
   svgContent?: string;
+  toolTipText?: string;
 };
 
 const MetricsCard = ({
@@ -29,6 +31,7 @@ const MetricsCard = ({
                        metricDecimals,
                        MetricIcon,
                        svgContent,
+                       toolTipText,
                      }: CoinCardProps) => {
   const metricUnit = mainMetricUnit ? mainMetricUnit : '';
 
@@ -48,7 +51,13 @@ const MetricsCard = ({
               </Typography>
               <Typography   sx={{fontSize: '22px',}}>
                 {mainMetricInUSD ? formatDollarAmount(mainMetric, metricDecimals) : formatNumber(mainMetric, metricDecimals) + metricUnit}
+                  {toolTipText && (
+                      <Tooltip title={toolTipText}>
+                          <HelpOutlineIcon sx={{ ml: 1, fontSize: 'small' }} />
+                      </Tooltip>
+                  )}
               </Typography>
+
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     {mainMetricChange && mainMetricChange > 0 ? (
                         <ArrowUpwardIcon fontSize="small" sx={{ color: green[500] }} />

@@ -46,7 +46,8 @@ export function useBalancerToken(tokenAddress: string): BalancerTokenData {
             const getTokenSnapshotData = async (address: string, fromTimestamp: number, toTimestamp: number) => {
                 const baseURI = 'https://api.coingecko.com/api/v3/coins/';
                 const queryParams =
-                    activeNetwork.coingeckoId + '/contract/' + address + '/market_chart/range?vs_currency=usd&from=' + fromTimestamp.toString() + '&to=' + toTimestamp.toString();
+                    activeNetwork.coingeckoId + '/contract/' + address + '/market_chart/range?vs_currency=usd&from=' +
+                    fromTimestamp.toString() + '&to=' + toTimestamp.toString();
                 try {
                     const coingeckoResponse = await fetch(baseURI + queryParams);
                     const json = await coingeckoResponse.json();

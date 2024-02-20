@@ -38,6 +38,8 @@ export const createGauge = (e: any): BalancerStakingGauges => {
         voteCount: 0,
         valuePerVote: 0,
         totalRewards: 0,
-        userValue: 0
+        userValue: 0,
+        gaugeRelativeWeight: 0,
+        gaugeVotes: 0
     };
 };

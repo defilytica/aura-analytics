@@ -7,6 +7,8 @@ import {AURA_TIMESTAMPS} from "../hidden-hand/constants";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
 import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
+import {useActiveNetworkVersion} from "../../state/application/hooks";
+import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices";
 
 
 const auraAddress = AURA_TOKEN_MAINNET;
@@ -15,17 +17,16 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const timestamps = AURA_TIMESTAMPS;
     const indexOfCurrent = timestamps.indexOf(timestampCurrentRound);
     const timestampPreviousRound = timestamps[indexOfCurrent - 1]
-    console.log("timestampPreviousRound", timestampPreviousRound)
+    const [activeNetwork] = useActiveNetworkVersion()
     // If a round is currently active we need to set the appropriate pattern
 
     const [emissionValuePerVote, setEmissionValuePerVote] = useState(0);
     const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
-    const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
+    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
+    const coinData = useGetSimpleTokenPrices([auraAddress, balAddress], activeNetwork.chainId);
     const auraGlobalStats = useAuraGlobalStats();
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
-
     const hiddenHandDataPrevious = useGetHiddenHandVotingIncentives(String(timestampPreviousRound));
-    console.log("timestamp", Date.now())
 
     useEffect(() => {
         const fetchData = async () => {
@@ -41,13 +42,32 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
                     // starting from August 17th 2023 voting round (epoch at 1692230400)
-                    const newEmissionEffectiveAt = 1692230400;
-                    const isNewEmission = timestampCurrentRound === 0 ? true : timestampCurrentRound > newEmissionEffectiveAt;
-                    const emissionMultiplier = isNewEmission ? 0.4 : 1;
-                    const additionalAuraAmount = isNewEmission ? 180000 : 0; // Hardcoded until Aura has updated the data on-chain
+                    // Weekly additional Aura: 90000 -> bi-weekly resulting in 180000
+                    // -----
+                    // Per AIP-63: additional weekly AURA has been reduced from 90000 to 76500 -> 153000 new additional Aura Amount
+                    // LP fees have been reduced from 25 to 22.5%
+                    const newEmissionEffectiveAt = 1692230400; // Starting point for new emission logic
+                    const secondaryOptimizationEffectiveAt = 1707951600; // Starting point for secondary optimization
 
-                    const auraPrice = coinData[auraAddress].usd
-                    const balPrice = coinData[balAddress].usd
+
+                    const isNewEmission = timestampCurrentRound > newEmissionEffectiveAt || timestampCurrentRound === 0;
+                    const isAuraOptimized = timestampCurrentRound > secondaryOptimizationEffectiveAt || timestampCurrentRound === 0;
+
+                    const emissionMultiplier = isNewEmission ? 0.4 : 1;
+
+                    let additionalAuraAmount = 0;
+                    if (isNewEmission) {
+                        additionalAuraAmount = 180000; // Bi-weekly amount after new emission policy
+                        if (isAuraOptimized) {
+                            additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
+                            console.log("Emission calculation based on AIP-63")
+                        }
+                    }
+
+
+
+                    const auraPrice = coinData.data[auraAddress].price
+                    const balPrice = coinData.data[balAddress].price
 
 
                     const balTokenAdminAddress = '0xf302f9F50958c5593770FDf4d4812309fF77414f';
@@ -127,7 +147,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         (additionalAuraAmount / approximateTotalVote) * auraPrice;
 
 
-                    const auraFee = 0.25;
+                    const auraFee = isAuraOptimized ? 0.225 : 0.25;
                     const emissionValuePerVote =
                         biweeklyBalEmissionPerAura *
                         (balPrice + auraPerBal * auraPrice) *

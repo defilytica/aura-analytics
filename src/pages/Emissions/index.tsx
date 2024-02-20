@@ -26,6 +26,7 @@ import { DAO_FEE_FACTOR } from '../../data/balancer/constants';
 import { formatPercentageAmount } from '../../utils/numbers';
 import { getBalTokenAddress } from '../../data/balancer/useLatestPrices';
 import { EthereumNetworkInfo } from '../../constants/networks';
+import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 
 export default function Emissions() {
 
@@ -53,8 +54,10 @@ export default function Emissions() {
     //TODO: obtain form contants
     const balAddress = getBalTokenAddress(activeNetwork.id);
     //Data
-    const coinData = useCoinGeckoSimpleTokenPrices([balAddress]);
-    const balPrice = coinData && coinData[balAddress] ? coinData[balAddress].usd : 0;
+    //const coinData = useCoinGeckoSimpleTokenPrices([balAddress]);
+    const coinData = useGetSimpleTokenPrices([balAddress], activeNetwork.chainId);
+
+    const balPrice = coinData && coinData.data[balAddress] ? coinData.data[balAddress].price : 0;
 
     //Init SDK
     const sdk = new BalancerSDK({
@@ -145,12 +148,12 @@ export default function Emissions() {
                             sx={{ justifyContent: { md: 'flex-start', xs: 'center' }, alignContent: 'center' }}
                         >
                             <Box m={1}>
-                                {coinData && coinData[balAddress] && coinData[balAddress].usd ?
+                                {coinData && coinData.data[balAddress] && coinData.data[balAddress].price ?
                                     <CoinCard
                                         tokenAddress={balAddress}
                                         tokenName='BAL'
-                                        tokenPrice={coinData[balAddress].usd}
-                                        tokenPriceChange={coinData[balAddress].usd_24h_change}
+                                        tokenPrice={coinData.data[balAddress].price}
+                                        tokenPriceChange={coinData.data[balAddress].priceChangePercentage24h}
 
                                     />
                                     : <CircularProgress />}
