@@ -42,10 +42,29 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
                     // starting from August 17th 2023 voting round (epoch at 1692230400)
-                    const newEmissionEffectiveAt = 1692230400;
-                    const isNewEmission = timestampCurrentRound === 0 ? true : timestampCurrentRound > newEmissionEffectiveAt;
+                    // Weekly additional Aura: 90000 -> bi-weekly resulting in 180000
+                    // -----
+                    // Per AIP-63: additional weekly AURA has been reduced from 90000 to 76500 -> 153000 new additional Aura Amount
+                    // LP fees have been reduced from 25 to 22.5%
+                    const newEmissionEffectiveAt = 1692230400; // Starting point for new emission logic
+                    const secondaryOptimizationEffectiveAt = 1707951600; // Starting point for secondary optimization
+
+
+                    const isNewEmission = timestampCurrentRound > newEmissionEffectiveAt || timestampCurrentRound === 0;
+                    const isAuraOptimized = timestampCurrentRound > secondaryOptimizationEffectiveAt || timestampCurrentRound === 0;
+
                     const emissionMultiplier = isNewEmission ? 0.4 : 1;
-                    const additionalAuraAmount = isNewEmission ? 180000 : 0; // Hardcoded until Aura has updated the data on-chain
+
+                    let additionalAuraAmount = 0;
+                    if (isNewEmission) {
+                        additionalAuraAmount = 180000; // Bi-weekly amount after new emission policy
+                        if (isAuraOptimized) {
+                            additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
+                            console.log("Emission calculation based on AIP-63")
+                        }
+                    }
+
+
 
                     const auraPrice = coinData.data[auraAddress].price
                     const balPrice = coinData.data[balAddress].price
@@ -128,7 +147,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         (additionalAuraAmount / approximateTotalVote) * auraPrice;
 
 
-                    const auraFee = 0.25;
+                    const auraFee = isAuraOptimized ? 0.225 : 0.25;
                     const emissionValuePerVote =
                         biweeklyBalEmissionPerAura *
                         (balPrice + auraPerBal * auraPrice) *

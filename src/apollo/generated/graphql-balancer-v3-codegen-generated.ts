@@ -143,6 +143,11 @@ export enum Account_OrderBy {
   VaultAccounts = "vaultAccounts",
 }
 
+export enum Aggregation_Interval {
+  Day = "day",
+  Hour = "hour",
+}
+
 export interface AmpUpdate {
   __typename?: "AmpUpdate";
   endAmp: Scalars["BigInt"]["output"];
@@ -3179,21 +3184,25 @@ export interface GqlSorGetBatchSwapForTokensInResponse {
   tokenOutAmount: Scalars["AmountHumanReadable"]["output"];
 }
 
-export interface GqlSorGetSwaps {
-  __typename?: "GqlSorGetSwaps";
+export interface GqlSorGetSwapPaths {
+  __typename?: "GqlSorGetSwapPaths";
+  effectivePrice: Scalars["AmountHumanReadable"]["output"];
+  effectivePriceReversed: Scalars["AmountHumanReadable"]["output"];
+  paths: Array<GqlSorPath>;
   priceImpact: Scalars["AmountHumanReadable"]["output"];
   returnAmount: Scalars["AmountHumanReadable"]["output"];
   returnAmountScaled: Scalars["BigDecimal"]["output"];
   routes: Array<GqlSorSwapRoute>;
   swapAmount: Scalars["AmountHumanReadable"]["output"];
   swapAmountScaled: Scalars["BigDecimal"]["output"];
-  swapType: GqlSorSwapType;
   swaps: Array<GqlSorSwap>;
-  tokenAddresses: Array<Scalars["String"]["output"]>;
+  /** The token address of the tokenIn provided */
   tokenIn: Scalars["String"]["output"];
   tokenInAmount: Scalars["AmountHumanReadable"]["output"];
+  /** The token address of the tokenOut provided */
   tokenOut: Scalars["String"]["output"];
   tokenOutAmount: Scalars["AmountHumanReadable"]["output"];
+  vaultVersion: Scalars["Int"]["output"];
 }
 
 export interface GqlSorGetSwapsResponse {
@@ -3217,6 +3226,15 @@ export interface GqlSorGetSwapsResponse {
   tokenInAmount: Scalars["AmountHumanReadable"]["output"];
   tokenOut: Scalars["String"]["output"];
   tokenOutAmount: Scalars["AmountHumanReadable"]["output"];
+}
+
+export interface GqlSorPath {
+  __typename?: "GqlSorPath";
+  inputAmountRaw: Scalars["String"]["output"];
+  outputAmountRaw: Scalars["String"]["output"];
+  pools: Array<Maybe<Scalars["String"]["output"]>>;
+  tokens: Array<Maybe<Token>>;
+  vaultVersion: Scalars["Int"]["output"];
 }
 
 export interface GqlSorSwap {
@@ -8626,8 +8644,10 @@ export interface Query {
   rewardDatas: Array<RewardData>;
   sftmxGetStakingData: GqlSftmxStakingData;
   sftmxGetWithdrawalRequests: Array<GqlSftmxWithdrawalRequests>;
+  /** Get swap quote from the SOR v2 for the V2 vault */
+  sorGetSwapPaths: GqlSorGetSwapPaths;
+  /** Get swap quote from the SOR, queries both the old and new SOR */
   sorGetSwaps: GqlSorGetSwapsResponse;
-  sorV2GetSwaps: GqlSorGetSwaps;
   swap?: Maybe<Swap>;
   swapFeeUpdate?: Maybe<SwapFeeUpdate>;
   swapFeeUpdates: Array<SwapFeeUpdate>;
@@ -9521,17 +9541,18 @@ export interface QuerySftmxGetWithdrawalRequestsArgs {
   user: Scalars["String"]["input"];
 }
 
-export interface QuerySorGetSwapsArgs {
-  chain?: InputMaybe<GqlChain>;
+export interface QuerySorGetSwapPathsArgs {
+  chain: GqlChain;
+  queryBatchSwap?: InputMaybe<Scalars["Boolean"]["input"]>;
   swapAmount: Scalars["BigDecimal"]["input"];
-  swapOptions: GqlSorSwapOptionsInput;
   swapType: GqlSorSwapType;
   tokenIn: Scalars["String"]["input"];
   tokenOut: Scalars["String"]["input"];
+  useVaultVersion?: InputMaybe<Scalars["Int"]["input"]>;
 }
 
-export interface QuerySorV2GetSwapsArgs {
-  chain: GqlChain;
+export interface QuerySorGetSwapsArgs {
+  chain?: InputMaybe<GqlChain>;
   swapAmount: Scalars["BigDecimal"]["input"];
   swapOptions: GqlSorSwapOptionsInput;
   swapType: GqlSorSwapType;
@@ -9589,6 +9610,7 @@ export interface QueryTokenGetCurrentPricesArgs {
 
 export interface QueryTokenGetHistoricalPricesArgs {
   addresses: Array<Scalars["String"]["input"]>;
+  chain?: InputMaybe<GqlChain>;
 }
 
 export interface QueryTokenGetPriceChartDataArgs {
@@ -9624,6 +9646,7 @@ export interface QueryTokenGetTokensDataArgs {
 
 export interface QueryTokenGetTokensDynamicDataArgs {
   addresses: Array<Scalars["String"]["input"]>;
+  chain?: InputMaybe<GqlChain>;
 }
 
 export interface QueryTokenPriceArgs {
@@ -14356,7 +14379,6 @@ export type GetTokenPriceQuery = {
   __typename?: "Query";
   tokenGetPriceChartData: Array<{
     __typename?: "GqlTokenPriceChartDataItem";
-    id: string;
     price: any;
     timestamp: number;
   }>;
@@ -16647,7 +16669,6 @@ export const GetTokenPriceDocument = gql`
       chain: $chain
       range: NINETY_DAY
     ) {
-      id
       price
       timestamp
     }

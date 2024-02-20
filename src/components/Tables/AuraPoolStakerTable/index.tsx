@@ -206,7 +206,7 @@ export default function AuraPoolStakerTable({ leaderboardInfo, pricePerBPT }: { 
         }
     }, [leaderboardInfo.leaderboard.length, page]);
 
-    console.log(localEnsMap);
+    //console.log(localEnsMap);
 
 
 

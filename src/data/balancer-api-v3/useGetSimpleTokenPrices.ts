@@ -27,7 +27,7 @@ export default function useGetSimpleTokenPrices(addresses: string[], chainId: st
         return acc;
     }, {} as TokenPrices) ?? {};
 
-    console.log("tokenData", tokenPrices);
+    //console.log("tokenData", tokenPrices);
     return {
         loading,
         error,

@@ -99,6 +99,11 @@ enum Account_orderBy {
   vaultAccounts
 }
 
+enum Aggregation_interval {
+  day
+  hour
+}
+
 scalar AmountHumanReadable
 
 type AmpUpdate {
@@ -3045,20 +3050,30 @@ type GqlSorGetBatchSwapForTokensInResponse {
   tokenOutAmount: AmountHumanReadable!
 }
 
-type GqlSorGetSwaps {
+type GqlSorGetSwapPaths {
+  effectivePrice: AmountHumanReadable!
+  effectivePriceReversed: AmountHumanReadable!
+  paths: [GqlSorPath!]!
   priceImpact: AmountHumanReadable!
   returnAmount: AmountHumanReadable!
   returnAmountScaled: BigDecimal!
   routes: [GqlSorSwapRoute!]!
   swapAmount: AmountHumanReadable!
   swapAmountScaled: BigDecimal!
-  swapType: GqlSorSwapType!
   swaps: [GqlSorSwap!]!
-  tokenAddresses: [String!]!
+
+  """
+  The token address of the tokenIn provided
+  """
   tokenIn: String!
   tokenInAmount: AmountHumanReadable!
+
+  """
+  The token address of the tokenOut provided
+  """
   tokenOut: String!
   tokenOutAmount: AmountHumanReadable!
+  vaultVersion: Int!
 }
 
 type GqlSorGetSwapsResponse {
@@ -3081,6 +3096,14 @@ type GqlSorGetSwapsResponse {
   tokenInAmount: AmountHumanReadable!
   tokenOut: String!
   tokenOutAmount: AmountHumanReadable!
+}
+
+type GqlSorPath {
+  inputAmountRaw: String!
+  outputAmountRaw: String!
+  pools: [String]!
+  tokens: [Token]!
+  vaultVersion: Int!
 }
 
 type GqlSorSwap {
@@ -9577,6 +9600,30 @@ type Query {
   ): [RewardData!]!
   sftmxGetStakingData: GqlSftmxStakingData!
   sftmxGetWithdrawalRequests(user: String!): [GqlSftmxWithdrawalRequests!]!
+
+  """
+  Get swap quote from the SOR v2 for the V2 vault
+  """
+  sorGetSwapPaths(
+    """
+    The Chain to query
+    """
+    chain: GqlChain!
+    queryBatchSwap: Boolean
+    swapAmount: BigDecimal!
+    swapType: GqlSorSwapType!
+
+    """
+    Token address of the tokenIn
+    """
+    tokenIn: String!
+    tokenOut: String!
+    useVaultVersion: Int
+  ): GqlSorGetSwapPaths!
+
+  """
+  Get swap quote from the SOR, queries both the old and new SOR
+  """
   sorGetSwaps(
     chain: GqlChain
     swapAmount: BigDecimal!
@@ -9585,14 +9632,6 @@ type Query {
     tokenIn: String!
     tokenOut: String!
   ): GqlSorGetSwapsResponse!
-  sorV2GetSwaps(
-    chain: GqlChain!
-    swapAmount: BigDecimal!
-    swapOptions: GqlSorSwapOptionsInput!
-    swapType: GqlSorSwapType!
-    tokenIn: String!
-    tokenOut: String!
-  ): GqlSorGetSwaps!
   swap(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
@@ -9667,7 +9706,10 @@ type Query {
     range: GqlTokenChartDataRange!
   ): [GqlTokenCandlestickChartDataItem!]!
   tokenGetCurrentPrices(chains: [GqlChain!]): [GqlTokenPrice!]!
-  tokenGetHistoricalPrices(addresses: [String!]!): [GqlHistoricalTokenPrice!]!
+  tokenGetHistoricalPrices(
+    addresses: [String!]!
+    chain: GqlChain
+  ): [GqlHistoricalTokenPrice!]!
   tokenGetPriceChartData(
     address: String!
     chain: GqlChain
@@ -9687,7 +9729,10 @@ type Query {
   ): GqlTokenDynamicData
   tokenGetTokens(chains: [GqlChain!]): [GqlToken!]!
   tokenGetTokensData(addresses: [String!]!): [GqlTokenData!]!
-  tokenGetTokensDynamicData(addresses: [String!]!): [GqlTokenDynamicData!]!
+  tokenGetTokensDynamicData(
+    addresses: [String!]!
+    chain: GqlChain
+  ): [GqlTokenDynamicData!]!
   tokenPrice(
     """
     The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.

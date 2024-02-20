@@ -24,7 +24,6 @@ query VeBalGetVotingGauges {
 query GetTokenPrice($address: String!, $chain: GqlChain!){
     tokenGetPriceChartData(address: $address, chain: $chain, range: NINETY_DAY)
     {
-        id
         price
         timestamp
     }
