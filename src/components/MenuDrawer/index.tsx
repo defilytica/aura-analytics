@@ -174,7 +174,7 @@ const MenuDrawer = ({
                     <Link href="https://twitter.com/Xeonusify" target="_blank" rel="noopener noreferrer">
                         <TwitterIcon />
                     </Link>
-                    <Link href="https://discord.gg/aurafinance" target="_blank" rel="noopener noreferrer">
+                    <Link href="https://discord.com/invite/aurafinanceofficial" target="_blank" rel="noopener noreferrer">
                     {theme.palette.mode === 'dark' ?
                         <img src={DiscordIconDark} alt="Discord Icon" width="25" /> :
                         <img src={DiscordIconLight} alt="Discord Icon" width="25" />
