@@ -11,7 +11,7 @@ jobs:
       CI: false
       GENERATE_SOURCEMAP: false
       REACT_APP_BALANCER_SUBGRAPH_START_TIMESTAMP: 1623004158
-      REACT_APP_SUBGRAPH_URL: "https://aura-v2-1-analytics.stellate.sh/"
+      REACT_APP_SUBGRAPH_URL: "https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1"
       REACT_APP_SUBGRAPH_ARBITRUM_URL: "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2"
       REACT_APP_SUBGRAPH_POLYGON_URL: "https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2"
       REACT_APP_BLOCKS_SUBGRAPH_URL: "https://api.thegraph.com/subgraphs/name/blocklytics/ethereum-blocks"

@@ -29,8 +29,7 @@ export const blockClient = new ApolloClient({
 
 //Aura client
 export const auraClient = new ApolloClient({
-  //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
-  uri: 'https://aura-v2-1-analytics.stellate.sh/',
+  uri: 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1',
   cache: new InMemoryCache({
       typePolicies: {
           Token: {
@@ -59,7 +58,6 @@ export const auraClient = new ApolloClient({
 
 //Aura client
 export const auraArbitrumClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-arbitrum',
     cache: new InMemoryCache({
         typePolicies: {
@@ -88,7 +86,6 @@ export const auraArbitrumClient = new ApolloClient({
 });
 
 export const auraOptimismClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism',
     cache: new InMemoryCache({
         typePolicies: {
@@ -117,7 +114,6 @@ export const auraOptimismClient = new ApolloClient({
 });
 
 export const auraPolygonClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-polygon',
     cache: new InMemoryCache({
         typePolicies: {
@@ -146,7 +142,6 @@ export const auraPolygonClient = new ApolloClient({
 });
 
 export const auraPolygonZkEVMClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://subgraph.satsuma-prod.com/3c56113393d7/1xhub-ltd/aura-finance-zkevm/api',
     cache: new InMemoryCache({
         typePolicies: {
@@ -175,7 +170,6 @@ export const auraPolygonZkEVMClient = new ApolloClient({
 });
 
 export const auraGnosisClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-gnosis-chain',
     cache: new InMemoryCache({
         typePolicies: {
@@ -204,7 +198,6 @@ export const auraGnosisClient = new ApolloClient({
 });
 
 export const auraBaseClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-base',
     cache: new InMemoryCache({
         typePolicies: {
@@ -233,8 +226,7 @@ export const auraBaseClient = new ApolloClient({
 });
 
 export const client = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
-    uri: 'https://balancer-v2-analytics.stellate.sh/',
+    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -262,8 +254,7 @@ export const client = new ApolloClient({
 });
 
 export const arbitrumClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2',
-    uri: 'https://balancer-arbitrum-v2-analytics.stellate.sh',
+    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2',
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -306,8 +297,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const polygonClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
-    uri: 'https://balancer-polygon-prune-v2-analytics.stellate.sh',
+    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-prune-v2',
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -350,8 +340,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const gnosisClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
-    uri: 'https://balancer-gnosis-chain-v2-analytics.stellate.sh',
+    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gnosis-chain-v2',
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -380,7 +369,7 @@ export const arbitrumClient = new ApolloClient({
 
 export const polygonZKEVMClient = new ApolloClient({
     //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
-    uri: 'https://balancer-polygon-zkevm-v2-analytics.stellate.sh',
+    uri: 'https://api.studio.thegraph.com/query/24660/balancer-polygon-zk-v2/version/latest',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
