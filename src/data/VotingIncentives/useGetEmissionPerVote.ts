@@ -9,6 +9,9 @@ import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices";
+import useGetHistoricalTokenPrice from "../balancer-api-v3/useGetHistoricalTokenPrice";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
+import {formatTime, unixToDate} from "../../utils/date";
 
 
 const auraAddress = AURA_TOKEN_MAINNET;
@@ -24,6 +27,8 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
     //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
     const coinData = useGetSimpleTokenPrices([auraAddress, balAddress], activeNetwork.chainId);
+    const { data: historicalAuraCoinData } = useGetHistoricalTokenPrice(auraAddress, GqlChain.Mainnet)
+    const { data: historicalBALCoinData } = useGetHistoricalTokenPrice(balAddress, GqlChain.Mainnet)
     const auraGlobalStats = useAuraGlobalStats();
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
     const hiddenHandDataPrevious = useGetHiddenHandVotingIncentives(String(timestampPreviousRound));
@@ -64,10 +69,13 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         }
                     }
 
+                    // Find price from historical set
+                    const auraTsPrice = historicalAuraCoinData?.find(el => el.time === unixToDate(timestampCurrentRound) ? el.value : 0)
+                    const balTsPrice = historicalBALCoinData?.find(el => el.time === unixToDate(timestampCurrentRound) ? el.value : 0)
 
-
-                    const auraPrice = coinData.data[auraAddress].price
-                    const balPrice = coinData.data[balAddress].price
+                    const auraPrice = auraTsPrice ? auraTsPrice.value : coinData.data[auraAddress].price
+                    const balPrice = balTsPrice ? balTsPrice.value : coinData.data[balAddress].price
+                    console.log("Aura price: ", auraPrice, "- BAL price: ", balPrice);
 
 
                     const balTokenAdminAddress = '0xf302f9F50958c5593770FDf4d4812309fF77414f';
