@@ -59,12 +59,22 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
             {offset: 0, color: 'rgb(46,17,98)'},
             {offset: 1, color: 'rgb(194,158,246)'},
         ]),
+        new graphic.LinearGradient(0, 0, 0, 1, [
+            {
+                offset: 0,
+                color: 'rgb(232, 65, 66)'
+            },
+            {
+                offset: 1,
+                color: 'rgb(232, 65, 66)'
+            }
+        ])
     ];
 
     const option = {
-        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC','#8500bb'],
+        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC','#8500bb', '#E84142'],
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base','zkEVM'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base','zkEVM', 'Avalanche'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {

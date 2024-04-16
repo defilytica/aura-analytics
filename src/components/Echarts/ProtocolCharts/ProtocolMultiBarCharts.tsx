@@ -32,6 +32,7 @@ interface ProtocolBarChartProps {
     gnosisData: number[],
     baseData: number[],
     zkevmData: number[],
+    avalancheData: number[],
     xAxis: string[],
 }
 
@@ -44,6 +45,7 @@ export default function ProtocolMultiBarCharts({
                                                    gnosisData,
                                                    baseData,
                                                    zkevmData,
+                                                   avalancheData,
                                                    xAxis
                                                }: ProtocolBarChartProps) {
 
@@ -62,7 +64,7 @@ export default function ProtocolMultiBarCharts({
 
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base', 'zkEVM'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base', 'zkEVM', 'Avalanche'],
             inactiveColor: "red",
             textStyle: {
                 color: theme.palette.mode === 'dark' ? 'white' : 'black'
@@ -311,6 +313,40 @@ export default function ProtocolMultiBarCharts({
                 },
                 data: zkevmData
             },
+
+            {
+                name: 'Avalanche',
+                type: 'bar',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                itemStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(232, 65, 66)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(232, 65, 66)'
+                        }
+                    ])
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value);
+                    }
+                },
+                data: baseData
+            },
+
         ]
     };
 
@@ -323,7 +359,7 @@ export default function ProtocolMultiBarCharts({
     };
 
     return (
-        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && gnosisData.length > 1 && xAxis ?
+        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && gnosisData.length > 1 && zkevmData.length > 1 && avalancheData.length > 1 && xAxis ?
             <ReactEcharts
                 option={option}
                 theme='my_theme'

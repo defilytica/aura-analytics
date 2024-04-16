@@ -32,6 +32,7 @@ export default function Protocol() {
     const [displayTransactionsGnosis, setDisplayTransactionsGnosis] = useState<{ value: number; time: string }[]>([]);
     const [displayTransactionsBase, setDisplayTransactionsBase] = useState<{ value: number; time: string }[]>([]);
     const [displayTransactionsZkevm, setDisplayTransactionsZkevm] = useState<{ value: number; time: string }[]>([]);
+    const [displayTransactionsAvalanche, setDisplayTransactionsAvalanche] = useState<{ value: number; time: string }[]>([]);
 
     const [displayPoolData, setDisplayPoolData] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataArb, setDisplayPoolDataArb] = useState<{ value: number; time: string }[]>([]);
@@ -40,6 +41,7 @@ export default function Protocol() {
     const [displayPoolDataGnosis, setDisplayPoolDataGnosis] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataBase, setDisplayPoolDataBase] = useState<{ value: number; time: string }[]>([]);
     const [displayPoolDataZkevm, setDisplayPoolDataZkevm] = useState<{ value: number; time: string }[]>([]);
+    const [displayPoolDataAvalanche, setDisplayPoolDataAvalanche] = useState<{ value: number; time: string }[]>([]);
 
     const [capturedTVLOpt, setCapturedTVLOpt] = useState<CapturedTVL[]>([]);
     const [capturedTVLArb, setCapturedTVLArb] = useState<CapturedTVL[]>([]);
@@ -48,6 +50,7 @@ export default function Protocol() {
     const [capturedTVLGnosis, setCapturedTVLGnosis] = useState<CapturedTVL[]>([]);
     const [capturedTVLBase, setCapturedTVLBase] = useState<CapturedTVL[]>([]);
     const [capturedTVLZkevm, setCapturedTVLZkevm] = useState<CapturedTVL[]>([]);
+    const [capturedTVLAvalanche, setCapturedTVLAvalanche] = useState<CapturedTVL[]>([]);
 
     const [sortedPoolTransactions, setSortedPoolTransactions] = useState<{ value: number; time: string }[]>([]);
     const [sortedPoolTransactionsArb, setSortedPoolTransactionsArb] = useState<{ value: number; time: string }[]>([]);
@@ -62,6 +65,10 @@ export default function Protocol() {
         value: number;
         time: string
     }[]>([]);
+    const [sortedPoolTransactionsAvalanche, setSortedPoolTransactionsAvalanche] = useState<{
+        value: number;
+        time: string
+    }[]>([]);
 
     const [sortedTvlData, setSortedTvlData] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataArb, setSortedTvlDataArb] = useState<{ value: number; time: string }[]>([]);
@@ -70,6 +77,7 @@ export default function Protocol() {
     const [sortedTvlDataGnosis, setSortedTvlDataGnosis] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataBase, setSortedTvlDataBase] = useState<{ value: number; time: string }[]>([]);
     const [sortedTvlDataZkevm, setSortedTvlDataZkevm] = useState<{ value: number; time: string }[]>([]);
+    const [sortedTvlDataAvalanche, setSortedTvlDataAvalanche] = useState<{ value: number; time: string }[]>([]);
 
     const [tvlDollar, setTvlDollar] = useState<number | undefined>();
     const [tvlChange, setTvlChange] = useState<number | undefined>();
@@ -93,6 +101,7 @@ export default function Protocol() {
     const balancerPoolsGnosis = useBalancerPoolsHistorically('gnosis')
     const balancerPoolsBase = useBalancerPoolsHistorically('base')
     const balancerPoolsZkevm = useBalancerPoolsHistorically('zkevm')
+    const balancerPoolsAvalanche = useBalancerPoolsHistorically('avalanche')
 
     const auraPools = useAuraPoolsHistorically('eth');
     const auraPoolsArb = useAuraPoolsHistorically('arb');
@@ -101,6 +110,7 @@ export default function Protocol() {
     const auraPoolsGnosis = useAuraPoolsHistorically('gnosis');
     const auraPoolsBase = useAuraPoolsHistorically('base');
     const auraPoolsZkevm = useAuraPoolsHistorically('zkevm');
+    const auraPoolsAvalanche = useAuraPoolsHistorically('avalanche');
 
     const poolTransactions = usePoolTransactions('eth');
     const poolTransactionsArb = usePoolTransactions('arb');
@@ -109,6 +119,7 @@ export default function Protocol() {
     const poolTransactionsGnosis = usePoolTransactions('gnosis');
     const poolTransactionsBase = usePoolTransactions('base');
     const poolTransactionsZkevm = usePoolTransactions('zkevm');
+    const poolTransactionsAvalanche = usePoolTransactions('avalanche');
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
 
     const handleChange = (event: SelectChangeEvent) => {
@@ -141,7 +152,8 @@ export default function Protocol() {
         sliceAndSetData(sortedPoolTransactionsGnosis, timeRangeVolume, setDisplayTransactionsGnosis);
         sliceAndSetData(sortedPoolTransactionsBase, timeRangeVolume, setDisplayTransactionsBase);
         sliceAndSetData(sortedPoolTransactionsZkevm, timeRangeVolume, setDisplayTransactionsZkevm);
-    }, [sortedPoolTransactions, sortedPoolTransactionsArb, sortedPoolTransactionsOpt, sortedPoolTransactionsPoly, sortedPoolTransactionsGnosis, sortedPoolTransactionsBase, sortedPoolTransactionsZkevm, timeRangeVolume]);
+        sliceAndSetData(sortedPoolTransactionsAvalanche, timeRangeVolume, setDisplayTransactionsAvalanche);
+    }, [sortedPoolTransactions, sortedPoolTransactionsArb, sortedPoolTransactionsOpt, sortedPoolTransactionsPoly, sortedPoolTransactionsGnosis, sortedPoolTransactionsBase, sortedPoolTransactionsZkevm, sortedPoolTransactionsAvalanche, timeRangeVolume]);
 
     React.useEffect(() => {
         sliceAndSetData(sortedTvlData, timeRange, setDisplayPoolData);
@@ -151,7 +163,8 @@ export default function Protocol() {
         sliceAndSetData(sortedTvlDataGnosis, timeRange, setDisplayPoolDataGnosis);
         sliceAndSetData(sortedTvlDataBase, timeRange, setDisplayPoolDataBase);
         sliceAndSetData(sortedTvlDataZkevm, timeRange, setDisplayPoolDataZkevm);
-    }, [sortedTvlData, sortedTvlDataArb, sortedTvlDataOpt, sortedTvlDataPoly, sortedTvlDataGnosis, sortedTvlDataBase, sortedTvlDataZkevm, timeRange]);
+        sliceAndSetData(sortedTvlDataAvalanche, timeRange, setDisplayPoolDataAvalanche);
+    }, [sortedTvlData, sortedTvlDataArb, sortedTvlDataOpt, sortedTvlDataPoly, sortedTvlDataGnosis, sortedTvlDataBase, sortedTvlDataZkevm, sortedTvlDataAvalanche, timeRange]);
 
     const processTransactions = (transactions: Volume[], coinData: TokenPrices) => {
         return transactions
@@ -220,7 +233,7 @@ export default function Protocol() {
             poolTransactions.length > 0 && poolTransactionsArb.length > 0 && poolTransactionsOpt.length > 0 &&
             poolTransactionsPoly.length > 0 && poolTransactionsGnosis.length > 0 && poolTransactionsBase.length > 0 && poolTransactionsZkevm.length > 0 &&
             coinData && auraGlobalStats && balancerPools.length > 0 && balancerPoolsArb.length > 0 &&
-            balancerPoolsOpt.length > 0 && balancerPoolsPoly.length > 0 && balancerPoolsGnosis.length > 0 && balancerPoolsBase.length > 0 && balancerPoolsZkevm.length > 0
+            balancerPoolsOpt.length > 0 && balancerPoolsPoly.length > 0 && balancerPoolsGnosis.length > 0 && balancerPoolsBase.length > 0 && balancerPoolsZkevm.length > 0 && balancerPoolsAvalanche.length > 0
         ) {
             const tempSortedTvlData = processTVLData(auraPools);
             setSortedTvlData(tempSortedTvlData);
@@ -243,6 +256,9 @@ export default function Protocol() {
             const tempSortedTvlDataZkevm = processTVLData(auraPoolsZkevm);
             setSortedTvlDataZkevm(tempSortedTvlDataZkevm);
 
+            const tempSortedTvlDataAvalanche = processTVLData(auraPoolsAvalanche);
+            setSortedTvlDataAvalanche(tempSortedTvlDataAvalanche);
+
             const tempSortedTvlDataBalancer = processTVLData(balancerPools);
             const tempSortedTvlDataBalancerArb = processTVLData(balancerPoolsArb);
             const tempSortedTvlDataBalancerOpt = processTVLData(balancerPoolsOpt);
@@ -250,6 +266,7 @@ export default function Protocol() {
             const tempSortedTvlDataBalancerGnosis = processTVLData(balancerPoolsGnosis);
             const tempSortedTvlDataBalancerBase = processTVLData(balancerPoolsBase);
             const tempSortedTvlDataBalancerZkevm = processTVLData(balancerPoolsZkevm);
+            const tempSortedTvlDataBalancerAvalanche = processTVLData(balancerPoolsAvalanche);
 
             const tempCalculatedCapturedTVL = calculateCapturedTVL(tempSortedTvlDataBalancer, tempSortedTvlData)
             setCapturedTVLEth(tempCalculatedCapturedTVL);
@@ -265,11 +282,13 @@ export default function Protocol() {
             setCapturedTVLBase(tempCalculatedCapturedTVLBase);
             const tempCalculatedCapturedTVLZkevm = calculateCapturedTVL(tempSortedTvlDataBalancerZkevm, tempSortedTvlDataZkevm)
             setCapturedTVLZkevm(tempCalculatedCapturedTVLZkevm);
+            const tempCalculatedCapturedTVLAvalanche = calculateCapturedTVL(tempSortedTvlDataBalancerAvalanche, tempSortedTvlDataAvalanche)
+            setCapturedTVLAvalanche(tempCalculatedCapturedTVLAvalanche);
 
-            let tempTvlDollar = tempSortedTvlData[tempSortedTvlData.length - 1].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 1].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 1].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 1].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 1].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 1].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 1].value;
+            let tempTvlDollar = tempSortedTvlData[tempSortedTvlData.length - 1].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 1].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 1].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 1].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 1].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 1].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 1].value + tempSortedTvlDataAvalanche[tempSortedTvlDataAvalanche.length - 1].value;
             setTvlDollar(tempTvlDollar);
 
-            let tempTvlDollarForChange = tempSortedTvlData[tempSortedTvlData.length - 2].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 2].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 2].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 2].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 2].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 2].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 2].value;
+            let tempTvlDollarForChange = tempSortedTvlData[tempSortedTvlData.length - 2].value + tempSortedTvlDataArb[tempSortedTvlDataArb.length - 2].value + tempSortedTvlDataOpt[tempSortedTvlDataOpt.length - 2].value + tempSortedTvlDataPoly[tempSortedTvlDataPoly.length - 2].value + tempSortedTvlDataGnosis[tempSortedTvlDataGnosis.length - 2].value + tempSortedTvlDataBase[tempSortedTvlDataBase.length - 2].value + tempSortedTvlDataZkevm[tempSortedTvlDataZkevm.length - 2].value + tempSortedTvlDataAvalanche[tempSortedTvlDataAvalanche.length - 2].value;
 
             let tempTvlChange = (tempTvlDollar - tempTvlDollarForChange) / tempTvlDollarForChange * 100;
             setTvlChange(tempTvlChange);
@@ -295,10 +314,13 @@ export default function Protocol() {
             const tempSortedTransactionsZkevm = processTransactions(poolTransactionsZkevm, coinData.data);
             setSortedPoolTransactionsZkevm(tempSortedTransactionsZkevm);
 
-            let tempVolumeDollar = tempSortedTransactions[tempSortedTransactions.length - 1].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 1].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 1].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 1].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 1].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 1].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 1].value;
+            const tempSortedTransactionsAvalanche = processTransactions(poolTransactionsAvalanche, coinData.data);
+            setSortedPoolTransactionsAvalanche(tempSortedTransactionsAvalanche);
+
+            let tempVolumeDollar = tempSortedTransactions[tempSortedTransactions.length - 1].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 1].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 1].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 1].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 1].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 1].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 1].value + tempSortedTransactionsAvalanche[tempSortedTransactionsAvalanche.length - 1].value;
             setVolumeDollar(tempVolumeDollar);
 
-            let tempVolumeDollarForChange = tempSortedTransactions[tempSortedTransactions.length - 2].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 2].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 2].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 2].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 2].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 2].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 2].value;
+            let tempVolumeDollarForChange = tempSortedTransactions[tempSortedTransactions.length - 2].value + tempSortedTransactionsArb[tempSortedTransactionsArb.length - 2].value + tempSortedTransactionsOpt[tempSortedTransactionsOpt.length - 2].value + tempSortedTransactionsPoly[tempSortedTransactionsPoly.length - 2].value + tempSortedTransactionsGnosis[tempSortedTransactionsGnosis.length - 2].value + tempSortedTransactionsBase[tempSortedTransactionsBase.length - 2].value + tempSortedTransactionsZkevm[tempSortedTransactionsZkevm.length - 2].value + tempSortedTransactionsAvalanche[tempSortedTransactionsAvalanche.length - 2].value;
 
             let tempVolumeChange = (tempVolumeDollar - tempVolumeDollarForChange) / tempVolumeDollarForChange * 100;
             setVolumeChange(tempVolumeChange);
@@ -411,6 +433,7 @@ export default function Protocol() {
                                         gnosisProtocolData={displayPoolDataGnosis}
                                         baseProtocolData={displayPoolDataBase}
                                         zkevmProtocolData={displayPoolDataZkevm}
+                                        avalancheProtocolData={displayPoolDataAvalanche}
                                         changeHandler={handleChange}
                                         timeRange={timeRange}/>
                                 </Card>
@@ -438,6 +461,7 @@ export default function Protocol() {
                                         gnosisProtocolData={displayTransactionsGnosis}
                                         baseProtocolData={displayTransactionsBase}
                                         zkevmProtocolData={displayTransactionsZkevm}
+                                        avalancheProtocolData={displayTransactionsAvalanche}
                                         changeHandler={handleChangeVolume}
                                         timeRange={timeRangeVolume}/>
                                 </Card>
@@ -466,6 +490,7 @@ export default function Protocol() {
                                             {name: 'Gnosis', data: capturedTVLGnosis},
                                             {name: 'Base', data: capturedTVLBase},
                                             {name: 'zkEVM', data: capturedTVLZkevm},
+                                            {name: 'Avalanche', data: capturedTVLAvalanche},
                                         ]}/>
                                 </Card>
                             </Grid>

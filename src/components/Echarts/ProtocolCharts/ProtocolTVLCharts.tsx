@@ -32,6 +32,7 @@ interface ProtocolAreaChartProps {
     gnosisData: number[],
     baseData: number[],
     zkevmData: number[],
+    avalancheData: number[],
     xAxis: string[],
 }
 
@@ -44,6 +45,7 @@ export default function ProtocolTVLCharts({
                                               gnosisData,
                                               baseData,
                                               zkevmData,
+                                              avalancheData,
                                               xAxis
                                           }: ProtocolAreaChartProps) {
 
@@ -51,7 +53,7 @@ export default function ProtocolTVLCharts({
     const theme = useTheme()
 
     const option = {
-        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC', '#8500bb'],
+        color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC', '#8500bb', '#E84142'],
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -62,7 +64,7 @@ export default function ProtocolTVLCharts({
             },
         },
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base', 'zkEVM'],
+            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base', 'zkEVM', 'Avalanche'],
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -298,6 +300,36 @@ export default function ProtocolTVLCharts({
                 },
                 data: zkevmData
             },
+
+            {
+                name: 'Avalanche',
+                type: 'line',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                areaStyle: {
+                    opacity: 0.95,
+                    color: new graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: 'rgb(232, 65, 66)'
+                        },
+                        {
+                            offset: 1,
+                            color: 'rgb(232, 65, 66)'
+                        }
+                    ])
+                },
+                tooltip: {
+                    valueFormatter: function (value: number) {
+                        return formatDollarAmount(value)
+                    }
+                },
+                data: avalancheData
+            },
         ]
     };
 
@@ -310,7 +342,7 @@ export default function ProtocolTVLCharts({
     };
 
     return (
-        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && polygonData.length > 1 && gnosisData.length > 1 && baseData.length > 1 && zkevmData.length > 1 && xAxis ?
+        mainnetData.length > 1 && arbitrumData.length > 1 && optimismData.length > 1 && polygonData.length > 1 && gnosisData.length > 1 && baseData.length > 1 && zkevmData.length > 1 && avalancheData.length > 1 && xAxis ?
             <ReactEcharts
                 option={option}
                 style={{height: '350px'}}
