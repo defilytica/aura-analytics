@@ -1,7 +1,7 @@
 import {Avatar, Divider, FormControl, MenuItem, Select, SelectChangeEvent} from "@mui/material"
 import {Box} from "@mui/system"
 import {
-    ArbitrumNetworkInfo, BaseNetworkInfo,
+    ArbitrumNetworkInfo, AvalancheNetworkInfo, BaseNetworkInfo,
     EthereumNetworkInfo,
     GnosisNetworkInfo,
     NetworkInfo,
@@ -16,6 +16,7 @@ import OpLogo from '../../assets/svg/optimism.svg'
 import GnosisLogo from '../../assets/svg/gnosis.svg'
 import BaseLogo from '../../assets/svg/base.svg'
 import ZkEvmLogo from '../../assets/svg/zkevm.svg'
+import AvalancheLogo from '../../assets/svg/avalancheLogo.svg'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useSwitchNetwork} from 'wagmi'
 
@@ -85,6 +86,10 @@ export default function NetworkSelector() {
         } else if (chainId === BaseNetworkInfo.chainId) {
             update(BaseNetworkInfo)
             const newPath = updatePathForNetwork(BaseNetworkInfo, location.pathname)
+            navigate(newPath)
+        } else if (chainId === AvalancheNetworkInfo.chainId) {
+            update(AvalancheNetworkInfo)
+            const newPath = updatePathForNetwork(AvalancheNetworkInfo, location.pathname)
             navigate(newPath)
         }
     };
@@ -158,7 +163,7 @@ export default function NetworkSelector() {
                         </Box>
                     </Box>
                 </MenuItem>
-                <MenuItem value={PolygonZkEVMNetworkInfo.chainId} key="poly">
+                <MenuItem value={PolygonZkEVMNetworkInfo.chainId} key="polyzkevm">
                     <Box display="flex" alignItems="center">
                         <Box mr={0.5}>
                             <Avatar
@@ -190,7 +195,7 @@ export default function NetworkSelector() {
                         </Box>
                     </Box>
                 </MenuItem>
-                <MenuItem value={GnosisNetworkInfo.chainId} key="optimism">
+                <MenuItem value={GnosisNetworkInfo.chainId} key="gnosis">
                     <Box display="flex" alignItems="center">
                         <Box mr={0.5}>
                             <Avatar
@@ -219,6 +224,22 @@ export default function NetworkSelector() {
                         </Box>
                         <Box>
                             Base
+                        </Box>
+                    </Box>
+                </MenuItem>
+                <MenuItem value={AvalancheNetworkInfo.chainId} key="avalanche">
+                    <Box display="flex" alignItems="center">
+                        <Box mr={0.5}>
+                            <Avatar
+                                sx={{
+                                    height: 20,
+                                    width: 20
+                                }}
+                                src={AvalancheLogo}
+                            />
+                        </Box>
+                        <Box>
+                            Avalanche
                         </Box>
                     </Box>
                 </MenuItem>

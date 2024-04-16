@@ -1,7 +1,9 @@
 import {ApolloClient, NormalizedCacheObject} from '@apollo/client'
 import {
   arbitrumBlockClient,
-  arbitrumClient, baseBlockClient,
+  arbitrumClient, avalancheBlockClient,
+  avalancheClient,
+  baseBlockClient,
   baseClient,
   blockClient,
   client,
@@ -80,6 +82,8 @@ export function useDataClient(): ApolloClient<NormalizedCacheObject> {
       return optimismClient;
     case SupportedNetwork.BASE:
       return baseClient;
+    case SupportedNetwork.AVALANCHE:
+      return avalancheClient;
     default:
       return client
   }
@@ -103,6 +107,8 @@ export function useBlockClient(): ApolloClient<NormalizedCacheObject> {
       return optimismBlockClient
     case SupportedNetwork.BASE:
       return baseBlockClient;
+    case SupportedNetwork.AVALANCHE:
+      return avalancheBlockClient;
     default:
       return blockClient
   }

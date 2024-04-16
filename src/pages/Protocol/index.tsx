@@ -15,7 +15,6 @@ import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 import {TVL, useAuraPoolsHistorically} from "../../data/aura/useAuraPools";
 import ProtocolMultiAreaChart from "../../components/Echarts/ProtocolCharts/ProtocolMultiAreaChart";
 import ProtocolMultiBarChart from "../../components/Echarts/ProtocolCharts/ProtocolMultiBarChart";
-import {CoingeckoRawData} from "../../data/coingecko/getCoingecoSimpleTokenPrices";
 import {useBalancerPoolsHistorically} from "../../data/balancer/useBalancerPoolsHistorically";
 import {CapturedTVL} from "../../data/aura/auraTypes";
 import {ProtocolMultiLineChart} from '../../components/Echarts/ProtocolCharts/ProtocolMultiLineChart';
@@ -308,7 +307,7 @@ export default function Protocol() {
 
 
     return (
-        dataLoaded && totalLockedAmount ? (
+        dataLoaded && totalLockedAmount && coinData ? (
                 <Box sx={{flexGrow: 2}}>
                     <Grid
                         container
