@@ -1,6 +1,6 @@
 import {ApolloClient, InMemoryCache, NormalizedCacheObject} from '@apollo/client';
 import {
-    ArbitrumNetworkInfo, BaseNetworkInfo,
+    ArbitrumNetworkInfo, AvalancheNetworkInfo, BaseNetworkInfo,
     EthereumNetworkInfo,
     GnosisNetworkInfo,
     OptimismNetworkInfo,
@@ -199,6 +199,34 @@ export const auraGnosisClient = new ApolloClient({
 
 export const auraBaseClient = new ApolloClient({
     uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-base',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+        },
+    },
+});
+
+export const auraAvalancheClient = new ApolloClient({
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-avalanche/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -513,6 +541,49 @@ export const baseClient = new ApolloClient({
     },
 })
 
+export const avalancheClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-avalanche-v2-beta',
+    cache: new InMemoryCache({
+        typePolicies: {
+            Token: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+            Pool: {
+                // Singleton types that have no identifying field can use an empty
+                // array for their keyFields.
+                keyFields: false,
+            },
+        },
+    }),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
+export const avalancheBlockClient = new ApolloClient({
+    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/avalanche-blocks',
+    cache: new InMemoryCache(),
+    queryDeduplication: true,
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'cache-first',
+        },
+        query: {
+            fetchPolicy: 'cache-first',
+            errorPolicy: 'all',
+        },
+    },
+})
+
 export function getAuraNetworkClient(networkId: string): ApolloClient<NormalizedCacheObject> {
     switch (networkId) {
         case EthereumNetworkInfo.chainId:
@@ -529,6 +600,8 @@ export function getAuraNetworkClient(networkId: string): ApolloClient<Normalized
             return auraGnosisClient;
         case BaseNetworkInfo.chainId:
             return auraBaseClient;
+        case AvalancheNetworkInfo.chainId:
+            return auraAvalancheClient;
         default:
             return auraClient;
     }

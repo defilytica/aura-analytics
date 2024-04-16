@@ -5,6 +5,7 @@ import GNOSIS_LOGO_URL from '../assets/svg/gnosis.svg'
 import ZKEVM_LOGO_URL from '../assets/svg/zkevm.svg'
 import OPTIMISM_LOGO_URL from '../assets/svg/optimism.svg';
 import BASE_LOGO_URL from '../assets/svg/base.svg'
+import AVALANCHE_LOGO_URL from '../assets/svg/avalancheLogo.svg'
 
 import {
   ALCHEMY_KEY,
@@ -21,6 +22,7 @@ export enum SupportedNetwork {
   GNOSIS,
   ZKEVM,
   OPTIMISM,
+  AVALANCHE,
   BASE,
 }
 
@@ -199,7 +201,7 @@ export const BaseNetworkInfo: NetworkInfo = {
   debankId: 'base',
   dbNetworkId: 'base',
   balAddress: '0x4158734d47fc9692176b5085e0f52ee0da5d47f1',
-  feeCollectorThreshold: 5000,
+  feeCollectorThreshold: 1000,
   route: 'base',
   name: 'Base',
   startTimeStamp: 1690495200,
@@ -215,6 +217,30 @@ export const BaseNetworkInfo: NetworkInfo = {
   blurb: 'Beta',
 }
 
+export const AvalancheNetworkInfo: NetworkInfo = {
+  dbNetworkId: "avax",
+  feeCollectorThreshold: 1000,
+  id: SupportedNetwork.AVALANCHE,
+  chainId: '43114',
+  v3NetworkID: 'AVALANCHE',
+  coingeckoId: 'avalanche',
+  debankId: 'avax',
+  balAddress: '0xe15bcb9e0ea69e6ab9fa080c4c4a5632896298c3',
+  route: 'avalanche',
+  name: 'Avalanche',
+  startTimeStamp: 1688229198,
+  appUri: 'https://app.balancer.fi/#/avalanche/',
+  clientUri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-avalanche-v2-beta',
+  decentralicedClientUri: '',
+  alchemyRPCUrl: ' https://api.avax.network/ext/bc/C/rpc ',
+  alchemyKey: '',
+  bgColor: '#F01B36',
+  primaryColor: '#F01B36',
+  secondaryColor: '#FB7876',
+  imageURL: AVALANCHE_LOGO_URL,
+  blurb: 'Beta'
+}
+
 export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
   EthereumNetworkInfo,
   ArbitrumNetworkInfo,
@@ -222,5 +248,6 @@ export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
   GnosisNetworkInfo,
   PolygonZkEVMNetworkInfo,
   OptimismNetworkInfo,
-    BaseNetworkInfo
+  AvalancheNetworkInfo,
+  BaseNetworkInfo
 ]
