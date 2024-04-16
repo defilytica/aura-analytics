@@ -96,6 +96,7 @@ export default function VotingIncentives() {
     const timeStampNow = Math.floor(Date.now() / 1000);
     const priceData = HISTORICAL_AURA_PRICE
     const { data: auraHistoricalPrice} = useGetHistoricalTokenPrice(AURA_TOKEN_MAINNET, GqlChain.Mainnet)
+    console.log("auraHistoricalprice: ", auraHistoricalPrice)
 
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
 
@@ -166,20 +167,21 @@ export default function VotingIncentives() {
         }
     });
 
-    //console.log("xAxisData", xAxisData)
-    //console.log("priceData", priceData)
+    console.log("xAxisData", xAxisData)
+    console.log("priceData", priceData)
     let historicalPrice = xAxisData.map((el) => {
         const price = priceData.find(price => el === price.time);
         const fallbackPrice = auraHistoricalPrice ? auraHistoricalPrice.find(price => el === price.time) : 0
         if (price) {
             return price.value;
         } else if (auraHistoricalPrice && fallbackPrice) {
-            return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / fallbackPrice.value;
+            return fallbackPrice.value;
         }
         else {
             return 0; // Fallback value
         }
     });
+    console.log("historical aura price:", historicalPrice)
 
     return (<>
             {(!roundsData?.rounds
