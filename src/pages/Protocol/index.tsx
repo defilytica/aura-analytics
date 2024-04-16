@@ -221,12 +221,10 @@ export default function Protocol() {
         return capturedTVLs;
     }
 
-    console.log(displayPoolDataZkevm)
-    console.log(displayPoolDataBase)
-
+    console.log(coinData)
     React.useEffect(() => {
         if (
-            totalLockedAmount &&
+            totalLockedAmount && !coinData.loading &&
             auraPools.length > 0 && auraPoolsArb.length > 0 && auraPoolsOpt.length > 0 &&
             auraPoolsPoly.length > 0 && auraPoolsGnosis.length > 0 && auraPoolsBase.length > 0 &&
             poolTransactions.length > 0 && poolTransactionsArb.length > 0 && poolTransactionsOpt.length > 0 &&
