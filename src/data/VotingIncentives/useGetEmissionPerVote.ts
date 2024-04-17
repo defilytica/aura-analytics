@@ -86,7 +86,17 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         provider
                     );
 
+                    // Simple BAL emission map based on https://dune.com/balancer/bal-supply
                     const biweeklyBalEmission = (await balTokenAdmin.rate()).mul(WEEK * 2);
+                    let biweeklyBalEmissionFormatted = 145000 * 2
+                    if (timestampCurrentRound < 1711975297 && timestampCurrentRound > 1680180097) {
+                        biweeklyBalEmissionFormatted = 121929.98 * 2
+                    } else {
+                        biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission))
+                    }
+
+                    console.log("Biweekly BAL emission: ", biweeklyBalEmissionFormatted)
+
 
                     const initAuraSupply = 50000000;
                     const auraCliffCount = auraGlobalStats?.auraTotalCliffs;
