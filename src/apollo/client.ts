@@ -13,7 +13,7 @@ export const healthClient = new ApolloClient({
 });
 
 export const blockClient = new ApolloClient({
-    uri: process.env.REACT_APP_BLOCKS_SUBGRAPH_URL,
+    uri: EthereumNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -29,7 +29,7 @@ export const blockClient = new ApolloClient({
 
 //Aura client
 export const auraClient = new ApolloClient({
-  uri: 'https://graph.aura.finance/subgraphs/name/aura/aura-mainnet-v2-1',
+  uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-mainnet/api',
   cache: new InMemoryCache({
       typePolicies: {
           Token: {
@@ -58,7 +58,7 @@ export const auraClient = new ApolloClient({
 
 //Aura client
 export const auraArbitrumClient = new ApolloClient({
-    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-arbitrum',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-arbitrum/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -86,7 +86,7 @@ export const auraArbitrumClient = new ApolloClient({
 });
 
 export const auraOptimismClient = new ApolloClient({
-    uri: 'https://graph.data.aura.finance/subgraphs/name/aura/aura-optimism',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-optimism/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -114,7 +114,7 @@ export const auraOptimismClient = new ApolloClient({
 });
 
 export const auraPolygonClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-polygon',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-polygon/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -142,7 +142,7 @@ export const auraPolygonClient = new ApolloClient({
 });
 
 export const auraPolygonZkEVMClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/3c56113393d7/1xhub-ltd/aura-finance-zkevm/api',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-zkevm/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -170,7 +170,7 @@ export const auraPolygonZkEVMClient = new ApolloClient({
 });
 
 export const auraGnosisClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-gnosis-chain',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-gnosis/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -198,7 +198,7 @@ export const auraGnosisClient = new ApolloClient({
 });
 
 export const auraBaseClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/aurafinance/aura-finance-base',
+    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-base/api',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -254,7 +254,7 @@ export const auraAvalancheClient = new ApolloClient({
 });
 
 export const client = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-v2',
+    uri: EthereumNetworkInfo.clientUri,
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -282,7 +282,7 @@ export const client = new ApolloClient({
 });
 
 export const arbitrumClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-arbitrum-v2',
+    uri: ArbitrumNetworkInfo.clientUri,
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -310,7 +310,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const arbitrumBlockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/arbitrum-one-blocks',
+    uri: ArbitrumNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -325,7 +325,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const polygonClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-prune-v2',
+    uri: PolygonNetworkInfo.clientUri,
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -353,7 +353,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const polygonBlockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/ianlapham/polygon-blocks',
+    uri: PolygonNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -368,7 +368,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
   export const gnosisClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-gnosis-chain-v2',
+    uri: GnosisNetworkInfo.clientUri,
     cache: new InMemoryCache({
       typePolicies: {
         Token: {
@@ -396,8 +396,7 @@ export const arbitrumClient = new ApolloClient({
   })
 
 export const polygonZKEVMClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
-    uri: 'https://api.studio.thegraph.com/query/24660/balancer-polygon-zk-v2/version/latest',
+    uri: PolygonZkEVMNetworkInfo.clientUri,
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -440,7 +439,7 @@ export const polygonZKEVMBlockClient = new ApolloClient({
 })
 
   export const gnosisBlockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/x0swapsubgraph/xdai-blocks',
+    uri: GnosisNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -455,7 +454,7 @@ export const polygonZKEVMBlockClient = new ApolloClient({
   })
 
 export const optimismClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/beethovenxfi/beethovenx-optimism',
+    uri: OptimismNetworkInfo.clientUri,
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -483,7 +482,7 @@ export const optimismClient = new ApolloClient({
 })
 
 export const optimismBlockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/beethovenxfi/optimism-blocks',
+    uri: OptimismNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
@@ -513,8 +512,7 @@ export const baseBlockClient = new ApolloClient({
 })
 
 export const baseClient = new ApolloClient({
-    //uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-polygon-v2',
-    uri: 'https://api.studio.thegraph.com/query/24660/balancer-base-v2/version/latest',
+    uri: BaseNetworkInfo.clientUri,
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -542,7 +540,7 @@ export const baseClient = new ApolloClient({
 })
 
 export const avalancheClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/balancer-labs/balancer-avalanche-v2-beta',
+    uri: AvalancheNetworkInfo.clientUri,
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -570,7 +568,7 @@ export const avalancheClient = new ApolloClient({
 })
 
 export const avalancheBlockClient = new ApolloClient({
-    uri: 'https://api.thegraph.com/subgraphs/name/iliaazhel/avalanche-blocks',
+    uri: AvalancheNetworkInfo.blockClientUri,
     cache: new InMemoryCache(),
     queryDeduplication: true,
     defaultOptions: {
