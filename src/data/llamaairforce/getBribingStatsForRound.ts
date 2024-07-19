@@ -86,30 +86,8 @@ export function GetBribingStatsForRounds() {
     const [jsonData, setJsonData] = useState<DashboardResponse>();
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const baseURI = 'https://api.llama.airforce/dashboard';
-                const response = await fetch(baseURI, {
-                    method: 'POST', headers: {
-                        'Content-Type': 'application/json',
-                    }, body: JSON.stringify({
-                        "id": "bribes-overview-aura",
-                    })
-                });
-                const json: DashboardResponse = await response.json();
-                setJsonData(json);
-            } catch (error) {
-                console.log("error", error);
-            }
-        };
-        if (isDev()) {
-            console.log("DEV: loading transaction mock")
             const copy = JSON.parse(JSON.stringify(dashboard));
             setJsonData(copy)
-        } else {
-            console.log("PRODUCTION: fetching data from LlamaAirforce")
-            fetchData();
-        }
     }, []);
 
     return jsonData;
