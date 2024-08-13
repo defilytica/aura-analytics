@@ -23,6 +23,7 @@ import CustomLinearProgress from "../../components/Progress/CustomLinearProgress
 import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {isMobile} from "react-device-detect";
 
 
 const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -346,6 +347,10 @@ export default function AuraLocks() {
                                     </Box>
                                 </Grid>
                             </Grid>
+                            <Box sx={{
+                                width: isMobile ? '430px' : 'auto',
+                                maxWidth: '100%'
+                            }}>
                             <LockerTable lockerAccounts={lockers}
                                          auraUSD={coinData?.data[auraAddress].price}
                                          totalAmountLocked={totalLockedAmount}
@@ -354,6 +359,7 @@ export default function AuraLocks() {
                                          rowsPerPage={rowsPerPage}
                                          setRowsPerPage={setRowsPerPage}
                                          />
+                            </Box>
                         </Grid>
                     </Grid>
                 </Box>) :

@@ -34,6 +34,7 @@ import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMulti
 import {ArbitrumNetworkInfo, EthereumNetworkInfo, PolygonNetworkInfo} from "../../constants/networks";
 import React from "react";
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {isMobile} from "react-device-detect";
 
 
 export default function AuraBAL() {
@@ -402,8 +403,12 @@ export default function AuraBAL() {
                     <Box p={1} display="flex" alignItems='center'>
 
                     </Box>
+                    <Box sx={{
+                        width: isMobile ? '430px' : 'auto',
+                        maxWidth: '100%'
+                    }}>
                     <AuraPoolLeaderboardTable leaderboardInfo={activeNetwork === EthereumNetworkInfo ? auraBalPoolLeaderboard : auraBalVaultLeaderboard}/>
-
+                    </Box>
                 </Grid>
             </Grid>
             <Grid

@@ -293,7 +293,7 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
                                                 {row.id}
                                             </StyledTableCell>
                                             <StyledTableCell
-                                                sx={{ display: { xs: 'none', md: 'table-cell' } }}
+                                                sx={{ display: { xs: 'table-cell', md: 'table-cell' } }}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
                                                     <Box mr={1}>
@@ -313,13 +313,13 @@ export default function AuraPoolLeaderboardTable({ leaderboardInfo }:
                                             </StyledTableCell>
                                             <StyledTableCell
                                                 align="right"
-                                                sx={{ display: { xs: 'none', md: 'table-cell' } }}
+                                                sx={{ display: { xs: 'table-cell', md: 'table-cell' } }}
                                             >
                                                 {formatAmount(row.amount, 2) + ' auraBAL'}
                                             </StyledTableCell>
                                             <StyledTableCell
                                                 align="right"
-                                                sx={{ display: { xs: 'none', md: 'table-cell' } }}
+                                                sx={{ display: { xs: 'table-cell', md: 'table-cell' } }}
                                             >
                                                 {formatAmount(row.fraction, 2) + ' %'}
                                             </StyledTableCell>

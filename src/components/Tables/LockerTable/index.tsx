@@ -110,21 +110,21 @@ const headCells: readonly HeadCell[] = [
         numeric: false,
         disablePadding: false,
         label: 'Value ($)',
-        isMobileVisible: false,
+        isMobileVisible: true,
     },
     {
         id: 'poolShare',
         numeric: false,
         disablePadding: false,
         label: 'Relative Share (%)',
-        isMobileVisible: false,
+        isMobileVisible: true,
     },
     {
         id: 'nrOfLocks',
         numeric: false,
         disablePadding: false,
         label: '# Locks',
-        isMobileVisible: false
+        isMobileVisible: true
     }
 ];
 
@@ -314,7 +314,7 @@ export default function LockerTable({
                                                 {row.id}
                                             </StyledTableCell>
                                             <StyledTableCell
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
+                                                sx={{display: {xs: 'table-cell', md: 'table-cell'}}}
                                             >
                                                 <Box display="flex" alignItems="center" alignContent="center">
                                                     <Box mr={1}>
@@ -336,7 +336,7 @@ export default function LockerTable({
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}
+                                                sx={{display: {xs: 'table-cell', md: 'table-cell'}}}
                                             >
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
@@ -349,7 +349,7 @@ export default function LockerTable({
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                sx={{display: {xs: 'table-cell', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         {formatDollarAmount(row.lockedUSD)}
@@ -360,7 +360,7 @@ export default function LockerTable({
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                sx={{display: {xs: 'table-cell', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         {row.poolShare.toFixed(2)}%
@@ -371,7 +371,7 @@ export default function LockerTable({
                                                 component="th"
                                                 id={labelId}
                                                 scope="row"
-                                                sx={{display: {xs: 'none', md: 'table-cell'}}}>
+                                                sx={{display: {xs: 'table-cell', md: 'table-cell'}}}>
                                                 <Box display="flex" alignItems="center">
                                                     <Box mr={1}>
                                                         {row.nrOfLocks}
