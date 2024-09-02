@@ -53,6 +53,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     // LP fees have been reduced from 25 to 22.5%
                     const newEmissionEffectiveAt = 1692230400; // Starting point for new emission logic
                     const secondaryOptimizationEffectiveAt = 1707951600; // Starting point for secondary optimization
+                    const thirdOptimizationEffectiveAt = 1724882400; //third optimization reducing emissions to 22.5%
 
 
                     const isNewEmission = timestampCurrentRound > newEmissionEffectiveAt || timestampCurrentRound === 0;
@@ -64,8 +65,14 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     if (isNewEmission) {
                         additionalAuraAmount = 180000; // Bi-weekly amount after new emission policy
                         if (isAuraOptimized) {
-                            additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
-                            console.log("Emission calculation based on AIP-63")
+                            if (timestampCurrentRound >= thirdOptimizationEffectiveAt) {
+                                additionalAuraAmount = 70380 * 2; // Adjusted amount after third Aura optimization
+                                console.log("Update: AIP-63 2024/09/02 AURA has been reduced from 76.5k to 70.380k per week")
+                            } else {
+                                additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
+                                console.log("Emission calculation based on AIP-63")
+                            }
+
                         }
                     }
 
