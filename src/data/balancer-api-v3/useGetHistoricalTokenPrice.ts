@@ -1,30 +1,32 @@
 import { GqlChain } from "../../apollo/generated/graphql-codegen-generated";
 import { balancerV3APIClient } from "../../apollo/client";
-import { useGetTokenPriceQuery } from "../../apollo/generated/graphql-balancer-v3-codegen-generated";
+import { useGetTokenSetHistoricalPricesQuery } from "../../apollo/generated/graphql-balancer-v3-codegen-generated";
 import { BalancerChartDataItem } from "../balancer/balancerTypes";
 import { unixToDate } from "../../utils/date";
 
 export default function useGetHistoricalTokenPrice(address: string, chainId: GqlChain) {
-    const { data, loading, error } = useGetTokenPriceQuery({
+    const { data, loading, error } = useGetTokenSetHistoricalPricesQuery({
         client: balancerV3APIClient,
         variables: {
-            address: address,
+            addresses: [address],
             chain: chainId,
         },
     });
 
     let mappedData: BalancerChartDataItem[] | undefined = undefined;
 
-    if (data && data.tokenGetPriceChartData) {
+    if (data && data.tokenGetHistoricalPrices && data.tokenGetHistoricalPrices.length > 0) {
+        const tokenData = data.tokenGetHistoricalPrices[0]; // We only expect one token's data
+
         // Group data by date string
         const groupedByDate: { [date: string]: BalancerChartDataItem[] } = {};
-        data.tokenGetPriceChartData.forEach((item) => {
-            const dateString = unixToDate(item.timestamp); // Get date string
+        tokenData.prices.forEach((item) => {
+            const dateString = unixToDate(Number(item.timestamp));
             if (!groupedByDate[dateString]) {
                 groupedByDate[dateString] = [];
             }
             groupedByDate[dateString].push({
-                value: parseFloat(item.price),
+                value: item.price,
                 time: dateString,
             });
         });

@@ -92,8 +92,6 @@ export default function VotingIncentives() {
     const {address} = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerV3StakingGauges();
-    //APR chart data
-    //const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
     const timeStampNow = Math.floor(Date.now() / 1000);
     const priceData = HISTORICAL_AURA_PRICE
     const { data: auraHistoricalPrice} = useGetHistoricalTokenPrice(AURA_TOKEN_MAINNET, GqlChain.Mainnet)
