@@ -3,7 +3,7 @@ import {useCoinGeckoSimpleTokenPrices} from "../coingecko/useCoinGeckoSimpleToke
 import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
-import {AURA_TIMESTAMPS} from "../hidden-hand/constants";
+import {AURA_TIMESTAMPS, HISTORICAL_AURA_PRICE, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
 import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
@@ -77,11 +77,16 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     }
 
                     // Find price from historical set
-                    const auraTsPrice = historicalAuraCoinData?.find(el => el.time === unixToDate(timestampCurrentRound) ? el.value : 0)
-                    const balTsPrice = historicalBALCoinData?.find(el => el.time === unixToDate(timestampCurrentRound) ? el.value : 0)
+                    const auraTsPrice = historicalAuraCoinData?.find(el => el.time === unixToDate(timestampCurrentRound))?.value
+                        ?? HISTORICAL_AURA_PRICE.find(e => e.time === unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))?.value
+                        ?? 0;
 
-                    const auraPrice = auraTsPrice ? auraTsPrice.value : coinData.data[auraAddress].price
-                    const balPrice = balTsPrice ? balTsPrice.value : coinData.data[balAddress].price
+                    const balTsPrice = historicalBALCoinData?.find(el => el.time === unixToDate(timestampCurrentRound))?.value
+                        ?? HISTORICAL_ROUND_BAL_PRICE.find(e => e.time === unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))?.value
+                        ?? 0;
+
+                    const auraPrice = auraTsPrice ? auraTsPrice : coinData.data[auraAddress].price
+                    const balPrice = balTsPrice ? balTsPrice : coinData.data[balAddress].price
                     console.log("Aura price: ", auraPrice, "- BAL price: ", balPrice);
 
 
@@ -98,6 +103,8 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     let biweeklyBalEmissionFormatted = 145000 * 2
                     if (timestampCurrentRound < 1711975297 && timestampCurrentRound > 1680180097) {
                         biweeklyBalEmissionFormatted = 121929.98 * 2
+                    } else if (timestampCurrentRound < 1680180097){
+                        biweeklyBalEmissionFormatted = 145000 * 2
                     } else {
                         biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission))
                     }

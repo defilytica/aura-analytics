@@ -99,7 +99,7 @@ export default function VotingIncentives() {
     const { data: historicalPrices, loading: pricesLoading, error: pricesError } = useGetTokenSetHistoricalPrices(tokenAddresses, GqlChain.Mainnet);
     const [correctedIncentives, setCorrectedIncentives] = useState<HiddenHandIncentives | null>(null);
 
-    console.log("auraHistoricalprice: ", auraHistoricalPrice)
+    //console.log("auraHistoricalprice: ", auraHistoricalPrice)
 
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
 
@@ -133,12 +133,23 @@ export default function VotingIncentives() {
                             ? curr : prev;
                     });
 
-                    const correctedValue = bribe.amount * closestPrice.price;
+                    // Check if the closest price is within 3 days of the proposal deadline
+                    const timeDifference = Math.abs(new Date(closestPrice.date).getTime() - proposal.proposalDeadline * 1000);
+                    const threeDaysInMilliseconds = 3 * 24 * 60 * 60 * 1000;
 
-                    return {
-                        ...bribe,
-                        value: correctedValue,
-                    };
+                    if (timeDifference <= threeDaysInMilliseconds) {
+                        const correctedValue = bribe.amount * closestPrice.price;
+                        return {
+                            ...bribe,
+                            value: correctedValue,
+                        };
+                    } else {
+                        // If no price within 3 days, use the original amount
+                        return {
+                            ...bribe,
+                            value: bribe.value,
+                        };
+                    }
                 }),
             }));
 
@@ -223,8 +234,8 @@ export default function VotingIncentives() {
         }
     });
 
-    console.log("xAxisData", xAxisData)
-    console.log("priceData", priceData)
+    //console.log("xAxisData", xAxisData)
+    //console.log("priceData", priceData)
     let historicalPrice = xAxisData.map((el) => {
         const price = priceData.find(price => el === price.time);
         const fallbackPrice = auraHistoricalPrice ? auraHistoricalPrice.find(price => el === price.time) : 0
@@ -237,7 +248,7 @@ export default function VotingIncentives() {
             return 0; // Fallback value
         }
     });
-    console.log("historical aura price:", historicalPrice)
+    //console.log("historical aura price:", historicalPrice)
 
     return (<>
             {(!roundsData?.rounds
