@@ -37,13 +37,13 @@ export function useBalancerProtocolData(): ProtocolData {
                     block48: { number: parseInt(block48.number) },
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 },
             });
         }
     }, [block24]);
 
-    
+
 
     if (!data) {
         return { tvlData: [], volumeData: [], swapData: [], feeData: [], whaleSwaps: [] };

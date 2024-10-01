@@ -3,7 +3,7 @@ import CustomLinearProgress from '../../components/Progress/CustomLinearProgress
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
 import {GetBribingStatsForRounds} from "../../data/llamaairforce/getBribingStatsForRound";
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {SelectChangeEvent} from "@mui/material/Select";
 import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
@@ -34,6 +34,7 @@ import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
 import {useCoinGeckoSingleTokenData} from "../../data/coingecko/useCoinGeckoSingleTokenData";
 import useGetHistoricalTokenPrice from "../../data/balancer-api-v3/useGetHistoricalTokenPrice";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
+import useGetTokenSetHistoricalPrices from "../../data/balancer-api-v3/useGetTokenSetHistoricalPrices";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -91,43 +92,98 @@ export default function VotingIncentives() {
     const {address} = useAccount();
     const addressRewards = useGetHiddenHandRewards(address ? address : '')
     const gaugeData = useGetBalancerV3StakingGauges();
-    //APR chart data
-    //const {priceData} = useBalancerTokenPageData(AURA_TOKEN_MAINNET);
     const timeStampNow = Math.floor(Date.now() / 1000);
     const priceData = HISTORICAL_AURA_PRICE
     const { data: auraHistoricalPrice} = useGetHistoricalTokenPrice(AURA_TOKEN_MAINNET, GqlChain.Mainnet)
+    const [tokenAddresses, setTokenAddresses] = useState<string[]>([]);
+    const { data: historicalPrices, loading: pricesLoading, error: pricesError } = useGetTokenSetHistoricalPrices(tokenAddresses, GqlChain.Mainnet);
+    const [correctedIncentives, setCorrectedIncentives] = useState<HiddenHandIncentives | null>(null);
+
     console.log("auraHistoricalprice: ", auraHistoricalPrice)
 
     const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
 
 
+    // Memoize hiddenHandData to prevent unnecessary re-renders
+    const memoizedHiddenHandData = useMemo(() => hiddenHandData.incentives, [hiddenHandData.incentives]);
 
     useEffect(() => {
-        const data = extractPoolRewards(hiddenHandData.incentives);
-        setBribeRewardsNew(data);
-        if (hiddenHandData.incentives && hiddenHandData.incentives.data.length > 1 && gaugeData.length > 1) {
+        if (memoizedHiddenHandData) {
+            const addresses = memoizedHiddenHandData.data.flatMap(proposal =>
+                proposal.bribes.map(bribe => bribe.token)
+            );
+            setTokenAddresses([...new Set(addresses)]);
+        }
+    }, [JSON.stringify(memoizedHiddenHandData)]);
+
+    useEffect(() => {
+        if (memoizedHiddenHandData && historicalPrices && !pricesLoading && !pricesError) {
+            const correctedData = memoizedHiddenHandData.data.map(proposal => ({
+                ...proposal,
+                bribes: proposal.bribes.map(bribe => {
+                    const tokenPrices = historicalPrices[bribe.token];
+                    if (!tokenPrices || tokenPrices.length === 0) {
+                        return bribe;
+                    }
+
+                    // Find the closest price to the proposal deadline
+                    const closestPrice = tokenPrices.reduce((prev, curr) => {
+                        return Math.abs(new Date(curr.date).getTime() - proposal.proposalDeadline * 1000) <
+                        Math.abs(new Date(prev.date).getTime() - proposal.proposalDeadline * 1000)
+                            ? curr : prev;
+                    });
+
+                    const correctedValue = bribe.amount * closestPrice.price;
+
+                    return {
+                        ...bribe,
+                        value: correctedValue,
+                    };
+                }),
+            }));
+
+            setCorrectedIncentives({
+                ...memoizedHiddenHandData,
+                data: correctedData,
+            });
+        }
+    }, [JSON.stringify(memoizedHiddenHandData), JSON.stringify(historicalPrices), pricesLoading, pricesError]);
+
+    // Memoize correctedIncentives to prevent unnecessary re-renders
+    const memoizedCorrectedIncentives = useMemo(() => correctedIncentives, [correctedIncentives]);
+
+    useEffect(() => {
+        if (memoizedCorrectedIncentives) {
+            const data = extractPoolRewards(memoizedCorrectedIncentives);
+            setBribeRewardsNew(data);
             setXAxisDataRoundNew(data.map((el) => el.pool));
-            //calculate inventives and emission per vote Metrics for a given round
+
             let totalVotes = 0;
             let totalValue = 0;
             let emissionVotes = 0;
             let emissionValue = 0;
-            hiddenHandData.incentives.data.forEach((item) => {
-                totalValue += item.totalValue;
+
+            memoizedCorrectedIncentives.data.forEach((item) => {
+                const itemTotalValue = item.bribes.reduce((sum, bribe) => sum + bribe.value, 0);
+                totalValue += itemTotalValue;
                 totalVotes += item.voteCount;
-                if (item.totalValue > 0) {
-                    emissionValue += item.totalValue;
+                if (itemTotalValue > 0) {
+                    emissionValue += itemTotalValue;
                     emissionVotes += item.voteCount;
                 }
             });
+
             const incentiveEfficency = emissionValue / emissionVotes;
-            setEmissionVotesTotal(emissionVotes)
-            setIncentivePerVote(incentiveEfficency)
-            setRoundIncentives(totalValue)
-            const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, hiddenHandData.incentives)
-            setDecoratedGagues(fullyDecoratedGauges)
+            setEmissionVotesTotal(emissionVotes);
+            setIncentivePerVote(incentiveEfficency);
+            setRoundIncentives(totalValue);
+
+            if (gaugeData.length > 1) {
+                const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, memoizedCorrectedIncentives);
+                setDecoratedGagues(fullyDecoratedGauges);
+            }
         }
-    }, [currentRoundNew, JSON.stringify(gaugeData), hiddenHandData.incentives]);
+    }, [JSON.stringify(memoizedCorrectedIncentives), JSON.stringify(gaugeData)]);
 
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {

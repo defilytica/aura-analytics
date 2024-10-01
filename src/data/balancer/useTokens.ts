@@ -89,11 +89,11 @@ export function useBalancerTokens(first = 100) {
                     first: first,
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 },
             });
         }
-    }, [block24, activeNetwork.clientUri, first, getTokenData]);
+    }, [block24, activeNetwork.decentralicedClientUri, first, getTokenData]);
 
     if (!data || pricesLoading) {
         return [];
