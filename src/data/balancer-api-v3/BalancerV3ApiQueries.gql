@@ -44,3 +44,13 @@ query GetDynamicTokenPrices($addresses: [String!]!) {
         priceChange24h
     }
 }
+
+query GetTokenSetHistoricalPrices($addresses: [String!]!, $chain: GqlChain!) {
+    tokenGetHistoricalPrices(addresses: $addresses, chain: $chain, range: ONE_YEAR,) {
+        address
+        prices {
+            price
+            timestamp
+        }
+    }
+}

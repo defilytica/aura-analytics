@@ -104,11 +104,11 @@ export function useBalancerPools(first = 250, startunixTime = startTimestamp, en
                     first: first,
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 }
             });
         }
-    }, [block24, first, activeNetwork.clientUri]);
+    }, [block24, first, activeNetwork.decentralicedClientUri]);
 
     if (!data) {
         return [];
@@ -172,7 +172,7 @@ export function useBalancerSwapFeePoolData(startTimestamp: number, endTimeStamp:
     const { data } = useBalancerPoolSwapFeeSnapshotQuery({
         variables: { startTimestamp: startTimestamp, endTimeStamp: endTimeStamp },
         context: {
-            uri: activeNetwork.clientUri,
+            uri: activeNetwork.decentralicedClientUri,
         }
     });
 
