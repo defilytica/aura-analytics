@@ -39,8 +39,8 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                 if ((timestampCurrentRound === 0 || timestampCurrentRound) && coinData && auraGlobalStats && hiddenHandDataCurrent.incentives && hiddenHandDataPrevious.incentives) {
                     const DAY = 86400;
                     const WEEK = 604800;
-                    const currentTime = Date.now() ;
-
+                    const currentTime = Date.now();
+                    const currentTimestamp = Math.floor(currentTime / 1000);
 
                     const provider = new ethers.providers.JsonRpcProvider('https://rpc.mevblocker.io/fast');
 
@@ -51,28 +51,28 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     // -----
                     // Per AIP-63: additional weekly AURA has been reduced from 90000 to 76500 -> 153000 new additional Aura Amount
                     // LP fees have been reduced from 25 to 22.5%
-                    const newEmissionEffectiveAt = 1692230400; // Starting point for new emission logic
-                    const secondaryOptimizationEffectiveAt = 1707951600; // Starting point for secondary optimization
-                    const thirdOptimizationEffectiveAt = 1724882400; //third optimization reducing emissions to 22.5%
+                    const newEmissionEffectiveAt = 1692230400;
+                    const secondaryOptimizationEffectiveAt = 1707951600;
+                    const thirdOptimizationEffectiveAt = 1724882400;
 
+                    // Use current timestamp if timestampCurrentRound is 0
+                    const effectiveTimestamp = timestampCurrentRound === 0 ? currentTimestamp : timestampCurrentRound;
 
-                    const isNewEmission = timestampCurrentRound > newEmissionEffectiveAt || timestampCurrentRound === 0;
-                    const isAuraOptimized = timestampCurrentRound > secondaryOptimizationEffectiveAt || timestampCurrentRound === 0;
+                    const isNewEmission = effectiveTimestamp > newEmissionEffectiveAt || timestampCurrentRound === 0;
+                    const isAuraOptimized = effectiveTimestamp > secondaryOptimizationEffectiveAt || timestampCurrentRound === 0;
 
                     const emissionMultiplier = isNewEmission ? 0.4 : 1;
 
                     let additionalAuraAmount = 0;
                     if (isNewEmission) {
-                        additionalAuraAmount = 180000; // Bi-weekly amount after new emission policy
-                        if (isAuraOptimized) {
-                            if (timestampCurrentRound >= thirdOptimizationEffectiveAt) {
-                                additionalAuraAmount = 70380 * 2; // Adjusted amount after third Aura optimization
-                                console.log("Update: AIP-63 2024/09/02 AURA has been reduced from 76.5k to 70.380k per week")
-                            } else {
-                                additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
-                                console.log("Emission calculation based on AIP-63")
-                            }
-
+                        if (effectiveTimestamp >= thirdOptimizationEffectiveAt) {
+                            additionalAuraAmount = 70380 * 2; // Adjusted amount after third Aura optimization
+                            console.log("Update: AIP-63 2024/09/02 additional AURA has been reduced from 76.5k to 70.380k per week");
+                        } else if (isAuraOptimized) {
+                            additionalAuraAmount = 153000; // Adjusted amount after Aura optimization
+                            console.log("Emission calculation based on AIP-63");
+                        } else {
+                            additionalAuraAmount = 180000; // Original bi-weekly amount after new emission policy
                         }
                     }
 
