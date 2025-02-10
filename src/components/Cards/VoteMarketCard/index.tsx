@@ -1,6 +1,6 @@
-import {Card, CardContent, CardMedia, Grid, Link, Typography} from '@mui/material';
+import {Card, Grid, Link, Typography} from '@mui/material';
 import { styled } from '@mui/system';
-import HHLogo from '../../../assets/png/hiddenHandLogo.png';
+import StakeDAO from '../../../assets/svg/stakeDAO.svg';
 import OrbBg from '../../../assets/png/orbz.png';
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -16,7 +16,6 @@ const ContentContainer = styled(Grid)(({ theme }) => ({
     alignItems: 'flex-start',
     justifyContent: 'space-between', // Add this line to distribute items evenly along the horizontal axis
     marginBottom: theme.spacing(2),
-
 }));
 
 const Title = styled(Typography)(({ theme }) => ({
@@ -35,31 +34,33 @@ const LogoImage = styled('img')({
     backgroundSize: 'cover',
     overflow: 'hidden',
     border: 'none',
+    filter: 'brightness(0) invert(1)',
 });
+
 
 const LogoContainer = styled(Grid)({
     display: 'flex',
     alignItems: 'flex-end',
 });
 
-const HiddenHandCard = () => {
+const PaladinQuestsCard = () => {
     return (
         <StyledCard>
             <ContentContainer container>
                 <Grid item xs={9}>
-                    <Title variant="h5">HiddenHand</Title>
+                    <Title variant="h5">Vote Market</Title>
                     <Description variant="body2">
-                        Explore a range of voting incentives available
+                        Explore vote aggregation on StakeDAO's vote market.
                     </Description>
                 </Grid>
 
                 <LogoContainer item xs={3}>
-                    <LogoImage src={HHLogo} alt="HiddenHand Logo" />
+                    <LogoImage src={StakeDAO} alt="VoteMarket Logo" />
                 </LogoContainer>
 
             </ContentContainer>
             <Link
-                href="https://hiddenhand.finance/aura"
+                href="https://classic.votemarket.org/?market=bal"
                 underline="none"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -68,4 +69,4 @@ const HiddenHandCard = () => {
     );
 };
 
-export default HiddenHandCard;
+export default PaladinQuestsCard;
