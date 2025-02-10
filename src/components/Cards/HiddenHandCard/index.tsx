@@ -28,7 +28,7 @@ const Description = styled(Typography)(({ theme }) => ({
 }));
 
 const LogoImage = styled('img')({
-    height: '60px',
+    height: '45px',
     width: 'auto',
     alignSelf: 'flex-end',
     background: `url(${OrbBg}) no-repeat center center`,

@@ -27,7 +27,7 @@ const Description = styled(Typography)(({ theme }) => ({
 }));
 
 const LogoImage = styled('img')({
-    height: '60px',
+    height: '45px',
     width: 'auto',
     alignSelf: 'flex-end',
     background: `url(${OrbBg}) no-repeat center center`,
@@ -49,7 +49,7 @@ const PaladinQuestsCard = () => {
                 <Grid item xs={9}>
                     <Title variant="h5">Paladin Quests</Title>
                     <Description variant="body2">
-                        Explore a range of quests on Paladin for voting incentives
+                        Explore a range of quests with dynamic APRs on Paladin for voting incentives.
                     </Description>
                 </Grid>
 

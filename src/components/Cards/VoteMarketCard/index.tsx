@@ -27,7 +27,7 @@ const Description = styled(Typography)(({ theme }) => ({
 }));
 
 const LogoImage = styled('img')({
-    height: '60px',
+    height: '45px',
     width: 'auto',
     alignSelf: 'flex-end',
     background: `url(${OrbBg}) no-repeat center center`,
@@ -48,9 +48,9 @@ const PaladinQuestsCard = () => {
         <StyledCard>
             <ContentContainer container>
                 <Grid item xs={9}>
-                    <Title variant="h5">Vote Market</Title>
+                    <Title variant="h5">VoteMarket</Title>
                     <Description variant="body2">
-                        Explore vote aggregation on StakeDAO's vote market.
+                        The liquidity incentive marketplace. Empower your liquidity with vote-based incentives. Turn your votes into rewards.
                     </Description>
                 </Grid>
 
