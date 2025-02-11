@@ -1,6 +1,6 @@
-import {Card, CardContent, CardMedia, Grid, Link, Typography} from '@mui/material';
+import {Card, Grid, Link, Typography} from '@mui/material';
 import { styled } from '@mui/system';
-import PaladinLogo from '../../../assets/svg/paladin.svg';
+import StakeDAO from '../../../assets/svg/stakeDAO.svg';
 import OrbBg from '../../../assets/png/orbz.png';
 
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -34,6 +34,7 @@ const LogoImage = styled('img')({
     backgroundSize: 'cover',
     overflow: 'hidden',
     border: 'none',
+    filter: 'brightness(0) invert(1)',
 });
 
 
@@ -47,19 +48,19 @@ const PaladinQuestsCard = () => {
         <StyledCard>
             <ContentContainer container>
                 <Grid item xs={9}>
-                    <Title variant="h5">Paladin Quests</Title>
+                    <Title variant="h5">VoteMarket</Title>
                     <Description variant="body2">
-                        Explore a range of quests with dynamic APRs on Paladin for voting incentives.
+                        The liquidity incentive marketplace. Empower your liquidity with vote-based incentives. Turn your votes into rewards.
                     </Description>
                 </Grid>
 
                 <LogoContainer item xs={3}>
-                    <LogoImage src={PaladinLogo} alt="Paladin Logo" />
+                    <LogoImage src={StakeDAO} alt="VoteMarket Logo" />
                 </LogoContainer>
 
             </ContentContainer>
             <Link
-                href="https://quest.paladin.vote/#/bal"
+                href="https://classic.votemarket.org/?market=bal"
                 underline="none"
                 target="_blank"
                 rel="noopener noreferrer"
