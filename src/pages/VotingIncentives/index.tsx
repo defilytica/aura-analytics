@@ -476,7 +476,7 @@ export default function VotingIncentives() {
                             </Grid>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '24px'}}>Hidden Hand: Historical Incentives Overview</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Hidden Hand: Historical Incentives</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                         <Grid
@@ -506,7 +506,7 @@ export default function VotingIncentives() {
                             </Grid>
                             : <CircularProgress/>}
                         <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '15px'}}>Paladin Quest Marketplace</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Paladin Quests: Historical Incentives</Typography>
                         </Grid>
                         {paladinDollarPerVlAssetData && paladinTotalAmountDollarsData && paladinXAxisData ?
                             <Grid item xs={11} sm={9}>
@@ -566,27 +566,27 @@ export default function VotingIncentives() {
                                 columns={{xs: 4, sm: 8, md: 12}}
                                 sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
-                                <Box mr={1}>
+                                <Box mr={1} mb={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box mr={1}>
+                                <Box mr={1} mb={1}>
                                     {emissionVotesTotal ?
                                         <MetricsCard mainMetric={emissionVotesTotal}
                                                      metricName={"Total Incentive Votes"}
                                                      mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box mr={1}>
+                                <Box mr={1} mb={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={incentivePerVote} metricName={"Incentive $/Vote"}
                                                      metricDecimals={4}
                                                      mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                         : <CircularProgress/>}
                                 </Box>
-                                <Box mr={1}>
+                                <Box mr={1} mb={1}>
                                     {totalAmountDollarsSum ?
                                         <MetricsCard mainMetric={emissionValuePerVote} metricName={"Emission $/Vote"}
                                                      metricDecimals={4}
