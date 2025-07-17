@@ -42,7 +42,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const currentTime = Date.now();
                     const currentTimestamp = Math.floor(currentTime / 1000);
 
-                    const provider = new ethers.providers.JsonRpcProvider('https://rpc.mevblocker.io/fast');
+                    const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
 
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
