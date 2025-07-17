@@ -19,14 +19,14 @@ const useDecorateL1Gauges = (stakingGaugeData: BalancerStakingGauges[] | undefin
         if (gaugeData && gaugeData.length > 0) {
             const multicalls = [];
 
-            const providerUrl = 'https://eth.llamarpc.com';
+            const providerUrl = 'https://lb.drpc.org/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac';
             const multicall = new Multicall({
                 ethersProvider: new ethers.providers.JsonRpcProvider(providerUrl),
                 tryAggregate: true
             });
 
             const multicallRoots = new Multicall({
-                ethersProvider: new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com'),
+                ethersProvider: new ethers.providers.JsonRpcProvider('https://lb.drpc.org/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac'),
                 tryAggregate: true
             });
             //Obtain mainnet gauge working and total supplies
