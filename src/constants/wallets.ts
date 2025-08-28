@@ -40,6 +40,14 @@ export const WALLETS = [
     {
         name: 'Aura Ecosystem Wallet (C)',
         walletId: '0x388a09A28e7D56dc61dcb1bb356251Fe0C46fe8C',
+    },
+    {
+        name: 'Aura Incentives Wallet',
+        walletId: '0x21AED3a7A1c34Cd88B8A39DbDAE042bEfbf947ff',
+    },
+    {
+        name: 'Aura Gauge Vote Rewards',
+        walletId: '0x26094f9A6a498c1FCCd8Ff65829F55FB8BD72A4E',
     }
 ]
 
