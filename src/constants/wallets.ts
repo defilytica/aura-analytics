@@ -95,3 +95,4 @@ export function getTreasuryConfig(chainID: string) {
     return TREASURY_ADDRESS_CONFIG[0];
 
 }
+

@@ -263,7 +263,7 @@ export default function TreasuryTransactionTable({ txnHistory }:
     //Create Rows
     const rows = txnHistory.history_list.map(el =>
         createData(
-            el.cate_id === 'receive' ? 'Receive' : 'Send',
+            el.receives.length > 0 && el.sends.length === 0 ? 'Receive' : el.sends.length > 0 && el.receives.length === 0 ? 'Send' : 'Multicall',
             obtainSendReceives(el.sends, el.receives),
             el.sends.length > 0 && el.receives.length > 0 ? 'Multicall' : getSPWalletName(obtainSPsSendsReceives(el.sends, el.receives)),
             obtainValue(el.sends, el.receives, txnHistory.token_dict),
