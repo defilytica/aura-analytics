@@ -161,7 +161,7 @@ export default function SingleRoundBarChart({rewardData, xAxisData, height, curr
                 alignItems="center"
 
             >
-                <CSVLink data={rewardData} filename={filename}>
+                <CSVLink data={rewardData} filename={filename} style={{ textDecoration: 'none' }}>
                     <Button sx={{
                     backgroundColor: "background.paper",
                     boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",

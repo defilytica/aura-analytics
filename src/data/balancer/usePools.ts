@@ -216,7 +216,7 @@ export function useBalancerPoolSingleData(poolId: string): PoolData | null {
 
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 }
             });
         }
@@ -294,7 +294,7 @@ export function useBalancerPoolPageData(poolId: string): {
     const { data } = useGetPoolChartDataQuery({
         variables: { poolId, startTimestamp: activeNetwork.startTimeStamp },
         context: {
-            uri: activeNetwork.clientUri,
+            uri: activeNetwork.decentralicedClientUri,
         },
     });
 

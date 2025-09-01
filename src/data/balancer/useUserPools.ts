@@ -58,7 +58,7 @@ export default function useUserPools (address: string, timeStamps?: number[]) {
                     userAddress: address,
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 },
             });
         }

@@ -308,7 +308,7 @@ export default function HistoricalIncentivesTable({gaugeDatas, currentRound}: {
                 <IconButton onClick={clearSearch} type="button" sx={{p: '10px'}} aria-label="search">
                     {searched !== "" ? <ClearIcon/> : <SearchIcon/>}
                 </IconButton>
-                <CSVLink data={downloadData} filename={filename}><Button sx={{
+                <CSVLink data={downloadData} filename={filename} style={{ textDecoration: 'none' }}><Button sx={{
                     backgroundColor: theme.palette.mode === 'dark' ? "background.paper" : null,
                 }}><Download/> CSV</Button></CSVLink>
             </Paper>

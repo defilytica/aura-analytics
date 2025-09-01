@@ -74,7 +74,7 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
     const option = {
         color: ['#868e94', '#37A2FF', '#f50202', '#b300ff', '#64A29D', '#0F51FC','#8500bb', '#E84142'],
         legend: {
-            data: ['Ethereum', 'Arbitrum', 'Optimism', 'Polygon', 'Gnosis', 'Base','zkEVM', 'Avalanche'],
+            data: dataSets.map(dataSet => dataSet.name),
             inactiveColor: "red",
             icon: 'circle',
             textStyle: {
@@ -107,6 +107,7 @@ export function ProtocolMultiLineChart({dataSets}: LineChartProps) {
         },
         yAxis: {
             type: 'value',
+            min: 0,
             axisLabel: {
                 formatter: '{value}%' // Add percentage sign to y-axis labels
             }

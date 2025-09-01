@@ -3,7 +3,8 @@ import {useCoinGeckoSimpleTokenPrices} from "../coingecko/useCoinGeckoSimpleToke
 import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
-import {AURA_TIMESTAMPS, HISTORICAL_AURA_PRICE, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
+import {AURA_TIMESTAMPS, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
+import { useAuraPrice, getPriceForDate } from "../balancer-api-v3/useGetCompleteHistoricalTokenPrice";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
 import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
@@ -27,7 +28,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
     //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
     const coinData = useGetSimpleTokenPrices([auraAddress, balAddress], activeNetwork.chainId);
-    const { data: historicalAuraCoinData } = useGetHistoricalTokenPrice(auraAddress, GqlChain.Mainnet)
+    const { data: auraCompletePrice } = useAuraPrice();
     const { data: historicalBALCoinData } = useGetHistoricalTokenPrice(balAddress, GqlChain.Mainnet)
     const auraGlobalStats = useAuraGlobalStats();
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
@@ -77,8 +78,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     }
 
                     // Find price from historical set
-                    const auraTsPrice = historicalAuraCoinData?.find(el => el.time === unixToDate(timestampCurrentRound))?.value
-                        ?? HISTORICAL_AURA_PRICE.find(e => e.time === unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))?.value
+                    const auraTsPrice = getPriceForDate(auraCompletePrice || [], unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))
                         ?? 0;
 
                     const balTsPrice = historicalBALCoinData?.find(el => el.time === unixToDate(timestampCurrentRound))?.value
