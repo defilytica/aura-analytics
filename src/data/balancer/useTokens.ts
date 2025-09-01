@@ -166,7 +166,7 @@ export function useBalancerTokenSingleData(address: string): TokenData | null {
                     block24: { number: parseInt(block24.number) },
                 },
                 context: {
-                    uri: activeNetwork.clientUri,
+                    uri: activeNetwork.decentralicedClientUri,
                 },
             });
         }
@@ -269,7 +269,7 @@ export function useBalancerTokenPageData(address: string): {
     const { data } = useGetTokenPageDataQuery({
         variables: { address, startTimestamp: activeNetwork.startTimeStamp },
         context: {
-            uri: activeNetwork.clientUri,
+            uri: activeNetwork.decentralicedClientUri,
         },
     });
     const [coingeckoSnapshotData, setCoingeckoSnapshotData] = useState<CoingeckoSnapshotPriceData>();

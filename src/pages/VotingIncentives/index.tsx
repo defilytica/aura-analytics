@@ -1,5 +1,4 @@
 import {Box, Card, CardContent, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
-import CustomLinearProgress from '../../components/Progress/CustomLinearProgress';
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
 import {GetBribingStatsForRounds} from "../../data/llamaairforce/getBribingStatsForRound";
 import * as React from "react";
@@ -41,6 +40,7 @@ import {
     getTokenPriceAtTimestamp,
     useGetHistoricalTokenPricesAggregated
 } from "../../data/balancer-api-v3/useGetHistoricalTokenPricesAggregated";
+import IntelligentLoadingIndicator from "../../components/Progress/IntelligentLoadingIndicator";
 
 // Helper functions to parse data types to Llama model
 const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
@@ -421,24 +421,60 @@ export default function VotingIncentives() {
 
 
 
+    const loadingStates = [
+        {
+            name: "Voting Rounds",
+            isLoading: !roundsData?.rounds,
+            isComplete: !!roundsData?.rounds,
+            hasError: false
+        },
+        {
+            name: "Historical Data", 
+            isLoading: !historicalData,
+            isComplete: !!historicalData,
+            hasError: false
+        },
+        {
+            name: "Hidden Hand Incentives",
+            isLoading: !hiddenHandData.incentives,
+            isComplete: !!hiddenHandData.incentives,
+            hasError: false
+        },
+        {
+            name: "Bribe Rewards",
+            isLoading: bribeRewardsNew.length < 1,
+            isComplete: bribeRewardsNew.length >= 1,
+            hasError: false
+        },
+        {
+            name: "Dashboard Metrics",
+            isLoading: !dashboardData || incentivePerVote === 0 || roundIncentives === 0,
+            isComplete: !!dashboardData && incentivePerVote > 0 && roundIncentives > 0,
+            hasError: false
+        },
+        {
+            name: "Token Prices",
+            isLoading: pricesLoading,
+            isComplete: !pricesLoading && !!historicalPrices,
+            hasError: !!pricesError,
+            errorMessage: pricesError?.message || undefined
+        },
+        {
+            name: "Paladin Quests",
+            isLoading: questsLoading,
+            isComplete: !!questData && !questsLoading,
+            hasError: false
+        }
+    ];
+
+    const isStillLoading = loadingStates.some(state => state.isLoading);
+
     return (<>
-            {(!roundsData?.rounds
-                || !historicalData
-                || !hiddenHandData.incentives
-                || bribeRewardsNew.length < 1
-                || !totalAmountDollarsSum
-                || !dashboardData
-                || incentivePerVote === 0
-                || roundIncentives === 0
-                || questsLoading
-            ) ? (
-                <Grid
-                    container
-                    spacing={2}
-                    mt='25%'
-                    sx={{justifyContent: 'center'}}
-                >
-                    <CustomLinearProgress/>
+            {isStillLoading ? (
+                <Grid container spacing={2} mt='5%' sx={{justifyContent: 'center'}}>
+                    <Grid item xs={11} sm={9}>
+                        <IntelligentLoadingIndicator loadingStates={loadingStates} />
+                    </Grid>
                 </Grid>
             ) : (
                 <Box sx={{flexGrow: 2}}>
@@ -505,21 +541,23 @@ export default function VotingIncentives() {
                                 </Card>
                             </Grid>
                             : <CircularProgress/>}
-                        <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '24px'}}>Paladin Quests: Historical Incentives</Typography>
-                        </Grid>
-                        {paladinDollarPerVlAssetData && paladinTotalAmountDollarsData && paladinXAxisData ?
-                            <Grid item xs={11} sm={9}>
-                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-                                    <DashboardOverviewChart
-                                        dollarPerVlAssetData={paladinDollarPerVlAssetData}
-                                        totalAmountDollarsData={paladinTotalAmountDollarsData}
-                                        xAxisData={paladinXAxisData}
-                                        height="400px"
-                                    />
-                                </Card>
-                            </Grid>
-                            : <CircularProgress/>}
+                        {paladinDollarPerVlAssetData && paladinTotalAmountDollarsData && paladinXAxisData && paladinDollarPerVlAssetData.length > 0 ? (
+                            <>
+                                <Grid item xs={11} sm={9}>
+                                    <Typography sx={{fontSize: '24px'}}>Paladin Quests: Historical Incentives</Typography>
+                                </Grid>
+                                <Grid item xs={11} sm={9}>
+                                    <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                        <DashboardOverviewChart
+                                            dollarPerVlAssetData={paladinDollarPerVlAssetData}
+                                            totalAmountDollarsData={paladinTotalAmountDollarsData}
+                                            xAxisData={paladinXAxisData}
+                                            height="400px"
+                                        />
+                                    </Card>
+                                </Grid>
+                            </>
+                        ) : null}
                         <Grid item xs={11} sm={9}>
                             <Typography sx={{fontSize: '24px'}}>Historical Aura Price vs. Incentive APR</Typography>
                         </Grid>

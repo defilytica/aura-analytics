@@ -131,27 +131,27 @@ export default function Protocol() {
     };
 
     const calculateCapturedTVL = (balancerTVLs: BalancerChartDataItem[], auraTVLs: BalancerChartDataItem[]): CapturedTVL[] => {
-        let balancerIndex = 0;
-        let auraIndex = 0;
         const capturedTVLs: CapturedTVL[] = [];
-
-        while (balancerIndex < balancerTVLs.length && auraIndex < auraTVLs.length) {
-            const balancerTVL = balancerTVLs[balancerIndex];
-            const auraTVL = auraTVLs[auraIndex];
-
-            if (balancerTVL.time === auraTVL.time) {
-                if (balancerTVL.value !== 0) {
-                    const capturedPercentage = (auraTVL.value / balancerTVL.value) * 100;
-                    capturedTVLs.push({ capturedPercentage, time: balancerTVL.time });
-                }
-                balancerIndex++;
-                auraIndex++;
-            } else if (new Date(balancerTVL.time) < new Date(auraTVL.time)) {
-                balancerIndex++;
-            } else {
-                auraIndex++;
+        
+        // Create maps for faster lookup
+        const balancerMap = new Map(balancerTVLs.map(item => [item.time, item.value]));
+        const auraMap = new Map(auraTVLs.map(item => [item.time, item.value]));
+        
+        // Get all unique dates from both datasets
+        const allDates = new Set([...balancerTVLs.map(item => item.time), ...auraTVLs.map(item => item.time)]);
+        
+        // Sort dates chronologically
+        const sortedDates = Array.from(allDates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+        
+        sortedDates.forEach(date => {
+            const balancerValue = balancerMap.get(date);
+            const auraValue = auraMap.get(date);
+            
+            if (balancerValue && auraValue && balancerValue !== 0) {
+                const capturedPercentage = Math.max(0, (auraValue / balancerValue) * 100);
+                capturedTVLs.push({ capturedPercentage, time: date });
             }
-        }
+        });
 
         return capturedTVLs;
     };
@@ -325,10 +325,22 @@ export default function Protocol() {
                 <Grid item mb={2} xs={11} sm={9}>
                     <Card sx={{ boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px" }}>
                         <ProtocolMultiLineChart
-                            dataSets={networks.map(network => ({
-                                name: network.charAt(0).toUpperCase() + network.slice(1),
-                                data: displayData.capturedTVLData[network],
-                            }))}
+                            dataSets={networks.map(network => {
+                                const networkNames: Record<Network, string> = {
+                                    eth: 'Ethereum',
+                                    arb: 'Arbitrum', 
+                                    opt: 'Optimism',
+                                    poly: 'Polygon',
+                                    gnosis: 'Gnosis',
+                                    base: 'Base',
+                                    zkevm: 'zkEVM',
+                                    avalanche: 'Avalanche'
+                                };
+                                return {
+                                    name: networkNames[network],
+                                    data: displayData.capturedTVLData[network],
+                                };
+                            })}
                         />
                     </Card>
                 </Grid>

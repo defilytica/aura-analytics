@@ -20,10 +20,10 @@ export interface AggregatedProtocolData {
 }
 
 export default function useAggregatedProtocolData() {
-    const protocolData = useBalancerChainProtocolData(EthereumNetworkInfo.clientUri, EthereumNetworkInfo.startTimeStamp);
-    const protocolArbitrumData = useBalancerChainProtocolData(ArbitrumNetworkInfo.clientUri, ArbitrumNetworkInfo.startTimeStamp, arbitrumBlockClient, arbitrumClient);
-    const protocolPolygonData = useBalancerChainProtocolData(PolygonNetworkInfo.clientUri, PolygonNetworkInfo.startTimeStamp, polygonBlockClient, polygonClient);
-    const protocolGnosisData = useBalancerChainProtocolData(GnosisNetworkInfo.clientUri, GnosisNetworkInfo.startTimeStamp, gnosisBlockClient, gnosisClient)
+    const protocolData = useBalancerChainProtocolData(EthereumNetworkInfo.decentralicedClientUri, EthereumNetworkInfo.startTimeStamp);
+    const protocolArbitrumData = useBalancerChainProtocolData(ArbitrumNetworkInfo.decentralicedClientUri, ArbitrumNetworkInfo.startTimeStamp, arbitrumBlockClient, arbitrumClient);
+    const protocolPolygonData = useBalancerChainProtocolData(PolygonNetworkInfo.decentralicedClientUri, PolygonNetworkInfo.startTimeStamp, polygonBlockClient, polygonClient);
+    const protocolGnosisData = useBalancerChainProtocolData(GnosisNetworkInfo.decentralicedClientUri, GnosisNetworkInfo.startTimeStamp, gnosisBlockClient, gnosisClient)
 
 
     if (!protocolData && !protocolArbitrumData && !protocolPolygonData && !protocolGnosisData) {

@@ -35,21 +35,16 @@ jobs:
       REACT_APP_ALCHEMY_URL: '${{ secrets.REACT_APP_ALCHEMY_URL }}'
       REACT_APP_CG_KEY: '${{ secrets.REACT_APP_CG_KEY }}'
       REACT_APP_PERSONAL_GRAPH_KEY: '${{ secrets.REACT_APP_PERSONAL_GRAPH_KEY }}'
-    strategy:
-      matrix:
-        node-version: [ 20.x ]
     steps:
       - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 20.x
       - run: yarn install
       - run: CI=false yarn build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_AURA_ANALYTICS_1C4B3 }}'
-          channelId: live
           projectId: aura-analytics-1c4b3
-          firebaseToolsVersion: 12.9.1

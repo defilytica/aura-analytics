@@ -37,18 +37,38 @@ export const useGetPaladinHistoricalQuests = (): {
                     }
                 }
 
-                // Fetch all quests
-                const questResponses = await Promise.all(
-                    timestamps.map(async timestamp => {
-                        try {
-                            const response = await axios.get<PaladinQuest[]>(`${API_URL}/${timestamp}`);
-                            return { timestamp, data: response.data, error: null };
-                        } catch (err) {
-                            console.error(`Error fetching data for timestamp ${timestamp}:`, err);
-                            return { timestamp, data: null, error: err };
-                        }
-                    })
-                );
+                // Fetch quests with throttling to avoid CORS/rate limit issues
+                const questResponses: { timestamp: number; data: PaladinQuest[] | null; error: any }[] = [];
+                const BATCH_SIZE = 5; // Process 5 requests at a time
+                const DELAY_MS = 200; // 200ms delay between batches
+                
+                for (let i = 0; i < timestamps.length; i += BATCH_SIZE) {
+                    const batch = timestamps.slice(i, i + BATCH_SIZE);
+                    
+                    const batchResponses = await Promise.all(
+                        batch.map(async timestamp => {
+                            try {
+                                const response = await axios.get<PaladinQuest[]>(`${API_URL}/${timestamp}`, {
+                                    timeout: 10000, // 10 second timeout
+                                    headers: {
+                                        'Accept': 'application/json',
+                                    }
+                                });
+                                return { timestamp, data: response.data, error: null };
+                            } catch (err) {
+                                console.warn(`Failed to fetch Paladin data for timestamp ${timestamp}:`, err instanceof Error ? err.message : 'Unknown error');
+                                return { timestamp, data: null, error: err };
+                            }
+                        })
+                    );
+                    
+                    questResponses.push(...batchResponses);
+                    
+                    // Add delay between batches to avoid overwhelming the API
+                    if (i + BATCH_SIZE < timestamps.length) {
+                        await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+                    }
+                }
 
                 // Collect token addresses and filter valid responses
                 const allTokenAddresses = new Set<string>();
