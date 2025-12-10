@@ -29,7 +29,7 @@ export const blockClient = new ApolloClient({
 
 //Aura client
 export const auraClient = new ApolloClient({
-  uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-mainnet/api',
+  uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-mainnet/v0.0.1/',
   cache: new InMemoryCache({
       typePolicies: {
           Token: {
@@ -58,7 +58,7 @@ export const auraClient = new ApolloClient({
 
 //Aura client
 export const auraArbitrumClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-arbitrum/api',
+    uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-arbitrum/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -86,7 +86,7 @@ export const auraArbitrumClient = new ApolloClient({
 });
 
 export const auraOptimismClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-optimism/api',
+    uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-optimism/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -114,7 +114,7 @@ export const auraOptimismClient = new ApolloClient({
 });
 
 export const auraPolygonClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-polygon/api',
+    uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-polygon/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -142,7 +142,7 @@ export const auraPolygonClient = new ApolloClient({
 });
 
 export const auraPolygonZkEVMClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-zkevm/api',
+    uri: 'https://api.studio.thegraph.com/query/77603/aura-finance-zkevm/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -170,7 +170,7 @@ export const auraPolygonZkEVMClient = new ApolloClient({
 });
 
 export const auraGnosisClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-gnosis/api',
+    uri: 'https://graph.data.aura.finance/subgraphs/name/aura-finance-gnosis',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -198,7 +198,7 @@ export const auraGnosisClient = new ApolloClient({
 });
 
 export const auraBaseClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-base/api',
+    uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-base/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
@@ -226,7 +226,7 @@ export const auraBaseClient = new ApolloClient({
 });
 
 export const auraAvalancheClient = new ApolloClient({
-    uri: 'https://subgraph.satsuma-prod.com/cae76ab408ca/1xhub-ltd/aura-finance-avalanche/api',
+    uri: 'https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-avalanche/v0.0.1/',
     cache: new InMemoryCache({
         typePolicies: {
             Token: {
