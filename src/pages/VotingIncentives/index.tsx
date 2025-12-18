@@ -422,8 +422,8 @@ export default function VotingIncentives() {
         },
         {
             name: "Hidden Hand Incentives",
-            isLoading: !hiddenHandData.incentives,
-            isComplete: !!hiddenHandData.incentives,
+            isLoading: hiddenHandData.loading || !hiddenHandData.incentives,
+            isComplete: !hiddenHandData.loading && !!hiddenHandData.incentives,
             hasError: false
         },
         {

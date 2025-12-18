@@ -3,6 +3,7 @@ import axios from 'axios';
 import {unixToDate} from "../../utils/date";
 
 interface HiddenHandIncentives {
+    error?: boolean;
     data: {
         totalValue: number;
         voteCount: number;
@@ -17,6 +18,42 @@ interface IncentiveData {
 }
 
 const API_URL = 'https://api.hiddenhand.finance/proposal/aura';
+const GITHUB_CACHE_URL = 'https://raw.githubusercontent.com/dinero-protocol/hidden-hand-cache/refs/heads/master/proposal-cache/aura';
+
+// Helper to check if data is valid (not empty)
+const isValidData = (data: HiddenHandIncentives | null): boolean => {
+    return data !== null && !data.error && Array.isArray(data.data) && data.data.length > 0;
+};
+
+// Fetch data for a single timestamp with fallback
+const fetchTimestampData = async (timestamp: number): Promise<HiddenHandIncentives | null> => {
+    const githubCacheUrl = `${GITHUB_CACHE_URL}/aura-${timestamp}.json`;
+    const hhApiUrl = `${API_URL}/${timestamp}`;
+
+    // Try GitHub cache first (more reliable for historical data)
+    try {
+        const cacheResponse = await axios.get(githubCacheUrl);
+        const cacheJson: HiddenHandIncentives = cacheResponse.data;
+        if (isValidData(cacheJson)) {
+            return cacheJson;
+        }
+    } catch (cacheError) {
+        // Cache miss, continue to HH API
+    }
+
+    // Fall back to Hidden Hand API
+    try {
+        const apiResponse = await axios.get(hhApiUrl);
+        const apiJson: HiddenHandIncentives = apiResponse.data;
+        if (isValidData(apiJson)) {
+            return apiJson;
+        }
+    } catch (apiError) {
+        // Both sources failed
+    }
+
+    return null;
+};
 
 export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => {
     const [data, setData] = useState<IncentiveData | null>(null);
@@ -33,12 +70,17 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
         }
 
         const fetchAndCalculateData = async () => {
+            console.log(`Fetching historical incentives for ${timestamps.length} timestamps...`);
+
             const results = await Promise.all(
                 timestamps.map(async (timestamp: number) => {
-                    const requestURL = API_URL + '/' + timestamp.toString();
                     try {
-                        const response = await axios.get(requestURL);
-                        const hiddenHandData: HiddenHandIncentives = response.data;
+                        const hiddenHandData = await fetchTimestampData(timestamp);
+
+                        if (!hiddenHandData || !isValidData(hiddenHandData)) {
+                            console.warn(`No data available for timestamp ${timestamp}`);
+                            return null;
+                        }
 
                         let totalValue = 0;
                         let totalVotes = 0;
@@ -56,7 +98,7 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
                             xAxis: unixToDate(timestamp),
                         };
                     } catch (error) {
-                        console.error(error);
+                        console.error(`Error processing timestamp ${timestamp}:`, error);
                         return null;
                     }
                 }),
@@ -66,6 +108,8 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
             const filteredResults = results.filter(
                 (result): result is { totalValue: number; valuePerVote: number; xAxis: string } => result !== null,
             );
+
+            console.log(`Successfully fetched ${filteredResults.length}/${timestamps.length} historical data points`);
 
             const totalValueList = filteredResults.map(result => result.totalValue);
             const valuePerVoteList = filteredResults.map(result => result.valuePerVote);
@@ -77,7 +121,6 @@ export const useGetHiddenHandHistoricalIncentives = (): IncentiveData | null => 
                 totalAmountDollarsData: totalValueList,
                 totalAmountDollarsSum: totalAmountDollarsSum,
                 xAxisData: xAxisData,
-
             });
         };
 
