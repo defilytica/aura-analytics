@@ -112,7 +112,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const currentTime = Date.now();
                     const currentTimestamp = Math.floor(currentTime / 1000);
 
-                    const provider = new ethers.providers.JsonRpcProvider('https://lb.drpc.org/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac');
+                    const provider = new ethers.providers.JsonRpcProvider('https://lb.drpc.live/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac');
 
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
