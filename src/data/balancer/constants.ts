@@ -24,3 +24,6 @@ export const ALCHEMY_URL_ZKEVM = process.env.REACT_APP_ALCHEMY_URL_ZKEVM|| '';
 export const FIREBASE_API_KEY = process.env.REACT_APP_FIREBASE_API || '';
 export const DAO_FEE_FACTOR = 0.175;
 export const CG_KEY = process.env.REACT_APP_CG_KEY || '';
+
+// DRPC endpoint for Ethereum mainnet (used for gauge emissions, voting power, etc.)
+export const DRPC_ETHEREUM_URL = 'https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac';

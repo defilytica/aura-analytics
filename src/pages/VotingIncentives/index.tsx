@@ -266,20 +266,31 @@ export default function VotingIncentives() {
 
     useEffect(() => {
         if (memoizedHiddenHandData) {
+            // Normalize addresses to lowercase for consistent API queries and lookups
             const addresses = memoizedHiddenHandData.data.flatMap(proposal =>
-                proposal.bribes.map(bribe => bribe.token)
+                proposal.bribes.map(bribe => bribe.token.toLowerCase())
             );
             setTokenAddresses([...new Set(addresses)]);
         }
     }, [JSON.stringify(memoizedHiddenHandData)]);
 
     useEffect(() => {
-        if (memoizedHiddenHandData && historicalPrices && !pricesLoading && !pricesError) {
+        // Process data when Hidden Hand data is available and prices are not loading
+        // If no historical prices available, still process with original values
+        if (memoizedHiddenHandData && !pricesLoading) {
             const correctedData = memoizedHiddenHandData.data.map(proposal => ({
                 ...proposal,
                 bribes: proposal.bribes.map(bribe => {
-                    const tokenPrices = historicalPrices[bribe.token];
+                    // If no historical prices available, use original bribe value
+                    if (!historicalPrices || pricesError) {
+                        return bribe;
+                    }
+
+                    // Normalize token address to lowercase for consistent lookup
+                    const normalizedToken = bribe.token.toLowerCase();
+                    const tokenPrices = historicalPrices[normalizedToken];
                     if (!tokenPrices || tokenPrices.length === 0) {
+                        console.warn(`No historical prices found for token: ${bribe.token} (${bribe.symbol}), using original value: $${bribe.value}`);
                         return bribe;
                     }
 
@@ -301,7 +312,8 @@ export default function VotingIncentives() {
                             value: correctedValue,
                         };
                     } else {
-                        // If no price within 3 days, use the original amount
+                        // If no price within 3 days, use the original value
+                        console.warn(`No price within 3 days for token: ${bribe.token} (${bribe.symbol}), using original value: $${bribe.value}`);
                         return {
                             ...bribe,
                             value: bribe.value,

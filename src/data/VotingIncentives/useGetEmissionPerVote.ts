@@ -4,6 +4,7 @@ import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
 import {AURA_TIMESTAMPS, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
+import {DRPC_ETHEREUM_URL} from "../balancer/constants";
 import { useAuraPrice, getPriceForDate } from "../balancer-api-v3/useGetCompleteHistoricalTokenPrice";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
 import {ethers} from "ethers";
@@ -112,7 +113,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const currentTime = Date.now();
                     const currentTimestamp = Math.floor(currentTime / 1000);
 
-                    const provider = new ethers.providers.JsonRpcProvider('https://lb.drpc.live/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac');
+                    const provider = new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL);
 
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
