@@ -26,4 +26,9 @@ export const DAO_FEE_FACTOR = 0.175;
 export const CG_KEY = process.env.REACT_APP_CG_KEY || '';
 
 // DRPC endpoint for Ethereum mainnet (used for gauge emissions, voting power, etc.)
-export const DRPC_ETHEREUM_URL = 'https://lb.drpc.org/ogrpc?network=ethereum&dkey=ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac';
+// Production key is domain-protected, dev key is loaded from .env for local development
+const DRPC_KEY_PROD = 'ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac';
+const DRPC_KEY = process.env.NODE_ENV === 'development' && process.env.REACT_APP_DRPC_KEY_DEV
+    ? process.env.REACT_APP_DRPC_KEY_DEV
+    : DRPC_KEY_PROD;
+export const DRPC_ETHEREUM_URL = `https://lb.drpc.live/ethereum/${DRPC_KEY}`;

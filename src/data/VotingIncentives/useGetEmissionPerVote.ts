@@ -3,7 +3,7 @@ import {useCoinGeckoSimpleTokenPrices} from "../coingecko/useCoinGeckoSimpleToke
 import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
-import {AURA_TIMESTAMPS, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
+import {AURA_TIMESTAMPS} from "../hidden-hand/constants";
 import {DRPC_ETHEREUM_URL} from "../balancer/constants";
 import { useAuraPrice, getPriceForDate } from "../balancer-api-v3/useGetCompleteHistoricalTokenPrice";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
@@ -14,76 +14,6 @@ import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices"
 import useGetHistoricalTokenPrice from "../balancer-api-v3/useGetHistoricalTokenPrice";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 import {formatTime, unixToDate} from "../../utils/date";
-import { BalancerChartDataItem } from "../balancer/balancerTypes";
-
-// Helper function to find the closest price from historical data
-const findClosestPrice = (
-    priceData: BalancerChartDataItem[] | undefined,
-    targetDate: string
-): number | null => {
-    if (!priceData || priceData.length === 0) return null;
-
-    // First try exact match
-    const exactMatch = priceData.find(p => p.time === targetDate);
-    if (exactMatch) return exactMatch.value;
-
-    // Find closest date
-    const targetTime = new Date(targetDate).getTime();
-    let closest: BalancerChartDataItem | null = null;
-    let minDiff = Infinity;
-
-    for (const item of priceData) {
-        const itemTime = new Date(item.time).getTime();
-        const diff = Math.abs(itemTime - targetTime);
-        if (diff < minDiff) {
-            minDiff = diff;
-            closest = item;
-        }
-    }
-
-    // Only return if within 7 days
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    if (closest && minDiff <= sevenDaysMs) {
-        return closest.value;
-    }
-
-    return null;
-};
-
-// Helper function to find closest price from historical constants
-const findClosestConstantPrice = (
-    historicalPrices: { value: number; time: string }[],
-    targetDate: string
-): number | null => {
-    if (!historicalPrices || historicalPrices.length === 0) return null;
-
-    // First try exact match
-    const exactMatch = historicalPrices.find(p => p.time === targetDate);
-    if (exactMatch) return exactMatch.value;
-
-    // Find closest date
-    const targetTime = new Date(targetDate).getTime();
-    let closest: { value: number; time: string } | null = null;
-    let minDiff = Infinity;
-
-    for (const item of historicalPrices) {
-        const itemTime = new Date(item.time).getTime();
-        const diff = Math.abs(itemTime - targetTime);
-        if (diff < minDiff) {
-            minDiff = diff;
-            closest = item;
-        }
-    }
-
-    // Only return if within 14 days (for bi-weekly rounds)
-    const fourteenDaysMs = 14 * 24 * 60 * 60 * 1000;
-    if (closest && minDiff <= fourteenDaysMs) {
-        return closest.value;
-    }
-
-    return null;
-};
-
 
 const auraAddress = AURA_TOKEN_MAINNET;
 const balAddress = BALANCER_TOKEN_MAINNET;
@@ -157,55 +87,32 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const liveAuraPrice = coinData?.data?.[auraAddress]?.price ?? 0;
                     const liveBalPrice = coinData?.data?.[balAddress]?.price ?? 0;
 
+                    // Determine AURA price to use
                     let auraPrice: number;
-                    let balPrice: number;
-
-                    if (isCurrentRound) {
-                        // For current round, ALWAYS use live API prices
-                        auraPrice = liveAuraPrice;
-                        balPrice = liveBalPrice;
-                        console.log("Current round - using LIVE prices | AURA:", auraPrice, "| BAL:", balPrice);
+                    if (timestampCurrentRound === 0) {
+                        // For current round, use the most recent historical price (last entry)
+                        const latestHistoricalPrice = auraCompletePrice?.[auraCompletePrice.length - 1];
+                        auraPrice = latestHistoricalPrice?.value ?? coinData.data[auraAddress].price;
+                        console.log("Current round - using latest historical AURA price:", auraPrice);
                     } else {
-                        // For historical rounds, use tiered fallback strategy:
-                        // 1. Try Balancer API historical data (last 365 days)
-                        // 2. Try historical constants (for older data)
-                        // 3. Fall back to live prices as last resort
+                        // For historical rounds, find the price at that specific date
+                        const auraTsPrice = getPriceForDate(auraCompletePrice || [], targetDate);
+                        auraPrice = auraTsPrice ?? coinData.data[auraAddress].price;
+                        console.log(`AURA historical price: ${auraPrice} for ${targetDate}`);
+                    }
 
-                        // AURA price fallback chain
-                        const auraHistoricalApiPrice = getPriceForDate(auraCompletePrice || [], targetDate);
-                        if (auraHistoricalApiPrice && auraHistoricalApiPrice > 0) {
-                            auraPrice = auraHistoricalApiPrice;
-                            console.log(`AURA historical price from API: ${auraPrice} for ${targetDate}`);
-                        } else if (liveAuraPrice > 0) {
-                            // For recent rounds without historical data, use live price
-                            auraPrice = liveAuraPrice;
-                            console.log(`AURA using live price as fallback: ${auraPrice} for ${targetDate}`);
-                        } else {
-                            auraPrice = 0;
-                            console.warn(`No AURA price available for ${targetDate}`);
-                        }
-
-                        // BAL price fallback chain
-                        // 1. Try Balancer API historical data
-                        const balHistoricalApiPrice = findClosestPrice(historicalBALCoinData, targetDate);
-                        if (balHistoricalApiPrice && balHistoricalApiPrice > 0) {
-                            balPrice = balHistoricalApiPrice;
-                            console.log(`BAL historical price from API: ${balPrice} for ${targetDate}`);
-                        } else {
-                            // 2. Try historical constants with closest match
-                            const balConstantPrice = findClosestConstantPrice(HISTORICAL_ROUND_BAL_PRICE, targetDate);
-                            if (balConstantPrice && balConstantPrice > 0) {
-                                balPrice = balConstantPrice;
-                                console.log(`BAL historical price from constants: ${balPrice} for ${targetDate}`);
-                            } else if (liveBalPrice > 0) {
-                                // 3. Fall back to live price for recent rounds
-                                balPrice = liveBalPrice;
-                                console.log(`BAL using live price as fallback: ${balPrice} for ${targetDate}`);
-                            } else {
-                                balPrice = 0;
-                                console.warn(`No BAL price available for ${targetDate}`);
-                            }
-                        }
+                    // Determine BAL price to use
+                    let balPrice: number;
+                    if (timestampCurrentRound === 0) {
+                        // For current round, use the most recent historical price (last entry)
+                        const latestHistoricalPrice = historicalBALCoinData?.[historicalBALCoinData.length - 1];
+                        balPrice = latestHistoricalPrice?.value ?? coinData.data[balAddress].price;
+                        console.log("Current round - using latest historical BAL price:", balPrice);
+                    } else {
+                        // For historical rounds, find the price at that specific date
+                        const balTsPrice = historicalBALCoinData?.find(el => el.time === targetDate);
+                        balPrice = balTsPrice?.value ?? coinData.data[balAddress].price;
+                        console.log(`BAL historical price: ${balPrice} for ${targetDate}`);
                     }
 
                     // Final validation - ensure we have valid prices
@@ -226,15 +133,22 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         provider
                     );
 
-                    // Simple BAL emission map based on https://dune.com/balancer/bal-supply
-                    const biweeklyBalEmission = (await balTokenAdmin.rate()).mul(WEEK * 2);
-                    let biweeklyBalEmissionFormatted = 145000 * 2
-                    if (timestampCurrentRound < 1711975297 && timestampCurrentRound > 1680180097) {
-                        biweeklyBalEmissionFormatted = 121929.98 * 2
-                    } else if (timestampCurrentRound < 1680180097){
-                        biweeklyBalEmissionFormatted = 145000 * 2
+                    // BAL emission schedule based on https://dune.com/balancer/bal-supply
+                    // Weekly emissions converted to biweekly (*2)
+                    let biweeklyBalEmissionFormatted: number;
+                    if (effectiveTimestamp > 1680127200 && effectiveTimestamp < 1743030000) {
+                        // Weekly: 102530.5
+                        biweeklyBalEmissionFormatted = 102530.5 * 2;
+                    } else if (effectiveTimestamp > 1743372000 && effectiveTimestamp < 1774306800) {
+                        // Weekly: 86217.5
+                        biweeklyBalEmissionFormatted = 86217.5 * 2;
+                    } else if (effectiveTimestamp > 1774652400 && effectiveTimestamp < 1805929200) {
+                        // Weekly: 72500
+                        biweeklyBalEmissionFormatted = 72500 * 2;
                     } else {
-                        biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission))
+                        // Fallback to on-chain rate for timestamps outside defined ranges
+                        const biweeklyBalEmission = (await balTokenAdmin.rate()).mul(WEEK * 2);
+                        biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission));
                     }
 
                     console.log("Biweekly BAL emission: ", biweeklyBalEmissionFormatted)
@@ -298,7 +212,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     console.log("approximateTotalVote", approximateTotalVote)
 
                     const biweeklyBalEmissionPerAura =
-                        (parseFloat(ethers.utils.formatEther(biweeklyBalEmission)) * auraBalShare) /
+                        (biweeklyBalEmissionFormatted * auraBalShare) /
                         approximateTotalVote;
 
 
