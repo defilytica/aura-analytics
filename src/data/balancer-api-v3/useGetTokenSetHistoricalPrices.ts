@@ -25,12 +25,16 @@ interface ProcessedTokenPrices {
 }
 
 export default function useGetTokenSetHistoricalPrices(addresses: string[], chainId: GqlChain) {
+    // Skip query if no addresses provided
+    const shouldSkip = !addresses || addresses.length === 0;
+
     const { data, loading, error } = useGetTokenSetHistoricalPricesQuery({
         client: balancerV3APIClient,
         variables: {
             addresses: addresses,
             chain: chainId,
         },
+        skip: shouldSkip,
     });
 
     let processedData: ProcessedTokenPrices | undefined = undefined;
@@ -50,13 +54,16 @@ export default function useGetTokenSetHistoricalPrices(addresses: string[], chai
                 }
             });
 
-            processedData![tokenData.address] = Object.values(groupedByDate)
+            // Normalize address to lowercase for consistent lookup
+            const normalizedAddress = tokenData.address.toLowerCase();
+            processedData![normalizedAddress] = Object.values(groupedByDate)
                 .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
         });
     }
 
     return {
-        loading,
+        // If skipped, not loading
+        loading: shouldSkip ? false : loading,
         error,
         data: processedData,
     };

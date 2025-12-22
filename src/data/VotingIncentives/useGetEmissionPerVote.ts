@@ -3,7 +3,8 @@ import {useCoinGeckoSimpleTokenPrices} from "../coingecko/useCoinGeckoSimpleToke
 import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
-import {AURA_TIMESTAMPS, HISTORICAL_ROUND_BAL_PRICE} from "../hidden-hand/constants";
+import {AURA_TIMESTAMPS} from "../hidden-hand/constants";
+import {DRPC_ETHEREUM_URL} from "../balancer/constants";
 import { useAuraPrice, getPriceForDate } from "../balancer-api-v3/useGetCompleteHistoricalTokenPrice";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
 import {ethers} from "ethers";
@@ -13,7 +14,6 @@ import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices"
 import useGetHistoricalTokenPrice from "../balancer-api-v3/useGetHistoricalTokenPrice";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 import {formatTime, unixToDate} from "../../utils/date";
-
 
 const auraAddress = AURA_TOKEN_MAINNET;
 const balAddress = BALANCER_TOKEN_MAINNET;
@@ -43,7 +43,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const currentTime = Date.now();
                     const currentTimestamp = Math.floor(currentTime / 1000);
 
-                    const provider = new ethers.providers.JsonRpcProvider('https://lb.drpc.org/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac');
+                    const provider = new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL);
 
                     // Per AIP-42, reduce AURA emission per BAL by 40%
                     // and instead add additional AURA distributed pro rata based on voting result
@@ -77,17 +77,52 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         }
                     }
 
-                    // Find price from historical set
-                    const auraTsPrice = getPriceForDate(auraCompletePrice || [], unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))
-                        ?? 0;
+                    // Determine if this is current round
+                    const isCurrentRound = timestampCurrentRound === 0;
+                    const targetDate = isCurrentRound
+                        ? unixToDate(currentTimestamp, 'YYYY-MM-DD')
+                        : unixToDate(timestampCurrentRound, 'YYYY-MM-DD');
 
-                    const balTsPrice = historicalBALCoinData?.find(el => el.time === unixToDate(timestampCurrentRound))?.value
-                        ?? HISTORICAL_ROUND_BAL_PRICE.find(e => e.time === unixToDate(timestampCurrentRound, 'YYYY-MM-DD'))?.value
-                        ?? 0;
+                    // Get live prices from API
+                    const liveAuraPrice = coinData?.data?.[auraAddress]?.price ?? 0;
+                    const liveBalPrice = coinData?.data?.[balAddress]?.price ?? 0;
 
-                    const auraPrice = auraTsPrice ? auraTsPrice : coinData.data[auraAddress].price
-                    const balPrice = balTsPrice ? balTsPrice : coinData.data[balAddress].price
-                    console.log("Aura price: ", auraPrice, "- BAL price: ", balPrice);
+                    // Determine AURA price to use
+                    let auraPrice: number;
+                    if (timestampCurrentRound === 0) {
+                        // For current round, use the most recent historical price (last entry)
+                        const latestHistoricalPrice = auraCompletePrice?.[auraCompletePrice.length - 1];
+                        auraPrice = latestHistoricalPrice?.value ?? coinData.data[auraAddress].price;
+                        console.log("Current round - using latest historical AURA price:", auraPrice);
+                    } else {
+                        // For historical rounds, find the price at that specific date
+                        const auraTsPrice = getPriceForDate(auraCompletePrice || [], targetDate);
+                        auraPrice = auraTsPrice ?? coinData.data[auraAddress].price;
+                        console.log(`AURA historical price: ${auraPrice} for ${targetDate}`);
+                    }
+
+                    // Determine BAL price to use
+                    let balPrice: number;
+                    if (timestampCurrentRound === 0) {
+                        // For current round, use the most recent historical price (last entry)
+                        const latestHistoricalPrice = historicalBALCoinData?.[historicalBALCoinData.length - 1];
+                        balPrice = latestHistoricalPrice?.value ?? coinData.data[balAddress].price;
+                        console.log("Current round - using latest historical BAL price:", balPrice);
+                    } else {
+                        // For historical rounds, find the price at that specific date
+                        const balTsPrice = historicalBALCoinData?.find(el => el.time === targetDate);
+                        balPrice = balTsPrice?.value ?? coinData.data[balAddress].price;
+                        console.log(`BAL historical price: ${balPrice} for ${targetDate}`);
+                    }
+
+                    // Final validation - ensure we have valid prices
+                    if (auraPrice <= 0 || balPrice <= 0) {
+                        console.error(`Invalid prices detected - AURA: ${auraPrice}, BAL: ${balPrice}. Using live prices as emergency fallback.`);
+                        if (auraPrice <= 0 && liveAuraPrice > 0) auraPrice = liveAuraPrice;
+                        if (balPrice <= 0 && liveBalPrice > 0) balPrice = liveBalPrice;
+                    }
+
+                    console.log(`Final prices for round ${isCurrentRound ? 'CURRENT' : targetDate} | AURA: $${auraPrice.toFixed(4)} | BAL: $${balPrice.toFixed(4)}`);
 
 
                     const balTokenAdminAddress = '0xf302f9F50958c5593770FDf4d4812309fF77414f';
@@ -98,15 +133,22 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                         provider
                     );
 
-                    // Simple BAL emission map based on https://dune.com/balancer/bal-supply
-                    const biweeklyBalEmission = (await balTokenAdmin.rate()).mul(WEEK * 2);
-                    let biweeklyBalEmissionFormatted = 145000 * 2
-                    if (timestampCurrentRound < 1711975297 && timestampCurrentRound > 1680180097) {
-                        biweeklyBalEmissionFormatted = 121929.98 * 2
-                    } else if (timestampCurrentRound < 1680180097){
-                        biweeklyBalEmissionFormatted = 145000 * 2
+                    // BAL emission schedule based on https://dune.com/balancer/bal-supply
+                    // Weekly emissions converted to biweekly (*2)
+                    let biweeklyBalEmissionFormatted: number;
+                    if (effectiveTimestamp > 1680127200 && effectiveTimestamp < 1743030000) {
+                        // Weekly: 102530.5
+                        biweeklyBalEmissionFormatted = 102530.5 * 2;
+                    } else if (effectiveTimestamp > 1743372000 && effectiveTimestamp < 1774306800) {
+                        // Weekly: 86217.5
+                        biweeklyBalEmissionFormatted = 86217.5 * 2;
+                    } else if (effectiveTimestamp > 1774652400 && effectiveTimestamp < 1805929200) {
+                        // Weekly: 72500
+                        biweeklyBalEmissionFormatted = 72500 * 2;
                     } else {
-                        biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission))
+                        // Fallback to on-chain rate for timestamps outside defined ranges
+                        const biweeklyBalEmission = (await balTokenAdmin.rate()).mul(WEEK * 2);
+                        biweeklyBalEmissionFormatted = parseFloat(ethers.utils.formatEther(biweeklyBalEmission));
                     }
 
                     console.log("Biweekly BAL emission: ", biweeklyBalEmissionFormatted)
@@ -170,7 +212,7 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     console.log("approximateTotalVote", approximateTotalVote)
 
                     const biweeklyBalEmissionPerAura =
-                        (parseFloat(ethers.utils.formatEther(biweeklyBalEmission)) * auraBalShare) /
+                        (biweeklyBalEmissionFormatted * auraBalShare) /
                         approximateTotalVote;
 
 

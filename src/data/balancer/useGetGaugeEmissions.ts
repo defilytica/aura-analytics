@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 import { EthereumNetworkInfo } from "../../constants/networks";
 import { useGetTotalWeight } from "./useGetTotalWeight";
+import { DRPC_ETHEREUM_URL } from "./constants";
 
 const useGetGaugeRelativeWeights = (stakingGaugeData: BalancerStakingGauges[]): BalancerStakingGauges[] => {
 
@@ -20,9 +21,8 @@ const useGetGaugeRelativeWeights = (stakingGaugeData: BalancerStakingGauges[]): 
     if (gaugeData && gaugeData.length > 0) {
       const multicalls = [];
 
-      const providerUrl = "https://lb.drpc.org/ethereum/ArfLI8Nwx0R2hnaACzaNOP6No1vyY0wR8KwLEklbR4ac";
       const multicall = new Multicall({
-        ethersProvider: new ethers.providers.JsonRpcProvider(providerUrl),
+        ethersProvider: new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL),
         tryAggregate: true,
       });
 
