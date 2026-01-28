@@ -170,8 +170,7 @@ export interface CombinedHistoricalData {
 export function combineHistoricalIncentiveData(
     hiddenHandData: { dollarPerVlAssetData: number[]; totalAmountDollarsData: number[]; xAxisData: string[]; totalAmountDollarsSum: number } | null,
     paladinData: { dollarPerVlAssetData: number[]; totalAmountDollarsData: number[]; xAxisData: string[]; totalAmountDollarsSum: number } | null,
-    voteMarketData: { dollarPerVlAssetData: number[]; totalAmountDollarsData: number[]; xAxisData: string[]; totalAmountDollarsSum: number } | null,
-    voteMarketPrimaryStartDate: string = '2025-01-08' // When Vote Market became primary for Aura
+    voteMarketData: { dollarPerVlAssetData: number[]; totalAmountDollarsData: number[]; xAxisData: string[]; totalAmountDollarsSum: number } | null
 ): CombinedHistoricalData | null {
     // Collect all unique dates
     const allDates = new Set<string>();
@@ -186,7 +185,14 @@ export function combineHistoricalIncentiveData(
         new Date(a).getTime() - new Date(b).getTime()
     );
 
-    const vmStartTime = new Date(voteMarketPrimaryStartDate).getTime();
+    // Dynamically determine when Vote Market becomes primary (first VM data point)
+    let vmStartTime = Infinity;
+    if (voteMarketData && voteMarketData.xAxisData.length > 0) {
+        const sortedVmDates = [...voteMarketData.xAxisData].sort((a, b) =>
+            new Date(a).getTime() - new Date(b).getTime()
+        );
+        vmStartTime = new Date(sortedVmDates[0]).getTime();
+    }
 
     // Initialize arrays
     const combinedDollarPerVlAsset: number[] = [];
@@ -215,14 +221,14 @@ export function combineHistoricalIncentiveData(
 
         // For stacked chart data
         if (isVoteMarketPrimary) {
-            // After Jan 2025: Use Vote Market + Paladin
+            // After VM starts: Use Vote Market + Paladin
             hhDataArray.push(0);
             paladinDataArray.push(paladinTotal);
             vmDataArray.push(vmTotal);
             combinedTotalAmount.push(vmTotal + paladinTotal);
             combinedDollarPerVlAsset.push(vmDollarPerVote + paladinDollarPerVote);
         } else {
-            // Before Jan 2025: Use Hidden Hand + Paladin
+            // Before VM starts: Use Hidden Hand + Paladin
             hhDataArray.push(hhTotal);
             paladinDataArray.push(paladinTotal);
             vmDataArray.push(0);

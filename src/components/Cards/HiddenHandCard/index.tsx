@@ -47,7 +47,7 @@ const HiddenHandCard = () => {
         <StyledCard>
             <ContentContainer container>
                 <Grid item xs={9}>
-                    <Title variant="h5">HiddenHand</Title>
+                    <Title variant="h5">HiddenHand (LEGACY)</Title>
                     <Description variant="body2">
                         Explore a range of voting incentives available
                     </Description>

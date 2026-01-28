@@ -323,14 +323,18 @@ export default function VotingIncentives() {
 
     // Combine HH and Vote Market data for APR chart
     const { combinedXAxisData, combinedDollarPerVlAssetData, combinedTotalAmountData } = useMemo(() => {
-        const voteMarketStartDate = '2025-01-08';
-        const vmStartTime = new Date(voteMarketStartDate).getTime();
+        // Determine when Vote Market data actually starts (use first VM data point)
+        let vmStartTime = Infinity;
+        if (voteMarketHistoricalData && voteMarketHistoricalData.xAxisData && voteMarketHistoricalData.xAxisData.length > 0) {
+            vmStartTime = new Date(voteMarketHistoricalData.xAxisData[0]).getTime();
+        }
 
         const combinedX: string[] = [];
         const combinedDollarPerVote: number[] = [];
         const combinedTotal: number[] = [];
 
-        // Add HH data for dates before VM start
+        // Add HH data for dates before VM data starts
+        // This includes all HH data through Dec 2025 from our local cache
         if (xAxisData && dollarPerVlAssetData && totalAmountDollarsData) {
             xAxisData.forEach((date, index) => {
                 const dateTime = new Date(date).getTime();
@@ -342,15 +346,12 @@ export default function VotingIncentives() {
             });
         }
 
-        // Add Vote Market data from VM start onwards
+        // Add Vote Market data from when it starts
         if (voteMarketHistoricalData && voteMarketHistoricalData.xAxisData) {
             voteMarketHistoricalData.xAxisData.forEach((date, index) => {
-                const dateTime = new Date(date).getTime();
-                if (dateTime >= vmStartTime) {
-                    combinedX.push(date);
-                    combinedDollarPerVote.push(voteMarketHistoricalData.dollarPerVlAssetData[index]?.value || 0);
-                    combinedTotal.push(voteMarketHistoricalData.totalAmountDollarsData[index]?.value || 0);
-                }
+                combinedX.push(date);
+                combinedDollarPerVote.push(voteMarketHistoricalData.dollarPerVlAssetData[index]?.value || 0);
+                combinedTotal.push(voteMarketHistoricalData.totalAmountDollarsData[index]?.value || 0);
             });
         }
 
@@ -666,32 +667,6 @@ export default function VotingIncentives() {
                                 </Card>
                             </Grid> :
                             <CircularProgress/>}
-
-                        {/* Unclaimed Personal Rewards */}
-                        <Grid item xs={11} sm={9}>
-                            <Typography variant="h5" mb={1}>Unclaimed Personal Rewards</Typography>
-                        </Grid>
-                        <Grid item xs={11} sm={9}>
-                            {address && addressRewards && addressRewards.data ?
-                                <HiddenHandAddressRewards rewardData={addressRewards?.data}/> :
-                                <Card sx={{
-                                    maxWidth: '250px',
-                                    minHeight: '100px'
-                                }}><Box
-                                    display="flex"
-                                    flexDirection="column"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    height="100%"
-                                    p={2}
-                                >
-                                    <SelfImprovementIcon sx={{fontSize: 48}}/>
-                                    <Typography variant="subtitle1" align="center">
-                                        Please connect your Wallet
-                                    </Typography>
-                                </Box>
-                                </Card>}
-                        </Grid>
                     </Grid>
                 </Box>
             )}

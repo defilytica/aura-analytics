@@ -60,7 +60,7 @@ const PaladinQuestsCard = () => {
 
             </ContentContainer>
             <Link
-                href="https://classic.votemarket.org/?market=bal"
+                href="https://votemarket.stakedao.org/balancer?market=vlaura"
                 underline="none"
                 target="_blank"
                 rel="noopener noreferrer"
