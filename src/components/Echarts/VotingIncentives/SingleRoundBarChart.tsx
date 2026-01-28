@@ -1,6 +1,6 @@
 import ReactEcharts from 'echarts-for-react';
 import {formatDollarAmount} from "../../../utils/numbers";
-import {PoolReward} from "../../../pages/VotingIncentives";
+import {PoolReward} from "../../../pages/VotingIncentives/helpers";
 import {Box, Button, Grid} from "@mui/material";
 import {Download} from "@mui/icons-material";
 import React from "react";
