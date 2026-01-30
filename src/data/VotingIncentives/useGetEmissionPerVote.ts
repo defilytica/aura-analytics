@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react';
-import {useCoinGeckoSimpleTokenPrices} from "../coingecko/useCoinGeckoSimpleTokenPrices";
 import {useAuraGlobalStats} from "../aura/useAuraGlobalStats";
 import balancerTokenAdminAbi from '../../constants/abis/balancerTokenAdmin.json';
 import erc20Abi from '../../constants/abis/erc20.json';
@@ -7,13 +6,14 @@ import {AURA_TIMESTAMPS} from "../hidden-hand/constants";
 import {DRPC_ETHEREUM_URL} from "../balancer/constants";
 import { useAuraPrice, getPriceForDate } from "../balancer-api-v3/useGetCompleteHistoricalTokenPrice";
 import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandVotingIncentives";
+import {useGetVoteMarketIncentives} from "../votemarket/useGetVoteMarketIncentives";
 import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
 import {useActiveNetworkVersion} from "../../state/application/hooks";
 import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices";
 import useGetHistoricalTokenPrice from "../balancer-api-v3/useGetHistoricalTokenPrice";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
-import {formatTime, unixToDate} from "../../utils/date";
+import {unixToDate} from "../../utils/date";
 
 const auraAddress = AURA_TOKEN_MAINNET;
 const balAddress = BALANCER_TOKEN_MAINNET;
@@ -31,13 +31,37 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const { data: auraCompletePrice } = useAuraPrice();
     const { data: historicalBALCoinData } = useGetHistoricalTokenPrice(balAddress, GqlChain.Mainnet)
     const auraGlobalStats = useAuraGlobalStats();
+
+    // Vote Market data for current/recent rounds (from vlaura endpoint)
+    // totalVotes = actual vlAURA votes
+    // totalRewardsUSD = Aura's share of incentives
+    // dollarPerVote = $/vlAURA (pre-calculated)
+    const {
+        data: voteMarketData,
+        loading: voteMarketLoading,
+        totalVotes: voteMarketTotalVotes,
+        totalRewardsUSD: voteMarketTotalRewards,
+        dollarPerVote: voteMarketDollarPerVote
+    } = useGetVoteMarketIncentives();
+
+    // Hidden Hand data for legacy/historical rounds
     const hiddenHandDataCurrent = useGetHiddenHandVotingIncentives(timestampCurrentRound === 0 ? '' : String(timestampCurrentRound));
     const hiddenHandDataPrevious = useGetHiddenHandVotingIncentives(String(timestampPreviousRound));
+
+    // Note: Vote Market is used for current round (timestampCurrentRound === 0)
+    // Hidden Hand is used for historical rounds (legacy data)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if ((timestampCurrentRound === 0 || timestampCurrentRound) && coinData && auraGlobalStats && hiddenHandDataCurrent.incentives && hiddenHandDataPrevious.incentives) {
+                // Check if we have the required data based on the data source
+                const hasVoteMarketData = voteMarketData && !voteMarketLoading;
+                const hasHiddenHandData = hiddenHandDataCurrent.incentives && hiddenHandDataPrevious.incentives;
+
+                // For Vote Market rounds, we need Vote Market data; for legacy rounds, we need Hidden Hand data
+                const hasRequiredIncentiveData = (timestampCurrentRound === 0 && hasVoteMarketData) || hasHiddenHandData;
+
+                if ((timestampCurrentRound === 0 || timestampCurrentRound) && coinData && auraGlobalStats && hasRequiredIncentiveData) {
                     const DAY = 86400;
                     const WEEK = 604800;
                     const currentTime = Date.now();
@@ -179,60 +203,112 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
                     const totalVotingPower = await veBal.totalSupply();
                     const auraBalShare = parseFloat(ethers.utils.formatEther(auraVotingPower)) / parseFloat(ethers.utils.formatEther(totalVotingPower));
 
+                    // Total vlAURA supply - this is ALL voting power for emission calculation
+                    // BAL emissions are distributed to ALL vlAURA holders, not just those voting on incentivized gauges
+                    const totalVlAura = auraGlobalStats?.auraTotalLockedAmount || 0;
+
                     let totalVotesCurrent = 0;
                     let totalVotesPrevious = 0;
-                    let totalVotesOnEmissions = 0;
-                    let totalEmissionsCurrent = 0;
-                    if (hiddenHandDataPrevious.incentives.data.length > 1 && hiddenHandDataCurrent.incentives.data.length > 1) {
+                    let totalVotesOnIncentivizedGauges = 0;
+                    let totalIncentivesUSD = 0;
+                    let dollarPerVlAura = 0;
+
+                    // For current round, use Vote Market data if available (from vlaura endpoint)
+                    if (timestampCurrentRound === 0 && voteMarketData) {
+                        // Use Vote Market data directly - already Aura-specific from vlaura endpoint
+                        totalIncentivesUSD = voteMarketTotalRewards || 0;
+                        totalVotesOnIncentivizedGauges = voteMarketTotalVotes || 0;
+                        // Use pre-calculated $/vlAURA from vlaura endpoint
+                        dollarPerVlAura = voteMarketDollarPerVote || 0;
+
+                        console.log("Using Votemarket (vlaura) data for current round");
+                        console.log(`  Total vlAURA (all voting power): ${totalVlAura.toFixed(2)}`);
+                        console.log(`  Votes on incentivized gauges: ${totalVotesOnIncentivizedGauges.toFixed(2)}`);
+                        console.log(`  Aura's incentives: $${totalIncentivesUSD.toFixed(2)}`);
+
+                        // Handle case where no vlAURA incentives are available
+                        if (totalIncentivesUSD === 0) {
+                            console.warn("No vlAURA incentives available");
+                            console.warn("Emission value per vlAURA can still be calculated, but $/vlAURA will be 0");
+                        } else {
+                            console.log(`  $/vlAURA: ${dollarPerVlAura.toFixed(6)}`);
+                        }
+                    } else if (hiddenHandDataPrevious.incentives && hiddenHandDataCurrent.incentives &&
+                               hiddenHandDataPrevious.incentives.data.length > 1 && hiddenHandDataCurrent.incentives.data.length > 1) {
+                        // Use Hidden Hand data for historical rounds
                         hiddenHandDataCurrent.incentives.data.forEach((item) => {
                             totalVotesCurrent += item.voteCount;
                             if (item.totalValue > 0) {
-                                totalVotesOnEmissions += item.voteCount;
+                                totalVotesOnIncentivizedGauges += item.voteCount;
                             }
-                            totalEmissionsCurrent += item.totalValue;
+                            totalIncentivesUSD += item.totalValue;
                         });
                         hiddenHandDataPrevious.incentives.data.forEach((item) => {
                             totalVotesPrevious += item.voteCount;
                         });
-                    }
-                    let approximateTotalVote = 0;
-                    // Use the largest of the vote count between the last 2 rounds in the beginning
-                    // But use actual current vote near the end
-                    if (timestampCurrentRound !== 0 && (
-                        !hiddenHandDataPrevious ||
-                        currentTime >= timestampCurrentRound ||
-                        timestampCurrentRound - currentTime < DAY
-                    )) {
-                        approximateTotalVote = totalVotesCurrent;
-                    } else {
-                        approximateTotalVote =
-                            totalVotesCurrent > totalVotesPrevious ? totalVotesCurrent : totalVotesPrevious;
+                        // Calculate $/vlAURA from Hidden Hand data
+                        dollarPerVlAura = totalVotesOnIncentivizedGauges > 0 ? totalIncentivesUSD / totalVotesOnIncentivizedGauges : 0;
                     }
 
-                    console.log("approximateTotalVote", approximateTotalVote)
+                    // For BAL emission calculation, use TOTAL vlAURA (all voting power)
+                    // This is because BAL emissions go to all voters, not just incentivized gauges
+                    // For historical rounds without totalVlAura, fall back to vote counts
+                    let totalVotingPowerForEmissions = totalVlAura;
+                    if (totalVotingPowerForEmissions === 0) {
+                        // Fallback for historical data where we don't have totalVlAura
+                        if (timestampCurrentRound !== 0 && (
+                            !hiddenHandDataPrevious ||
+                            currentTime >= timestampCurrentRound ||
+                            timestampCurrentRound - currentTime < DAY
+                        )) {
+                            totalVotingPowerForEmissions = totalVotesCurrent;
+                        } else {
+                            totalVotingPowerForEmissions =
+                                totalVotesCurrent > totalVotesPrevious ? totalVotesCurrent : totalVotesPrevious;
+                        }
+                    }
 
-                    const biweeklyBalEmissionPerAura =
+                    console.log("Total voting power for emissions:", totalVotingPowerForEmissions)
+
+                    // BAL emissions per vlAURA = (Total BAL emissions * Aura's veBAL share) / Total vlAURA
+                    const biweeklyBalEmissionPerVlAura =
                         (biweeklyBalEmissionFormatted * auraBalShare) /
-                        approximateTotalVote;
-
+                        totalVotingPowerForEmissions;
 
                     // Handle additional distribution mechanism per AIP-42
-                    const additionalAuraPerVote =
-                        (additionalAuraAmount / approximateTotalVote) * auraPrice;
+                    // Additional AURA is also distributed to ALL vlAURA holders
+                    const additionalAuraPerVlAura =
+                        (additionalAuraAmount / totalVotingPowerForEmissions) * auraPrice;
 
 
                     const auraFee = isAuraOptimized ? 0.225 : 0.25;
-                    const emissionValuePerVote =
-                        biweeklyBalEmissionPerAura *
+                    // Emission value per vlAURA:
+                    // = BAL per vlAURA * (BAL price + AURA per BAL * AURA price) * (1 - fee) + additional AURA value
+                    const emissionValuePerVlAura =
+                        biweeklyBalEmissionPerVlAura *
                         (balPrice + auraPerBal * auraPrice) *
                         (1 - auraFee) +
-                        additionalAuraPerVote;
-                    setEmissionValuePerVote(emissionValuePerVote);
+                        additionalAuraPerVlAura;
+                    setEmissionValuePerVote(emissionValuePerVlAura);
 
-                    // Approximate emissions / $ spent
-                    const dollarPervlAura = totalEmissionsCurrent / totalVotesOnEmissions;
-                    const emissionDollars = 1 / (dollarPervlAura / emissionValuePerVote)
-                    setEmissionsPerDollarSpent(emissionDollars)
+                    console.log(`Emission calculation:`);
+                    console.log(`  BAL per vlAURA (biweekly): ${biweeklyBalEmissionPerVlAura.toFixed(8)}`);
+                    console.log(`  AURA per BAL: ${auraPerBal.toFixed(4)}`);
+                    console.log(`  Emission value per vlAURA: $${emissionValuePerVlAura.toFixed(6)}`);
+
+                    // Emissions per $1 spent on incentives
+                    // = Emission value per vlAURA / Cost per vlAURA vote (from incentive market)
+                    // This tells you how much emission value you get for each $1 spent on voting incentives
+                    if (dollarPerVlAura > 0) {
+                        const emissionsPerDollar = emissionValuePerVlAura / dollarPerVlAura;
+                        setEmissionsPerDollarSpent(emissionsPerDollar);
+                        console.log(`Emissions per $1 spent: ${emissionsPerDollar.toFixed(4)}`);
+                        console.log(`  ($/vlAURA incentive cost: ${dollarPerVlAura.toFixed(6)}, emission value/vlAURA: $${emissionValuePerVlAura.toFixed(6)})`);
+                    } else {
+                        // No vlAURA incentives available - cannot calculate emissions per dollar
+                        setEmissionsPerDollarSpent(0);
+                        console.log(`Emissions per $1 spent: N/A (no vlAURA incentives available)`);
+                    }
                 }
 
             } catch (error) {
@@ -241,7 +317,23 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
         };
 
         fetchData();
-    }, [coinData, auraGlobalStats, hiddenHandDataCurrent, hiddenHandDataPrevious]);
+    // Use specific properties or loading states instead of entire objects to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        coinData?.data?.[auraAddress]?.price,
+        coinData?.data?.[balAddress]?.price,
+        auraGlobalStats?.auraTotalCliffs,
+        auraGlobalStats?.auraTotalSupply,
+        auraGlobalStats?.auraTotalLockedAmount,
+        hiddenHandDataCurrent.loading,
+        hiddenHandDataPrevious.loading,
+        JSON.stringify(hiddenHandDataCurrent.incentives?.data?.length),
+        JSON.stringify(hiddenHandDataPrevious.incentives?.data?.length),
+        voteMarketLoading,
+        voteMarketTotalVotes,
+        voteMarketTotalRewards,
+        timestampCurrentRound
+    ]);
 
     return{
         emissionValuePerVote: emissionValuePerVote,

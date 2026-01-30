@@ -59,7 +59,7 @@ const PaladinQuestsCard = () => {
 
             </ContentContainer>
             <Link
-                href="https://quest.paladin.vote/#/bal"
+                href="https://quest.paladin.vote/#/aura"
                 underline="none"
                 target="_blank"
                 rel="noopener noreferrer"

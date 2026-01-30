@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {unixToDate} from "../../utils/date";
+import { LOCAL_CACHE } from './cache';
 
 interface HiddenHandIncentives {
     error?: boolean;
@@ -27,10 +28,18 @@ const isValidData = (data: HiddenHandIncentives | null): boolean => {
 
 // Fetch data for a single timestamp with fallback
 const fetchTimestampData = async (timestamp: number): Promise<HiddenHandIncentives | null> => {
+    // First, check local cache (for Sep-Dec 2025 data after GitHub cache stopped)
+    if (LOCAL_CACHE[timestamp]) {
+        const localData = LOCAL_CACHE[timestamp] as HiddenHandIncentives;
+        if (isValidData(localData)) {
+            return localData;
+        }
+    }
+
     const githubCacheUrl = `${GITHUB_CACHE_URL}/aura-${timestamp}.json`;
     const hhApiUrl = `${API_URL}/${timestamp}`;
 
-    // Try GitHub cache first (more reliable for historical data)
+    // Try GitHub cache second (for older historical data)
     try {
         const cacheResponse = await axios.get(githubCacheUrl);
         const cacheJson: HiddenHandIncentives = cacheResponse.data;
@@ -49,7 +58,7 @@ const fetchTimestampData = async (timestamp: number): Promise<HiddenHandIncentiv
             return apiJson;
         }
     } catch (apiError) {
-        // Both sources failed
+        // All sources failed
     }
 
     return null;

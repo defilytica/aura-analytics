@@ -1,4 +1,4 @@
-import {Box, Card, CardContent, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
+import {Box, Card, CircularProgress, Grid, MenuItem, Select, Typography} from "@mui/material";
 import {GetBribingRounds} from "../../data/llamaairforce/getBribingRounds";
 import {GetBribingStatsForRounds} from "../../data/llamaairforce/getBribingStatsForRound";
 import * as React from "react";
@@ -8,70 +8,46 @@ import NavCrumbs, {NavElement} from "../../components/NavCrumbs";
 import DashboardOverviewChart from "../../components/Echarts/VotingIncentives/DashboardOverviewChart";
 import {unixToDate} from "../../utils/date";
 import MetricsCard from "../../components/Cards/MetricsCard";
-import {AddShoppingCart, CurrencyExchange, ShoppingCartCheckout} from "@mui/icons-material";
+import {AddShoppingCart, CurrencyExchange} from "@mui/icons-material";
 import SingleRoundBarChart from "../../components/Echarts/VotingIncentives/SingleRoundBarChart";
-import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
-import {HiddenHandIncentives} from "../../data/hidden-hand/hiddenHandTypes";
 import {useGetHiddenHandHistoricalIncentives} from "../../data/hidden-hand/useGetHiddenHandHistoricalIncentives";
-import {AURA_TIMESTAMPS, HISTORICAL_AURA_PRICE} from "../../data/hidden-hand/constants";
 import {BalancerStakingGauges} from "../../data/balancer/balancerTypes";
-import {decorateGaugesWithIncentives} from "./helpers";
+import {
+    decorateGaugesWithVoteMarketIncentives,
+    extractVoteMarketPoolRewards,
+    PoolReward
+} from "./helpers";
+import {
+    VOTE_MARKET_AURA_METADATA_URL,
+    VOTE_MARKET_AURA_HISTORICAL_BASE_URL,
+    VOTE_MARKET_FIRST_VALID_ROUND
+} from "../../data/votemarket/constants";
+import { VoteMarketHistoricalRound, VoteMarketRoundMetadata, VoteMarketAnalytics } from "../../data/votemarket/voteMarketTypes";
 import IncentivesTable from "../../components/Tables/IncentivesTable";
-import HistoricalIncentivesTable from "../../components/Tables/HistoricalIncentivesTable";
 import {useGetHiddenHandRewards} from "../../data/hidden-hand/useGetHiddenHandRewards";
 import {useAccount} from "wagmi";
 import HiddenHandCard from "../../components/Cards/HiddenHandCard";
 import HiddenHandAddressRewards from "../../components/Tables/HiddenHandAddressRewards";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
-import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import AuraIncentiveAPRChart from "../../components/Echarts/VotingIncentives/AuraIncentiveAPRChart";
 import useGetBalancerV3StakingGauges from "../../data/balancer-api-v3/useGetBalancerV3StakingGauges";
-import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 import PaladinQuestsCard from "../../components/Cards/PaladinQuestsCard";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
-import useGetTokenSetHistoricalPrices from "../../data/balancer-api-v3/useGetTokenSetHistoricalPrices";
 import VoteMarketCard from "../../components/Cards/VoteMarketCard";
 import {useGetPaladinHistoricalQuests} from "../../data/paladin/useGetPaladinHistoricalQuests";
 import {ethers} from "ethers";
-import CombinedOverviewChart from "../../components/Echarts/VotingIncentives/CombinedOverviewChart";
 import {
     getTokenPriceAtTimestamp,
     useGetHistoricalTokenPricesAggregated
 } from "../../data/balancer-api-v3/useGetHistoricalTokenPricesAggregated";
 import IntelligentLoadingIndicator from "../../components/Progress/IntelligentLoadingIndicator";
 import { useAuraPrice, getPriceForDate } from "../../data/balancer-api-v3/useGetCompleteHistoricalTokenPrice";
+// Vote Market imports
+import { useGetVoteMarketIncentives } from "../../data/votemarket/useGetVoteMarketIncentives";
+import { useGetVoteMarketHistoricalIncentives } from "../../data/votemarket/useGetVoteMarketHistoricalIncentives";
 
-// Helper functions to parse data types to Llama model
-const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
-    const poolRewards: PoolReward[] = [];
-
-    if (data) {
-        data.data.forEach((item) => {
-            const {title, bribes} = item;
-
-            if (bribes.length > 0) {
-                const poolReward: PoolReward = {pool: title};
-                bribes.forEach((bribe) => {
-                    const {symbol, value} = bribe;
-                    const tokenKey = `${symbol.toUpperCase()}`;
-
-                    if (!poolReward[tokenKey]) {
-                        poolReward[tokenKey] = value;
-                    } else {
-                        const existingValue = poolReward[tokenKey];
-                        poolReward[tokenKey] = typeof existingValue === 'number' ? existingValue + value : value;
-                    }
-                });
-
-                poolRewards.push(poolReward);
-            }
-        });
-    }
-    return poolRewards;
-};
-
-//Combined stats for HH and Paladin
+// Type for Paladin historical data
 type CombinedIncentiveData = {
     dollarPerVlAssetData: number[];
     totalAmountDollarsData: number[];
@@ -79,63 +55,6 @@ type CombinedIncentiveData = {
     totalAmountDollarsSum: number;
 };
 
-const combineIncentiveData = (
-    hiddenHandData: CombinedIncentiveData | null,
-    paladinData: CombinedIncentiveData | null
-): CombinedIncentiveData | null => {
-    if (!hiddenHandData && !paladinData) return null;
-    if (!hiddenHandData) return paladinData;
-    if (!paladinData) return hiddenHandData;
-
-    // Create a map of all unique dates
-    const dateMap = new Map<string, number>();
-    hiddenHandData.xAxisData.forEach((date, index) => {
-        dateMap.set(date, index);
-    });
-    paladinData.xAxisData.forEach((date, index) => {
-        if (!dateMap.has(date)) {
-            dateMap.set(date, dateMap.size);
-        }
-    });
-
-    // Sort dates chronologically
-    const sortedDates = Array.from(dateMap.keys()).sort();
-
-    // Initialize arrays for combined data
-    const combinedDollarPerVlAsset: number[] = new Array(sortedDates.length).fill(0);
-    const combinedTotalAmount: number[] = new Array(sortedDates.length).fill(0);
-
-    // Combine Hidden Hand data
-    sortedDates.forEach((date, newIndex) => {
-        const hhIndex = hiddenHandData.xAxisData.indexOf(date);
-        if (hhIndex !== -1) {
-            combinedDollarPerVlAsset[newIndex] += hiddenHandData.dollarPerVlAssetData[hhIndex] || 0;
-            combinedTotalAmount[newIndex] += hiddenHandData.totalAmountDollarsData[hhIndex] || 0;
-        }
-    });
-
-    // Add Paladin data
-    sortedDates.forEach((date, newIndex) => {
-        const palIndex = paladinData.xAxisData.indexOf(date);
-        if (palIndex !== -1) {
-            combinedDollarPerVlAsset[newIndex] += paladinData.dollarPerVlAssetData[palIndex] || 0;
-            combinedTotalAmount[newIndex] += paladinData.totalAmountDollarsData[palIndex] || 0;
-        }
-    });
-
-    return {
-        dollarPerVlAssetData: combinedDollarPerVlAsset,
-        totalAmountDollarsData: combinedTotalAmount,
-        xAxisData: sortedDates,
-        totalAmountDollarsSum: hiddenHandData.totalAmountDollarsSum + paladinData.totalAmountDollarsSum
-    };
-};
-
-
-export type PoolReward = {
-    pool: string;
-    [token: string]: string | number; // this represents any number of token properties with their corresponding `amountDollars` value
-};
 export default function VotingIncentives() {
     const homeNav: NavElement = {
         name: 'Home',
@@ -144,39 +63,73 @@ export default function VotingIncentives() {
     const navCrumbs: NavElement[] = []
     navCrumbs.push(homeNav)
 
-    // New Hidden Hand API
-    const timestamps = AURA_TIMESTAMPS;
-    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 1]); // Default timestamp
+    // Round selector state - 0 means current/latest round
+    const [selectedRoundId, setSelectedRoundId] = useState<number>(0);
+    const [availableRounds, setAvailableRounds] = useState<{id: number; endVoting: number}[]>([]);
     const [bribeRewardsNew, setBribeRewardsNew] = useState<PoolReward[]>([]);
     const [xAxisDataRoundNew, setXAxisDataRoundNew] = useState<string[]>([]);
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
     const [roundIncentives, setRoundIncentives] = useState<number>(0);
     const [emissionVotesTotal, setEmissionVotesTotal] = useState<number>(0);
+    const [roundVotingEfficiency, setRoundVotingEfficiency] = useState<number>(0);
     const [decoratedGauges, setDecoratedGagues] = useState<BalancerStakingGauges[]>([]);
-    const hiddenHandData = useGetHiddenHandVotingIncentives(currentRoundNew === 0 ? '' : String(currentRoundNew));
-    // const currentHiddenHandData = useGetHiddenHandVotingIncentives();
-    const {address} = useAccount();
-    const addressRewards = useGetHiddenHandRewards(address ? address : '')
-    const gaugeData = useGetBalancerV3StakingGauges();
-    const timeStampNow = Math.floor(Date.now() / 1000);
-    const { data: auraCompletePrice, loading: auraPriceLoading, error: auraPriceError } = useAuraPrice();
-    const [tokenAddresses, setTokenAddresses] = useState<string[]>([]);
-    const { data: historicalPrices, loading: pricesLoading, error: pricesError } = useGetTokenSetHistoricalPrices(tokenAddresses, GqlChain.Mainnet);
-    const [correctedIncentives, setCorrectedIncentives] = useState<HiddenHandIncentives | null>(null);
     const [paladinHistoricalData, setPaladinHistoricalData] = useState<CombinedIncentiveData | null>(null);
+    const [historicalRoundLoading, setHistoricalRoundLoading] = useState<boolean>(false);
 
-    //console.log("auraHistoricalprice: ", auraHistoricalPrice)
+    // Vote Market data (primary source for current round)
+    // Now uses vlaura endpoint directly - all metrics are Aura-specific
+    const {
+        data: voteMarketData,
+        loading: voteMarketLoading,
+        currentRoundId,
+        totalRewardsUSD: vmTotalRewards,
+        totalVotes: vmTotalVotes,
+        dollarPerVote: vmDollarPerVote,
+        votingEfficiency: vmVotingEfficiency // Emissions per $1 spent - directly from vlaura data
+    } = useGetVoteMarketIncentives();
+    const voteMarketCampaigns = voteMarketData?.campaigns || [];
+    const voteMarketAnalytics = voteMarketData?.analytics || null;
 
-    const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
+    // Vote Market historical data
+    const { data: voteMarketHistoricalData, loading: voteMarketHistoricalLoading } = useGetVoteMarketHistoricalIncentives();
 
-    //Paladin data
+    // Gauge data
+    const gaugeData = useGetBalancerV3StakingGauges();
+
+    // User wallet
+    const {address} = useAccount();
+    const addressRewards = useGetHiddenHandRewards(address ? address : '');
+
+    // Price data
+    const { data: auraCompletePrice, loading: auraPriceLoading, error: auraPriceError } = useAuraPrice();
+
+    // Fetch available rounds from vlaura metadata
+    useEffect(() => {
+        const fetchRoundsMetadata = async () => {
+            try {
+                const response = await fetch(VOTE_MARKET_AURA_METADATA_URL);
+                if (response.ok) {
+                    const metadata: VoteMarketRoundMetadata[] = await response.json();
+                    // Filter to valid rounds and sort by ID descending (newest first)
+                    const validRounds = metadata
+                        .filter(r => r.id >= VOTE_MARKET_FIRST_VALID_ROUND)
+                        .sort((a, b) => b.id - a.id);
+                    setAvailableRounds(validRounds);
+                }
+            } catch (error) {
+                console.error('Error fetching rounds metadata:', error);
+            }
+        };
+        fetchRoundsMetadata();
+    }, []);
+
+    // Paladin data
     const { questData, loading: questsLoading } = useGetPaladinHistoricalQuests();
     const questTimestamps = useMemo(() => {
         if (!questData) return [];
         return Array.from(new Set(questData.quests.map(q => q.timestamp)));
     }, [questData]);
 
-    // Use the new hook for historical price data
     const {
         priceData: historicalTokenPrices,
         loading: tokenPricesLoading,
@@ -185,64 +138,64 @@ export default function VotingIncentives() {
         questTimestamps
     );
 
-    console.log("questData", questData);
-    console.log("historicalTokenPrices", historicalTokenPrices)
+    // Hidden Hand historical data
+    const historicalData = useGetHiddenHandHistoricalIncentives();
+
+    // LLAMA API
+    const roundsData = GetBribingRounds();
+    const allRoundsBribes = GetBribingStatsForRounds();
+    const dashboardData = allRoundsBribes?.dashboard;
 
     // Process Paladin quest data
     useEffect(() => {
-        // Only process when we have both quest data and token prices
         if (!questData || !historicalTokenPrices || questsLoading || tokenPricesLoading) {
             return;
         }
 
-        const processedData = questData.quests.map(questPeriod => {
-            let periodTotalValue = 0;
-            let totalRewardPerVote = 0;
-            let validQuestCount = 0;
+        const now = Math.floor(Date.now() / 1000);
+        const oneYearAgo = now - (365 * 24 * 60 * 60);
 
-            questPeriod.data.forEach(quest => {
-                // Validate all required fields exist
-                if (!quest.rewardToken || !quest.rewardDistributed || !quest.rewardPerVote) {
-                    return;
-                }
+        const processedData = questData.quests
+            .filter(questPeriod => questPeriod.timestamp <= now && questPeriod.timestamp >= oneYearAgo)
+            .map(questPeriod => {
+                let periodTotalValue = 0;
+                let totalRewardPerVote = 0;
+                let validQuestCount = 0;
 
-                try {
-                    // Get historical price for this token at this timestamp
-                    const tokenPrice = getTokenPriceAtTimestamp(
-                        historicalTokenPrices,
-                        quest.rewardToken,
-                        questPeriod.timestamp
-                    );
-
-                    if (tokenPrice === 0) {
-                        console.warn(`No price found for token ${quest.rewardToken} at timestamp ${questPeriod.timestamp}`);
+                questPeriod.data.forEach(quest => {
+                    if (!quest.rewardToken || !quest.rewardDistributed || !quest.rewardPerVote) {
                         return;
                     }
 
-                    // Calculate value using historical token price
-                    const rewardDistributedEther = Number(ethers.utils.formatEther(quest.rewardDistributed || '0'));
-                    const rewardValueUSD = rewardDistributedEther * tokenPrice;
-                    periodTotalValue += rewardValueUSD;
+                    try {
+                        const tokenPrice = getTokenPriceAtTimestamp(
+                            historicalTokenPrices,
+                            quest.rewardToken,
+                            questPeriod.timestamp
+                        );
 
-                    // Calculate reward per vote in USD
-                    const questRewardPerVote = Number(ethers.utils.formatEther(quest.rewardPerVote || '0'));
-                    const rewardPerVoteUSD = questRewardPerVote * tokenPrice;
-                    totalRewardPerVote += rewardPerVoteUSD;
-                    validQuestCount++;
-                } catch (error) {
-                    console.error('Error processing quest:', error, quest);
-                    return;
-                }
+                        if (tokenPrice === 0) return;
+
+                        const rewardDistributedEther = Number(ethers.utils.formatEther(quest.rewardDistributed || '0'));
+                        const rewardValueUSD = rewardDistributedEther * tokenPrice;
+                        periodTotalValue += rewardValueUSD;
+
+                        const questRewardPerVote = Number(ethers.utils.formatEther(quest.rewardPerVote || '0'));
+                        const rewardPerVoteUSD = questRewardPerVote * tokenPrice;
+                        totalRewardPerVote += rewardPerVoteUSD;
+                        validQuestCount++;
+                    } catch {
+                        return;
+                    }
+                });
+
+                return {
+                    totalValue: periodTotalValue,
+                    valuePerVote: validQuestCount > 0 ? totalRewardPerVote / validQuestCount : 0,
+                    xAxis: unixToDate(questPeriod.timestamp)
+                };
             });
 
-            return {
-                totalValue: periodTotalValue,
-                valuePerVote: validQuestCount > 0 ? totalRewardPerVote / validQuestCount : 0,
-                xAxis: unixToDate(questPeriod.timestamp)
-            };
-        });
-
-        // Filter out periods with no valid data and sort chronologically
         const validProcessedData = processedData
             .filter(data => data.totalValue > 0)
             .sort((a, b) => new Date(a.xAxis).getTime() - new Date(b.xAxis).getTime());
@@ -260,165 +213,204 @@ export default function VotingIncentives() {
         });
     }, [JSON.stringify(questData), JSON.stringify(historicalTokenPrices), questsLoading, tokenPricesLoading]);
 
-
-    // Memoize hiddenHandData to prevent unnecessary re-renders
-    const memoizedHiddenHandData = useMemo(() => hiddenHandData.incentives, [hiddenHandData.incentives]);
-
+    // Process round data from vlaura endpoint
     useEffect(() => {
-        if (memoizedHiddenHandData) {
-            // Normalize addresses to lowercase for consistent API queries and lookups
-            const addresses = memoizedHiddenHandData.data.flatMap(proposal =>
-                proposal.bribes.map(bribe => bribe.token.toLowerCase())
-            );
-            setTokenAddresses([...new Set(addresses)]);
-        }
-    }, [JSON.stringify(memoizedHiddenHandData)]);
+        const processRoundData = async () => {
+            if (gaugeData.length === 0) return;
 
-    useEffect(() => {
-        // Process data when Hidden Hand data is available and prices are not loading
-        // If no historical prices available, still process with original values
-        if (memoizedHiddenHandData && !pricesLoading) {
-            const correctedData = memoizedHiddenHandData.data.map(proposal => ({
-                ...proposal,
-                bribes: proposal.bribes.map(bribe => {
-                    // If no historical prices available, use original bribe value
-                    if (!historicalPrices || pricesError) {
-                        return bribe;
-                    }
+            // Current round (0) uses the already-fetched voteMarketData
+            if (selectedRoundId === 0 && voteMarketAnalytics && !voteMarketLoading) {
+                // Extract pool rewards from Vote Market analytics
+                const vmPoolRewards = extractVoteMarketPoolRewards(voteMarketCampaigns, voteMarketAnalytics, gaugeData);
+                setBribeRewardsNew(vmPoolRewards);
+                setXAxisDataRoundNew(vmPoolRewards.map((el) => el.pool));
 
-                    // Normalize token address to lowercase for consistent lookup
-                    const normalizedToken = bribe.token.toLowerCase();
-                    const tokenPrices = historicalPrices[normalizedToken];
-                    if (!tokenPrices || tokenPrices.length === 0) {
-                        console.warn(`No historical prices found for token: ${bribe.token} (${bribe.symbol}), using original value: $${bribe.value}`);
-                        return bribe;
-                    }
+                // Use metrics directly from the vlaura hook - already Aura-specific
+                setRoundIncentives(vmTotalRewards);
+                setEmissionVotesTotal(vmTotalVotes);
+                setIncentivePerVote(vmDollarPerVote);
+                setRoundVotingEfficiency(vmVotingEfficiency);
 
-                    // Find the closest price to the proposal deadline
-                    const closestPrice = tokenPrices.reduce((prev, curr) => {
-                        return Math.abs(new Date(curr.date).getTime() - proposal.proposalDeadline * 1000) <
-                        Math.abs(new Date(prev.date).getTime() - proposal.proposalDeadline * 1000)
-                            ? curr : prev;
-                    });
-
-                    // Check if the closest price is within 3 days of the proposal deadline
-                    const timeDifference = Math.abs(new Date(closestPrice.date).getTime() - proposal.proposalDeadline * 1000);
-                    const threeDaysInMilliseconds = 3 * 24 * 60 * 60 * 1000;
-
-                    if (timeDifference <= threeDaysInMilliseconds) {
-                        const correctedValue = bribe.amount * closestPrice.price;
-                        return {
-                            ...bribe,
-                            value: correctedValue,
-                        };
-                    } else {
-                        // If no price within 3 days, use the original value
-                        console.warn(`No price within 3 days for token: ${bribe.token} (${bribe.symbol}), using original value: $${bribe.value}`);
-                        return {
-                            ...bribe,
-                            value: bribe.value,
-                        };
-                    }
-                }),
-            }));
-
-            setCorrectedIncentives({
-                ...memoizedHiddenHandData,
-                data: correctedData,
-            });
-        }
-    }, [JSON.stringify(memoizedHiddenHandData), JSON.stringify(historicalPrices), pricesLoading, pricesError]);
-
-    // Memoize correctedIncentives to prevent unnecessary re-renders
-    const memoizedCorrectedIncentives = useMemo(() => correctedIncentives, [correctedIncentives]);
-
-    useEffect(() => {
-        if (memoizedCorrectedIncentives) {
-            const data = extractPoolRewards(memoizedCorrectedIncentives);
-            setBribeRewardsNew(data);
-            setXAxisDataRoundNew(data.map((el) => el.pool));
-
-            let totalVotes = 0;
-            let totalValue = 0;
-            let emissionVotes = 0;
-            let emissionValue = 0;
-
-            memoizedCorrectedIncentives.data.forEach((item) => {
-                const itemTotalValue = item.bribes.reduce((sum, bribe) => sum + bribe.value, 0);
-                totalValue += itemTotalValue;
-                totalVotes += item.voteCount;
-                if (itemTotalValue > 0) {
-                    emissionValue += itemTotalValue;
-                    emissionVotes += item.voteCount;
-                }
-            });
-
-            const incentiveEfficency = emissionValue / emissionVotes;
-            setEmissionVotesTotal(emissionVotes);
-            setIncentivePerVote(incentiveEfficency);
-            setRoundIncentives(totalValue);
-
-            if (gaugeData.length > 1) {
-                const fullyDecoratedGauges = decorateGaugesWithIncentives(gaugeData, memoizedCorrectedIncentives);
-                setDecoratedGagues(fullyDecoratedGauges);
+                // Decorate gauges with Vote Market analytics and filter to only show gauges with incentives
+                const fullyDecoratedGauges = decorateGaugesWithVoteMarketIncentives(gaugeData, voteMarketAnalytics);
+                const gaugesWithIncentives = fullyDecoratedGauges.filter(gauge => gauge.totalRewards && gauge.totalRewards > 0);
+                setDecoratedGagues(gaugesWithIncentives);
+                setHistoricalRoundLoading(false);
             }
-        }
-    }, [JSON.stringify(memoizedCorrectedIncentives), JSON.stringify(gaugeData)]);
+            // Historical rounds - fetch from vlaura endpoint
+            else if (selectedRoundId !== 0) {
+                setHistoricalRoundLoading(true);
+                try {
+                    const url = `${VOTE_MARKET_AURA_HISTORICAL_BASE_URL}/${selectedRoundId}.json`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        console.error(`Failed to fetch round ${selectedRoundId}`);
+                        setHistoricalRoundLoading(false);
+                        return;
+                    }
+                    const roundData: VoteMarketHistoricalRound = await response.json();
 
+                    // Build analytics structure
+                    const analytics: VoteMarketAnalytics = {
+                        totalDepositedUSD: roundData.totalDepositedUSD || 0,
+                        globalAverageDollarPerVote: roundData.globalAverageDollarPerVote || 0,
+                        globalAverageEfficiency: roundData.globalAverageEfficiency || 0,
+                        analytics: roundData.analytics || []
+                    };
+
+                    // Extract pool rewards
+                    const vmPoolRewards = extractVoteMarketPoolRewards([], analytics, gaugeData);
+                    setBribeRewardsNew(vmPoolRewards);
+                    setXAxisDataRoundNew(vmPoolRewards.map((el) => el.pool));
+
+                    // Calculate totals from analytics
+                    let totalVotes = 0;
+                    let totalRewards = 0;
+                    if (roundData.analytics) {
+                        roundData.analytics.forEach(ga => {
+                            totalVotes += parseFloat(ga.nonBlacklistedVotes?.toString() || '0');
+                            totalRewards += ga.totalDeposited || 0;
+                        });
+                    }
+
+                    setRoundIncentives(roundData.totalDepositedUSD || totalRewards);
+                    setEmissionVotesTotal(totalVotes);
+                    setIncentivePerVote(roundData.globalAverageDollarPerVote || 0);
+                    setRoundVotingEfficiency(roundData.globalAverageEfficiency || 0);
+
+                    // Decorate gauges and filter
+                    const fullyDecoratedGauges = decorateGaugesWithVoteMarketIncentives(gaugeData, analytics);
+                    const gaugesWithIncentives = fullyDecoratedGauges.filter(gauge => gauge.totalRewards && gauge.totalRewards > 0);
+                    setDecoratedGagues(gaugesWithIncentives);
+                } catch (error) {
+                    console.error(`Error fetching round ${selectedRoundId}:`, error);
+                } finally {
+                    setHistoricalRoundLoading(false);
+                }
+            }
+        };
+
+        processRoundData();
+    }, [selectedRoundId, gaugeData.length, vmTotalRewards, vmTotalVotes, vmDollarPerVote, vmVotingEfficiency, voteMarketLoading]);
 
     const handleEpochChange = (event: SelectChangeEvent<number>) => {
-        setCurrentRoundNew(Number(event.target.value));
+        setSelectedRoundId(Number(event.target.value));
     };
 
-    //Historical data
-    const historicalData = useGetHiddenHandHistoricalIncentives();
-
-    // LLAMA API
-    const roundsData = GetBribingRounds();
-    let allRoundsBribes = GetBribingStatsForRounds()
-    let dashboardData = allRoundsBribes?.dashboard;
-    let dollarPerVlAssetData: number[] = [];
-    let totalAmountDollarsData;
-    let xAxisData: string[] = [];
-    let totalAmountDollarsSum;
-    if (dashboardData && historicalData) {
-        //Remove the last element of the Llama data as the new API needs at least that data point as a starting element.
-        //TODO: Refactor after data is stored in DB
-        dollarPerVlAssetData = [...dashboardData.epochs.slice(0, -1).map(item => item.dollarPerVlAsset), ...historicalData.dollarPerVlAssetData]
-        totalAmountDollarsData = [...dashboardData.epochs.slice(0, -1).map(item => item.totalAmountDollars), ...historicalData.totalAmountDollarsData]
-        totalAmountDollarsSum = totalAmountDollarsData.slice(0, -1).reduce((accumulator, currentValue) => accumulator + currentValue, 0) + historicalData.totalAmountDollarsSum;
-        xAxisData = [...dashboardData.epochs.slice(0, -1).map(item => unixToDate(item.end)), ...historicalData.xAxisData];
-    }
-    // APR chart: match the dollarPerVLAssetData with price Data to calculate APR
-    let historicalAPR = xAxisData.map((el) => {
-        const price = getPriceForDate(auraCompletePrice || [], el);
-        if (price && price > 0) {
-            return dollarPerVlAssetData[xAxisData.indexOf(el)] * 2 * 12 / price;
+    // Memoize processed HH historical data
+    const { dollarPerVlAssetData, totalAmountDollarsData, xAxisData, totalAmountDollarsSum } = useMemo(() => {
+        if (!dashboardData || !historicalData) {
+            return {
+                dollarPerVlAssetData: [],
+                totalAmountDollarsData: [],
+                xAxisData: [],
+                totalAmountDollarsSum: 0
+            };
         }
-        return 0; // Fallback value
-    });
 
-    let historicalPrice = xAxisData.map((el) => {
-        const price = getPriceForDate(auraCompletePrice || [], el);
-        return price || 0; // Fallback value
-    });
+        const hhDollarPerVlAssetData = [...dashboardData.epochs.slice(0, -1).map(item => item.dollarPerVlAsset), ...historicalData.dollarPerVlAssetData];
+        const hhTotalAmountDollarsData = [...dashboardData.epochs.slice(0, -1).map(item => item.totalAmountDollars), ...historicalData.totalAmountDollarsData];
+        const hhXAxisData = [...dashboardData.epochs.slice(0, -1).map(item => unixToDate(item.end)), ...historicalData.xAxisData];
+        const hhTotalAmountDollarsSum = hhTotalAmountDollarsData.slice(0, -1).reduce((acc, curr) => acc + curr, 0) + historicalData.totalAmountDollarsSum;
 
-    // Add Paladin data preparation
-    let paladinDollarPerVlAssetData: number[] = [];
-    let paladinTotalAmountDollarsData: number[] = [];
-    let paladinXAxisData: string[] = [];
-    let paladinTotalAmountDollarsSum = 0;
+        return {
+            dollarPerVlAssetData: hhDollarPerVlAssetData,
+            totalAmountDollarsData: hhTotalAmountDollarsData,
+            xAxisData: hhXAxisData,
+            totalAmountDollarsSum: hhTotalAmountDollarsSum
+        };
+    }, [dashboardData, historicalData]);
 
-    if (paladinHistoricalData) {
-        paladinDollarPerVlAssetData = paladinHistoricalData.dollarPerVlAssetData;
-        paladinTotalAmountDollarsData = paladinHistoricalData.totalAmountDollarsData;
-        paladinXAxisData = paladinHistoricalData.xAxisData;
-        paladinTotalAmountDollarsSum = paladinHistoricalData.totalAmountDollarsSum;
-    }
+    // Combine HH and Vote Market data for APR chart
+    const { combinedXAxisData, combinedDollarPerVlAssetData, combinedTotalAmountData } = useMemo(() => {
+        // Determine when Vote Market data actually starts (use first VM data point)
+        let vmStartTime = Infinity;
+        if (voteMarketHistoricalData && voteMarketHistoricalData.xAxisData && voteMarketHistoricalData.xAxisData.length > 0) {
+            vmStartTime = new Date(voteMarketHistoricalData.xAxisData[0]).getTime();
+        }
 
+        const combinedX: string[] = [];
+        const combinedDollarPerVote: number[] = [];
+        const combinedTotal: number[] = [];
 
+        // Add HH data for dates before VM data starts
+        // This includes all HH data through Dec 2025 from our local cache
+        if (xAxisData && dollarPerVlAssetData && totalAmountDollarsData) {
+            xAxisData.forEach((date, index) => {
+                const dateTime = new Date(date).getTime();
+                if (dateTime < vmStartTime) {
+                    combinedX.push(date);
+                    combinedDollarPerVote.push(dollarPerVlAssetData[index]);
+                    combinedTotal.push(totalAmountDollarsData[index]);
+                }
+            });
+        }
 
+        // Add Vote Market data from when it starts
+        if (voteMarketHistoricalData && voteMarketHistoricalData.xAxisData) {
+            voteMarketHistoricalData.xAxisData.forEach((date, index) => {
+                combinedX.push(date);
+                combinedDollarPerVote.push(voteMarketHistoricalData.dollarPerVlAssetData[index]?.value || 0);
+                combinedTotal.push(voteMarketHistoricalData.totalAmountDollarsData[index]?.value || 0);
+            });
+        }
 
+        // Sort by date
+        const sorted = combinedX
+            .map((date, i) => ({ date, dollarPerVote: combinedDollarPerVote[i], total: combinedTotal[i] }))
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+        return {
+            combinedXAxisData: sorted.map(s => s.date),
+            combinedDollarPerVlAssetData: sorted.map(s => s.dollarPerVote),
+            combinedTotalAmountData: sorted.map(s => s.total)
+        };
+    }, [xAxisData, dollarPerVlAssetData, totalAmountDollarsData, voteMarketHistoricalData]);
+
+    // APR chart data
+    const { historicalAPR, historicalPrice } = useMemo(() => {
+        if (!combinedXAxisData || combinedXAxisData.length === 0 || !combinedDollarPerVlAssetData) {
+            return { historicalAPR: [], historicalPrice: [] };
+        }
+
+        const aprData = combinedXAxisData.map((el, index) => {
+            const price = getPriceForDate(auraCompletePrice || [], el);
+            if (price && price > 0) {
+                // Aura uses bi-weekly rounds, so multiply by 26 for annual
+                return combinedDollarPerVlAssetData[index] * 26 / price;
+            }
+            return 0;
+        });
+
+        const priceHistory = combinedXAxisData.map((el) => {
+            const price = getPriceForDate(auraCompletePrice || [], el);
+            return price || 0;
+        });
+
+        return {
+            historicalAPR: aprData,
+            historicalPrice: priceHistory
+        };
+    }, [combinedXAxisData, combinedDollarPerVlAssetData, auraCompletePrice]);
+
+    // Calculate combined total for all-time incentives
+    const allTimeIncentivesTotal = useMemo(() => {
+        let total = totalAmountDollarsSum || 0;
+
+        // Add Vote Market total
+        if (voteMarketHistoricalData) {
+            total += voteMarketHistoricalData.totalAmountDollarsData.reduce((sum, item) => sum + (item?.value || 0), 0);
+        }
+
+        // Add Paladin total
+        if (paladinHistoricalData) {
+            total += paladinHistoricalData.totalAmountDollarsSum;
+        }
+
+        return total;
+    }, [totalAmountDollarsSum, voteMarketHistoricalData, paladinHistoricalData]);
+
+    // Loading states
     const loadingStates = [
         {
             name: "Voting Rounds",
@@ -427,35 +419,28 @@ export default function VotingIncentives() {
             hasError: false
         },
         {
-            name: "Historical Data", 
+            name: "Votemarket (Primary)",
+            isLoading: voteMarketLoading,
+            isComplete: !voteMarketLoading && !!voteMarketData,
+            hasError: false
+        },
+        {
+            name: "Votemarket Historical",
+            isLoading: voteMarketHistoricalLoading,
+            isComplete: !voteMarketHistoricalLoading && !!voteMarketHistoricalData,
+            hasError: false
+        },
+        {
+            name: "Round Data",
+            isLoading: historicalRoundLoading,
+            isComplete: !historicalRoundLoading && decoratedGauges.length > 0,
+            hasError: false
+        },
+        {
+            name: "Historical Data",
             isLoading: !historicalData,
             isComplete: !!historicalData,
             hasError: false
-        },
-        {
-            name: "Hidden Hand Incentives",
-            isLoading: hiddenHandData.loading || !hiddenHandData.incentives,
-            isComplete: !hiddenHandData.loading && !!hiddenHandData.incentives,
-            hasError: false
-        },
-        {
-            name: "Bribe Rewards",
-            isLoading: bribeRewardsNew.length < 1,
-            isComplete: bribeRewardsNew.length >= 1,
-            hasError: false
-        },
-        {
-            name: "Dashboard Metrics",
-            isLoading: !dashboardData || incentivePerVote === 0 || roundIncentives === 0,
-            isComplete: !!dashboardData && incentivePerVote > 0 && roundIncentives > 0,
-            hasError: false
-        },
-        {
-            name: "Token Prices",
-            isLoading: pricesLoading,
-            isComplete: !pricesLoading && !!historicalPrices,
-            hasError: !!pricesError,
-            errorMessage: pricesError?.message || undefined
         },
         {
             name: "AURA Price Data",
@@ -499,86 +484,29 @@ export default function VotingIncentives() {
                         <Grid item xs={11} sm={9}>
                             <Grid
                                 container
-                                spacing={2}  // Consistent spacing
+                                spacing={2}
                                 columns={{ xs: 4, sm: 8, md: 12 }}
                                 sx={{
                                     justifyContent: { md: 'space-between', xs: 'center' }
                                 }}
                             >
                                 <Grid item xs={12} sm={6} md={4}>
-                                    <HiddenHandCard />
+                                    <VoteMarketCard />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
                                     <PaladinQuestsCard />
                                 </Grid>
                                 <Grid item xs={12} sm={6} md={4}>
-                                    <VoteMarketCard />
+                                    <HiddenHandCard />
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '24px'}}>Hidden Hand: Historical Incentives</Typography>
-                        </Grid>
-                        <Grid item xs={11} sm={9}>
-                        <Grid
-                            container
-                            columns={{xs: 4, sm: 8, md: 12}}
-                            sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
-                        >
-                            <Box mt={1}>
-                                {totalAmountDollarsSum ?
-                                    <MetricsCard mainMetric={totalAmountDollarsSum}
-                                                 metricName={"All time incentives"} mainMetricInUSD={true}
-                                                 MetricIcon={CurrencyExchange}/>
-                                    : <CircularProgress/>}
-                            </Box>
-                        </Grid>
-                        </Grid>
-                        {dashboardData && dollarPerVlAssetData && totalAmountDollarsData && xAxisData ?
-                            <Grid item xs={11} sm={9}>
-                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-                                    <DashboardOverviewChart
-                                        dollarPerVlAssetData={dollarPerVlAssetData}
-                                        totalAmountDollarsData={totalAmountDollarsData}
-                                        xAxisData={xAxisData}
-                                        height="400px"
-                                    />
-                                </Card>
-                            </Grid>
-                            : <CircularProgress/>}
-                        {paladinDollarPerVlAssetData && paladinTotalAmountDollarsData && paladinXAxisData && paladinDollarPerVlAssetData.length > 0 ? (
-                            <>
-                                <Grid item xs={11} sm={9}>
-                                    <Typography sx={{fontSize: '24px'}}>Paladin Quests: Historical Incentives</Typography>
-                                </Grid>
-                                <Grid item xs={11} sm={9}>
-                                    <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-                                        <DashboardOverviewChart
-                                            dollarPerVlAssetData={paladinDollarPerVlAssetData}
-                                            totalAmountDollarsData={paladinTotalAmountDollarsData}
-                                            xAxisData={paladinXAxisData}
-                                            height="400px"
-                                        />
-                                    </Card>
-                                </Grid>
-                            </>
-                        ) : null}
-                        <Grid item xs={11} sm={9}>
-                            <Typography sx={{fontSize: '24px'}}>Historical Aura Price vs. Incentive APR</Typography>
-                        </Grid>
-                        {historicalPrice && historicalPrice.length > 0 && historicalAPR ?
-                            <Grid item xs={11} sm={9}>
-                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-                                    <AuraIncentiveAPRChart
-                                        auraPrice={historicalPrice}
-                                        auraAPR={historicalAPR}
-                                        xAxisData={xAxisData}
-                                        height={"400px"}/>
-                                </Card>
-                            </Grid> :
-                            <CircularProgress/>}
+
+                        {/* Vote Market: Round Metrics */}
                         <Grid item xs={11} sm={9} mt={1}>
-                            <Typography sx={{fontSize: '24px'}} mb={1}>Hidden Hand: Voting Epoch Metrics</Typography>
+                            <Typography sx={{fontSize: '24px'}} mb={1}>
+                                {`Votemarket: Round ${selectedRoundId === 0 ? currentRoundId : selectedRoundId} Metrics`}
+                            </Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
                             <Box>
@@ -590,16 +518,20 @@ export default function VotingIncentives() {
                                         borderColor: 0,
                                     }}
                                     color="primary"
-                                    value={currentRoundNew}
+                                    value={selectedRoundId}
                                     onChange={handleEpochChange}
                                     displayEmpty
                                 >
-                                    {timestamps.map((roundNumber, index) => (
-                                        <MenuItem
-                                            value={roundNumber}
-                                            key={index}>{roundNumber === 0 ? 'Current' : unixToDate(roundNumber)}
-                                        </MenuItem>
-                                    ))}
+                                    <MenuItem value={0} key="current">
+                                        Round {currentRoundId} (Current)
+                                    </MenuItem>
+                                    {availableRounds
+                                        .filter(r => r.id !== currentRoundId) // Don't show current round twice
+                                        .map((round) => (
+                                            <MenuItem value={round.id} key={round.id}>
+                                                Round {round.id} ({unixToDate(round.endVoting)})
+                                            </MenuItem>
+                                        ))}
                                 </Select>
                             </Box>
                         </Grid>
@@ -610,96 +542,131 @@ export default function VotingIncentives() {
                                 sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
                             >
                                 <Box mr={1} mb={1}>
-                                    {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"}
-                                                     mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
-                                        : <CircularProgress/>}
+                                    <MetricsCard mainMetric={roundIncentives} metricName={"Total Incentives"}
+                                                 mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                 </Box>
                                 <Box mr={1} mb={1}>
-                                    {emissionVotesTotal ?
-                                        <MetricsCard mainMetric={emissionVotesTotal}
-                                                     metricName={"Total Incentive Votes"}
-                                                     mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
-                                        : <CircularProgress/>}
+                                    <MetricsCard mainMetric={emissionVotesTotal}
+                                                 metricName={"Total Incentive Votes"}
+                                                 mainMetricInUSD={false} MetricIcon={HowToVoteIcon}/>
                                 </Box>
                                 <Box mr={1} mb={1}>
-                                    {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={incentivePerVote} metricName={"Incentive $/Vote"}
-                                                     metricDecimals={4}
-                                                     mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
-                                        : <CircularProgress/>}
+                                    <MetricsCard mainMetric={incentivePerVote} metricName={"$/vlAURA"}
+                                                 metricDecimals={6}
+                                                 mainMetricInUSD={true} MetricIcon={CurrencyExchange}/>
                                 </Box>
                                 <Box mr={1} mb={1}>
-                                    {totalAmountDollarsSum ?
-                                        <MetricsCard mainMetric={emissionValuePerVote} metricName={"Emission $/Vote"}
-                                                     metricDecimals={4}
-                                                     mainMetricInUSD={true} MetricIcon={ShoppingCartCheckout}/>
-                                        : <CircularProgress/>}
-                                </Box>
-                                <Box mr={1}>
-                                    {emissionsPerDollarSpent ?
-                                        <MetricsCard
-                                            mainMetric={emissionsPerDollarSpent}
-                                            metricName={"Emissions per $1"} mainMetricInUSD={true}
-                                            metricDecimals={4}
-                                            MetricIcon={AddShoppingCart}/>
-                                        : <CircularProgress/>}
+                                    <MetricsCard
+                                        mainMetric={roundVotingEfficiency}
+                                        metricName={"Avg Voting Efficiency"}
+                                        metricDecimals={2}
+                                        mainMetricInUSD={false}
+                                        MetricIcon={AddShoppingCart}/>
                                 </Box>
                             </Grid>
                         </Grid>
-                        {hiddenHandData.incentives === null ? (
-                            <CircularProgress/>
-                        ) : (
+                        {historicalRoundLoading ? (
+                            <Grid item mt={1} xs={11} sm={9}>
+                                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                                    <CircularProgress/>
+                                </Box>
+                            </Grid>
+                        ) : bribeRewardsNew.length > 0 ? (
                             <Grid item mt={1} xs={11} sm={9}>
                                 <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
-
                                     <SingleRoundBarChart
                                         rewardData={bribeRewardsNew}
                                         xAxisData={xAxisDataRoundNew}
                                         height="500px"
-                                        currentRound={currentRoundNew}
+                                        currentRound={selectedRoundId}
                                     />
                                 </Card>
                             </Grid>
+                        ) : (
+                            <Grid item mt={1} xs={11} sm={9}>
+                                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                                    <CircularProgress/>
+                                </Box>
+                            </Grid>
                         )}
-
                         <Grid item xs={11} sm={9}>
-                            {currentRoundNew < 1689019200 && currentRoundNew !== 0 && hiddenHandData.incentives !== null ? (
-                                <HistoricalIncentivesTable
-                                    key={currentRoundNew}
-                                    currentRound={currentRoundNew}
-                                    gaugeDatas={hiddenHandData.incentives.data}/>
+                            {historicalRoundLoading ? (
+                                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                                    <CircularProgress/>
+                                </Box>
                             ) : decoratedGauges && decoratedGauges.length > 0 ? (
-                                <IncentivesTable gaugeDatas={decoratedGauges} currentRound={currentRoundNew}/>
+                                <IncentivesTable gaugeDatas={decoratedGauges} currentRound={selectedRoundId}/>
                             ) : (
-                                <CircularProgress/>
+                                <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+                                    <CircularProgress/>
+                                </Box>
                             )}
                         </Grid>
+
+                        {/* Historical Combined Performance */}
                         <Grid item xs={11} sm={9}>
-                            <Typography variant="h5" mb={1}>Unclaimed Personal Rewards</Typography>
+                            <Typography sx={{fontSize: '24px'}}>Historical Incentives Performance</Typography>
                         </Grid>
                         <Grid item xs={11} sm={9}>
-                            {address && addressRewards && addressRewards.data ?
-                                <HiddenHandAddressRewards rewardData={addressRewards?.data}/> :
-                                <Card sx={{
-                                    maxWidth: '250px',
-                                    minHeight: '100px'
-                                }}><CardContent>
-                                    <Box
-                                        display="flex"
-                                        flexDirection="column"
-                                        alignItems="center"
-                                        justifyContent="center"
-                                        height="100%"
-                                    >
-                                        <SelfImprovementIcon sx={{fontSize: 48}}/>
-                                        <Typography variant="subtitle1" align="center">
-                                            Please connect your Wallet
-                                        </Typography>
-                                    </Box>
-                                </CardContent>
-                                </Card>}
+                            <Grid
+                                container
+                                columns={{xs: 4, sm: 8, md: 12}}
+                                sx={{justifyContent: {md: 'space-between', xs: 'center'}, alignContent: 'center'}}
+                            >
+                                <Box mt={1}>
+                                    <MetricsCard mainMetric={allTimeIncentivesTotal}
+                                                 metricName={"All time incentives"} mainMetricInUSD={true}
+                                                 MetricIcon={CurrencyExchange}/>
+                                </Box>
+                            </Grid>
                         </Grid>
+                        {combinedDollarPerVlAssetData && combinedTotalAmountData && combinedXAxisData && combinedXAxisData.length > 0 ?
+                            <Grid item xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                    <DashboardOverviewChart
+                                        dollarPerVlAssetData={combinedDollarPerVlAssetData}
+                                        totalAmountDollarsData={combinedTotalAmountData}
+                                        xAxisData={combinedXAxisData}
+                                        height="400px"
+                                    />
+                                </Card>
+                            </Grid>
+                            : <CircularProgress/>}
+
+                        {/* Paladin Quests Historical */}
+                        {paladinHistoricalData && paladinHistoricalData.dollarPerVlAssetData.length > 0 ? (
+                            <>
+                                <Grid item xs={11} sm={9}>
+                                    <Typography sx={{fontSize: '24px'}}>Paladin Quests: Historical Incentives</Typography>
+                                </Grid>
+                                <Grid item xs={11} sm={9}>
+                                    <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                        <DashboardOverviewChart
+                                            dollarPerVlAssetData={paladinHistoricalData.dollarPerVlAssetData}
+                                            totalAmountDollarsData={paladinHistoricalData.totalAmountDollarsData}
+                                            xAxisData={paladinHistoricalData.xAxisData}
+                                            height="400px"
+                                        />
+                                    </Card>
+                                </Grid>
+                            </>
+                        ) : null}
+
+                        {/* AURA Price vs APR Chart */}
+                        <Grid item xs={11} sm={9}>
+                            <Typography sx={{fontSize: '24px'}}>Historical Aura Price vs. Incentive APR</Typography>
+                        </Grid>
+                        {historicalPrice && historicalPrice.length > 0 && historicalAPR ?
+                            <Grid item xs={11} sm={9}>
+                                <Card sx={{boxShadow: "rgb(51, 65, 85) 0px 0px 0px 0.5px",}}>
+                                    <AuraIncentiveAPRChart
+                                        auraPrice={historicalPrice}
+                                        auraAPR={historicalAPR}
+                                        xAxisData={combinedXAxisData}
+                                        height={"400px"}/>
+                                </Card>
+                            </Grid> :
+                            <CircularProgress/>}
                     </Grid>
                 </Box>
             )}

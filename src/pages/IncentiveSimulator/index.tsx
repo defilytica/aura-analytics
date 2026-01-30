@@ -21,6 +21,7 @@ import {useBalancerPools} from "../../data/balancer/usePools";
 import {useEffect, useState} from "react";
 import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
 import { useCoinGeckoSimpleTokenPrices } from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
+import { useGetVoteMarketIncentives } from "../../data/votemarket/useGetVoteMarketIncentives";
 import CoinCard from "../../components/Cards/CoinCard";
 import CircularProgress from "@mui/material/CircularProgress";
 import PoolComposition from "../../components/PoolComposition";
@@ -131,9 +132,18 @@ export default function BribeSimulator() {
     //Emission stats
     const timestamps = AURA_TIMESTAMPS;
     const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 2]); // Default timestamp
-    // TODO: take average of historical incentives for estimation
+    // Vote Market data (primary source for current round) - uses vlaura endpoint directly
+    const {
+        data: voteMarketData,
+        loading: voteMarketLoading,
+        totalRewardsUSD: vmTotalRewards,
+        dollarPerVote: vmDollarPerVote,
+        votingEfficiency: vmVotingEfficiency // Emissions per $1 spent - directly from vlaura data
+    } = useGetVoteMarketIncentives();
+    // Hidden Hand data (legacy/fallback)
     const hhIncentives = useGetHiddenHandVotingIncentives(currentRoundNew.toString());
-    const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(currentRoundNew);
+    // Use 0 for current round to get Vote Market data in emission calculation (kept for historical rounds)
+    const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(0);
 
     //States
     const [selectedPoolId, setSelectedPoolId] = useState<string>("");
@@ -264,27 +274,40 @@ export default function BribeSimulator() {
                 setTargetAPR(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * balPrice * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)));
             }
         }
-    }, [gaugeRelativeWeights, selectedPoolId, weeklyEmissions, pricePerBPT]);
+    // Use stable dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [gaugeRelativeWeights.length, selectedPoolId, weeklyEmissions, pricePerBPT, coinData?.data?.[balAddress]?.price]);
 
     // useEffect to handle other calculations and updates
     useEffect(() => {
-        if (hhIncentives.incentives && hhIncentives.incentives.data.length > 1) {
+        // Handle pool value based on selection mode
+        if (useNewPoolValue) {
+            // Use the custom poolValue if the checkbox is checked
+            setCustomPoolValue(customPoolValue);
+        } else if (selectedPoolId) {
+            // Otherwise, use the TVL of the selected pool from the pools object
+            const selectedPool = pools.find((pool) => pool.address === selectedPoolId);
+            console.log("selectedPool", selectedPool)
+            if (selectedPool) {
+                setCustomPoolValue(selectedPool.tvlUSD);
+                setPricePerBPT(selectedPool.tvlUSD / selectedPool.totalShares);
+            }
+        }
+
+        // PRIMARY: Use Votemarket data for current round metrics (from vlaura endpoint)
+        if (voteMarketData && !voteMarketLoading) {
+            // Use values directly from the vlaura hook - already Aura-specific
+            setIncentivePerVote(vmDollarPerVote);
+            setEmissionPerVote(vmDollarPerVote); // For backward compatibility
+            setRoundIncentives(vmTotalRewards);
+
+            console.log("Votemarket metrics - dollarPerVote:", vmDollarPerVote, "totalRewards:", vmTotalRewards, "votingEfficiency:", vmVotingEfficiency);
+        }
+        // FALLBACK: Use Hidden Hand data if Vote Market data not available
+        else if (hhIncentives.incentives && hhIncentives.incentives.data.length > 1) {
             // Calculate incentives and emission per vote Metrics for a given round
             let totalVotes = 0;
             let totalValue = 0;
-
-            if (useNewPoolValue) {
-                // Use the custom poolValue if the checkbox is checked
-                setCustomPoolValue(customPoolValue);
-            } else if (selectedPoolId) {
-                // Otherwise, use the TVL of the selected pool from the pools object
-                const selectedPool = pools.find((pool) => pool.address === selectedPoolId);
-                console.log("selectedPool", selectedPool)
-                if (selectedPool) {
-                    setCustomPoolValue(selectedPool.tvlUSD);
-                    setPricePerBPT(selectedPool.tvlUSD / selectedPool.totalShares);
-                }
-            }
 
             hhIncentives.incentives.data.forEach((item) => {
                 totalValue += item.totalValue;
@@ -307,13 +330,26 @@ export default function BribeSimulator() {
             const emissionEff = emissionValue / emissionVotes;
 
             setIncentivePerVote(incentiveEfficency);
-            console.log("incentiveEfficiency", incentiveEfficency)
-            console.log("totalValue", totalValue)
-            console.log("totalVotes", totalVotes)
+            console.log("HH incentiveEfficiency", incentiveEfficency)
+            console.log("HH totalValue", totalValue)
+            console.log("HH totalVotes", totalVotes)
             setEmissionPerVote(emissionEff);
             setRoundIncentives(totalValue);
         }
-    }, [gaugeData, hhIncentives.incentives, useNewPoolValue, customPoolValue, selectedPoolId, pools]);
+    // Use stable dependencies to avoid infinite loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        gaugeData.length,
+        hhIncentives.loading,
+        JSON.stringify(hhIncentives.incentives?.data?.length),
+        voteMarketLoading,
+        vmTotalRewards,
+        vmDollarPerVote,
+        useNewPoolValue,
+        customPoolValue,
+        selectedPoolId,
+        pools.length
+    ]);
 
     const selectedPool = pools.find((pool) => pool.address === selectedPoolId);
     const val = selectedPoolId.toLowerCase();
@@ -432,7 +468,7 @@ export default function BribeSimulator() {
                     </Grid>
                 </Grid>
                 <Grid item xs={11} md={9}>
-                    <Typography variant={"h5"}>HH Voting Market Metrics as of voting round {unixToDate(currentRoundNew)}</Typography>
+                    <Typography variant={"h5"}>Votemarket Metrics (Current Round)</Typography>
                 </Grid>
                 <Grid item xs={11} md={9}>
                     <Grid
@@ -444,18 +480,19 @@ export default function BribeSimulator() {
                         }}
                     >
                         <Box m={{xs: 0, sm: 1}}>
-                            {emissionValuePerVote ?
-                                <MetricsCard mainMetric={emissionValuePerVote} metricName={"Emission $/Vote"}
-                                             metricDecimals={4}
+                            {vmDollarPerVote ?
+                                <MetricsCard mainMetric={vmDollarPerVote} metricName={"$/vlAURA"}
+                                             metricDecimals={6}
                                              mainMetricInUSD={true} MetricIcon={ShoppingCartCheckout}/>
                                 : <CircularProgress/>}
                         </Box>
                         <Box m={{xs: 0, sm: 1}}>
-                            {emissionsPerDollarSpent ?
+                            {vmVotingEfficiency ?
                                 <MetricsCard
-                                    mainMetric={emissionsPerDollarSpent}
-                                    metricName={"Emissions per $1"} mainMetricInUSD={true}
-                                    metricDecimals={4}
+                                    mainMetric={vmVotingEfficiency}
+                                    metricName={"Voting Efficiency"}
+                                    mainMetricInUSD={false}
+                                    metricDecimals={2}
                                     MetricIcon={AddShoppingCart}/>
                                 : <CircularProgress/>}
                         </Box>

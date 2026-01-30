@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { HiddenHandIncentives } from './hiddenHandTypes';
+import { LOCAL_CACHE } from './cache';
 
 const API_URL = 'https://api.hiddenhand.finance/proposal/aura';
 const GITHUB_CACHE_URL = 'https://raw.githubusercontent.com/dinero-protocol/hidden-hand-cache/refs/heads/master/proposal-cache/aura';
@@ -47,12 +48,24 @@ export const useGetHiddenHandVotingIncentives = (timestamp = ''): { incentives: 
                 return;
             }
 
-            // For historical rounds, try GitHub cache first, then fall back to HH API
+            // For historical rounds, check local cache first, then GitHub cache, then HH API
+            const tsNum = Number(effectiveTimestamp);
             const githubCacheUrl = `${GITHUB_CACHE_URL}/aura-${effectiveTimestamp}.json`;
             const hhApiUrl = `${API_URL}/${effectiveTimestamp}`;
 
+            // First, check local cache (for Sep-Dec 2025 data)
+            if (LOCAL_CACHE[tsNum]) {
+                const localData = LOCAL_CACHE[tsNum] as HiddenHandIncentives;
+                if (isValidData(localData)) {
+                    console.log(`Using local cache for timestamp ${effectiveTimestamp}`);
+                    setIncentives(localData);
+                    setLoading(false);
+                    return;
+                }
+            }
+
             try {
-                // Try GitHub cache first (more reliable for historical data)
+                // Try GitHub cache second (for older historical data)
                 console.log(`Fetching historical data from GitHub cache: ${githubCacheUrl}`);
                 const cacheResponse = await axios.get(githubCacheUrl);
                 const cacheJson: HiddenHandIncentives = cacheResponse.data;
@@ -81,7 +94,7 @@ export const useGetHiddenHandVotingIncentives = (timestamp = ''): { incentives: 
                     setIncentives(null);
                 }
             } catch (apiError) {
-                console.error(`Failed to fetch data for timestamp ${effectiveTimestamp} from both sources:`, apiError);
+                console.error(`Failed to fetch data for timestamp ${effectiveTimestamp} from all sources:`, apiError);
                 setIncentives(null);
             }
 
