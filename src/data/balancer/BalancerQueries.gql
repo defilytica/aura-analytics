@@ -116,17 +116,6 @@ query GetPoolData($block24: Block_height!, $first: Int!) {
     }
 }
 
-query GetUserWalletPoolData($userAddress: String!, $block: Int!) {
-    poolShares(block: {number: $block}, first: 1000, where: {userAddress: $userAddress, balance_gt: 0}) {
-    balance
-    poolId {
-      id
-      totalLiquidity,
-      totalShares
-    }
-  }
-}
-
 query GetPoolChartData($poolId: String!, $startTimestamp: Int!) {
     poolSnapshots(first: 1000, orderBy: timestamp, orderDirection: asc, where: {pool: $poolId, timestamp_gte: $startTimestamp}) {
         id
@@ -167,15 +156,6 @@ query BalancerPoolSwapFeeSnapshot($startTimestamp: Int!, $endTimeStamp: Int!) {
         }
 }
 
-fragment LatestPrice on LatestPrice {
-    asset
-    pricingAsset
-    price
-    poolId {
-        id
-    }
-}
-
 query BalancerProtocolData(
     $skip: Int
     $first: Int
@@ -198,62 +178,6 @@ query BalancerProtocolData(
         totalSwapFee
         poolCount
         totalSwapCount
-    }
-}
-
-query BalancerUser($id: ID!, $block: Block_height) {
-    user(id: $id, block: $block) {
-        ...User
-    }
-}
-
-query BalancerUsers(
-    $skip: Int
-    $first: Int
-    $orderBy: User_orderBy
-    $orderDirection: OrderDirection
-    $where: User_filter
-    $block: Block_height
-) {
-    users(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...User
-    }
-}
-
-fragment User on User {
-    id
-    sharesOwned(first: 1000) {
-        balance
-        poolId {
-            id
-        }
-    }
-}
-
-query BalancerTokenPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: TokenPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: TokenPrice_filter
-    $block: Block_height
-) {
-    tokenPrices(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerTokenPrice
     }
 }
 
@@ -323,17 +247,13 @@ fragment BalancerChartTokenPrice on TokenPrice {
     amount
 }
 
-fragment BalancerTokenPrice on TokenPrice {
-    id
-    poolId {
-        id
+query GetBalancerPool($id: ID!, $block24: Block_height) {
+    pool(id: $id){
+        ...BalancerPool
     }
-    asset
-    amount
-    pricingAsset
-    price
-    block
-    timestamp
+    pool24: pool(id: $id, block: $block24) {
+        ...BalancerPool
+    }
 }
 
 fragment BalancerPool on Pool {
@@ -376,156 +296,6 @@ fragment BalancerPoolToken on PoolToken {
     }
 }
 
-query GetBalancerPools(
-    $skip: Int
-    $first: Int
-    $orderBy: Pool_orderBy
-    $orderDirection: OrderDirection
-    $where: Pool_filter
-    $block: Block_height
-) {
-    pools(skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block) {
-        ...BalancerPool
-    }
-}
-
-query GetBalancerPool($id: ID!, $block24: Block_height) {
-    pool(id: $id){
-        ...BalancerPool
-    }
-    pool24: pool(id: $id, block: $block24) {
-        ...BalancerPool
-    }
-}
-
-query BalancerPoolTokens(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolToken_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolToken_filter
-    $block: Block_height
-) {
-    poolTokens(skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block) {
-        ...BalancerPoolToken
-    }
-}
-
-query BalancerPoolHistoricalLiquidities(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolHistoricalLiquidity_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolHistoricalLiquidity_filter
-    $block: Block_height
-) {
-    poolHistoricalLiquidities(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        id
-        poolId {
-            id
-        }
-        poolTotalShares
-        poolLiquidity
-        poolShareValue
-        pricingAsset
-        block
-    }
-}
-
-query BalancerPoolSnapshots(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolSnapshot_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolSnapshot_filter
-    $block: Block_height
-) {
-    poolSnapshots(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerPoolSnapshot
-    }
-}
-
-fragment BalancerPoolSnapshot on PoolSnapshot {
-    id
-    pool {
-        id
-    }
-    totalShares
-    swapVolume
-    swapFees
-    timestamp
-}
-
-query BalancerLatestPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: LatestPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: LatestPrice_filter
-    $block: Block_height
-) {
-    latestPrices(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        id
-        asset
-        price
-        poolId {
-            id
-        }
-        pricingAsset
-    }
-}
-
-query BalancerJoinExits(
-    $skip: Int
-    $first: Int
-    $orderBy: JoinExit_orderBy
-    $orderDirection: OrderDirection
-    $where: JoinExit_filter
-    $block: Block_height
-) {
-    joinExits(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerJoinExit
-    }
-}
-
 fragment BalancerJoinExit on JoinExit {
     amounts
     valueUSD
@@ -537,43 +307,6 @@ fragment BalancerJoinExit on JoinExit {
     pool {
         id
         tokensList
-    }
-}
-
-query BalancePortfolioData($id: ID!, $previousBlockNumber: Int!) {
-    user(id: $id) {
-        ...User
-    }
-    pools(first: 1000, where: {totalShares_gt: "0"}) {
-        ...BalancerPool
-    }
-
-    previousUser: user(id: $id, block: {number: $previousBlockNumber}) {
-        ...User
-    }
-    previousPools: pools(first: 1000, where: {totalShares_gt: "0"}, block: {number: $previousBlockNumber}) {
-        ...BalancerPool
-    }
-}
-
-
-query BalancerSwaps(
-    $skip: Int
-    $first: Int
-    $orderBy: Swap_orderBy
-    $orderDirection: OrderDirection
-    $where: Swap_filter
-    $block: Block_height
-) {
-    swaps(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerSwap
     }
 }
 
@@ -600,27 +333,6 @@ fragment BalancerSwap on Swap {
     tx
 }
 
-
-query GetBalancerTokens(
-    $skip: Int
-    $first: Int
-    $orderBy: Token_orderBy
-    $orderDirection: OrderDirection
-    $where: Token_filter
-    $block: Block_height
-) {
-    tokens(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerToken
-    }
-}
-
 fragment BalancerToken on Token {
     id
     address
@@ -635,59 +347,6 @@ fragment BalancerToken on Token {
     latestUSDPrice
 }
 
-
-query BalancerTradePairs(
-    $skip: Int
-    $first: Int
-    $orderBy: TradePair_orderBy
-    $orderDirection: OrderDirection
-    $where: TradePair_filter
-    $block: Block_height
-) {
-    tradePairs(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerTradePair
-    }
-}
-
-fragment BalancerTradePair on TradePair {
-    id
-    token0 {
-        ...BalancerToken
-    }
-    token1  {
-        ...BalancerToken
-    }
-    totalSwapVolume
-    totalSwapFee
-}
-
-query GetBalancerSnapshots(
-    $skip: Int
-    $first: Int
-    $orderBy: BalancerSnapshot_orderBy
-    $orderDirection: OrderDirection
-    $where: BalancerSnapshot_filter
-    $block: Block_height
-) {
-    balancerSnapshots(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...BalancerSnapshot
-    }
-}
-
 fragment BalancerSnapshot on BalancerSnapshot {
     id
     timestamp
@@ -696,25 +355,4 @@ fragment BalancerSnapshot on BalancerSnapshot {
     totalSwapCount
     totalSwapVolume
     totalSwapFee
-}
-
-
-query GetLatestPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: LatestPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: LatestPrice_filter
-    $block: Block_height
-) {
-    latestPrices(
-        skip: $skip
-        first: $first
-        orderBy: $orderBy
-        orderDirection: $orderDirection
-        where: $where
-        block: $block
-    ) {
-        ...LatestPrice
-    }
 }

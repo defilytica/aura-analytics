@@ -2,7 +2,6 @@ import { useDeltaTimestamps } from '../../utils/queries';
 import { useBlocksFromTimestamps } from '../../hooks/useBlocksFromTimestamps';
 import {
     BalancerTokenFragment,
-    LatestPriceFragment,
     useGetTokenDataLazyQuery,
     useGetTokenPageDataQuery,
     useGetTokenSingleDataLazyQuery,
