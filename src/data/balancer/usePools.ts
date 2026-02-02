@@ -1,6 +1,6 @@
 import {
     BalancerPoolFragment,
-    BalancerPoolSnapshotFragment,
+    BalancerPoolSwapFeeSnapshotQuery,
     useGetPoolChartDataQuery,
     useGetPoolDataLazyQuery,
     useBalancerPoolSwapFeeSnapshotQuery,
@@ -20,7 +20,7 @@ function getPoolValues(
     pools: BalancerPoolFragment[],
     startunixTime: number,
     endunixTime: number,
-    poolSwapFeeSnapshots?: BalancerPoolSnapshotFragment[],
+    poolSwapFeeSnapshots?: BalancerPoolSwapFeeSnapshotQuery['poolSnapshots'],
 ): { tvl: number; volume: number; swapCount: number; fees: number, feesEpoch: number, poolType: string | null | undefined } {
     const pool = pools.find((pool) => poolId === pool.id);
     let epochFees = 0;
@@ -49,7 +49,7 @@ function getEpochSwapFees(
     poolId: string,
     startTimeStamp: number,
     endTimeStamp: number,
-    poolSnapshots: BalancerPoolSnapshotFragment[],
+    poolSnapshots: BalancerPoolSwapFeeSnapshotQuery['poolSnapshots'],
 ): { swapFee: number } {
     let snapshotFee = 0;
     let startFee = 0;

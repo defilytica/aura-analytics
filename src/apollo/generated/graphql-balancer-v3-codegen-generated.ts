@@ -35,16 +35,10 @@ export interface Scalars {
   Bytes: { input: any; output: any };
   Date: { input: any; output: any };
   GqlBigNumber: { input: any; output: any };
-  /**
-   * 8 bytes signed integer
-   *
-   */
+  /** 8 bytes signed integer */
   Int8: { input: any; output: any };
   JSON: { input: any; output: any };
-  /**
-   * A string representation of microseconds UNIX timestamp (16 digits)
-   *
-   */
+  /** A string representation of microseconds UNIX timestamp (16 digits) */
   Timestamp: { input: any; output: any };
 }
 
@@ -97,6 +91,7 @@ export interface AccountVaultAccountsArgs {
 export interface Account_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Account_Filter>>>;
   auraBalMintTransactions_?: InputMaybe<AuraBalMintTransaction_Filter>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -134,6 +129,7 @@ export interface Account_Filter {
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
   merkleDropClaims_?: InputMaybe<MerkleDropClaim_Filter>;
+  or?: InputMaybe<Array<InputMaybe<Account_Filter>>>;
   poolAccounts_?: InputMaybe<PoolAccount_Filter>;
   vaultAccounts_?: InputMaybe<VaultAccount_Filter>;
 }
@@ -141,6 +137,12 @@ export interface Account_Filter {
 export enum Account_OrderBy {
   AuraBalMintTransactions = "auraBalMintTransactions",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
   Id = "id",
   MerkleDropClaims = "merkleDropClaims",
   PoolAccounts = "poolAccounts",
@@ -357,9 +359,14 @@ export interface AuraBalMintTransaction_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<AuraBalMintTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -371,6 +378,7 @@ export interface AuraBalMintTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<AuraBalMintTransaction_Filter>>>;
   timestamp?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -383,6 +391,7 @@ export interface AuraBalMintTransaction_Filter {
 
 export enum AuraBalMintTransaction_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   Amount = "amount",
   Hash = "hash",
   Id = "id",
@@ -602,6 +611,7 @@ export interface AuraLockerAccount_Filter {
   account_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  and?: InputMaybe<Array<InputMaybe<AuraLockerAccount_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLocker_?: InputMaybe<AuraLocker_Filter>;
   auraLocker_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -687,6 +697,7 @@ export interface AuraLockerAccount_Filter {
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
   kickRewardTransactions_?: InputMaybe<LockerKickRewardTransaction_Filter>;
+  or?: InputMaybe<Array<InputMaybe<AuraLockerAccount_Filter>>>;
   rewardPaidTransactions_?: InputMaybe<LockerRewardPaidTransaction_Filter>;
   stakedTransactions_?: InputMaybe<LockerStakedTransaction_Filter>;
   userData_?: InputMaybe<AuraLockerUserData_Filter>;
@@ -704,13 +715,25 @@ export interface AuraLockerAccount_Filter {
 
 export enum AuraLockerAccount_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   AuraLocker = "auraLocker",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Balance = "balance",
   BalanceLocked = "balanceLocked",
   BalanceNextUnlockIndex = "balanceNextUnlockIndex",
   Delegate = "delegate",
   DelegateChangedTransactions = "delegateChangedTransactions",
   DelegateUpdatedAt = "delegateUpdatedAt",
+  DelegateBalance = "delegate__balance",
+  DelegateBalanceLocked = "delegate__balanceLocked",
+  DelegateBalanceNextUnlockIndex = "delegate__balanceNextUnlockIndex",
+  DelegateDelegateUpdatedAt = "delegate__delegateUpdatedAt",
+  DelegateId = "delegate__id",
+  DelegateUserLocksLength = "delegate__userLocksLength",
   Delegators = "delegators",
   Id = "id",
   KickRewardTransactions = "kickRewardTransactions",
@@ -740,6 +763,7 @@ export interface AuraLockerRewardData extends RewardData {
 export interface AuraLockerRewardData_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<AuraLockerRewardData_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLocker_?: InputMaybe<AuraLocker_Filter>;
   auraLocker_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -777,6 +801,7 @@ export interface AuraLockerRewardData_Filter {
   lastUpdateTime_lte?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<AuraLockerRewardData_Filter>>>;
   periodFinish?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gt?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -826,12 +851,21 @@ export interface AuraLockerRewardData_Filter {
 
 export enum AuraLockerRewardData_OrderBy {
   AuraLocker = "auraLocker",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Id = "id",
   LastUpdateTime = "lastUpdateTime",
   PeriodFinish = "periodFinish",
   RewardPerTokenStored = "rewardPerTokenStored",
   RewardRate = "rewardRate",
   Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 export interface AuraLockerUserData {
@@ -850,6 +884,7 @@ export interface AuraLockerUserData {
 export interface AuraLockerUserData_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<AuraLockerUserData_Filter>>>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
   auraLockerAccount_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -885,6 +920,7 @@ export interface AuraLockerUserData_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<AuraLockerUserData_Filter>>>;
   rewardPerTokenPaid?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardPerTokenPaid_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardPerTokenPaid_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -926,10 +962,20 @@ export interface AuraLockerUserData_Filter {
 
 export enum AuraLockerUserData_OrderBy {
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
   Id = "id",
   RewardPerTokenPaid = "rewardPerTokenPaid",
   Rewards = "rewards",
   Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 export interface AuraLockerUserLock {
@@ -955,6 +1001,7 @@ export interface AuraLockerUserLock_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<AuraLockerUserLock_Filter>>>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
   auraLockerAccount_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -990,6 +1037,7 @@ export interface AuraLockerUserLock_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<AuraLockerUserLock_Filter>>>;
   unlockTime?: InputMaybe<Scalars["Int"]["input"]>;
   unlockTime_gt?: InputMaybe<Scalars["Int"]["input"]>;
   unlockTime_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -1003,6 +1051,12 @@ export interface AuraLockerUserLock_Filter {
 export enum AuraLockerUserLock_OrderBy {
   Amount = "amount",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
   Id = "id",
   UnlockTime = "unlockTime",
 }
@@ -1013,10 +1067,15 @@ export interface AuraLocker_Filter {
   accounts_?: InputMaybe<AuraLockerAccount_Filter>;
   address?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  address_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   address_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<AuraLocker_Filter>>>;
   delegateChangedTransactions_?: InputMaybe<LockerDelegateChangedTransaction_Filter>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
@@ -1039,6 +1098,7 @@ export interface AuraLocker_Filter {
   lockedSupply_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockedSupply_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockedSupply_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<AuraLocker_Filter>>>;
   rewardData_?: InputMaybe<AuraLockerRewardData_Filter>;
   rewardPaidTransactions_?: InputMaybe<LockerRewardPaidTransaction_Filter>;
   stakedTransactions_?: InputMaybe<LockerStakedTransaction_Filter>;
@@ -1737,13 +1797,24 @@ export enum CircuitBreaker_OrderBy {
   UpperBoundPercentage = "upperBoundPercentage",
 }
 
+export interface CreateLbpInput {
+  metadata: LbpMetadataInput;
+  poolContract: LbPoolInput;
+}
+
 /** The review data for the ERC4626 token */
 export interface Erc4626ReviewData {
   __typename?: "Erc4626ReviewData";
+  /** If it is an ERC4626 token, this defines whether we can use wrap/unwrap through the buffer in swap paths for this token. */
+  canUseBufferForSwaps?: Maybe<Scalars["Boolean"]["output"]>;
   /** The filename of the review of the ERC4626 */
   reviewFile: Scalars["String"]["output"];
   /** A summary of the ERC4626 review, usually just says safe or unsafe */
   summary: Scalars["String"]["output"];
+  /** If it is an ERC4626 token, this defines whether we allow underlying tokens to be used for add/remove operations. */
+  useUnderlyingForAddRemove?: Maybe<Scalars["Boolean"]["output"]>;
+  /** If it is an ERC4626 token, this defines whether we allow the wrapped tokens to be used for add/remove operations. */
+  useWrappedForAddRemove?: Maybe<Scalars["Boolean"]["output"]>;
   /** Warnings associated with the ERC4626 */
   warnings: Array<Scalars["String"]["output"]>;
 }
@@ -1752,6 +1823,122 @@ export interface Erc4626ReviewData {
 export interface ExitFeeHookParams {
   __typename?: "ExitFeeHookParams";
   exitFeePercentage?: Maybe<Scalars["String"]["output"]>;
+}
+
+export interface ExtraReward {
+  __typename?: "ExtraReward";
+  /** total amount funded - total amount queued */
+  amount: Scalars["BigInt"]["output"];
+  funded: Array<FundedReward>;
+  /** pool.id + token.id */
+  id: Scalars["Bytes"]["output"];
+  pool: Pool;
+  queued: Array<QueuedReward>;
+  token: Token;
+}
+
+export interface ExtraRewardFundedArgs {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<FundedReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<FundedReward_Filter>;
+}
+
+export interface ExtraRewardQueuedArgs {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<QueuedReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<QueuedReward_Filter>;
+}
+
+export interface ExtraReward_Filter {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amount?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  amount_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<ExtraReward_Filter>>>;
+  funded_?: InputMaybe<FundedReward_Filter>;
+  id?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<ExtraReward_Filter>>>;
+  pool?: InputMaybe<Scalars["String"]["input"]>;
+  pool_?: InputMaybe<Pool_Filter>;
+  pool_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_lt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_lte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  queued_?: InputMaybe<QueuedReward_Filter>;
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  token_?: InputMaybe<Token_Filter>;
+  token_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_gt?: InputMaybe<Scalars["String"]["input"]>;
+  token_gte?: InputMaybe<Scalars["String"]["input"]>;
+  token_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_lt?: InputMaybe<Scalars["String"]["input"]>;
+  token_lte?: InputMaybe<Scalars["String"]["input"]>;
+  token_not?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+}
+
+export enum ExtraReward_OrderBy {
+  Amount = "amount",
+  Funded = "funded",
+  Id = "id",
+  Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
+  Queued = "queued",
+  Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 export interface FxOracle {
@@ -1848,15 +2035,24 @@ export interface FactoryPoolData_Filter {
   addedAt_lte?: InputMaybe<Scalars["Int"]["input"]>;
   addedAt_not?: InputMaybe<Scalars["Int"]["input"]>;
   addedAt_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<FactoryPoolData_Filter>>>;
   balancerPoolId?: InputMaybe<Scalars["Bytes"]["input"]>;
   balancerPoolId_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  balancerPoolId_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  balancerPoolId_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   balancerPoolId_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  balancerPoolId_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  balancerPoolId_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   balancerPoolId_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   balancerPoolId_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   balancerPoolId_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   gauge?: InputMaybe<Scalars["Bytes"]["input"]>;
   gauge_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  gauge_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  gauge_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   gauge_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  gauge_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  gauge_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   gauge_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   gauge_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   gauge_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -1872,6 +2068,7 @@ export interface FactoryPoolData_Filter {
   isShutdown_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   isShutdown_not?: InputMaybe<Scalars["Boolean"]["input"]>;
   isShutdown_not_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<FactoryPoolData_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   pool_?: InputMaybe<Pool_Filter>;
   pool_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -1895,7 +2092,11 @@ export interface FactoryPoolData_Filter {
   pool_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   stash?: InputMaybe<Scalars["Bytes"]["input"]>;
   stash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  stash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  stash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   stash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  stash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  stash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   stash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   stash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   stash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -1908,6 +2109,12 @@ export enum FactoryPoolData_OrderBy {
   Id = "id",
   IsShutdown = "isShutdown",
   Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   Stash = "stash",
 }
 
@@ -1917,6 +2124,134 @@ export interface FeeTakingHookParams {
   addLiquidityFeePercentage?: Maybe<Scalars["String"]["output"]>;
   removeLiquidityFeePercentage?: Maybe<Scalars["String"]["output"]>;
   swapFeePercentage?: Maybe<Scalars["String"]["output"]>;
+}
+
+export interface FundedReward {
+  __typename?: "FundedReward";
+  amount: Scalars["BigInt"]["output"];
+  epoch: Scalars["BigInt"]["output"];
+  extraReward: ExtraReward;
+  /** pool.id + token.id + epoch + txHash */
+  id: Scalars["Bytes"]["output"];
+  pool: Pool;
+  token: Token;
+}
+
+export interface FundedReward_Filter {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amount?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  amount_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<FundedReward_Filter>>>;
+  epoch?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  epoch_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  extraReward?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_?: InputMaybe<ExtraReward_Filter>;
+  extraReward_contains?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_gt?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_gte?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  extraReward_lt?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_lte?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  extraReward_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<FundedReward_Filter>>>;
+  pool?: InputMaybe<Scalars["String"]["input"]>;
+  pool_?: InputMaybe<Pool_Filter>;
+  pool_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_lt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_lte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  token_?: InputMaybe<Token_Filter>;
+  token_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_gt?: InputMaybe<Scalars["String"]["input"]>;
+  token_gte?: InputMaybe<Scalars["String"]["input"]>;
+  token_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_lt?: InputMaybe<Scalars["String"]["input"]>;
+  token_lte?: InputMaybe<Scalars["String"]["input"]>;
+  token_not?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+}
+
+export enum FundedReward_OrderBy {
+  Amount = "amount",
+  Epoch = "epoch",
+  ExtraReward = "extraReward",
+  ExtraRewardAmount = "extraReward__amount",
+  ExtraRewardId = "extraReward__id",
+  Id = "id",
+  Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
+  Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 export interface Gauge {
@@ -1939,6 +2274,7 @@ export interface Gauge {
 export interface Gauge_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Gauge_Filter>>>;
   balance?: InputMaybe<Scalars["BigInt"]["input"]>;
   balance_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   balance_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -1955,6 +2291,7 @@ export interface Gauge_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<Gauge_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   pool_?: InputMaybe<Pool_Filter>;
   pool_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -1998,6 +2335,12 @@ export enum Gauge_OrderBy {
   Balance = "balance",
   Id = "id",
   Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   TotalSupply = "totalSupply",
   WorkingSupply = "workingSupply",
 }
@@ -2028,6 +2371,7 @@ export interface Global {
 export interface Global_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<Global_Filter>>>;
   aura?: InputMaybe<Scalars["Bytes"]["input"]>;
   auraBalTotalSupply?: InputMaybe<Scalars["BigInt"]["input"]>;
   auraBalTotalSupply_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -2055,7 +2399,11 @@ export interface Global_Filter {
   auraMinterMinted_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   auraMinterMinted_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   auraMinter_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  auraMinter_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  auraMinter_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   auraMinter_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  auraMinter_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  auraMinter_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   auraMinter_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   auraMinter_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   auraMinter_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -2084,13 +2432,21 @@ export interface Global_Filter {
   auraTotalSupply_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   auraTotalSupply_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   aura_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  aura_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  aura_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   aura_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  aura_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  aura_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   aura_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   aura_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   aura_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   booster?: InputMaybe<Scalars["Bytes"]["input"]>;
   booster_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  booster_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  booster_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   booster_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  booster_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  booster_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   booster_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   booster_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   booster_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -2118,6 +2474,7 @@ export interface Global_Filter {
   lockIncentive_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockIncentive_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockIncentive_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<Global_Filter>>>;
   platformFee?: InputMaybe<Scalars["BigInt"]["input"]>;
   platformFee_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   platformFee_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -2136,7 +2493,11 @@ export interface Global_Filter {
   stakerIncentive_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   voteDelegate?: InputMaybe<Scalars["Bytes"]["input"]>;
   voteDelegate_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  voteDelegate_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  voteDelegate_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   voteDelegate_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  voteDelegate_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  voteDelegate_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   voteDelegate_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   voteDelegate_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   voteDelegate_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -2162,17 +2523,12 @@ export enum Global_OrderBy {
 
 export interface GqlAggregatorPoolFilter {
   chainIn?: InputMaybe<Array<GqlChain>>;
-  chainNotIn?: InputMaybe<Array<GqlChain>>;
-  createTime?: InputMaybe<GqlPoolTimePeriod>;
   idIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  idNotIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
   includeHooks?: InputMaybe<Array<GqlHookType>>;
   minTvl?: InputMaybe<Scalars["Float"]["input"]>;
   poolTypeIn?: InputMaybe<Array<GqlPoolType>>;
-  poolTypeNotIn?: InputMaybe<Array<GqlPoolType>>;
   protocolVersionIn?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   tokensIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  tokensNotIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
 }
 
 export interface GqlBalancePoolAprItem {
@@ -2197,30 +2553,17 @@ export enum GqlChain {
   Fantom = "FANTOM",
   Fraxtal = "FRAXTAL",
   Gnosis = "GNOSIS",
+  Hyperevm = "HYPEREVM",
   Mainnet = "MAINNET",
   Mode = "MODE",
+  Monad = "MONAD",
   Optimism = "OPTIMISM",
+  Plasma = "PLASMA",
   Polygon = "POLYGON",
   Sepolia = "SEPOLIA",
   Sonic = "SONIC",
+  Xlayer = "XLAYER",
   Zkevm = "ZKEVM",
-}
-
-export interface GqlContentNewsItem {
-  __typename?: "GqlContentNewsItem";
-  discussionUrl?: Maybe<Scalars["String"]["output"]>;
-  id: Scalars["ID"]["output"];
-  image?: Maybe<Scalars["String"]["output"]>;
-  source: GqlContentNewsItemSource;
-  text: Scalars["String"]["output"];
-  timestamp: Scalars["String"]["output"];
-  url: Scalars["String"]["output"];
-}
-
-export enum GqlContentNewsItemSource {
-  Discord = "discord",
-  Medium = "medium",
-  Twitter = "twitter",
 }
 
 export interface GqlFeaturePoolGroupItemExternalLink {
@@ -2303,22 +2646,53 @@ export interface GqlHookReviewData {
 }
 
 export enum GqlHookType {
+  Akron = "AKRON",
   DirectionalFee = "DIRECTIONAL_FEE",
   ExitFee = "EXIT_FEE",
   FeeTaking = "FEE_TAKING",
+  Lbp = "LBP",
   Lottery = "LOTTERY",
   MevTax = "MEV_TAX",
   NftliquidityPosition = "NFTLIQUIDITY_POSITION",
+  Reclamm = "RECLAMM",
   StableSurge = "STABLE_SURGE",
   Unknown = "UNKNOWN",
   VebalDiscount = "VEBAL_DISCOUNT",
 }
 
-export interface GqlLatestSyncedBlocks {
-  __typename?: "GqlLatestSyncedBlocks";
-  poolSyncBlock: Scalars["BigInt"]["output"];
-  userStakeSyncBlock: Scalars["BigInt"]["output"];
-  userWalletSyncBlock: Scalars["BigInt"]["output"];
+export interface GqlLbpTopTrade {
+  __typename?: "GqlLBPTopTrade";
+  address: Scalars["String"]["output"];
+  timestamp: Scalars["String"]["output"];
+  value: Scalars["String"]["output"];
+}
+
+export interface GqlLoopsData {
+  __typename?: "GqlLoopsData";
+  /** Actual TotalSupply of LoopS. */
+  actualSupply: Scalars["String"]["output"];
+  /** The total APR for LoopS */
+  apr: Scalars["Float"]["output"];
+  /** The amount of stS provided to Aave. */
+  collateralAmount: Scalars["String"]["output"];
+  /** The amount of stS provided to Aave in S. */
+  collateralAmountInEth: Scalars["String"]["output"];
+  /** The total S debt amount of the position */
+  debtAmount: Scalars["String"]["output"];
+  /** The health factor of the Aave position */
+  healthFactor: Scalars["String"]["output"];
+  /** The amount of leverage the current position has. */
+  leverage: Scalars["Float"]["output"];
+  /** Net Asset Value. The amount of collateral minus the amount of debt. */
+  nav: Scalars["String"]["output"];
+  /** The current rate of LoopS against S. */
+  rate: Scalars["String"]["output"];
+  /** The current amount of stS supplied to the Aave market */
+  stSAaveMarketSupply: Scalars["String"]["output"];
+  /** The current cap on the stS market on Aave */
+  stSAaveMarketSupplyCap: Scalars["String"]["output"];
+  /** Net Asset Value in USD. */
+  tvl: Scalars["String"]["output"];
 }
 
 /** All info on the nested pool if the token is a BPT. It will only support 1 level of nesting. */
@@ -2416,18 +2790,26 @@ export interface GqlPoolAggregator {
   beta?: Maybe<Scalars["String"]["output"]>;
   /** Data specific to gyro pools */
   c?: Maybe<Scalars["String"]["output"]>;
+  /** ReClamm: The centeredness margin of the pool */
+  centerednessMargin?: Maybe<Scalars["BigDecimal"]["output"]>;
   /** The chain on which the pool is deployed */
   chain: GqlChain;
   /** The timestamp the pool was created. */
   createTime: Scalars["Int"]["output"];
+  /** ReClamm: The current fourth root price ratio, an interpolation of the price ratio state */
+  currentFourthRootPriceRatio?: Maybe<Scalars["BigDecimal"]["output"]>;
   /** Data specific to gyro pools */
   dSq?: Maybe<Scalars["String"]["output"]>;
+  /** ReClamm: Represents how fast the pool can move the virtual balances per day */
+  dailyPriceShiftBase?: Maybe<Scalars["BigDecimal"]["output"]>;
   /** The decimals of the BPT, usually 18 */
   decimals: Scalars["Int"]["output"];
   /** Data specific to fx pools */
   delta?: Maybe<Scalars["String"]["output"]>;
   /** Dynamic data such as token balances, swap fees or volume */
   dynamicData: GqlPoolDynamicData;
+  /** ReClamm: The fourth root price ratio at the end of an update */
+  endFourthRootPriceRatio?: Maybe<Scalars["BigDecimal"]["output"]>;
   /** Data specific to fx pools */
   epsilon?: Maybe<Scalars["String"]["output"]>;
   /** The factory contract address from which the pool was created. */
@@ -2438,6 +2820,10 @@ export interface GqlPoolAggregator {
   id: Scalars["ID"]["output"];
   /** Data specific to gyro/fx pools */
   lambda?: Maybe<Scalars["String"]["output"]>;
+  /** The timestamp of the last user interaction */
+  lastTimestamp?: Maybe<Scalars["Int"]["output"]>;
+  /** ReClamm: The last virtual balances of the pool */
+  lastVirtualBalances?: Maybe<Array<Scalars["BigDecimal"]["output"]>>;
   /** Liquidity management settings for v3 pools. */
   liquidityManagement?: Maybe<LiquidityManagement>;
   /** The name of the pool as per contract */
@@ -2453,8 +2839,14 @@ export interface GqlPoolAggregator {
   poolCreator?: Maybe<Scalars["Bytes"]["output"]>;
   /** Returns all pool tokens, including BPTs and nested pools if there are any. Only one nested level deep. */
   poolTokens: Array<GqlPoolTokenDetail>;
+  /** ReClamm: The timestamp when the update ends */
+  priceRatioUpdateEndTime?: Maybe<Scalars["Int"]["output"]>;
+  /** ReClamm: The timestamp when the update begins */
+  priceRatioUpdateStartTime?: Maybe<Scalars["Int"]["output"]>;
   /** The protocol version on which the pool is deployed, 1, 2 or 3 */
   protocolVersion: Scalars["Int"]["output"];
+  /** QuantAmmWeighted specific fields */
+  quantAmmWeightedParams?: Maybe<QuantAmmWeightedParams>;
   /** Data specific to gyro pools */
   root3Alpha?: Maybe<Scalars["String"]["output"]>;
   /** Data specific to gyro pools */
@@ -2463,6 +2855,8 @@ export interface GqlPoolAggregator {
   sqrtAlpha?: Maybe<Scalars["String"]["output"]>;
   /** Data specific to gyro pools */
   sqrtBeta?: Maybe<Scalars["String"]["output"]>;
+  /** ReClamm: The fourth root price ratio at the start of an update */
+  startFourthRootPriceRatio?: Maybe<Scalars["BigDecimal"]["output"]>;
   /** Account empowered to set static swap fees for a pool (when 0 on V2 swap fees are immutable, on V3 delegate to governance) */
   swapFeeManager?: Maybe<Scalars["Bytes"]["output"]>;
   /** The token symbol of the pool as per contract */
@@ -2502,7 +2896,7 @@ export interface GqlPoolApr {
 /** All APRs for a pool */
 export interface GqlPoolAprItem {
   __typename?: "GqlPoolAprItem";
-  /** The APR value in % -> 0.2 = 0.2% */
+  /** The APR value in % -> 0.2 = 20% */
   apr: Scalars["Float"]["output"];
   /** The id of the APR item */
   id: Scalars["ID"]["output"];
@@ -2535,6 +2929,8 @@ export enum GqlPoolAprItemType {
   Merkl = "MERKL",
   /** Represents if the APR items comes from a nested pool. */
   Nested = "NESTED",
+  /** APR calculated for QUANT-AMM pools based on performance measurements over a month */
+  QuantAmmUplift = "QUANT_AMM_UPLIFT",
   /** Staking reward APR in a pool from a reward token. */
   Staking = "STAKING",
   /** APR boost that can be earned, i.e. via veBAL or maBEETS. */
@@ -2664,43 +3060,6 @@ export interface GqlPoolBase {
   withdrawConfig: GqlPoolWithdrawConfig;
 }
 
-export interface GqlPoolBatchSwap {
-  __typename?: "GqlPoolBatchSwap";
-  chain: GqlChain;
-  id: Scalars["ID"]["output"];
-  swaps: Array<GqlPoolBatchSwapSwap>;
-  timestamp: Scalars["Int"]["output"];
-  tokenAmountIn: Scalars["String"]["output"];
-  tokenAmountOut: Scalars["String"]["output"];
-  tokenIn: Scalars["String"]["output"];
-  tokenInPrice: Scalars["Float"]["output"];
-  tokenOut: Scalars["String"]["output"];
-  tokenOutPrice: Scalars["Float"]["output"];
-  tx: Scalars["String"]["output"];
-  userAddress: Scalars["String"]["output"];
-  valueUSD: Scalars["Float"]["output"];
-}
-
-export interface GqlPoolBatchSwapPool {
-  __typename?: "GqlPoolBatchSwapPool";
-  id: Scalars["ID"]["output"];
-  tokens: Array<Scalars["String"]["output"]>;
-}
-
-export interface GqlPoolBatchSwapSwap {
-  __typename?: "GqlPoolBatchSwapSwap";
-  id: Scalars["ID"]["output"];
-  pool: PoolForBatchSwap;
-  timestamp: Scalars["Int"]["output"];
-  tokenAmountIn: Scalars["String"]["output"];
-  tokenAmountOut: Scalars["String"]["output"];
-  tokenIn: Scalars["String"]["output"];
-  tokenOut: Scalars["String"]["output"];
-  tx: Scalars["String"]["output"];
-  userAddress: Scalars["String"]["output"];
-  valueUSD: Scalars["Float"]["output"];
-}
-
 export interface GqlPoolComposableStable extends GqlPoolBase {
   __typename?: "GqlPoolComposableStable";
   address: Scalars["Bytes"]["output"];
@@ -2801,9 +3160,13 @@ export interface GqlPoolDynamicData {
   apr: GqlPoolApr;
   aprItems: Array<GqlPoolAprItem>;
   fees24h: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   fees24hAth: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   fees24hAthTimestamp: Scalars["Int"]["output"];
+  /** @deprecated No longer supported */
   fees24hAtl: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   fees24hAtlTimestamp: Scalars["Int"]["output"];
   fees48h: Scalars["BigDecimal"]["output"];
   holdersCount: Scalars["BigInt"]["output"];
@@ -2817,9 +3180,13 @@ export interface GqlPoolDynamicData {
   protocolFees48h: Scalars["BigDecimal"]["output"];
   protocolYieldCapture24h: Scalars["BigDecimal"]["output"];
   protocolYieldCapture48h: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   sharePriceAth: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   sharePriceAthTimestamp: Scalars["Int"]["output"];
+  /** @deprecated No longer supported */
   sharePriceAtl: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   sharePriceAtlTimestamp: Scalars["Int"]["output"];
   /** CowAmm specific, equivalent of swap fees */
   surplus24h: Scalars["BigDecimal"]["output"];
@@ -2828,20 +3195,29 @@ export interface GqlPoolDynamicData {
   /** Disabled for bricked pools */
   swapEnabled: Scalars["Boolean"]["output"];
   swapFee: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   swapsCount: Scalars["BigInt"]["output"];
   totalLiquidity: Scalars["BigDecimal"]["output"];
   totalLiquidity24hAgo: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   totalLiquidityAth: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   totalLiquidityAthTimestamp: Scalars["Int"]["output"];
+  /** @deprecated No longer supported */
   totalLiquidityAtl: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   totalLiquidityAtlTimestamp: Scalars["Int"]["output"];
   totalShares: Scalars["BigDecimal"]["output"];
   totalShares24hAgo: Scalars["BigDecimal"]["output"];
   totalSupply: Scalars["BigDecimal"]["output"];
   volume24h: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   volume24hAth: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   volume24hAthTimestamp: Scalars["Int"]["output"];
+  /** @deprecated No longer supported */
   volume24hAtl: Scalars["BigDecimal"]["output"];
+  /** @deprecated No longer supported */
   volume24hAtlTimestamp: Scalars["Int"]["output"];
   volume48h: Scalars["BigDecimal"]["output"];
   yieldCapture24h: Scalars["BigDecimal"]["output"];
@@ -2949,14 +3325,9 @@ export enum GqlPoolEventsDataRange {
 
 export interface GqlPoolEventsFilter {
   chainIn?: InputMaybe<Array<InputMaybe<GqlChain>>>;
-  poolIdIn?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
-  range?: InputMaybe<GqlPoolEventsDataRange>;
-  typeIn?: InputMaybe<Array<InputMaybe<GqlPoolEventType>>>;
+  poolId?: InputMaybe<Scalars["String"]["input"]>;
+  type?: InputMaybe<GqlPoolEventType>;
   userAddress?: InputMaybe<Scalars["String"]["input"]>;
-  /** USD value of the event */
-  valueUSD_gt?: InputMaybe<Scalars["Float"]["input"]>;
-  /** USD value of the event */
-  valueUSD_gte?: InputMaybe<Scalars["Float"]["input"]>;
 }
 
 export interface GqlPoolFeaturedPool {
@@ -3178,11 +3549,6 @@ export interface GqlPoolJoinExitAmount {
   amount: Scalars["String"]["output"];
 }
 
-export interface GqlPoolJoinExitFilter {
-  chainIn?: InputMaybe<Array<GqlChain>>;
-  poolIdIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-}
-
 export enum GqlPoolJoinExitType {
   Exit = "Exit",
   Join = "Join",
@@ -3240,6 +3606,75 @@ export interface GqlPoolLiquidityBootstrapping extends GqlPoolBase {
   version: Scalars["Int"]["output"];
   /** @deprecated Removed without replacement */
   withdrawConfig: GqlPoolWithdrawConfig;
+}
+
+export interface GqlPoolLiquidityBootstrappingV3 extends GqlPoolBase {
+  __typename?: "GqlPoolLiquidityBootstrappingV3";
+  address: Scalars["Bytes"]["output"];
+  /** @deprecated Use poolTokens instead */
+  allTokens: Array<GqlPoolTokenExpanded>;
+  categories?: Maybe<Array<Maybe<GqlPoolFilterCategory>>>;
+  chain: GqlChain;
+  createTime: Scalars["Int"]["output"];
+  decimals: Scalars["Int"]["output"];
+  description?: Maybe<Scalars["String"]["output"]>;
+  discord?: Maybe<Scalars["String"]["output"]>;
+  /** @deprecated Use poolTokens instead */
+  displayTokens: Array<GqlPoolTokenDisplay>;
+  dynamicData: GqlPoolDynamicData;
+  endTime: Scalars["Int"]["output"];
+  factory?: Maybe<Scalars["Bytes"]["output"]>;
+  farcaster?: Maybe<Scalars["String"]["output"]>;
+  hasAnyAllowedBuffer: Scalars["Boolean"]["output"];
+  hasErc4626: Scalars["Boolean"]["output"];
+  hasNestedErc4626: Scalars["Boolean"]["output"];
+  hook?: Maybe<GqlHook>;
+  id: Scalars["ID"]["output"];
+  /** @deprecated Removed without replacement */
+  investConfig: GqlPoolInvestConfig;
+  isProjectTokenSwapInBlocked: Scalars["Boolean"]["output"];
+  isSeedless: Scalars["Boolean"]["output"];
+  lbpName?: Maybe<Scalars["String"]["output"]>;
+  lbpOwner: Scalars["String"]["output"];
+  liquidityManagement?: Maybe<LiquidityManagement>;
+  name: Scalars["String"]["output"];
+  /**
+   * The wallet address of the owner of the pool. Pool owners can set certain properties like swapFees or AMP.
+   * @deprecated Use swapFeeManager instead
+   */
+  owner?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to pause/unpause the pool (or 0 to delegate to governance) */
+  pauseManager?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to set the pool creator fee percentage */
+  poolCreator?: Maybe<Scalars["Bytes"]["output"]>;
+  poolTokens: Array<GqlPoolTokenDetail>;
+  projectToken: Scalars["String"]["output"];
+  projectTokenEndWeight: Scalars["Float"]["output"];
+  projectTokenIndex: Scalars["Int"]["output"];
+  projectTokenStartWeight: Scalars["Float"]["output"];
+  protocolVersion: Scalars["Int"]["output"];
+  reserveToken: Scalars["String"]["output"];
+  reserveTokenEndWeight: Scalars["Float"]["output"];
+  reserveTokenIndex: Scalars["Int"]["output"];
+  reserveTokenStartWeight: Scalars["Float"]["output"];
+  /** All tokens of the pool. If it is a nested pool, the nested pool is expanded with its own tokens again. */
+  staking?: Maybe<GqlPoolStaking>;
+  startTime: Scalars["Int"]["output"];
+  /** Account empowered to set static swap fees for a pool (when 0 on V2 swap fees are immutable, on V3 delegate to governance) */
+  swapFeeManager?: Maybe<Scalars["Bytes"]["output"]>;
+  symbol: Scalars["String"]["output"];
+  tags?: Maybe<Array<Maybe<Scalars["String"]["output"]>>>;
+  telegram?: Maybe<Scalars["String"]["output"]>;
+  topTrades?: Maybe<Array<GqlLbpTopTrade>>;
+  type: GqlPoolType;
+  userBalance?: Maybe<GqlPoolUserBalance>;
+  /** @deprecated use protocolVersion instead */
+  vaultVersion: Scalars["Int"]["output"];
+  version: Scalars["Int"]["output"];
+  website?: Maybe<Scalars["String"]["output"]>;
+  /** @deprecated Removed without replacement */
+  withdrawConfig: GqlPoolWithdrawConfig;
+  x?: Maybe<Scalars["String"]["output"]>;
 }
 
 export interface GqlPoolMetaStable extends GqlPoolBase {
@@ -3331,6 +3766,8 @@ export interface GqlPoolMinimal {
   id: Scalars["ID"]["output"];
   /** Pool is receiving rewards when liquidity tokens are staked */
   incentivized: Scalars["Boolean"]["output"];
+  /** LBP specific params for v3 pools only. */
+  lbpParams?: Maybe<LiquidityBootstrappingPoolV3Params>;
   /** Liquidity management settings for v3 pools. */
   liquidityManagement?: Maybe<LiquidityManagement>;
   /** The name of the pool as per contract */
@@ -3404,11 +3841,140 @@ export enum GqlPoolOrderDirection {
   Desc = "desc",
 }
 
+export interface GqlPoolQuantAmmWeighted extends GqlPoolBase {
+  __typename?: "GqlPoolQuantAmmWeighted";
+  address: Scalars["Bytes"]["output"];
+  /** @deprecated Use poolTokens instead */
+  allTokens: Array<GqlPoolTokenExpanded>;
+  categories?: Maybe<Array<Maybe<GqlPoolFilterCategory>>>;
+  chain: GqlChain;
+  createTime: Scalars["Int"]["output"];
+  decimals: Scalars["Int"]["output"];
+  /** @deprecated Use poolTokens instead */
+  displayTokens: Array<GqlPoolTokenDisplay>;
+  dynamicData: GqlPoolDynamicData;
+  factory?: Maybe<Scalars["Bytes"]["output"]>;
+  hasAnyAllowedBuffer: Scalars["Boolean"]["output"];
+  hasErc4626: Scalars["Boolean"]["output"];
+  hasNestedErc4626: Scalars["Boolean"]["output"];
+  hook?: Maybe<GqlHook>;
+  id: Scalars["ID"]["output"];
+  /** @deprecated Removed without replacement */
+  investConfig: GqlPoolInvestConfig;
+  liquidityManagement?: Maybe<LiquidityManagement>;
+  name: Scalars["String"]["output"];
+  /** @deprecated Removed without replacement */
+  nestingType: GqlPoolNestingType;
+  /**
+   * The wallet address of the owner of the pool. Pool owners can set certain properties like swapFees or AMP.
+   * @deprecated Use swapFeeManager instead
+   */
+  owner?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to pause/unpause the pool (or 0 to delegate to governance) */
+  pauseManager?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to set the pool creator fee percentage */
+  poolCreator?: Maybe<Scalars["Bytes"]["output"]>;
+  poolTokens: Array<GqlPoolTokenDetail>;
+  protocolVersion: Scalars["Int"]["output"];
+  quantAmmWeightedParams?: Maybe<QuantAmmWeightedParams>;
+  staking?: Maybe<GqlPoolStaking>;
+  /** Account empowered to set static swap fees for a pool (when 0 on V2 swap fees are immutable, on V3 delegate to governance) */
+  swapFeeManager?: Maybe<Scalars["Bytes"]["output"]>;
+  symbol: Scalars["String"]["output"];
+  tags?: Maybe<Array<Maybe<Scalars["String"]["output"]>>>;
+  /**
+   * All tokens of the pool. If it is a nested pool, the nested pool is expanded with its own tokens again.
+   * @deprecated Use poolTokens instead
+   */
+  tokens: Array<GqlPoolTokenUnion>;
+  type: GqlPoolType;
+  userBalance?: Maybe<GqlPoolUserBalance>;
+  /** @deprecated use protocolVersion instead */
+  vaultVersion: Scalars["Int"]["output"];
+  version: Scalars["Int"]["output"];
+  weightSnapshots?: Maybe<Array<QuantAmmWeightSnapshot>>;
+  /** @deprecated Removed without replacement */
+  withdrawConfig: GqlPoolWithdrawConfig;
+}
+
+export interface GqlPoolReClamm extends GqlPoolBase {
+  __typename?: "GqlPoolReClamm";
+  address: Scalars["Bytes"]["output"];
+  /** @deprecated Use poolTokens instead */
+  allTokens: Array<GqlPoolTokenExpanded>;
+  categories?: Maybe<Array<Maybe<GqlPoolFilterCategory>>>;
+  /** The centeredness margin of the pool */
+  centerednessMargin: Scalars["BigDecimal"]["output"];
+  chain: GqlChain;
+  createTime: Scalars["Int"]["output"];
+  /** The current fourth root price ratio, an interpolation of the price ratio state */
+  currentFourthRootPriceRatio: Scalars["BigDecimal"]["output"];
+  /** Represents how fast the pool can move the virtual balances per day */
+  dailyPriceShiftBase: Scalars["BigDecimal"]["output"];
+  decimals: Scalars["Int"]["output"];
+  /** @deprecated Use poolTokens instead */
+  displayTokens: Array<GqlPoolTokenDisplay>;
+  dynamicData: GqlPoolDynamicData;
+  /** The fourth root price ratio at the end of an update */
+  endFourthRootPriceRatio: Scalars["BigDecimal"]["output"];
+  factory?: Maybe<Scalars["Bytes"]["output"]>;
+  hasAnyAllowedBuffer: Scalars["Boolean"]["output"];
+  hasErc4626: Scalars["Boolean"]["output"];
+  hasNestedErc4626: Scalars["Boolean"]["output"];
+  hook?: Maybe<GqlHook>;
+  id: Scalars["ID"]["output"];
+  /** @deprecated Removed without replacement */
+  investConfig: GqlPoolInvestConfig;
+  /** The timestamp of the last user interaction */
+  lastTimestamp: Scalars["Int"]["output"];
+  /** The last virtual balances of the pool */
+  lastVirtualBalances: Array<Scalars["BigDecimal"]["output"]>;
+  liquidityManagement?: Maybe<LiquidityManagement>;
+  name: Scalars["String"]["output"];
+  /** @deprecated Removed without replacement */
+  nestingType: GqlPoolNestingType;
+  /**
+   * The wallet address of the owner of the pool. Pool owners can set certain properties like swapFees or AMP.
+   * @deprecated Use swapFeeManager instead
+   */
+  owner?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to pause/unpause the pool (or 0 to delegate to governance) */
+  pauseManager?: Maybe<Scalars["Bytes"]["output"]>;
+  /** Account empowered to set the pool creator fee percentage */
+  poolCreator?: Maybe<Scalars["Bytes"]["output"]>;
+  poolTokens: Array<GqlPoolTokenDetail>;
+  /** The timestamp when the update ends */
+  priceRatioUpdateEndTime: Scalars["Int"]["output"];
+  /** The timestamp when the update begins */
+  priceRatioUpdateStartTime: Scalars["Int"]["output"];
+  protocolVersion: Scalars["Int"]["output"];
+  staking?: Maybe<GqlPoolStaking>;
+  /** The fourth root price ratio at the start of an update */
+  startFourthRootPriceRatio: Scalars["BigDecimal"]["output"];
+  /** Account empowered to set static swap fees for a pool (when 0 on V2 swap fees are immutable, on V3 delegate to governance) */
+  swapFeeManager?: Maybe<Scalars["Bytes"]["output"]>;
+  symbol: Scalars["String"]["output"];
+  tags?: Maybe<Array<Maybe<Scalars["String"]["output"]>>>;
+  /**
+   * All tokens of the pool. If it is a nested pool, the nested pool is expanded with its own tokens again.
+   * @deprecated Use poolTokens instead
+   */
+  tokens: Array<GqlPoolTokenUnion>;
+  type: GqlPoolType;
+  userBalance?: Maybe<GqlPoolUserBalance>;
+  /** @deprecated use protocolVersion instead */
+  vaultVersion: Scalars["Int"]["output"];
+  version: Scalars["Int"]["output"];
+  /** @deprecated Removed without replacement */
+  withdrawConfig: GqlPoolWithdrawConfig;
+}
+
 export interface GqlPoolSnapshot {
   __typename?: "GqlPoolSnapshot";
   amounts: Array<Scalars["String"]["output"]>;
   chain: GqlChain;
   fees24h: Scalars["String"]["output"];
+  /** @deprecated No longer supported */
   holdersCount: Scalars["String"]["output"];
   id: Scalars["ID"]["output"];
   poolId: Scalars["String"]["output"];
@@ -3418,8 +3984,11 @@ export interface GqlPoolSnapshot {
   timestamp: Scalars["Int"]["output"];
   totalLiquidity: Scalars["String"]["output"];
   totalShares: Scalars["String"]["output"];
+  /** @deprecated No longer supported */
   totalSurplus: Scalars["String"]["output"];
+  /** @deprecated No longer supported */
   totalSwapFee: Scalars["String"]["output"];
+  /** @deprecated No longer supported */
   totalSwapVolume: Scalars["String"]["output"];
   volume24h: Scalars["String"]["output"];
 }
@@ -3674,13 +4243,6 @@ export interface GqlPoolSwapEventV3 extends GqlPoolEvent {
   valueUSD: Scalars["Float"]["output"];
 }
 
-export interface GqlPoolSwapFilter {
-  chainIn?: InputMaybe<Array<GqlChain>>;
-  poolIdIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  tokenInIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-  tokenOutIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
-}
-
 export interface GqlPoolTimePeriod {
   gt?: InputMaybe<Scalars["Int"]["input"]>;
   lt?: InputMaybe<Scalars["Int"]["input"]>;
@@ -3774,6 +4336,10 @@ export interface GqlPoolTokenDetail {
   isExemptFromProtocolYieldFee: Scalars["Boolean"]["output"];
   /** Token logo */
   logoURI?: Maybe<Scalars["String"]["output"]>;
+  /** If it is an ERC4626 token, this  defines how much can be deposited into the ERC4626 vault. */
+  maxDeposit?: Maybe<Scalars["String"]["output"]>;
+  /** If it is an ERC4626 token, this  defines how much can be withdrawn from the ERC4626 vault. */
+  maxWithdraw?: Maybe<Scalars["String"]["output"]>;
   /** Name of the pool token. */
   name: Scalars["String"]["output"];
   /** Additional data for the nested pool if the token is a BPT. Null otherwise. */
@@ -3847,6 +4413,8 @@ export enum GqlPoolType {
   LiquidityBootstrapping = "LIQUIDITY_BOOTSTRAPPING",
   MetaStable = "META_STABLE",
   PhantomStable = "PHANTOM_STABLE",
+  QuantAmmWeighted = "QUANT_AMM_WEIGHTED",
+  Reclamm = "RECLAMM",
   Stable = "STABLE",
   Unknown = "UNKNOWN",
   Weighted = "WEIGHTED",
@@ -3858,7 +4426,10 @@ export type GqlPoolUnion =
   | GqlPoolFx
   | GqlPoolGyro
   | GqlPoolLiquidityBootstrapping
+  | GqlPoolLiquidityBootstrappingV3
   | GqlPoolMetaStable
+  | GqlPoolQuantAmmWeighted
+  | GqlPoolReClamm
   | GqlPoolStable
   | GqlPoolWeighted;
 
@@ -3997,6 +4568,7 @@ export interface GqlProtocolMetricsAggregated {
   chains: Array<GqlProtocolMetricsChain>;
   numLiquidityProviders: Scalars["BigInt"]["output"];
   poolCount: Scalars["BigInt"]["output"];
+  surplus24h: Scalars["BigDecimal"]["output"];
   swapFee24h: Scalars["BigDecimal"]["output"];
   swapVolume24h: Scalars["BigDecimal"]["output"];
   totalLiquidity: Scalars["BigDecimal"]["output"];
@@ -4012,6 +4584,7 @@ export interface GqlProtocolMetricsChain {
   chainId: Scalars["String"]["output"];
   numLiquidityProviders: Scalars["BigInt"]["output"];
   poolCount: Scalars["BigInt"]["output"];
+  surplus24h: Scalars["BigDecimal"]["output"];
   swapFee24h: Scalars["BigDecimal"]["output"];
   swapVolume24h: Scalars["BigDecimal"]["output"];
   totalLiquidity: Scalars["BigDecimal"]["output"];
@@ -4047,20 +4620,9 @@ export interface GqlReliquaryFarmSnapshot {
   levelBalances: Array<GqlReliquaryFarmLevelSnapshot>;
   relicCount: Scalars["String"]["output"];
   timestamp: Scalars["Int"]["output"];
-  tokenBalances: Array<GqlReliquaryTokenBalanceSnapshot>;
   totalBalance: Scalars["String"]["output"];
   totalLiquidity: Scalars["String"]["output"];
   userCount: Scalars["String"]["output"];
-}
-
-export interface GqlReliquaryTokenBalanceSnapshot {
-  __typename?: "GqlReliquaryTokenBalanceSnapshot";
-  address: Scalars["String"]["output"];
-  balance: Scalars["String"]["output"];
-  decimals: Scalars["Int"]["output"];
-  id: Scalars["ID"]["output"];
-  name: Scalars["String"]["output"];
-  symbol: Scalars["String"]["output"];
 }
 
 export interface GqlSftmxStakingData {
@@ -4268,7 +4830,10 @@ export interface GqlSorSwapRoute {
 /** A hop of a route. A route can have many hops meaning it traverses more than one pool. */
 export interface GqlSorSwapRouteHop {
   __typename?: "GqlSorSwapRouteHop";
-  /** The pool entity of this hop. */
+  /**
+   * The pool entity of this hop.
+   * @deprecated No longer supported
+   */
   pool: GqlPoolMinimal;
   /** The pool id of this hop. */
   poolId: Scalars["String"]["output"];
@@ -4379,6 +4944,8 @@ export interface GqlToken {
   isErc4626: Scalars["Boolean"]["output"];
   /** The logo URI of the token */
   logoURI?: Maybe<Scalars["String"]["output"]>;
+  /** If it is an ERC4626 token, this  defines how much can be deposited into the ERC4626 vault. */
+  maxDeposit?: Maybe<Scalars["String"]["output"]>;
   /** The name of the token */
   name: Scalars["String"]["output"];
   /** The rate provider data for the token */
@@ -4398,6 +4965,7 @@ export interface GqlToken {
   tradable: Scalars["Boolean"]["output"];
   /** The Twitter username of the token */
   twitterUsername?: Maybe<Scalars["String"]["output"]>;
+  types?: Maybe<Array<GqlTokenType>>;
   /** The ERC4626 underlying token address, if applicable. */
   underlyingTokenAddress?: Maybe<Scalars["String"]["output"]>;
   /** The website URL of the token */
@@ -4478,6 +5046,8 @@ export interface GqlTokenDynamicData {
 export interface GqlTokenFilter {
   /** Only return tokens with these addresses */
   tokensIn?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  /** Filter by token type */
+  typeIn?: InputMaybe<Array<GqlTokenType>>;
 }
 
 /** Result of the poolReloadPools mutation */
@@ -4508,8 +5078,12 @@ export interface GqlTokenPriceChartDataItem {
 }
 
 export enum GqlTokenType {
+  BlockedV2 = "BLOCKED_V2",
+  BlockedV3 = "BLOCKED_V3",
   Bpt = "BPT",
+  Erc4626 = "ERC4626",
   PhantomBpt = "PHANTOM_BPT",
+  /** @deprecated Use BLOCKED instead */
   WhiteListed = "WHITE_LISTED",
 }
 
@@ -4621,9 +5195,13 @@ export interface GqlVotingPool {
   gauge: GqlVotingGauge;
   /** Pool ID */
   id: Scalars["ID"]["output"];
+  /** Returns all pool tokens, including BPTs and nested pools if there are any. Only one nested level deep. */
+  poolTokens: Array<GqlPoolTokenDetail>;
   protocolVersion: Scalars["Int"]["output"];
   /** The symbol of the pool. */
   symbol: Scalars["String"]["output"];
+  /** List of tags assigned by the team based on external factors */
+  tags?: Maybe<Array<Maybe<Scalars["String"]["output"]>>>;
   /** The tokens inside the pool. */
   tokens: Array<GqlVotingGaugeToken>;
   /** The type of the pool. */
@@ -5028,6 +5606,41 @@ export enum JoinExit_OrderBy {
   ValueUsd = "valueUSD",
 }
 
+export interface LbpMetadataInput {
+  description: Scalars["String"]["input"];
+  discord?: InputMaybe<Scalars["String"]["input"]>;
+  farcaster?: InputMaybe<Scalars["String"]["input"]>;
+  lbpName: Scalars["String"]["input"];
+  telegram?: InputMaybe<Scalars["String"]["input"]>;
+  tokenLogo: Scalars["String"]["input"];
+  website: Scalars["String"]["input"];
+  x?: InputMaybe<Scalars["String"]["input"]>;
+}
+
+export interface LbpPriceChartData {
+  __typename?: "LBPPriceChartData";
+  buyVolume: Scalars["Float"]["output"];
+  cumulativeFees: Scalars["Float"]["output"];
+  cumulativeVolume: Scalars["Float"]["output"];
+  fees: Scalars["Float"]["output"];
+  /** @deprecated No longer supported */
+  intervalTimestamp: Scalars["Int"]["output"];
+  projectTokenBalance: Scalars["Float"]["output"];
+  projectTokenPrice: Scalars["Float"]["output"];
+  reservePrice: Scalars["Float"]["output"];
+  reserveTokenBalance: Scalars["Float"]["output"];
+  sellVolume: Scalars["Float"]["output"];
+  swapCount: Scalars["Int"]["output"];
+  timestamp: Scalars["Int"]["output"];
+  tvl: Scalars["Float"]["output"];
+  volume: Scalars["Float"]["output"];
+}
+
+export interface LbPoolInput {
+  address: Scalars["String"]["input"];
+  chain: GqlChain;
+}
+
 export interface LatestPrice {
   __typename?: "LatestPrice";
   asset: Scalars["Bytes"]["output"];
@@ -5186,6 +5799,32 @@ export enum LatestPrice_OrderBy {
   PricingAsset = "pricingAsset",
 }
 
+/** LBP specific params for v3 pools only. */
+export interface LiquidityBootstrappingPoolV3Params {
+  __typename?: "LiquidityBootstrappingPoolV3Params";
+  description?: Maybe<Scalars["String"]["output"]>;
+  discord?: Maybe<Scalars["String"]["output"]>;
+  endTime: Scalars["Int"]["output"];
+  farcaster?: Maybe<Scalars["String"]["output"]>;
+  isProjectTokenSwapInBlocked: Scalars["Boolean"]["output"];
+  isSeedless: Scalars["Boolean"]["output"];
+  lbpName?: Maybe<Scalars["String"]["output"]>;
+  lbpOwner: Scalars["String"]["output"];
+  projectToken: Scalars["String"]["output"];
+  projectTokenEndWeight: Scalars["Float"]["output"];
+  projectTokenIndex: Scalars["Int"]["output"];
+  projectTokenStartWeight: Scalars["Float"]["output"];
+  reserveToken: Scalars["String"]["output"];
+  reserveTokenEndWeight: Scalars["Float"]["output"];
+  reserveTokenIndex: Scalars["Int"]["output"];
+  reserveTokenStartWeight: Scalars["Float"]["output"];
+  startTime: Scalars["Int"]["output"];
+  telegram?: Maybe<Scalars["String"]["output"]>;
+  topTrades?: Maybe<Array<GqlLbpTopTrade>>;
+  website?: Maybe<Scalars["String"]["output"]>;
+  x?: Maybe<Scalars["String"]["output"]>;
+}
+
 /** Liquidity management settings for v3 pools. */
 export interface LiquidityManagement {
   __typename?: "LiquidityManagement";
@@ -5213,6 +5852,7 @@ export interface LockerDelegateChangedTransaction extends LockerTransaction {
 export interface LockerDelegateChangedTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<LockerDelegateChangedTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5263,13 +5903,21 @@ export interface LockerDelegateChangedTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   fromDelegate?: InputMaybe<Scalars["Bytes"]["input"]>;
   fromDelegate_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  fromDelegate_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  fromDelegate_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   fromDelegate_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  fromDelegate_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  fromDelegate_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   fromDelegate_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   fromDelegate_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   fromDelegate_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5281,6 +5929,7 @@ export interface LockerDelegateChangedTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerDelegateChangedTransaction_Filter>>>;
   timestamp?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -5291,7 +5940,11 @@ export interface LockerDelegateChangedTransaction_Filter {
   timestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
   toDelegate?: InputMaybe<Scalars["Bytes"]["input"]>;
   toDelegate_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  toDelegate_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  toDelegate_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   toDelegate_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  toDelegate_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  toDelegate_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   toDelegate_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   toDelegate_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   toDelegate_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5300,6 +5953,17 @@ export interface LockerDelegateChangedTransaction_Filter {
 export enum LockerDelegateChangedTransaction_OrderBy {
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   FromDelegate = "fromDelegate",
   Hash = "hash",
   Id = "id",
@@ -5321,6 +5985,7 @@ export interface LockerKickRewardTransaction extends LockerTransaction {
 export interface LockerKickRewardTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<LockerKickRewardTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5371,7 +6036,11 @@ export interface LockerKickRewardTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5385,10 +6054,15 @@ export interface LockerKickRewardTransaction_Filter {
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
   kicked?: InputMaybe<Scalars["Bytes"]["input"]>;
   kicked_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  kicked_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  kicked_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   kicked_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  kicked_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  kicked_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   kicked_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   kicked_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   kicked_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerKickRewardTransaction_Filter>>>;
   reward?: InputMaybe<Scalars["BigInt"]["input"]>;
   reward_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   reward_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -5410,6 +6084,17 @@ export interface LockerKickRewardTransaction_Filter {
 export enum LockerKickRewardTransaction_OrderBy {
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Hash = "hash",
   Id = "id",
   Kicked = "kicked",
@@ -5431,6 +6116,7 @@ export interface LockerRewardPaidTransaction extends LockerTransaction {
 export interface LockerRewardPaidTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<LockerRewardPaidTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5481,7 +6167,11 @@ export interface LockerRewardPaidTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5493,6 +6183,7 @@ export interface LockerRewardPaidTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerRewardPaidTransaction_Filter>>>;
   reward?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardToken?: InputMaybe<Scalars["String"]["input"]>;
   rewardToken_?: InputMaybe<Token_Filter>;
@@ -5535,10 +6226,25 @@ export interface LockerRewardPaidTransaction_Filter {
 export enum LockerRewardPaidTransaction_OrderBy {
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Hash = "hash",
   Id = "id",
   Reward = "reward",
   RewardToken = "rewardToken",
+  RewardTokenDecimals = "rewardToken__decimals",
+  RewardTokenId = "rewardToken__id",
+  RewardTokenName = "rewardToken__name",
+  RewardTokenSymbol = "rewardToken__symbol",
   Timestamp = "timestamp",
 }
 
@@ -5556,6 +6262,7 @@ export interface LockerStakedTransaction extends LockerTransaction {
 export interface LockerStakedTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<LockerStakedTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5606,7 +6313,11 @@ export interface LockerStakedTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5626,6 +6337,7 @@ export interface LockerStakedTransaction_Filter {
   lockedAmount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockedAmount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   lockedAmount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerStakedTransaction_Filter>>>;
   paidAmount?: InputMaybe<Scalars["BigInt"]["input"]>;
   paidAmount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   paidAmount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -5647,6 +6359,17 @@ export interface LockerStakedTransaction_Filter {
 export enum LockerStakedTransaction_OrderBy {
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Hash = "hash",
   Id = "id",
   LockedAmount = "lockedAmount",
@@ -5665,6 +6388,7 @@ export interface LockerTransaction {
 export interface LockerTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<LockerTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5715,7 +6439,11 @@ export interface LockerTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5727,6 +6455,7 @@ export interface LockerTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerTransaction_Filter>>>;
   timestamp?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -5740,6 +6469,17 @@ export interface LockerTransaction_Filter {
 export enum LockerTransaction_OrderBy {
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Hash = "hash",
   Id = "id",
   Timestamp = "timestamp",
@@ -5767,6 +6507,7 @@ export interface LockerWithdrawnTransaction_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<LockerWithdrawnTransaction_Filter>>>;
   auraLocker?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount?: InputMaybe<Scalars["String"]["input"]>;
   auraLockerAccount_?: InputMaybe<AuraLockerAccount_Filter>;
@@ -5817,7 +6558,11 @@ export interface LockerWithdrawnTransaction_Filter {
   auraLocker_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -5829,6 +6574,7 @@ export interface LockerWithdrawnTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<LockerWithdrawnTransaction_Filter>>>;
   relocked?: InputMaybe<Scalars["Boolean"]["input"]>;
   relocked_in?: InputMaybe<Array<Scalars["Boolean"]["input"]>>;
   relocked_not?: InputMaybe<Scalars["Boolean"]["input"]>;
@@ -5847,6 +6593,17 @@ export enum LockerWithdrawnTransaction_OrderBy {
   Amount = "amount",
   AuraLocker = "auraLocker",
   AuraLockerAccount = "auraLockerAccount",
+  AuraLockerAccountBalance = "auraLockerAccount__balance",
+  AuraLockerAccountBalanceLocked = "auraLockerAccount__balanceLocked",
+  AuraLockerAccountBalanceNextUnlockIndex = "auraLockerAccount__balanceNextUnlockIndex",
+  AuraLockerAccountDelegateUpdatedAt = "auraLockerAccount__delegateUpdatedAt",
+  AuraLockerAccountId = "auraLockerAccount__id",
+  AuraLockerAccountUserLocksLength = "auraLockerAccount__userLocksLength",
+  AuraLockerAddress = "auraLocker__address",
+  AuraLockerId = "auraLocker__id",
+  AuraLockerIsShutdown = "auraLocker__isShutdown",
+  AuraLockerLockedSupply = "auraLocker__lockedSupply",
+  AuraLockerTotalSupply = "auraLocker__totalSupply",
   Hash = "hash",
   Id = "id",
   Relocked = "relocked",
@@ -6026,6 +6783,7 @@ export interface MasterChefPoolInfo_Filter {
   allocPoint_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   allocPoint_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   allocPoint_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<MasterChefPoolInfo_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -6092,9 +6850,14 @@ export interface MasterChefPoolInfo_Filter {
   masterChef_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   masterChef_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   masterChef_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<MasterChefPoolInfo_Filter>>>;
   rewarder?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewarder_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewarder_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewarder_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewarder_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  rewarder_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewarder_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewarder_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewarder_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewarder_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -6108,7 +6871,16 @@ export enum MasterChefPoolInfo_OrderBy {
   LastRewardBlock = "lastRewardBlock",
   LpSupply = "lpSupply",
   LpToken = "lpToken",
+  LpTokenDecimals = "lpToken__decimals",
+  LpTokenId = "lpToken__id",
+  LpTokenName = "lpToken__name",
+  LpTokenSymbol = "lpToken__symbol",
   MasterChef = "masterChef",
+  MasterChefEndBlock = "masterChef__endBlock",
+  MasterChefId = "masterChef__id",
+  MasterChefRewardPerBlock = "masterChef__rewardPerBlock",
+  MasterChefStartBlock = "masterChef__startBlock",
+  MasterChefTotalAllocPoint = "masterChef__totalAllocPoint",
   Rewarder = "rewarder",
   UserInfos = "userInfos",
 }
@@ -6159,6 +6931,7 @@ export interface MasterChefUserInfo_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<MasterChefUserInfo_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -6188,6 +6961,7 @@ export interface MasterChefUserInfo_Filter {
   masterChef_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   masterChef_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   masterChef_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<MasterChefUserInfo_Filter>>>;
   poolInfo?: InputMaybe<Scalars["String"]["input"]>;
   poolInfo_?: InputMaybe<MasterChefPoolInfo_Filter>;
   poolInfo_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -6221,16 +6995,29 @@ export interface MasterChefUserInfo_Filter {
 
 export enum MasterChefUserInfo_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   Amount = "amount",
   Id = "id",
   MasterChef = "masterChef",
+  MasterChefEndBlock = "masterChef__endBlock",
+  MasterChefId = "masterChef__id",
+  MasterChefRewardPerBlock = "masterChef__rewardPerBlock",
+  MasterChefStartBlock = "masterChef__startBlock",
+  MasterChefTotalAllocPoint = "masterChef__totalAllocPoint",
   PoolInfo = "poolInfo",
+  PoolInfoAccCvxPerShare = "poolInfo__accCvxPerShare",
+  PoolInfoAllocPoint = "poolInfo__allocPoint",
+  PoolInfoId = "poolInfo__id",
+  PoolInfoLastRewardBlock = "poolInfo__lastRewardBlock",
+  PoolInfoLpSupply = "poolInfo__lpSupply",
+  PoolInfoRewarder = "poolInfo__rewarder",
   RewardDebt = "rewardDebt",
 }
 
 export interface MasterChef_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<MasterChef_Filter>>>;
   endBlock?: InputMaybe<Scalars["BigInt"]["input"]>;
   endBlock_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   endBlock_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -6247,6 +7034,7 @@ export interface MasterChef_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<MasterChef_Filter>>>;
   poolInfos_?: InputMaybe<MasterChefPoolInfo_Filter>;
   rewardPerBlock?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardPerBlock_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -6351,6 +7139,7 @@ export interface MerkleDropClaim_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<MerkleDropClaim_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -6384,19 +7173,26 @@ export interface MerkleDropClaim_Filter {
   merkleDrop_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   merkleDrop_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   merkleDrop_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<MerkleDropClaim_Filter>>>;
 }
 
 export enum MerkleDropClaim_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   Amount = "amount",
   Id = "id",
   Locked = "locked",
   MerkleDrop = "merkleDrop",
+  MerkleDropExpiryTime = "merkleDrop__expiryTime",
+  MerkleDropId = "merkleDrop__id",
+  MerkleDropMerkleRoot = "merkleDrop__merkleRoot",
+  MerkleDropStartTime = "merkleDrop__startTime",
 }
 
 export interface MerkleDrop_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<MerkleDrop_Filter>>>;
   claims_?: InputMaybe<MerkleDropClaim_Filter>;
   expiryTime?: InputMaybe<Scalars["Int"]["input"]>;
   expiryTime_gt?: InputMaybe<Scalars["Int"]["input"]>;
@@ -6416,10 +7212,15 @@ export interface MerkleDrop_Filter {
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
   merkleRoot?: InputMaybe<Scalars["Bytes"]["input"]>;
   merkleRoot_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  merkleRoot_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  merkleRoot_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   merkleRoot_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  merkleRoot_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  merkleRoot_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   merkleRoot_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   merkleRoot_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   merkleRoot_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<MerkleDrop_Filter>>>;
   startTime?: InputMaybe<Scalars["Int"]["input"]>;
   startTime_gt?: InputMaybe<Scalars["Int"]["input"]>;
   startTime_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -6449,16 +7250,15 @@ export interface MevTaxHookParams {
 export interface Mutation {
   __typename?: "Mutation";
   beetsPoolLoadReliquarySnapshotsForAllFarms: Scalars["String"]["output"];
-  beetsSyncFbeetsRatio: Scalars["String"]["output"];
+  createLBP: Scalars["Boolean"]["output"];
   poolLoadOnChainDataForAllPools: Array<GqlPoolMutationResult>;
   poolLoadSnapshotsForPools: Scalars["String"]["output"];
   poolReloadAllPoolAprs: Scalars["String"]["output"];
   poolReloadPools: Array<GqlPoolMutationResult>;
   poolReloadStakingForAllPools: Scalars["String"]["output"];
-  poolSyncAllCowSnapshots: Array<GqlPoolMutationResult>;
+  poolReloadSwaps: Scalars["String"]["output"];
   poolSyncAllPoolsFromSubgraph: Array<Scalars["String"]["output"]>;
   poolSyncFxQuoteTokens: Array<GqlPoolMutationResult>;
-  poolUpdateLifetimeValuesForAllPools: Scalars["String"]["output"];
   poolUpdateLiquidityValuesForAllPools: Scalars["String"]["output"];
   protocolCacheMetrics: Scalars["String"]["output"];
   sftmxSyncStakingData: Scalars["String"]["output"];
@@ -6471,9 +7271,6 @@ export interface Mutation {
   tokenSyncTokenDefinitions: Scalars["String"]["output"];
   userInitStakedBalances: Scalars["String"]["output"];
   userInitWalletBalancesForAllPools: Scalars["String"]["output"];
-  userInitWalletBalancesForPool: Scalars["String"]["output"];
-  userSyncBalance: Scalars["String"]["output"];
-  userSyncBalanceAllPools: Scalars["String"]["output"];
   userSyncChangedStakedBalances: Scalars["String"]["output"];
   userSyncChangedWalletBalancesForAllPools: Scalars["String"]["output"];
   veBalSyncAllUserBalances: Scalars["String"]["output"];
@@ -6484,13 +7281,17 @@ export interface MutationBeetsPoolLoadReliquarySnapshotsForAllFarmsArgs {
   chain: GqlChain;
 }
 
+export interface MutationCreateLbpArgs {
+  input: CreateLbpInput;
+}
+
 export interface MutationPoolLoadOnChainDataForAllPoolsArgs {
   chains: Array<GqlChain>;
 }
 
 export interface MutationPoolLoadSnapshotsForPoolsArgs {
-  poolIds: Array<Scalars["String"]["input"]>;
-  reload?: InputMaybe<Scalars["Boolean"]["input"]>;
+  chain: GqlChain;
+  poolId: Scalars["String"]["input"];
 }
 
 export interface MutationPoolReloadAllPoolAprsArgs {
@@ -6505,8 +7306,9 @@ export interface MutationPoolReloadStakingForAllPoolsArgs {
   stakingTypes: Array<GqlPoolStakingType>;
 }
 
-export interface MutationPoolSyncAllCowSnapshotsArgs {
-  chains: Array<GqlChain>;
+export interface MutationPoolReloadSwapsArgs {
+  chain: GqlChain;
+  poolId: Scalars["String"]["input"];
 }
 
 export interface MutationPoolSyncFxQuoteTokensArgs {
@@ -6536,14 +7338,6 @@ export interface MutationUserInitStakedBalancesArgs {
 
 export interface MutationUserInitWalletBalancesForAllPoolsArgs {
   chain?: InputMaybe<GqlChain>;
-}
-
-export interface MutationUserInitWalletBalancesForPoolArgs {
-  poolId: Scalars["String"]["input"];
-}
-
-export interface MutationUserSyncBalanceArgs {
-  poolId: Scalars["String"]["input"];
 }
 
 export enum OperationType {
@@ -6581,6 +7375,7 @@ export interface Pool {
   depositToken: Token;
   epsilon?: Maybe<Scalars["BigDecimal"]["output"]>;
   expiryTime?: Maybe<Scalars["BigInt"]["output"]>;
+  extraRewards: Array<ExtraReward>;
   factory?: Maybe<Scalars["Bytes"]["output"]>;
   factoryPoolData?: Maybe<FactoryPoolData>;
   /**
@@ -6739,6 +7534,14 @@ export interface PoolCircuitBreakersArgs {
   orderDirection?: InputMaybe<OrderDirection>;
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   where?: InputMaybe<CircuitBreaker_Filter>;
+}
+
+export interface PoolExtraRewardsArgs {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<ExtraReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  where?: InputMaybe<ExtraReward_Filter>;
 }
 
 export interface PoolHistoricalValuesArgs {
@@ -6926,6 +7729,7 @@ export interface PoolAccountRewards {
 export interface PoolAccountRewards_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<PoolAccountRewards_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -6934,6 +7738,7 @@ export interface PoolAccountRewards_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolAccountRewards_Filter>>>;
   poolAccount?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount_?: InputMaybe<PoolAccount_Filter>;
   poolAccount_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -6997,8 +7802,14 @@ export interface PoolAccountRewards_Filter {
 export enum PoolAccountRewards_OrderBy {
   Id = "id",
   PoolAccount = "poolAccount",
+  PoolAccountId = "poolAccount__id",
+  PoolAccountStaked = "poolAccount__staked",
   RewardPerTokenPaid = "rewardPerTokenPaid",
   RewardToken = "rewardToken",
+  RewardTokenDecimals = "rewardToken__decimals",
+  RewardTokenId = "rewardToken__id",
+  RewardTokenName = "rewardToken__name",
+  RewardTokenSymbol = "rewardToken__symbol",
   Rewards = "rewards",
 }
 
@@ -7026,6 +7837,7 @@ export interface PoolAccount_Filter {
   account_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  and?: InputMaybe<Array<InputMaybe<PoolAccount_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -7034,6 +7846,7 @@ export interface PoolAccount_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolAccount_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   pool_?: InputMaybe<Pool_Filter>;
   pool_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -7071,8 +7884,15 @@ export interface PoolAccount_Filter {
 
 export enum PoolAccount_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   Id = "id",
   Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   RewardPaidTransactions = "rewardPaidTransactions",
   Rewards = "rewards",
   Staked = "staked",
@@ -7192,15 +8012,6 @@ export enum PoolContract_OrderBy {
   PoolW = "pool__w",
   PoolWrappedIndex = "pool__wrappedIndex",
   PoolZ = "pool__z",
-}
-
-export interface PoolForBatchSwap {
-  __typename?: "PoolForBatchSwap";
-  allTokens?: Maybe<Array<TokenForBatchSwapPool>>;
-  id: Scalars["String"]["output"];
-  name: Scalars["String"]["output"];
-  symbol: Scalars["String"]["output"];
-  type: GqlPoolType;
 }
 
 export interface PoolHistoricalLiquidity {
@@ -7371,6 +8182,7 @@ export enum PoolHistoricalLiquidity_OrderBy {
 
 export interface PoolRewardData extends RewardData {
   __typename?: "PoolRewardData";
+  address: Scalars["Bytes"]["output"];
   /**
    * {pool.id}.{token.id}
    *
@@ -7388,6 +8200,17 @@ export interface PoolRewardData extends RewardData {
 export interface PoolRewardData_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  address?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  address_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  address_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<PoolRewardData_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -7404,6 +8227,7 @@ export interface PoolRewardData_Filter {
   lastUpdateTime_lte?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolRewardData_Filter>>>;
   periodFinish?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gt?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -7481,14 +8305,25 @@ export interface PoolRewardData_Filter {
 }
 
 export enum PoolRewardData_OrderBy {
+  Address = "address",
   Id = "id",
   LastUpdateTime = "lastUpdateTime",
   PeriodFinish = "periodFinish",
   Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   QueuedRewards = "queuedRewards",
   RewardPerTokenStored = "rewardPerTokenStored",
   RewardRate = "rewardRate",
   Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 export interface PoolRewardPaidTransaction extends PoolTransaction {
@@ -7504,9 +8339,14 @@ export interface PoolRewardPaidTransaction extends PoolTransaction {
 export interface PoolRewardPaidTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<PoolRewardPaidTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -7518,6 +8358,7 @@ export interface PoolRewardPaidTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolRewardPaidTransaction_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount_?: InputMaybe<PoolAccount_Filter>;
@@ -7583,6 +8424,14 @@ export enum PoolRewardPaidTransaction_OrderBy {
   Id = "id",
   Pool = "pool",
   PoolAccount = "poolAccount",
+  PoolAccountId = "poolAccount__id",
+  PoolAccountStaked = "poolAccount__staked",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   Reward = "reward",
   Timestamp = "timestamp",
 }
@@ -7960,9 +8809,14 @@ export interface PoolStakedTransaction_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<PoolStakedTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -7974,6 +8828,7 @@ export interface PoolStakedTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolStakedTransaction_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount_?: InputMaybe<PoolAccount_Filter>;
@@ -8032,6 +8887,14 @@ export enum PoolStakedTransaction_OrderBy {
   Id = "id",
   Pool = "pool",
   PoolAccount = "poolAccount",
+  PoolAccountId = "poolAccount__id",
+  PoolAccountStaked = "poolAccount__staked",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   Timestamp = "timestamp",
 }
 
@@ -8415,9 +9278,14 @@ export interface PoolTransaction {
 export interface PoolTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<PoolTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -8429,6 +9297,7 @@ export interface PoolTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolTransaction_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount_?: InputMaybe<PoolAccount_Filter>;
@@ -8486,6 +9355,14 @@ export enum PoolTransaction_OrderBy {
   Id = "id",
   Pool = "pool",
   PoolAccount = "poolAccount",
+  PoolAccountId = "poolAccount__id",
+  PoolAccountStaked = "poolAccount__staked",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   Timestamp = "timestamp",
 }
 
@@ -8510,9 +9387,14 @@ export interface PoolWithdrawnTransaction_Filter {
   amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<PoolWithdrawnTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -8524,6 +9406,7 @@ export interface PoolWithdrawnTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<PoolWithdrawnTransaction_Filter>>>;
   pool?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount?: InputMaybe<Scalars["String"]["input"]>;
   poolAccount_?: InputMaybe<PoolAccount_Filter>;
@@ -8582,6 +9465,14 @@ export enum PoolWithdrawnTransaction_OrderBy {
   Id = "id",
   Pool = "pool",
   PoolAccount = "poolAccount",
+  PoolAccountId = "poolAccount__id",
+  PoolAccountStaked = "poolAccount__staked",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
   Timestamp = "timestamp",
 }
 
@@ -8705,6 +9596,7 @@ export interface Pool_Filter {
   expiryTime_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
   expiryTime_not?: InputMaybe<Scalars["BigInt"]["input"]>;
   expiryTime_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  extraRewards_?: InputMaybe<ExtraReward_Filter>;
   factory?: InputMaybe<Scalars["Bytes"]["input"]>;
   factoryPoolData?: InputMaybe<Scalars["String"]["input"]>;
   factoryPoolData_?: InputMaybe<FactoryPoolData_Filter>;
@@ -9040,7 +9932,11 @@ export interface Pool_Filter {
   rewardPaidTransactions_?: InputMaybe<PoolRewardPaidTransaction_Filter>;
   rewardPool?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewardPool_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewardPool_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewardPool_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewardPool_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  rewardPool_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  rewardPool_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewardPool_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewardPool_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   rewardPool_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -9409,11 +10305,26 @@ export enum Pool_OrderBy {
   DSq = "dSq",
   Delta = "delta",
   DepositToken = "depositToken",
+  DepositTokenDecimals = "depositToken__decimals",
+  DepositTokenId = "depositToken__id",
+  DepositTokenName = "depositToken__name",
+  DepositTokenSymbol = "depositToken__symbol",
   Epsilon = "epsilon",
   ExpiryTime = "expiryTime",
+  ExtraRewards = "extraRewards",
   Factory = "factory",
   FactoryPoolData = "factoryPoolData",
+  FactoryPoolDataAddedAt = "factoryPoolData__addedAt",
+  FactoryPoolDataBalancerPoolId = "factoryPoolData__balancerPoolId",
+  FactoryPoolDataGauge = "factoryPoolData__gauge",
+  FactoryPoolDataId = "factoryPoolData__id",
+  FactoryPoolDataIsShutdown = "factoryPoolData__isShutdown",
+  FactoryPoolDataStash = "factoryPoolData__stash",
   Gauge = "gauge",
+  GaugeBalance = "gauge__balance",
+  GaugeId = "gauge__id",
+  GaugeTotalSupply = "gauge__totalSupply",
+  GaugeWorkingSupply = "gauge__workingSupply",
   HistoricalValues = "historicalValues",
   HoldersCount = "holdersCount",
   Id = "id",
@@ -9434,6 +10345,10 @@ export enum Pool_OrderBy {
   LatestAmpUpdateStartTimestamp = "latestAmpUpdate__startTimestamp",
   LowerTarget = "lowerTarget",
   LpToken = "lpToken",
+  LpTokenDecimals = "lpToken__decimals",
+  LpTokenId = "lpToken__id",
+  LpTokenName = "lpToken__name",
+  LpTokenSymbol = "lpToken__symbol",
   MainIndex = "mainIndex",
   ManagementAumFee = "managementAumFee",
   ManagementFee = "managementFee",
@@ -9456,6 +10371,10 @@ export enum Pool_OrderBy {
   RewardPaidTransactions = "rewardPaidTransactions",
   RewardPool = "rewardPool",
   RewardToken = "rewardToken",
+  RewardTokenDecimals = "rewardToken__decimals",
+  RewardTokenId = "rewardToken__id",
+  RewardTokenName = "rewardToken__name",
+  RewardTokenSymbol = "rewardToken__symbol",
   Root3Alpha = "root3Alpha",
   S = "s",
   Shares = "shares",
@@ -9760,6 +10679,36 @@ export enum ProtocolIdData_OrderBy {
   Name = "name",
 }
 
+export interface QuantAmmWeightedDetail {
+  __typename?: "QuantAMMWeightedDetail";
+  category: Scalars["String"]["output"];
+  name: Scalars["String"]["output"];
+  type: Scalars["String"]["output"];
+  value: Scalars["String"]["output"];
+}
+
+export interface QuantAmmWeightSnapshot {
+  __typename?: "QuantAmmWeightSnapshot";
+  timestamp: Scalars["Int"]["output"];
+  weights?: Maybe<Array<Scalars["Float"]["output"]>>;
+}
+
+export interface QuantAmmWeightedParams {
+  __typename?: "QuantAmmWeightedParams";
+  absoluteWeightGuardRail: Scalars["String"]["output"];
+  details: Array<QuantAmmWeightedDetail>;
+  epsilonMax: Scalars["String"]["output"];
+  lambda: Array<Scalars["String"]["output"]>;
+  lastInterpolationTimePossible: Scalars["String"]["output"];
+  lastUpdateIntervalTime: Scalars["String"]["output"];
+  maxTradeSizeRatio: Scalars["String"]["output"];
+  oracleStalenessThreshold: Scalars["String"]["output"];
+  poolRegistry: Scalars["String"]["output"];
+  updateInterval: Scalars["String"]["output"];
+  weightBlockMultipliers: Array<Scalars["String"]["output"]>;
+  weightsAtLastUpdateInterval: Array<Scalars["String"]["output"]>;
+}
+
 export interface Query {
   __typename?: "Query";
   /** Access to subgraph metadata */
@@ -9800,9 +10749,12 @@ export interface Query {
   blocksGetBlocksPerYear: Scalars["Float"]["output"];
   circuitBreaker?: Maybe<CircuitBreaker>;
   circuitBreakers: Array<CircuitBreaker>;
-  contentGetNewsItems: Array<GqlContentNewsItem>;
+  extraReward?: Maybe<ExtraReward>;
+  extraRewards: Array<ExtraReward>;
   factoryPoolData?: Maybe<FactoryPoolData>;
   factoryPoolDatas: Array<FactoryPoolData>;
+  fundedReward?: Maybe<FundedReward>;
+  fundedRewards: Array<FundedReward>;
   fxoracle?: Maybe<FxOracle>;
   fxoracles: Array<FxOracle>;
   gauge?: Maybe<Gauge>;
@@ -9815,7 +10767,7 @@ export interface Query {
   joinExits: Array<JoinExit>;
   latestPrice?: Maybe<LatestPrice>;
   latestPrices: Array<LatestPrice>;
-  latestSyncedBlocks: GqlLatestSyncedBlocks;
+  lbpPriceChart?: Maybe<Array<LbpPriceChartData>>;
   lockerDelegateChangedTransaction?: Maybe<LockerDelegateChangedTransaction>;
   lockerDelegateChangedTransactions: Array<LockerDelegateChangedTransaction>;
   lockerKickRewardTransaction?: Maybe<LockerKickRewardTransaction>;
@@ -9828,6 +10780,8 @@ export interface Query {
   lockerTransactions: Array<LockerTransaction>;
   lockerWithdrawnTransaction?: Maybe<LockerWithdrawnTransaction>;
   lockerWithdrawnTransactions: Array<LockerWithdrawnTransaction>;
+  /** Get the LoopS data */
+  loopsGetData: GqlLoopsData;
   managementOperation?: Maybe<ManagementOperation>;
   managementOperations: Array<ManagementOperation>;
   masterChef?: Maybe<MasterChef>;
@@ -9842,7 +10796,8 @@ export interface Query {
   merkleDrops: Array<MerkleDrop>;
   pool?: Maybe<Pool>;
   poolAccount?: Maybe<PoolAccount>;
-  poolAccountRewards: Array<PoolAccountRewards>;
+  poolAccountRewards?: Maybe<PoolAccountRewards>;
+  poolAccountRewards_collection: Array<PoolAccountRewards>;
   poolAccounts: Array<PoolAccount>;
   poolContract?: Maybe<PoolContract>;
   poolContracts: Array<PoolContract>;
@@ -9853,25 +10808,8 @@ export interface Query {
    * @deprecated Use aggregatorPools instead
    */
   poolGetAggregatorPools: Array<GqlPoolAggregator>;
-  /**
-   * Will de deprecated in favor of poolEvents
-   * @deprecated Use poolEvents instead
-   */
-  poolGetBatchSwaps: Array<GqlPoolBatchSwap>;
-  /** Getting swap, add and remove events with range */
-  poolGetEvents: Array<GqlPoolEvent>;
-  /**
-   * Will de deprecated in favor of poolGetFeaturedPools
-   * @deprecated Use poolGetFeaturedPools instead
-   */
-  poolGetFeaturedPoolGroups: Array<GqlPoolFeaturedPoolGroup>;
   /** Returns the list of featured pools for chains */
   poolGetFeaturedPools: Array<GqlPoolFeaturedPool>;
-  /**
-   * Will de deprecated in favor of poolEvents
-   * @deprecated Use poolEvents instead
-   */
-  poolGetJoinExits: Array<GqlPoolJoinExit>;
   /** Returns one pool. If a user address is provided, the user balances for the given pool will also be returned. */
   poolGetPool: GqlPoolBase;
   /** Returns all pools for a given filter */
@@ -9880,11 +10818,6 @@ export interface Query {
   poolGetPoolsCount: Scalars["Int"]["output"];
   /** Gets all the snapshots for a given pool on a chain for a certain range */
   poolGetSnapshots: Array<GqlPoolSnapshot>;
-  /**
-   * Will de deprecated in favor of poolEvents
-   * @deprecated Use poolEvents instead
-   */
-  poolGetSwaps: Array<GqlPoolSwap>;
   poolHistoricalLiquidities: Array<PoolHistoricalLiquidity>;
   poolHistoricalLiquidity?: Maybe<PoolHistoricalLiquidity>;
   poolRewardData?: Maybe<PoolRewardData>;
@@ -9910,6 +10843,8 @@ export interface Query {
   protocolIdDatas: Array<ProtocolIdData>;
   protocolMetricsAggregated: GqlProtocolMetricsAggregated;
   protocolMetricsChain: GqlProtocolMetricsChain;
+  queuedReward?: Maybe<QueuedReward>;
+  queuedRewards: Array<QueuedReward>;
   rewardData?: Maybe<RewardData>;
   rewardDatas: Array<RewardData>;
   /** Get the staking data and status for sFTMx */
@@ -9918,7 +10853,7 @@ export interface Query {
   sftmxGetStakingSnapshots: Array<GqlSftmxStakingSnapshot>;
   /** Retrieve the withdrawalrequests from a user */
   sftmxGetWithdrawalRequests: Array<GqlSftmxWithdrawalRequests>;
-  /** Get swap quote from the SOR v2 for the V2 vault */
+  /** Get swap quote from the SOR v2 */
   sorGetSwapPaths: GqlSorGetSwapPaths;
   /** Get the staking data and status for stS */
   stsGetGqlStakedSonicData: GqlStakedSonicData;
@@ -9978,10 +10913,16 @@ export interface Query {
   user?: Maybe<User>;
   userGetFbeetsBalance: GqlUserFbeetsBalance;
   userGetPoolBalances: Array<GqlUserPoolBalance>;
-  /** Will de deprecated in favor of poolGetEvents */
+  /**
+   * Will de deprecated in favor of poolGetEvents
+   * @deprecated Use poolEvents instead
+   */
   userGetPoolJoinExits: Array<GqlPoolJoinExit>;
   userGetStaking: Array<GqlPoolStaking>;
-  /** Will de deprecated in favor of poolGetEvents */
+  /**
+   * Will de deprecated in favor of poolGetEvents
+   * @deprecated Use poolEvents instead
+   */
   userGetSwaps: Array<GqlPoolSwap>;
   userInternalBalance?: Maybe<UserInternalBalance>;
   userInternalBalances: Array<UserInternalBalance>;
@@ -10222,8 +11163,20 @@ export interface QueryCircuitBreakersArgs {
   where?: InputMaybe<CircuitBreaker_Filter>;
 }
 
-export interface QueryContentGetNewsItemsArgs {
-  chain?: InputMaybe<GqlChain>;
+export interface QueryExtraRewardArgs {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"]["input"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface QueryExtraRewardsArgs {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<ExtraReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<ExtraReward_Filter>;
 }
 
 export interface QueryFactoryPoolDataArgs {
@@ -10240,6 +11193,22 @@ export interface QueryFactoryPoolDatasArgs {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<FactoryPoolData_Filter>;
+}
+
+export interface QueryFundedRewardArgs {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"]["input"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface QueryFundedRewardsArgs {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<FundedReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<FundedReward_Filter>;
 }
 
 export interface QueryFxoracleArgs {
@@ -10336,6 +11305,12 @@ export interface QueryLatestPricesArgs {
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   subgraphError?: _SubgraphErrorPolicy_;
   where?: InputMaybe<LatestPrice_Filter>;
+}
+
+export interface QueryLbpPriceChartArgs {
+  chain: GqlChain;
+  dataPoints?: InputMaybe<Scalars["Int"]["input"]>;
+  id: Scalars["String"]["input"];
 }
 
 export interface QueryLockerDelegateChangedTransactionArgs {
@@ -10544,6 +11519,12 @@ export interface QueryPoolAccountArgs {
 
 export interface QueryPoolAccountRewardsArgs {
   block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"]["input"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface QueryPoolAccountRewards_CollectionArgs {
+  block?: InputMaybe<Block_Height>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
   orderBy?: InputMaybe<PoolAccountRewards_OrderBy>;
   orderDirection?: InputMaybe<OrderDirection>;
@@ -10592,32 +11573,8 @@ export interface QueryPoolGetAggregatorPoolsArgs {
   where?: InputMaybe<GqlPoolFilter>;
 }
 
-export interface QueryPoolGetBatchSwapsArgs {
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<GqlPoolSwapFilter>;
-}
-
-export interface QueryPoolGetEventsArgs {
-  chain: GqlChain;
-  poolId: Scalars["String"]["input"];
-  range: GqlPoolEventsDataRange;
-  typeIn: Array<GqlPoolEventType>;
-  userAddress?: InputMaybe<Scalars["String"]["input"]>;
-}
-
-export interface QueryPoolGetFeaturedPoolGroupsArgs {
-  chains?: InputMaybe<Array<GqlChain>>;
-}
-
 export interface QueryPoolGetFeaturedPoolsArgs {
   chains: Array<GqlChain>;
-}
-
-export interface QueryPoolGetJoinExitsArgs {
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<GqlPoolJoinExitFilter>;
 }
 
 export interface QueryPoolGetPoolArgs {
@@ -10648,12 +11605,6 @@ export interface QueryPoolGetSnapshotsArgs {
   chain?: InputMaybe<GqlChain>;
   id: Scalars["String"]["input"];
   range: GqlPoolSnapshotDataRange;
-}
-
-export interface QueryPoolGetSwapsArgs {
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  where?: InputMaybe<GqlPoolSwapFilter>;
 }
 
 export interface QueryPoolHistoricalLiquiditiesArgs {
@@ -10848,6 +11799,22 @@ export interface QueryProtocolMetricsAggregatedArgs {
 
 export interface QueryProtocolMetricsChainArgs {
   chain?: InputMaybe<GqlChain>;
+}
+
+export interface QueryQueuedRewardArgs {
+  block?: InputMaybe<Block_Height>;
+  id: Scalars["ID"]["input"];
+  subgraphError?: _SubgraphErrorPolicy_;
+}
+
+export interface QueryQueuedRewardsArgs {
+  block?: InputMaybe<Block_Height>;
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  orderBy?: InputMaybe<QueuedReward_OrderBy>;
+  orderDirection?: InputMaybe<OrderDirection>;
+  skip?: InputMaybe<Scalars["Int"]["input"]>;
+  subgraphError?: _SubgraphErrorPolicy_;
+  where?: InputMaybe<QueuedReward_Filter>;
 }
 
 export interface QueryRewardDataArgs {
@@ -11283,6 +12250,134 @@ export interface QueryVeBalGetVotingListArgs {
   includeKilled?: InputMaybe<Scalars["Boolean"]["input"]>;
 }
 
+export interface QueuedReward {
+  __typename?: "QueuedReward";
+  amount: Scalars["BigInt"]["output"];
+  epoch: Scalars["BigInt"]["output"];
+  extraReward: ExtraReward;
+  /** pool.id + token.id + epoch + txHash */
+  id: Scalars["Bytes"]["output"];
+  pool: Pool;
+  token: Token;
+}
+
+export interface QueuedReward_Filter {
+  /** Filter for the block changed event. */
+  _change_block?: InputMaybe<BlockChangedFilter>;
+  amount?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  amount_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  amount_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  and?: InputMaybe<Array<InputMaybe<QueuedReward_Filter>>>;
+  epoch?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  epoch_lt?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_lte?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_not?: InputMaybe<Scalars["BigInt"]["input"]>;
+  epoch_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
+  extraReward?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_?: InputMaybe<ExtraReward_Filter>;
+  extraReward_contains?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_gt?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_gte?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  extraReward_lt?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_lte?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  extraReward_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  extraReward_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  id?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  id_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  id_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<QueuedReward_Filter>>>;
+  pool?: InputMaybe<Scalars["String"]["input"]>;
+  pool_?: InputMaybe<Pool_Filter>;
+  pool_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_gte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_lt?: InputMaybe<Scalars["String"]["input"]>;
+  pool_lte?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  pool_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  pool_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  token_?: InputMaybe<Token_Filter>;
+  token_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_gt?: InputMaybe<Scalars["String"]["input"]>;
+  token_gte?: InputMaybe<Scalars["String"]["input"]>;
+  token_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_lt?: InputMaybe<Scalars["String"]["input"]>;
+  token_lte?: InputMaybe<Scalars["String"]["input"]>;
+  token_not?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+}
+
+export enum QueuedReward_OrderBy {
+  Amount = "amount",
+  Epoch = "epoch",
+  ExtraReward = "extraReward",
+  ExtraRewardAmount = "extraReward__amount",
+  ExtraRewardId = "extraReward__id",
+  Id = "id",
+  Pool = "pool",
+  PoolId = "pool__id",
+  PoolIsFactoryPool = "pool__isFactoryPool",
+  PoolRewardPool = "pool__rewardPool",
+  PoolStartTime = "pool__startTime",
+  PoolTotalStaked = "pool__totalStaked",
+  PoolTotalSupply = "pool__totalSupply",
+  Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
+}
+
 export interface RewardData {
   /**
    * Last time any user took action
@@ -11310,6 +12405,7 @@ export interface RewardData {
 export interface RewardData_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<RewardData_Filter>>>;
   lastUpdateTime?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_gt?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -11318,6 +12414,7 @@ export interface RewardData_Filter {
   lastUpdateTime_lte?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<RewardData_Filter>>>;
   periodFinish?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gt?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -11371,6 +12468,10 @@ export enum RewardData_OrderBy {
   RewardPerTokenStored = "rewardPerTokenStored",
   RewardRate = "rewardRate",
   Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
 }
 
 /** StableSurge hook specific params. Percentage format is 0.01 -> 0.01%. */
@@ -11378,1179 +12479,6 @@ export interface StableSurgeHookParams {
   __typename?: "StableSurgeHookParams";
   maxSurgeFeePercentage?: Maybe<Scalars["String"]["output"]>;
   surgeThresholdPercentage?: Maybe<Scalars["String"]["output"]>;
-}
-
-export interface Subscription {
-  __typename?: "Subscription";
-  /** Access to subgraph metadata */
-  _meta?: Maybe<_Meta_>;
-  account?: Maybe<Account>;
-  accounts: Array<Account>;
-  ampUpdate?: Maybe<AmpUpdate>;
-  ampUpdates: Array<AmpUpdate>;
-  auraBalMintTransaction?: Maybe<AuraBalMintTransaction>;
-  auraBalMintTransactions: Array<AuraBalMintTransaction>;
-  auraLocker?: Maybe<AuraLocker>;
-  auraLockerAccount?: Maybe<AuraLockerAccount>;
-  auraLockerAccounts: Array<AuraLockerAccount>;
-  auraLockerRewardData?: Maybe<AuraLockerRewardData>;
-  auraLockerRewardDatas: Array<AuraLockerRewardData>;
-  auraLockerUserData?: Maybe<AuraLockerUserData>;
-  auraLockerUserDatas: Array<AuraLockerUserData>;
-  auraLockerUserLock?: Maybe<AuraLockerUserLock>;
-  auraLockerUserLocks: Array<AuraLockerUserLock>;
-  auraLockers: Array<AuraLocker>;
-  balancer?: Maybe<Balancer>;
-  balancerSnapshot?: Maybe<BalancerSnapshot>;
-  balancerSnapshots: Array<BalancerSnapshot>;
-  balancers: Array<Balancer>;
-  block?: Maybe<Block>;
-  blocks: Array<Block>;
-  circuitBreaker?: Maybe<CircuitBreaker>;
-  circuitBreakers: Array<CircuitBreaker>;
-  factoryPoolData?: Maybe<FactoryPoolData>;
-  factoryPoolDatas: Array<FactoryPoolData>;
-  fxoracle?: Maybe<FxOracle>;
-  fxoracles: Array<FxOracle>;
-  gauge?: Maybe<Gauge>;
-  gauges: Array<Gauge>;
-  global?: Maybe<Global>;
-  globals: Array<Global>;
-  gradualWeightUpdate?: Maybe<GradualWeightUpdate>;
-  gradualWeightUpdates: Array<GradualWeightUpdate>;
-  joinExit?: Maybe<JoinExit>;
-  joinExits: Array<JoinExit>;
-  latestPrice?: Maybe<LatestPrice>;
-  latestPrices: Array<LatestPrice>;
-  lockerDelegateChangedTransaction?: Maybe<LockerDelegateChangedTransaction>;
-  lockerDelegateChangedTransactions: Array<LockerDelegateChangedTransaction>;
-  lockerKickRewardTransaction?: Maybe<LockerKickRewardTransaction>;
-  lockerKickRewardTransactions: Array<LockerKickRewardTransaction>;
-  lockerRewardPaidTransaction?: Maybe<LockerRewardPaidTransaction>;
-  lockerRewardPaidTransactions: Array<LockerRewardPaidTransaction>;
-  lockerStakedTransaction?: Maybe<LockerStakedTransaction>;
-  lockerStakedTransactions: Array<LockerStakedTransaction>;
-  lockerTransaction?: Maybe<LockerTransaction>;
-  lockerTransactions: Array<LockerTransaction>;
-  lockerWithdrawnTransaction?: Maybe<LockerWithdrawnTransaction>;
-  lockerWithdrawnTransactions: Array<LockerWithdrawnTransaction>;
-  managementOperation?: Maybe<ManagementOperation>;
-  managementOperations: Array<ManagementOperation>;
-  masterChef?: Maybe<MasterChef>;
-  masterChefPoolInfo?: Maybe<MasterChefPoolInfo>;
-  masterChefPoolInfos: Array<MasterChefPoolInfo>;
-  masterChefUserInfo?: Maybe<MasterChefUserInfo>;
-  masterChefUserInfos: Array<MasterChefUserInfo>;
-  masterChefs: Array<MasterChef>;
-  merkleDrop?: Maybe<MerkleDrop>;
-  merkleDropClaim?: Maybe<MerkleDropClaim>;
-  merkleDropClaims: Array<MerkleDropClaim>;
-  merkleDrops: Array<MerkleDrop>;
-  pool?: Maybe<Pool>;
-  poolAccount?: Maybe<PoolAccount>;
-  poolAccountRewards: Array<PoolAccountRewards>;
-  poolAccounts: Array<PoolAccount>;
-  poolContract?: Maybe<PoolContract>;
-  poolContracts: Array<PoolContract>;
-  poolHistoricalLiquidities: Array<PoolHistoricalLiquidity>;
-  poolHistoricalLiquidity?: Maybe<PoolHistoricalLiquidity>;
-  poolRewardData?: Maybe<PoolRewardData>;
-  poolRewardDatas: Array<PoolRewardData>;
-  poolRewardPaidTransaction?: Maybe<PoolRewardPaidTransaction>;
-  poolRewardPaidTransactions: Array<PoolRewardPaidTransaction>;
-  poolShare?: Maybe<PoolShare>;
-  poolShares: Array<PoolShare>;
-  poolSnapshot?: Maybe<PoolSnapshot>;
-  poolSnapshots: Array<PoolSnapshot>;
-  poolStakedTransaction?: Maybe<PoolStakedTransaction>;
-  poolStakedTransactions: Array<PoolStakedTransaction>;
-  poolToken?: Maybe<PoolToken>;
-  poolTokens: Array<PoolToken>;
-  poolTransaction?: Maybe<PoolTransaction>;
-  poolTransactions: Array<PoolTransaction>;
-  poolWithdrawnTransaction?: Maybe<PoolWithdrawnTransaction>;
-  poolWithdrawnTransactions: Array<PoolWithdrawnTransaction>;
-  pools: Array<Pool>;
-  priceRateProvider?: Maybe<PriceRateProvider>;
-  priceRateProviders: Array<PriceRateProvider>;
-  protocolIdData?: Maybe<ProtocolIdData>;
-  protocolIdDatas: Array<ProtocolIdData>;
-  rewardData?: Maybe<RewardData>;
-  rewardDatas: Array<RewardData>;
-  swap?: Maybe<Swap>;
-  swapFeeUpdate?: Maybe<SwapFeeUpdate>;
-  swapFeeUpdates: Array<SwapFeeUpdate>;
-  swaps: Array<Swap>;
-  token?: Maybe<Token>;
-  tokenPrice?: Maybe<TokenPrice>;
-  tokenPrices: Array<TokenPrice>;
-  tokenSnapshot?: Maybe<TokenSnapshot>;
-  tokenSnapshots: Array<TokenSnapshot>;
-  tokens: Array<Token>;
-  tradePair?: Maybe<TradePair>;
-  tradePairSnapshot?: Maybe<TradePairSnapshot>;
-  tradePairSnapshots: Array<TradePairSnapshot>;
-  tradePairs: Array<TradePair>;
-  user?: Maybe<User>;
-  userInternalBalance?: Maybe<UserInternalBalance>;
-  userInternalBalances: Array<UserInternalBalance>;
-  users: Array<User>;
-  vault?: Maybe<Vault>;
-  vaultAccount?: Maybe<VaultAccount>;
-  vaultAccountReward?: Maybe<VaultAccountReward>;
-  vaultAccountRewards: Array<VaultAccountReward>;
-  vaultAccounts: Array<VaultAccount>;
-  vaultDepositTransaction?: Maybe<VaultDepositTransaction>;
-  vaultDepositTransactions: Array<VaultDepositTransaction>;
-  vaultHarvestTransaction?: Maybe<VaultHarvestTransaction>;
-  vaultHarvestTransactions: Array<VaultHarvestTransaction>;
-  vaultRewardData?: Maybe<VaultRewardData>;
-  vaultRewardDatas: Array<VaultRewardData>;
-  vaultRewardPaidTransaction?: Maybe<VaultRewardPaidTransaction>;
-  vaultRewardPaidTransactions: Array<VaultRewardPaidTransaction>;
-  vaultTransaction?: Maybe<VaultTransaction>;
-  vaultTransactions: Array<VaultTransaction>;
-  vaultWithdrawTransaction?: Maybe<VaultWithdrawTransaction>;
-  vaultWithdrawTransactions: Array<VaultWithdrawTransaction>;
-  vaults: Array<Vault>;
-}
-
-export interface Subscription_MetaArgs {
-  block?: InputMaybe<Block_Height>;
-}
-
-export interface SubscriptionAccountArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAccountsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Account_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Account_Filter>;
-}
-
-export interface SubscriptionAmpUpdateArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAmpUpdatesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AmpUpdate_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AmpUpdate_Filter>;
-}
-
-export interface SubscriptionAuraBalMintTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraBalMintTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraBalMintTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraBalMintTransaction_Filter>;
-}
-
-export interface SubscriptionAuraLockerArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraLockerAccountArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraLockerAccountsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraLockerAccount_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraLockerAccount_Filter>;
-}
-
-export interface SubscriptionAuraLockerRewardDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraLockerRewardDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraLockerRewardData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraLockerRewardData_Filter>;
-}
-
-export interface SubscriptionAuraLockerUserDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraLockerUserDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraLockerUserData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraLockerUserData_Filter>;
-}
-
-export interface SubscriptionAuraLockerUserLockArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionAuraLockerUserLocksArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraLockerUserLock_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraLockerUserLock_Filter>;
-}
-
-export interface SubscriptionAuraLockersArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<AuraLocker_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<AuraLocker_Filter>;
-}
-
-export interface SubscriptionBalancerArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionBalancerSnapshotArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionBalancerSnapshotsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<BalancerSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<BalancerSnapshot_Filter>;
-}
-
-export interface SubscriptionBalancersArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Balancer_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Balancer_Filter>;
-}
-
-export interface SubscriptionBlockArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionBlocksArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Block_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Block_Filter>;
-}
-
-export interface SubscriptionCircuitBreakerArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionCircuitBreakersArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<CircuitBreaker_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<CircuitBreaker_Filter>;
-}
-
-export interface SubscriptionFactoryPoolDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionFactoryPoolDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<FactoryPoolData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<FactoryPoolData_Filter>;
-}
-
-export interface SubscriptionFxoracleArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionFxoraclesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<FxOracle_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<FxOracle_Filter>;
-}
-
-export interface SubscriptionGaugeArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionGaugesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Gauge_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Gauge_Filter>;
-}
-
-export interface SubscriptionGlobalArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionGlobalsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Global_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Global_Filter>;
-}
-
-export interface SubscriptionGradualWeightUpdateArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionGradualWeightUpdatesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<GradualWeightUpdate_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<GradualWeightUpdate_Filter>;
-}
-
-export interface SubscriptionJoinExitArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionJoinExitsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<JoinExit_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<JoinExit_Filter>;
-}
-
-export interface SubscriptionLatestPriceArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLatestPricesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LatestPrice_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LatestPrice_Filter>;
-}
-
-export interface SubscriptionLockerDelegateChangedTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerDelegateChangedTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerDelegateChangedTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerDelegateChangedTransaction_Filter>;
-}
-
-export interface SubscriptionLockerKickRewardTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerKickRewardTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerKickRewardTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerKickRewardTransaction_Filter>;
-}
-
-export interface SubscriptionLockerRewardPaidTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerRewardPaidTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerRewardPaidTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerRewardPaidTransaction_Filter>;
-}
-
-export interface SubscriptionLockerStakedTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerStakedTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerStakedTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerStakedTransaction_Filter>;
-}
-
-export interface SubscriptionLockerTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerTransaction_Filter>;
-}
-
-export interface SubscriptionLockerWithdrawnTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionLockerWithdrawnTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LockerWithdrawnTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<LockerWithdrawnTransaction_Filter>;
-}
-
-export interface SubscriptionManagementOperationArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionManagementOperationsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<ManagementOperation_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<ManagementOperation_Filter>;
-}
-
-export interface SubscriptionMasterChefArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionMasterChefPoolInfoArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionMasterChefPoolInfosArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<MasterChefPoolInfo_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MasterChefPoolInfo_Filter>;
-}
-
-export interface SubscriptionMasterChefUserInfoArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionMasterChefUserInfosArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<MasterChefUserInfo_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MasterChefUserInfo_Filter>;
-}
-
-export interface SubscriptionMasterChefsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<MasterChef_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MasterChef_Filter>;
-}
-
-export interface SubscriptionMerkleDropArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionMerkleDropClaimArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionMerkleDropClaimsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<MerkleDropClaim_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MerkleDropClaim_Filter>;
-}
-
-export interface SubscriptionMerkleDropsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<MerkleDrop_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<MerkleDrop_Filter>;
-}
-
-export interface SubscriptionPoolArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolAccountArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolAccountRewardsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolAccountRewards_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolAccountRewards_Filter>;
-}
-
-export interface SubscriptionPoolAccountsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolAccount_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolAccount_Filter>;
-}
-
-export interface SubscriptionPoolContractArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolContractsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolContract_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolContract_Filter>;
-}
-
-export interface SubscriptionPoolHistoricalLiquiditiesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolHistoricalLiquidity_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolHistoricalLiquidity_Filter>;
-}
-
-export interface SubscriptionPoolHistoricalLiquidityArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolRewardDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolRewardDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolRewardData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolRewardData_Filter>;
-}
-
-export interface SubscriptionPoolRewardPaidTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolRewardPaidTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolRewardPaidTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolRewardPaidTransaction_Filter>;
-}
-
-export interface SubscriptionPoolShareArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolSharesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolShare_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolShare_Filter>;
-}
-
-export interface SubscriptionPoolSnapshotArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolSnapshotsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolSnapshot_Filter>;
-}
-
-export interface SubscriptionPoolStakedTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolStakedTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolStakedTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolStakedTransaction_Filter>;
-}
-
-export interface SubscriptionPoolTokenArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolTokensArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolToken_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolToken_Filter>;
-}
-
-export interface SubscriptionPoolTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolTransaction_Filter>;
-}
-
-export interface SubscriptionPoolWithdrawnTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPoolWithdrawnTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolWithdrawnTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PoolWithdrawnTransaction_Filter>;
-}
-
-export interface SubscriptionPoolsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Pool_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Pool_Filter>;
-}
-
-export interface SubscriptionPriceRateProviderArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionPriceRateProvidersArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PriceRateProvider_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<PriceRateProvider_Filter>;
-}
-
-export interface SubscriptionProtocolIdDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionProtocolIdDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<ProtocolIdData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<ProtocolIdData_Filter>;
-}
-
-export interface SubscriptionRewardDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionRewardDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<RewardData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<RewardData_Filter>;
-}
-
-export interface SubscriptionSwapArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionSwapFeeUpdateArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionSwapFeeUpdatesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<SwapFeeUpdate_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<SwapFeeUpdate_Filter>;
-}
-
-export interface SubscriptionSwapsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Swap_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Swap_Filter>;
-}
-
-export interface SubscriptionTokenArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionTokenPriceArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionTokenPricesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TokenPrice_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TokenPrice_Filter>;
-}
-
-export interface SubscriptionTokenSnapshotArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionTokenSnapshotsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TokenSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TokenSnapshot_Filter>;
-}
-
-export interface SubscriptionTokensArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Token_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Token_Filter>;
-}
-
-export interface SubscriptionTradePairArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionTradePairSnapshotArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionTradePairSnapshotsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TradePairSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TradePairSnapshot_Filter>;
-}
-
-export interface SubscriptionTradePairsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TradePair_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<TradePair_Filter>;
-}
-
-export interface SubscriptionUserArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionUserInternalBalanceArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionUserInternalBalancesArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<UserInternalBalance_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<UserInternalBalance_Filter>;
-}
-
-export interface SubscriptionUsersArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<User_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<User_Filter>;
-}
-
-export interface SubscriptionVaultArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultAccountArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultAccountRewardArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultAccountRewardsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultAccountReward_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultAccountReward_Filter>;
-}
-
-export interface SubscriptionVaultAccountsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultAccount_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultAccount_Filter>;
-}
-
-export interface SubscriptionVaultDepositTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultDepositTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultDepositTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultDepositTransaction_Filter>;
-}
-
-export interface SubscriptionVaultHarvestTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultHarvestTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultHarvestTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultHarvestTransaction_Filter>;
-}
-
-export interface SubscriptionVaultRewardDataArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultRewardDatasArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultRewardData_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultRewardData_Filter>;
-}
-
-export interface SubscriptionVaultRewardPaidTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultRewardPaidTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultRewardPaidTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultRewardPaidTransaction_Filter>;
-}
-
-export interface SubscriptionVaultTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultTransaction_Filter>;
-}
-
-export interface SubscriptionVaultWithdrawTransactionArgs {
-  block?: InputMaybe<Block_Height>;
-  id: Scalars["ID"]["input"];
-  subgraphError?: _SubgraphErrorPolicy_;
-}
-
-export interface SubscriptionVaultWithdrawTransactionsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<VaultWithdrawTransaction_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<VaultWithdrawTransaction_Filter>;
-}
-
-export interface SubscriptionVaultsArgs {
-  block?: InputMaybe<Block_Height>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Vault_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  subgraphError?: _SubgraphErrorPolicy_;
-  where?: InputMaybe<Vault_Filter>;
 }
 
 export interface Swap {
@@ -13023,14 +12951,6 @@ export interface Token {
   totalSwapCount: Scalars["BigInt"]["output"];
   totalVolumeNotional: Scalars["BigDecimal"]["output"];
   totalVolumeUSD: Scalars["BigDecimal"]["output"];
-}
-
-export interface TokenForBatchSwapPool {
-  __typename?: "TokenForBatchSwapPool";
-  address: Scalars["String"]["output"];
-  isNested: Scalars["Boolean"]["output"];
-  isPhantomBpt: Scalars["Boolean"]["output"];
-  weight?: Maybe<Scalars["BigDecimal"]["output"]>;
 }
 
 export interface TokenPrice {
@@ -14178,6 +14098,7 @@ export interface VaultAccountReward {
 export interface VaultAccountReward_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultAccountReward_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -14186,6 +14107,7 @@ export interface VaultAccountReward_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultAccountReward_Filter>>>;
   rewardPerTokenPaid?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardPerTokenPaid_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardPerTokenPaid_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -14250,8 +14172,14 @@ export enum VaultAccountReward_OrderBy {
   Id = "id",
   RewardPerTokenPaid = "rewardPerTokenPaid",
   RewardToken = "rewardToken",
+  RewardTokenDecimals = "rewardToken__decimals",
+  RewardTokenId = "rewardToken__id",
+  RewardTokenName = "rewardToken__name",
+  RewardTokenSymbol = "rewardToken__symbol",
   Rewards = "rewards",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
 }
 
 export interface VaultAccount_Filter {
@@ -14278,6 +14206,7 @@ export interface VaultAccount_Filter {
   account_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   account_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  and?: InputMaybe<Array<InputMaybe<VaultAccount_Filter>>>;
   depositTransactions_?: InputMaybe<VaultDepositTransaction_Filter>;
   harvestTransactions_?: InputMaybe<VaultHarvestTransaction_Filter>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
@@ -14288,6 +14217,7 @@ export interface VaultAccount_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultAccount_Filter>>>;
   rewardPaidTransactions_?: InputMaybe<VaultRewardPaidTransaction_Filter>;
   rewards_?: InputMaybe<VaultAccountReward_Filter>;
   shares?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -14324,6 +14254,7 @@ export interface VaultAccount_Filter {
 
 export enum VaultAccount_OrderBy {
   Account = "account",
+  AccountId = "account__id",
   DepositTransactions = "depositTransactions",
   HarvestTransactions = "harvestTransactions",
   Id = "id",
@@ -14331,6 +14262,13 @@ export enum VaultAccount_OrderBy {
   Rewards = "rewards",
   Shares = "shares",
   Vault = "vault",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
   WithdrawTransactions = "withdrawTransactions",
 }
 
@@ -14350,6 +14288,7 @@ export interface VaultDepositTransaction extends VaultTransaction {
 export interface VaultDepositTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultDepositTransaction_Filter>>>;
   assets?: InputMaybe<Scalars["BigInt"]["input"]>;
   assets_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   assets_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -14360,7 +14299,11 @@ export interface VaultDepositTransaction_Filter {
   assets_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14372,15 +14315,24 @@ export interface VaultDepositTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultDepositTransaction_Filter>>>;
   owner?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  owner_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   sender?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  sender_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14454,6 +14406,15 @@ export enum VaultDepositTransaction_OrderBy {
   Timestamp = "timestamp",
   Vault = "vault",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface VaultHarvestTransaction extends VaultTransaction {
@@ -14463,6 +14424,7 @@ export interface VaultHarvestTransaction extends VaultTransaction {
   id: Scalars["ID"]["output"];
   sender: Scalars["Bytes"]["output"];
   timestamp: Scalars["Int"]["output"];
+  token?: Maybe<Token>;
   vault: Vault;
   vaultAccount: VaultAccount;
 }
@@ -14470,6 +14432,7 @@ export interface VaultHarvestTransaction extends VaultTransaction {
 export interface VaultHarvestTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultHarvestTransaction_Filter>>>;
   harvested?: InputMaybe<Scalars["BigInt"]["input"]>;
   harvested_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   harvested_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -14480,7 +14443,11 @@ export interface VaultHarvestTransaction_Filter {
   harvested_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14492,9 +14459,14 @@ export interface VaultHarvestTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultHarvestTransaction_Filter>>>;
   sender?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  sender_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14506,6 +14478,27 @@ export interface VaultHarvestTransaction_Filter {
   timestamp_lte?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_not?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  token?: InputMaybe<Scalars["String"]["input"]>;
+  token_?: InputMaybe<Token_Filter>;
+  token_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_gt?: InputMaybe<Scalars["String"]["input"]>;
+  token_gte?: InputMaybe<Scalars["String"]["input"]>;
+  token_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_lt?: InputMaybe<Scalars["String"]["input"]>;
+  token_lte?: InputMaybe<Scalars["String"]["input"]>;
+  token_not?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_contains_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_ends_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_in?: InputMaybe<Array<Scalars["String"]["input"]>>;
+  token_not_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with?: InputMaybe<Scalars["String"]["input"]>;
+  token_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   vault?: InputMaybe<Scalars["String"]["input"]>;
   vaultAccount?: InputMaybe<Scalars["String"]["input"]>;
   vaultAccount_?: InputMaybe<VaultAccount_Filter>;
@@ -14556,8 +14549,22 @@ export enum VaultHarvestTransaction_OrderBy {
   Id = "id",
   Sender = "sender",
   Timestamp = "timestamp",
+  Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
   Vault = "vault",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface VaultRewardData extends RewardData {
@@ -14579,6 +14586,7 @@ export interface VaultRewardData extends RewardData {
 export interface VaultRewardData_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultRewardData_Filter>>>;
   id?: InputMaybe<Scalars["ID"]["input"]>;
   id_gt?: InputMaybe<Scalars["ID"]["input"]>;
   id_gte?: InputMaybe<Scalars["ID"]["input"]>;
@@ -14595,6 +14603,7 @@ export interface VaultRewardData_Filter {
   lastUpdateTime_lte?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not?: InputMaybe<Scalars["Int"]["input"]>;
   lastUpdateTime_not_in?: InputMaybe<Array<Scalars["Int"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultRewardData_Filter>>>;
   periodFinish?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gt?: InputMaybe<Scalars["Int"]["input"]>;
   periodFinish_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -14679,7 +14688,18 @@ export enum VaultRewardData_OrderBy {
   RewardPerTokenStored = "rewardPerTokenStored",
   RewardRate = "rewardRate",
   Token = "token",
+  TokenDecimals = "token__decimals",
+  TokenId = "token__id",
+  TokenName = "token__name",
+  TokenSymbol = "token__symbol",
   Vault = "vault",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface VaultRewardPaidTransaction extends VaultTransaction {
@@ -14696,9 +14716,14 @@ export interface VaultRewardPaidTransaction extends VaultTransaction {
 export interface VaultRewardPaidTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultRewardPaidTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14710,6 +14735,7 @@ export interface VaultRewardPaidTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultRewardPaidTransaction_Filter>>>;
   reward?: InputMaybe<Scalars["BigInt"]["input"]>;
   rewardData?: InputMaybe<Scalars["String"]["input"]>;
   rewardData_?: InputMaybe<VaultRewardData_Filter>;
@@ -14796,9 +14822,24 @@ export enum VaultRewardPaidTransaction_OrderBy {
   Id = "id",
   Reward = "reward",
   RewardData = "rewardData",
+  RewardDataId = "rewardData__id",
+  RewardDataLastUpdateTime = "rewardData__lastUpdateTime",
+  RewardDataPeriodFinish = "rewardData__periodFinish",
+  RewardDataQueuedRewards = "rewardData__queuedRewards",
+  RewardDataRewardPerTokenStored = "rewardData__rewardPerTokenStored",
+  RewardDataRewardRate = "rewardData__rewardRate",
   Timestamp = "timestamp",
   Vault = "vault",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface VaultTransaction {
@@ -14812,9 +14853,14 @@ export interface VaultTransaction {
 export interface VaultTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultTransaction_Filter>>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14826,6 +14872,7 @@ export interface VaultTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultTransaction_Filter>>>;
   timestamp?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gt?: InputMaybe<Scalars["Int"]["input"]>;
   timestamp_gte?: InputMaybe<Scalars["Int"]["input"]>;
@@ -14884,6 +14931,15 @@ export enum VaultTransaction_OrderBy {
   Timestamp = "timestamp",
   Vault = "vault",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface VaultWithdrawTransaction extends VaultTransaction {
@@ -14903,6 +14959,7 @@ export interface VaultWithdrawTransaction extends VaultTransaction {
 export interface VaultWithdrawTransaction_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
+  and?: InputMaybe<Array<InputMaybe<VaultWithdrawTransaction_Filter>>>;
   assets?: InputMaybe<Scalars["BigInt"]["input"]>;
   assets_gt?: InputMaybe<Scalars["BigInt"]["input"]>;
   assets_gte?: InputMaybe<Scalars["BigInt"]["input"]>;
@@ -14913,7 +14970,11 @@ export interface VaultWithdrawTransaction_Filter {
   assets_not_in?: InputMaybe<Array<Scalars["BigInt"]["input"]>>;
   hash?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  hash_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  hash_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   hash_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -14925,21 +14986,34 @@ export interface VaultWithdrawTransaction_Filter {
   id_lte?: InputMaybe<Scalars["ID"]["input"]>;
   id_not?: InputMaybe<Scalars["ID"]["input"]>;
   id_not_in?: InputMaybe<Array<Scalars["ID"]["input"]>>;
+  or?: InputMaybe<Array<InputMaybe<VaultWithdrawTransaction_Filter>>>;
   owner?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  owner_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  owner_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   owner_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   receiver?: InputMaybe<Scalars["Bytes"]["input"]>;
   receiver_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  receiver_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  receiver_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   receiver_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  receiver_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  receiver_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   receiver_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   receiver_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   receiver_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
   sender?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  sender_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  sender_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   sender_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -15014,12 +15088,22 @@ export enum VaultWithdrawTransaction_OrderBy {
   Timestamp = "timestamp",
   Vault = "vault",
   VaultAccount = "vaultAccount",
+  VaultAccountId = "vaultAccount__id",
+  VaultAccountShares = "vaultAccount__shares",
+  VaultDecimals = "vault__decimals",
+  VaultId = "vault__id",
+  VaultName = "vault__name",
+  VaultStrategy = "vault__strategy",
+  VaultSymbol = "vault__symbol",
+  VaultTotalSupply = "vault__totalSupply",
+  VaultTotalUnderlying = "vault__totalUnderlying",
 }
 
 export interface Vault_Filter {
   /** Filter for the block changed event. */
   _change_block?: InputMaybe<BlockChangedFilter>;
   accounts_?: InputMaybe<VaultAccount_Filter>;
+  and?: InputMaybe<Array<InputMaybe<Vault_Filter>>>;
   asset?: InputMaybe<Scalars["String"]["input"]>;
   asset_?: InputMaybe<Token_Filter>;
   asset_contains?: InputMaybe<Scalars["String"]["input"]>;
@@ -15079,11 +15163,16 @@ export interface Vault_Filter {
   name_not_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
   name_starts_with?: InputMaybe<Scalars["String"]["input"]>;
   name_starts_with_nocase?: InputMaybe<Scalars["String"]["input"]>;
+  or?: InputMaybe<Array<InputMaybe<Vault_Filter>>>;
   rewardData_?: InputMaybe<VaultRewardData_Filter>;
   rewardPaidTransactions_?: InputMaybe<VaultRewardPaidTransaction_Filter>;
   strategy?: InputMaybe<Scalars["Bytes"]["input"]>;
   strategy_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
+  strategy_gt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  strategy_gte?: InputMaybe<Scalars["Bytes"]["input"]>;
   strategy_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
+  strategy_lt?: InputMaybe<Scalars["Bytes"]["input"]>;
+  strategy_lte?: InputMaybe<Scalars["Bytes"]["input"]>;
   strategy_not?: InputMaybe<Scalars["Bytes"]["input"]>;
   strategy_not_contains?: InputMaybe<Scalars["Bytes"]["input"]>;
   strategy_not_in?: InputMaybe<Array<Scalars["Bytes"]["input"]>>;
@@ -15150,6 +15239,10 @@ export interface Vault_Filter {
 export enum Vault_OrderBy {
   Accounts = "accounts",
   Asset = "asset",
+  AssetDecimals = "asset__decimals",
+  AssetId = "asset__id",
+  AssetName = "asset__name",
+  AssetSymbol = "asset__symbol",
   Decimals = "decimals",
   DepositTransactions = "depositTransactions",
   HarvestTransactions = "harvestTransactions",
@@ -15162,6 +15255,10 @@ export enum Vault_OrderBy {
   TotalSupply = "totalSupply",
   TotalUnderlying = "totalUnderlying",
   Underlying = "underlying",
+  UnderlyingDecimals = "underlying__decimals",
+  UnderlyingId = "underlying__id",
+  UnderlyingName = "underlying__name",
+  UnderlyingSymbol = "underlying__symbol",
   WithdrawTransactions = "withdrawTransactions",
 }
 
@@ -15185,7 +15282,6 @@ export interface _Meta_ {
    * will be null if the _meta field has a block constraint that asks for
    * a block number. It will be filled if the _meta field has no block constraint
    * and therefore asks for the latest  block
-   *
    */
   block: _Block_;
   /** The deployment ID */
@@ -16117,25 +16213,6 @@ export type GetPoolDataQuery = {
   }>;
 };
 
-export type GetUserWalletPoolDataQueryVariables = Exact<{
-  userAddress: Scalars["String"]["input"];
-  block: Scalars["Int"]["input"];
-}>;
-
-export type GetUserWalletPoolDataQuery = {
-  __typename?: "Query";
-  poolShares: Array<{
-    __typename?: "PoolShare";
-    balance: any;
-    poolId: {
-      __typename?: "Pool";
-      id: string;
-      totalLiquidity: any;
-      totalShares: any;
-    };
-  }>;
-};
-
 export type GetPoolChartDataQueryVariables = Exact<{
   poolId: Scalars["String"]["input"];
   startTimestamp: Scalars["Int"]["input"];
@@ -16185,14 +16262,6 @@ export type BalancerPoolSwapFeeSnapshotQuery = {
   }>;
 };
 
-export type LatestPriceFragment = {
-  __typename?: "LatestPrice";
-  asset: any;
-  pricingAsset: any;
-  price: any;
-  poolId: { __typename?: "Pool"; id: string };
-};
-
 export type BalancerProtocolDataQueryVariables = Exact<{
   skip?: InputMaybe<Scalars["Int"]["input"]>;
   first?: InputMaybe<Scalars["Int"]["input"]>;
@@ -16212,80 +16281,6 @@ export type BalancerProtocolDataQuery = {
     totalSwapFee: any;
     poolCount: number;
     totalSwapCount: any;
-  }>;
-};
-
-export type BalancerUserQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerUserQuery = {
-  __typename?: "Query";
-  user?: {
-    __typename?: "User";
-    id: string;
-    sharesOwned?: Array<{
-      __typename?: "PoolShare";
-      balance: any;
-      poolId: { __typename?: "Pool"; id: string };
-    }> | null;
-  } | null;
-};
-
-export type BalancerUsersQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<User_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<User_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerUsersQuery = {
-  __typename?: "Query";
-  users: Array<{
-    __typename?: "User";
-    id: string;
-    sharesOwned?: Array<{
-      __typename?: "PoolShare";
-      balance: any;
-      poolId: { __typename?: "Pool"; id: string };
-    }> | null;
-  }>;
-};
-
-export type UserFragment = {
-  __typename?: "User";
-  id: string;
-  sharesOwned?: Array<{
-    __typename?: "PoolShare";
-    balance: any;
-    poolId: { __typename?: "Pool"; id: string };
-  }> | null;
-};
-
-export type BalancerTokenPricesQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TokenPrice_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TokenPrice_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerTokenPricesQuery = {
-  __typename?: "Query";
-  tokenPrices: Array<{
-    __typename?: "TokenPrice";
-    id: string;
-    asset: any;
-    amount: any;
-    pricingAsset: any;
-    price: any;
-    block: any;
-    timestamp: number;
-    poolId: { __typename?: "Pool"; id: string };
   }>;
 };
 
@@ -16345,113 +16340,6 @@ export type BalancerChartTokenPriceFragment = {
   timestamp: number;
   price: any;
   amount: any;
-};
-
-export type BalancerTokenPriceFragment = {
-  __typename?: "TokenPrice";
-  id: string;
-  asset: any;
-  amount: any;
-  pricingAsset: any;
-  price: any;
-  block: any;
-  timestamp: number;
-  poolId: { __typename?: "Pool"; id: string };
-};
-
-export type BalancerPoolFragment = {
-  __typename?: "Pool";
-  id: string;
-  address: any;
-  poolType?: string | null;
-  symbol?: string | null;
-  name?: string | null;
-  swapFee: any;
-  totalWeight?: any | null;
-  totalSwapVolume: any;
-  totalSwapFee: any;
-  totalLiquidity: any;
-  totalShares: any;
-  swapsCount: any;
-  holdersCount: any;
-  createTime: number;
-  owner?: any | null;
-  amp?: any | null;
-  factory?: any | null;
-  strategyType: number;
-  swapEnabled: boolean;
-  tokens?: Array<{
-    __typename?: "PoolToken";
-    id: string;
-    symbol: string;
-    name: string;
-    decimals: number;
-    address: string;
-    balance: any;
-    weight?: any | null;
-    priceRate: any;
-    poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-  }> | null;
-};
-
-export type BalancerPoolTokenFragment = {
-  __typename?: "PoolToken";
-  id: string;
-  symbol: string;
-  name: string;
-  decimals: number;
-  address: string;
-  balance: any;
-  weight?: any | null;
-  priceRate: any;
-  poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-};
-
-export type GetBalancerPoolsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Pool_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<Pool_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type GetBalancerPoolsQuery = {
-  __typename?: "Query";
-  pools: Array<{
-    __typename?: "Pool";
-    id: string;
-    address: any;
-    poolType?: string | null;
-    symbol?: string | null;
-    name?: string | null;
-    swapFee: any;
-    totalWeight?: any | null;
-    totalSwapVolume: any;
-    totalSwapFee: any;
-    totalLiquidity: any;
-    totalShares: any;
-    swapsCount: any;
-    holdersCount: any;
-    createTime: number;
-    owner?: any | null;
-    amp?: any | null;
-    factory?: any | null;
-    strategyType: number;
-    swapEnabled: boolean;
-    tokens?: Array<{
-      __typename?: "PoolToken";
-      id: string;
-      symbol: string;
-      name: string;
-      decimals: number;
-      address: string;
-      balance: any;
-      weight?: any | null;
-      priceRate: any;
-      poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-    }> | null;
-  }>;
 };
 
 export type GetBalancerPoolQueryVariables = Exact<{
@@ -16531,18 +16419,28 @@ export type GetBalancerPoolQuery = {
   } | null;
 };
 
-export type BalancerPoolTokensQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolToken_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<PoolToken_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerPoolTokensQuery = {
-  __typename?: "Query";
-  poolTokens: Array<{
+export type BalancerPoolFragment = {
+  __typename?: "Pool";
+  id: string;
+  address: any;
+  poolType?: string | null;
+  symbol?: string | null;
+  name?: string | null;
+  swapFee: any;
+  totalWeight?: any | null;
+  totalSwapVolume: any;
+  totalSwapFee: any;
+  totalLiquidity: any;
+  totalShares: any;
+  swapsCount: any;
+  holdersCount: any;
+  createTime: number;
+  owner?: any | null;
+  amp?: any | null;
+  factory?: any | null;
+  strategyType: number;
+  swapEnabled: boolean;
+  tokens?: Array<{
     __typename?: "PoolToken";
     id: string;
     symbol: string;
@@ -16553,107 +16451,20 @@ export type BalancerPoolTokensQuery = {
     weight?: any | null;
     priceRate: any;
     poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-  }>;
+  }> | null;
 };
 
-export type BalancerPoolHistoricalLiquiditiesQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolHistoricalLiquidity_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<PoolHistoricalLiquidity_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerPoolHistoricalLiquiditiesQuery = {
-  __typename?: "Query";
-  poolHistoricalLiquidities: Array<{
-    __typename?: "PoolHistoricalLiquidity";
-    id: string;
-    poolTotalShares: any;
-    poolLiquidity: any;
-    poolShareValue: any;
-    pricingAsset: any;
-    block: any;
-    poolId: { __typename?: "Pool"; id: string };
-  }>;
-};
-
-export type BalancerPoolSnapshotsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<PoolSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<PoolSnapshot_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerPoolSnapshotsQuery = {
-  __typename?: "Query";
-  poolSnapshots: Array<{
-    __typename?: "PoolSnapshot";
-    id: string;
-    totalShares: any;
-    swapVolume: any;
-    swapFees: any;
-    timestamp: number;
-    pool: { __typename?: "Pool"; id: string };
-  }>;
-};
-
-export type BalancerPoolSnapshotFragment = {
-  __typename?: "PoolSnapshot";
+export type BalancerPoolTokenFragment = {
+  __typename?: "PoolToken";
   id: string;
-  totalShares: any;
-  swapVolume: any;
-  swapFees: any;
-  timestamp: number;
-  pool: { __typename?: "Pool"; id: string };
-};
-
-export type BalancerLatestPricesQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LatestPrice_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<LatestPrice_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerLatestPricesQuery = {
-  __typename?: "Query";
-  latestPrices: Array<{
-    __typename?: "LatestPrice";
-    id: string;
-    asset: any;
-    price: any;
-    pricingAsset: any;
-    poolId: { __typename?: "Pool"; id: string };
-  }>;
-};
-
-export type BalancerJoinExitsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<JoinExit_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<JoinExit_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerJoinExitsQuery = {
-  __typename?: "Query";
-  joinExits: Array<{
-    __typename?: "JoinExit";
-    amounts: Array<any>;
-    valueUSD?: any | null;
-    id: string;
-    sender: any;
-    timestamp: number;
-    tx: any;
-    type: InvestType;
-    pool: { __typename?: "Pool"; id: string; tokensList: Array<any> };
-  }>;
+  symbol: string;
+  name: string;
+  decimals: number;
+  address: string;
+  balance: any;
+  weight?: any | null;
+  priceRate: any;
+  poolId?: { __typename?: "Pool"; id: string; address: any } | null;
 };
 
 export type BalancerJoinExitFragment = {
@@ -16666,136 +16477,6 @@ export type BalancerJoinExitFragment = {
   tx: any;
   type: InvestType;
   pool: { __typename?: "Pool"; id: string; tokensList: Array<any> };
-};
-
-export type BalancePortfolioDataQueryVariables = Exact<{
-  id: Scalars["ID"]["input"];
-  previousBlockNumber: Scalars["Int"]["input"];
-}>;
-
-export type BalancePortfolioDataQuery = {
-  __typename?: "Query";
-  user?: {
-    __typename?: "User";
-    id: string;
-    sharesOwned?: Array<{
-      __typename?: "PoolShare";
-      balance: any;
-      poolId: { __typename?: "Pool"; id: string };
-    }> | null;
-  } | null;
-  pools: Array<{
-    __typename?: "Pool";
-    id: string;
-    address: any;
-    poolType?: string | null;
-    symbol?: string | null;
-    name?: string | null;
-    swapFee: any;
-    totalWeight?: any | null;
-    totalSwapVolume: any;
-    totalSwapFee: any;
-    totalLiquidity: any;
-    totalShares: any;
-    swapsCount: any;
-    holdersCount: any;
-    createTime: number;
-    owner?: any | null;
-    amp?: any | null;
-    factory?: any | null;
-    strategyType: number;
-    swapEnabled: boolean;
-    tokens?: Array<{
-      __typename?: "PoolToken";
-      id: string;
-      symbol: string;
-      name: string;
-      decimals: number;
-      address: string;
-      balance: any;
-      weight?: any | null;
-      priceRate: any;
-      poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-    }> | null;
-  }>;
-  previousUser?: {
-    __typename?: "User";
-    id: string;
-    sharesOwned?: Array<{
-      __typename?: "PoolShare";
-      balance: any;
-      poolId: { __typename?: "Pool"; id: string };
-    }> | null;
-  } | null;
-  previousPools: Array<{
-    __typename?: "Pool";
-    id: string;
-    address: any;
-    poolType?: string | null;
-    symbol?: string | null;
-    name?: string | null;
-    swapFee: any;
-    totalWeight?: any | null;
-    totalSwapVolume: any;
-    totalSwapFee: any;
-    totalLiquidity: any;
-    totalShares: any;
-    swapsCount: any;
-    holdersCount: any;
-    createTime: number;
-    owner?: any | null;
-    amp?: any | null;
-    factory?: any | null;
-    strategyType: number;
-    swapEnabled: boolean;
-    tokens?: Array<{
-      __typename?: "PoolToken";
-      id: string;
-      symbol: string;
-      name: string;
-      decimals: number;
-      address: string;
-      balance: any;
-      weight?: any | null;
-      priceRate: any;
-      poolId?: { __typename?: "Pool"; id: string; address: any } | null;
-    }> | null;
-  }>;
-};
-
-export type BalancerSwapsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Swap_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<Swap_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerSwapsQuery = {
-  __typename?: "Query";
-  swaps: Array<{
-    __typename?: "Swap";
-    id: string;
-    caller: any;
-    tokenIn: any;
-    tokenInSym: string;
-    tokenOut: any;
-    tokenOutSym: string;
-    tokenAmountIn: any;
-    tokenAmountOut: any;
-    valueUSD: any;
-    timestamp: number;
-    tx: any;
-    poolId: {
-      __typename?: "Pool";
-      id: string;
-      name?: string | null;
-      address: any;
-      swapFee: any;
-    };
-    userAddress: { __typename?: "User"; id: string };
-  }>;
 };
 
 export type BalancerSwapFragment = {
@@ -16821,33 +16502,6 @@ export type BalancerSwapFragment = {
   userAddress: { __typename?: "User"; id: string };
 };
 
-export type GetBalancerTokensQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<Token_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<Token_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type GetBalancerTokensQuery = {
-  __typename?: "Query";
-  tokens: Array<{
-    __typename?: "Token";
-    id: string;
-    address: string;
-    decimals: number;
-    name: string;
-    symbol: string;
-    totalBalanceUSD: any;
-    totalBalanceNotional: any;
-    totalVolumeUSD: any;
-    totalVolumeNotional: any;
-    totalSwapCount: any;
-    latestUSDPrice?: any | null;
-  }>;
-};
-
 export type BalancerTokenFragment = {
   __typename?: "Token";
   id: string;
@@ -16863,111 +16517,6 @@ export type BalancerTokenFragment = {
   latestUSDPrice?: any | null;
 };
 
-export type BalancerTradePairsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<TradePair_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<TradePair_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type BalancerTradePairsQuery = {
-  __typename?: "Query";
-  tradePairs: Array<{
-    __typename?: "TradePair";
-    id: string;
-    totalSwapVolume: any;
-    totalSwapFee: any;
-    token0: {
-      __typename?: "Token";
-      id: string;
-      address: string;
-      decimals: number;
-      name: string;
-      symbol: string;
-      totalBalanceUSD: any;
-      totalBalanceNotional: any;
-      totalVolumeUSD: any;
-      totalVolumeNotional: any;
-      totalSwapCount: any;
-      latestUSDPrice?: any | null;
-    };
-    token1: {
-      __typename?: "Token";
-      id: string;
-      address: string;
-      decimals: number;
-      name: string;
-      symbol: string;
-      totalBalanceUSD: any;
-      totalBalanceNotional: any;
-      totalVolumeUSD: any;
-      totalVolumeNotional: any;
-      totalSwapCount: any;
-      latestUSDPrice?: any | null;
-    };
-  }>;
-};
-
-export type BalancerTradePairFragment = {
-  __typename?: "TradePair";
-  id: string;
-  totalSwapVolume: any;
-  totalSwapFee: any;
-  token0: {
-    __typename?: "Token";
-    id: string;
-    address: string;
-    decimals: number;
-    name: string;
-    symbol: string;
-    totalBalanceUSD: any;
-    totalBalanceNotional: any;
-    totalVolumeUSD: any;
-    totalVolumeNotional: any;
-    totalSwapCount: any;
-    latestUSDPrice?: any | null;
-  };
-  token1: {
-    __typename?: "Token";
-    id: string;
-    address: string;
-    decimals: number;
-    name: string;
-    symbol: string;
-    totalBalanceUSD: any;
-    totalBalanceNotional: any;
-    totalVolumeUSD: any;
-    totalVolumeNotional: any;
-    totalSwapCount: any;
-    latestUSDPrice?: any | null;
-  };
-};
-
-export type GetBalancerSnapshotsQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<BalancerSnapshot_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<BalancerSnapshot_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type GetBalancerSnapshotsQuery = {
-  __typename?: "Query";
-  balancerSnapshots: Array<{
-    __typename?: "BalancerSnapshot";
-    id: string;
-    timestamp: number;
-    poolCount: number;
-    totalLiquidity: any;
-    totalSwapCount: any;
-    totalSwapVolume: any;
-    totalSwapFee: any;
-  }>;
-};
-
 export type BalancerSnapshotFragment = {
   __typename?: "BalancerSnapshot";
   id: string;
@@ -16977,26 +16526,6 @@ export type BalancerSnapshotFragment = {
   totalSwapCount: any;
   totalSwapVolume: any;
   totalSwapFee: any;
-};
-
-export type GetLatestPricesQueryVariables = Exact<{
-  skip?: InputMaybe<Scalars["Int"]["input"]>;
-  first?: InputMaybe<Scalars["Int"]["input"]>;
-  orderBy?: InputMaybe<LatestPrice_OrderBy>;
-  orderDirection?: InputMaybe<OrderDirection>;
-  where?: InputMaybe<LatestPrice_Filter>;
-  block?: InputMaybe<Block_Height>;
-}>;
-
-export type GetLatestPricesQuery = {
-  __typename?: "Query";
-  latestPrices: Array<{
-    __typename?: "LatestPrice";
-    asset: any;
-    pricingAsset: any;
-    price: any;
-    poolId: { __typename?: "Pool"; id: string };
-  }>;
 };
 
 export type GetLatestBlockQueryVariables = Exact<{ [key: string]: never }>;
@@ -17114,47 +16643,12 @@ export const TokenSnapshotFragmentDoc = gql`
     totalSwapCount
   }
 `;
-export const LatestPriceFragmentDoc = gql`
-  fragment LatestPrice on LatestPrice {
-    asset
-    pricingAsset
-    price
-    poolId {
-      id
-    }
-  }
-`;
-export const UserFragmentDoc = gql`
-  fragment User on User {
-    id
-    sharesOwned(first: 1000) {
-      balance
-      poolId {
-        id
-      }
-    }
-  }
-`;
 export const BalancerChartTokenPriceFragmentDoc = gql`
   fragment BalancerChartTokenPrice on TokenPrice {
     id
     timestamp
     price
     amount
-  }
-`;
-export const BalancerTokenPriceFragmentDoc = gql`
-  fragment BalancerTokenPrice on TokenPrice {
-    id
-    poolId {
-      id
-    }
-    asset
-    amount
-    pricingAsset
-    price
-    block
-    timestamp
   }
 `;
 export const BalancerPoolTokenFragmentDoc = gql`
@@ -17199,18 +16693,6 @@ export const BalancerPoolFragmentDoc = gql`
     }
   }
   ${BalancerPoolTokenFragmentDoc}
-`;
-export const BalancerPoolSnapshotFragmentDoc = gql`
-  fragment BalancerPoolSnapshot on PoolSnapshot {
-    id
-    pool {
-      id
-    }
-    totalShares
-    swapVolume
-    swapFees
-    timestamp
-  }
 `;
 export const BalancerJoinExitFragmentDoc = gql`
   fragment BalancerJoinExit on JoinExit {
@@ -17265,20 +16747,6 @@ export const BalancerTokenFragmentDoc = gql`
     totalSwapCount
     latestUSDPrice
   }
-`;
-export const BalancerTradePairFragmentDoc = gql`
-  fragment BalancerTradePair on TradePair {
-    id
-    token0 {
-      ...BalancerToken
-    }
-    token1 {
-      ...BalancerToken
-    }
-    totalSwapVolume
-    totalSwapFee
-  }
-  ${BalancerTokenFragmentDoc}
 `;
 export const BalancerSnapshotFragmentDoc = gql`
   fragment BalancerSnapshot on BalancerSnapshot {
@@ -18776,74 +18244,6 @@ export type GetPoolDataQueryResult = Apollo.QueryResult<
   GetPoolDataQuery,
   GetPoolDataQueryVariables
 >;
-export const GetUserWalletPoolDataDocument = gql`
-  query GetUserWalletPoolData($userAddress: String!, $block: Int!) {
-    poolShares(
-      block: { number: $block }
-      first: 1000
-      where: { userAddress: $userAddress, balance_gt: 0 }
-    ) {
-      balance
-      poolId {
-        id
-        totalLiquidity
-        totalShares
-      }
-    }
-  }
-`;
-
-/**
- * __useGetUserWalletPoolDataQuery__
- *
- * To run a query within a React component, call `useGetUserWalletPoolDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserWalletPoolDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserWalletPoolDataQuery({
- *   variables: {
- *      userAddress: // value for 'userAddress'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useGetUserWalletPoolDataQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetUserWalletPoolDataQuery,
-    GetUserWalletPoolDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetUserWalletPoolDataQuery,
-    GetUserWalletPoolDataQueryVariables
-  >(GetUserWalletPoolDataDocument, options);
-}
-export function useGetUserWalletPoolDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetUserWalletPoolDataQuery,
-    GetUserWalletPoolDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetUserWalletPoolDataQuery,
-    GetUserWalletPoolDataQueryVariables
-  >(GetUserWalletPoolDataDocument, options);
-}
-export type GetUserWalletPoolDataQueryHookResult = ReturnType<
-  typeof useGetUserWalletPoolDataQuery
->;
-export type GetUserWalletPoolDataLazyQueryHookResult = ReturnType<
-  typeof useGetUserWalletPoolDataLazyQuery
->;
-export type GetUserWalletPoolDataQueryResult = Apollo.QueryResult<
-  GetUserWalletPoolDataQuery,
-  GetUserWalletPoolDataQueryVariables
->;
 export const GetPoolChartDataDocument = gql`
   query GetPoolChartData($poolId: String!, $startTimestamp: Int!) {
     poolSnapshots(
@@ -19080,222 +18480,6 @@ export type BalancerProtocolDataQueryResult = Apollo.QueryResult<
   BalancerProtocolDataQuery,
   BalancerProtocolDataQueryVariables
 >;
-export const BalancerUserDocument = gql`
-  query BalancerUser($id: ID!, $block: Block_height) {
-    user(id: $id, block: $block) {
-      ...User
-    }
-  }
-  ${UserFragmentDoc}
-`;
-
-/**
- * __useBalancerUserQuery__
- *
- * To run a query within a React component, call `useBalancerUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerUserQuery({
- *   variables: {
- *      id: // value for 'id'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerUserQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    BalancerUserQuery,
-    BalancerUserQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<BalancerUserQuery, BalancerUserQueryVariables>(
-    BalancerUserDocument,
-    options
-  );
-}
-export function useBalancerUserLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerUserQuery,
-    BalancerUserQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<BalancerUserQuery, BalancerUserQueryVariables>(
-    BalancerUserDocument,
-    options
-  );
-}
-export type BalancerUserQueryHookResult = ReturnType<
-  typeof useBalancerUserQuery
->;
-export type BalancerUserLazyQueryHookResult = ReturnType<
-  typeof useBalancerUserLazyQuery
->;
-export type BalancerUserQueryResult = Apollo.QueryResult<
-  BalancerUserQuery,
-  BalancerUserQueryVariables
->;
-export const BalancerUsersDocument = gql`
-  query BalancerUsers(
-    $skip: Int
-    $first: Int
-    $orderBy: User_orderBy
-    $orderDirection: OrderDirection
-    $where: User_filter
-    $block: Block_height
-  ) {
-    users(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...User
-    }
-  }
-  ${UserFragmentDoc}
-`;
-
-/**
- * __useBalancerUsersQuery__
- *
- * To run a query within a React component, call `useBalancerUsersQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerUsersQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerUsersQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerUsersQuery,
-    BalancerUsersQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<BalancerUsersQuery, BalancerUsersQueryVariables>(
-    BalancerUsersDocument,
-    options
-  );
-}
-export function useBalancerUsersLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerUsersQuery,
-    BalancerUsersQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<BalancerUsersQuery, BalancerUsersQueryVariables>(
-    BalancerUsersDocument,
-    options
-  );
-}
-export type BalancerUsersQueryHookResult = ReturnType<
-  typeof useBalancerUsersQuery
->;
-export type BalancerUsersLazyQueryHookResult = ReturnType<
-  typeof useBalancerUsersLazyQuery
->;
-export type BalancerUsersQueryResult = Apollo.QueryResult<
-  BalancerUsersQuery,
-  BalancerUsersQueryVariables
->;
-export const BalancerTokenPricesDocument = gql`
-  query BalancerTokenPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: TokenPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: TokenPrice_filter
-    $block: Block_height
-  ) {
-    tokenPrices(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerTokenPrice
-    }
-  }
-  ${BalancerTokenPriceFragmentDoc}
-`;
-
-/**
- * __useBalancerTokenPricesQuery__
- *
- * To run a query within a React component, call `useBalancerTokenPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerTokenPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerTokenPricesQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerTokenPricesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerTokenPricesQuery,
-    BalancerTokenPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerTokenPricesQuery,
-    BalancerTokenPricesQueryVariables
-  >(BalancerTokenPricesDocument, options);
-}
-export function useBalancerTokenPricesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerTokenPricesQuery,
-    BalancerTokenPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerTokenPricesQuery,
-    BalancerTokenPricesQueryVariables
-  >(BalancerTokenPricesDocument, options);
-}
-export type BalancerTokenPricesQueryHookResult = ReturnType<
-  typeof useBalancerTokenPricesQuery
->;
-export type BalancerTokenPricesLazyQueryHookResult = ReturnType<
-  typeof useBalancerTokenPricesLazyQuery
->;
-export type BalancerTokenPricesQueryResult = Apollo.QueryResult<
-  BalancerTokenPricesQuery,
-  BalancerTokenPricesQueryVariables
->;
 export const BalancerChartTokenPricesDocument = gql`
   query BalancerChartTokenPrices($asset: Bytes!) {
     prices1: tokenPrices(
@@ -19406,84 +18590,6 @@ export type BalancerChartTokenPricesQueryResult = Apollo.QueryResult<
   BalancerChartTokenPricesQuery,
   BalancerChartTokenPricesQueryVariables
 >;
-export const GetBalancerPoolsDocument = gql`
-  query GetBalancerPools(
-    $skip: Int
-    $first: Int
-    $orderBy: Pool_orderBy
-    $orderDirection: OrderDirection
-    $where: Pool_filter
-    $block: Block_height
-  ) {
-    pools(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerPool
-    }
-  }
-  ${BalancerPoolFragmentDoc}
-`;
-
-/**
- * __useGetBalancerPoolsQuery__
- *
- * To run a query within a React component, call `useGetBalancerPoolsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBalancerPoolsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBalancerPoolsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useGetBalancerPoolsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetBalancerPoolsQuery,
-    GetBalancerPoolsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetBalancerPoolsQuery, GetBalancerPoolsQueryVariables>(
-    GetBalancerPoolsDocument,
-    options
-  );
-}
-export function useGetBalancerPoolsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetBalancerPoolsQuery,
-    GetBalancerPoolsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetBalancerPoolsQuery,
-    GetBalancerPoolsQueryVariables
-  >(GetBalancerPoolsDocument, options);
-}
-export type GetBalancerPoolsQueryHookResult = ReturnType<
-  typeof useGetBalancerPoolsQuery
->;
-export type GetBalancerPoolsLazyQueryHookResult = ReturnType<
-  typeof useGetBalancerPoolsLazyQuery
->;
-export type GetBalancerPoolsQueryResult = Apollo.QueryResult<
-  GetBalancerPoolsQuery,
-  GetBalancerPoolsQueryVariables
->;
 export const GetBalancerPoolDocument = gql`
   query GetBalancerPool($id: ID!, $block24: Block_height) {
     pool(id: $id) {
@@ -19546,872 +18652,6 @@ export type GetBalancerPoolLazyQueryHookResult = ReturnType<
 export type GetBalancerPoolQueryResult = Apollo.QueryResult<
   GetBalancerPoolQuery,
   GetBalancerPoolQueryVariables
->;
-export const BalancerPoolTokensDocument = gql`
-  query BalancerPoolTokens(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolToken_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolToken_filter
-    $block: Block_height
-  ) {
-    poolTokens(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerPoolToken
-    }
-  }
-  ${BalancerPoolTokenFragmentDoc}
-`;
-
-/**
- * __useBalancerPoolTokensQuery__
- *
- * To run a query within a React component, call `useBalancerPoolTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerPoolTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerPoolTokensQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerPoolTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerPoolTokensQuery,
-    BalancerPoolTokensQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerPoolTokensQuery,
-    BalancerPoolTokensQueryVariables
-  >(BalancerPoolTokensDocument, options);
-}
-export function useBalancerPoolTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerPoolTokensQuery,
-    BalancerPoolTokensQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerPoolTokensQuery,
-    BalancerPoolTokensQueryVariables
-  >(BalancerPoolTokensDocument, options);
-}
-export type BalancerPoolTokensQueryHookResult = ReturnType<
-  typeof useBalancerPoolTokensQuery
->;
-export type BalancerPoolTokensLazyQueryHookResult = ReturnType<
-  typeof useBalancerPoolTokensLazyQuery
->;
-export type BalancerPoolTokensQueryResult = Apollo.QueryResult<
-  BalancerPoolTokensQuery,
-  BalancerPoolTokensQueryVariables
->;
-export const BalancerPoolHistoricalLiquiditiesDocument = gql`
-  query BalancerPoolHistoricalLiquidities(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolHistoricalLiquidity_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolHistoricalLiquidity_filter
-    $block: Block_height
-  ) {
-    poolHistoricalLiquidities(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      id
-      poolId {
-        id
-      }
-      poolTotalShares
-      poolLiquidity
-      poolShareValue
-      pricingAsset
-      block
-    }
-  }
-`;
-
-/**
- * __useBalancerPoolHistoricalLiquiditiesQuery__
- *
- * To run a query within a React component, call `useBalancerPoolHistoricalLiquiditiesQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerPoolHistoricalLiquiditiesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerPoolHistoricalLiquiditiesQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerPoolHistoricalLiquiditiesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerPoolHistoricalLiquiditiesQuery,
-    BalancerPoolHistoricalLiquiditiesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerPoolHistoricalLiquiditiesQuery,
-    BalancerPoolHistoricalLiquiditiesQueryVariables
-  >(BalancerPoolHistoricalLiquiditiesDocument, options);
-}
-export function useBalancerPoolHistoricalLiquiditiesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerPoolHistoricalLiquiditiesQuery,
-    BalancerPoolHistoricalLiquiditiesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerPoolHistoricalLiquiditiesQuery,
-    BalancerPoolHistoricalLiquiditiesQueryVariables
-  >(BalancerPoolHistoricalLiquiditiesDocument, options);
-}
-export type BalancerPoolHistoricalLiquiditiesQueryHookResult = ReturnType<
-  typeof useBalancerPoolHistoricalLiquiditiesQuery
->;
-export type BalancerPoolHistoricalLiquiditiesLazyQueryHookResult = ReturnType<
-  typeof useBalancerPoolHistoricalLiquiditiesLazyQuery
->;
-export type BalancerPoolHistoricalLiquiditiesQueryResult = Apollo.QueryResult<
-  BalancerPoolHistoricalLiquiditiesQuery,
-  BalancerPoolHistoricalLiquiditiesQueryVariables
->;
-export const BalancerPoolSnapshotsDocument = gql`
-  query BalancerPoolSnapshots(
-    $skip: Int
-    $first: Int
-    $orderBy: PoolSnapshot_orderBy
-    $orderDirection: OrderDirection
-    $where: PoolSnapshot_filter
-    $block: Block_height
-  ) {
-    poolSnapshots(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerPoolSnapshot
-    }
-  }
-  ${BalancerPoolSnapshotFragmentDoc}
-`;
-
-/**
- * __useBalancerPoolSnapshotsQuery__
- *
- * To run a query within a React component, call `useBalancerPoolSnapshotsQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerPoolSnapshotsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerPoolSnapshotsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerPoolSnapshotsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerPoolSnapshotsQuery,
-    BalancerPoolSnapshotsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerPoolSnapshotsQuery,
-    BalancerPoolSnapshotsQueryVariables
-  >(BalancerPoolSnapshotsDocument, options);
-}
-export function useBalancerPoolSnapshotsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerPoolSnapshotsQuery,
-    BalancerPoolSnapshotsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerPoolSnapshotsQuery,
-    BalancerPoolSnapshotsQueryVariables
-  >(BalancerPoolSnapshotsDocument, options);
-}
-export type BalancerPoolSnapshotsQueryHookResult = ReturnType<
-  typeof useBalancerPoolSnapshotsQuery
->;
-export type BalancerPoolSnapshotsLazyQueryHookResult = ReturnType<
-  typeof useBalancerPoolSnapshotsLazyQuery
->;
-export type BalancerPoolSnapshotsQueryResult = Apollo.QueryResult<
-  BalancerPoolSnapshotsQuery,
-  BalancerPoolSnapshotsQueryVariables
->;
-export const BalancerLatestPricesDocument = gql`
-  query BalancerLatestPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: LatestPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: LatestPrice_filter
-    $block: Block_height
-  ) {
-    latestPrices(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      id
-      asset
-      price
-      poolId {
-        id
-      }
-      pricingAsset
-    }
-  }
-`;
-
-/**
- * __useBalancerLatestPricesQuery__
- *
- * To run a query within a React component, call `useBalancerLatestPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerLatestPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerLatestPricesQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerLatestPricesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerLatestPricesQuery,
-    BalancerLatestPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerLatestPricesQuery,
-    BalancerLatestPricesQueryVariables
-  >(BalancerLatestPricesDocument, options);
-}
-export function useBalancerLatestPricesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerLatestPricesQuery,
-    BalancerLatestPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerLatestPricesQuery,
-    BalancerLatestPricesQueryVariables
-  >(BalancerLatestPricesDocument, options);
-}
-export type BalancerLatestPricesQueryHookResult = ReturnType<
-  typeof useBalancerLatestPricesQuery
->;
-export type BalancerLatestPricesLazyQueryHookResult = ReturnType<
-  typeof useBalancerLatestPricesLazyQuery
->;
-export type BalancerLatestPricesQueryResult = Apollo.QueryResult<
-  BalancerLatestPricesQuery,
-  BalancerLatestPricesQueryVariables
->;
-export const BalancerJoinExitsDocument = gql`
-  query BalancerJoinExits(
-    $skip: Int
-    $first: Int
-    $orderBy: JoinExit_orderBy
-    $orderDirection: OrderDirection
-    $where: JoinExit_filter
-    $block: Block_height
-  ) {
-    joinExits(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerJoinExit
-    }
-  }
-  ${BalancerJoinExitFragmentDoc}
-`;
-
-/**
- * __useBalancerJoinExitsQuery__
- *
- * To run a query within a React component, call `useBalancerJoinExitsQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerJoinExitsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerJoinExitsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerJoinExitsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerJoinExitsQuery,
-    BalancerJoinExitsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerJoinExitsQuery,
-    BalancerJoinExitsQueryVariables
-  >(BalancerJoinExitsDocument, options);
-}
-export function useBalancerJoinExitsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerJoinExitsQuery,
-    BalancerJoinExitsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerJoinExitsQuery,
-    BalancerJoinExitsQueryVariables
-  >(BalancerJoinExitsDocument, options);
-}
-export type BalancerJoinExitsQueryHookResult = ReturnType<
-  typeof useBalancerJoinExitsQuery
->;
-export type BalancerJoinExitsLazyQueryHookResult = ReturnType<
-  typeof useBalancerJoinExitsLazyQuery
->;
-export type BalancerJoinExitsQueryResult = Apollo.QueryResult<
-  BalancerJoinExitsQuery,
-  BalancerJoinExitsQueryVariables
->;
-export const BalancePortfolioDataDocument = gql`
-  query BalancePortfolioData($id: ID!, $previousBlockNumber: Int!) {
-    user(id: $id) {
-      ...User
-    }
-    pools(first: 1000, where: { totalShares_gt: "0" }) {
-      ...BalancerPool
-    }
-    previousUser: user(id: $id, block: { number: $previousBlockNumber }) {
-      ...User
-    }
-    previousPools: pools(
-      first: 1000
-      where: { totalShares_gt: "0" }
-      block: { number: $previousBlockNumber }
-    ) {
-      ...BalancerPool
-    }
-  }
-  ${UserFragmentDoc}
-  ${BalancerPoolFragmentDoc}
-`;
-
-/**
- * __useBalancePortfolioDataQuery__
- *
- * To run a query within a React component, call `useBalancePortfolioDataQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancePortfolioDataQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancePortfolioDataQuery({
- *   variables: {
- *      id: // value for 'id'
- *      previousBlockNumber: // value for 'previousBlockNumber'
- *   },
- * });
- */
-export function useBalancePortfolioDataQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    BalancePortfolioDataQuery,
-    BalancePortfolioDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancePortfolioDataQuery,
-    BalancePortfolioDataQueryVariables
-  >(BalancePortfolioDataDocument, options);
-}
-export function useBalancePortfolioDataLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancePortfolioDataQuery,
-    BalancePortfolioDataQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancePortfolioDataQuery,
-    BalancePortfolioDataQueryVariables
-  >(BalancePortfolioDataDocument, options);
-}
-export type BalancePortfolioDataQueryHookResult = ReturnType<
-  typeof useBalancePortfolioDataQuery
->;
-export type BalancePortfolioDataLazyQueryHookResult = ReturnType<
-  typeof useBalancePortfolioDataLazyQuery
->;
-export type BalancePortfolioDataQueryResult = Apollo.QueryResult<
-  BalancePortfolioDataQuery,
-  BalancePortfolioDataQueryVariables
->;
-export const BalancerSwapsDocument = gql`
-  query BalancerSwaps(
-    $skip: Int
-    $first: Int
-    $orderBy: Swap_orderBy
-    $orderDirection: OrderDirection
-    $where: Swap_filter
-    $block: Block_height
-  ) {
-    swaps(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerSwap
-    }
-  }
-  ${BalancerSwapFragmentDoc}
-`;
-
-/**
- * __useBalancerSwapsQuery__
- *
- * To run a query within a React component, call `useBalancerSwapsQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerSwapsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerSwapsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerSwapsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerSwapsQuery,
-    BalancerSwapsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<BalancerSwapsQuery, BalancerSwapsQueryVariables>(
-    BalancerSwapsDocument,
-    options
-  );
-}
-export function useBalancerSwapsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerSwapsQuery,
-    BalancerSwapsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<BalancerSwapsQuery, BalancerSwapsQueryVariables>(
-    BalancerSwapsDocument,
-    options
-  );
-}
-export type BalancerSwapsQueryHookResult = ReturnType<
-  typeof useBalancerSwapsQuery
->;
-export type BalancerSwapsLazyQueryHookResult = ReturnType<
-  typeof useBalancerSwapsLazyQuery
->;
-export type BalancerSwapsQueryResult = Apollo.QueryResult<
-  BalancerSwapsQuery,
-  BalancerSwapsQueryVariables
->;
-export const GetBalancerTokensDocument = gql`
-  query GetBalancerTokens(
-    $skip: Int
-    $first: Int
-    $orderBy: Token_orderBy
-    $orderDirection: OrderDirection
-    $where: Token_filter
-    $block: Block_height
-  ) {
-    tokens(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerToken
-    }
-  }
-  ${BalancerTokenFragmentDoc}
-`;
-
-/**
- * __useGetBalancerTokensQuery__
- *
- * To run a query within a React component, call `useGetBalancerTokensQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBalancerTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBalancerTokensQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useGetBalancerTokensQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetBalancerTokensQuery,
-    GetBalancerTokensQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetBalancerTokensQuery,
-    GetBalancerTokensQueryVariables
-  >(GetBalancerTokensDocument, options);
-}
-export function useGetBalancerTokensLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetBalancerTokensQuery,
-    GetBalancerTokensQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetBalancerTokensQuery,
-    GetBalancerTokensQueryVariables
-  >(GetBalancerTokensDocument, options);
-}
-export type GetBalancerTokensQueryHookResult = ReturnType<
-  typeof useGetBalancerTokensQuery
->;
-export type GetBalancerTokensLazyQueryHookResult = ReturnType<
-  typeof useGetBalancerTokensLazyQuery
->;
-export type GetBalancerTokensQueryResult = Apollo.QueryResult<
-  GetBalancerTokensQuery,
-  GetBalancerTokensQueryVariables
->;
-export const BalancerTradePairsDocument = gql`
-  query BalancerTradePairs(
-    $skip: Int
-    $first: Int
-    $orderBy: TradePair_orderBy
-    $orderDirection: OrderDirection
-    $where: TradePair_filter
-    $block: Block_height
-  ) {
-    tradePairs(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerTradePair
-    }
-  }
-  ${BalancerTradePairFragmentDoc}
-`;
-
-/**
- * __useBalancerTradePairsQuery__
- *
- * To run a query within a React component, call `useBalancerTradePairsQuery` and pass it any options that fit your needs.
- * When your component renders, `useBalancerTradePairsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useBalancerTradePairsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useBalancerTradePairsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    BalancerTradePairsQuery,
-    BalancerTradePairsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    BalancerTradePairsQuery,
-    BalancerTradePairsQueryVariables
-  >(BalancerTradePairsDocument, options);
-}
-export function useBalancerTradePairsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    BalancerTradePairsQuery,
-    BalancerTradePairsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    BalancerTradePairsQuery,
-    BalancerTradePairsQueryVariables
-  >(BalancerTradePairsDocument, options);
-}
-export type BalancerTradePairsQueryHookResult = ReturnType<
-  typeof useBalancerTradePairsQuery
->;
-export type BalancerTradePairsLazyQueryHookResult = ReturnType<
-  typeof useBalancerTradePairsLazyQuery
->;
-export type BalancerTradePairsQueryResult = Apollo.QueryResult<
-  BalancerTradePairsQuery,
-  BalancerTradePairsQueryVariables
->;
-export const GetBalancerSnapshotsDocument = gql`
-  query GetBalancerSnapshots(
-    $skip: Int
-    $first: Int
-    $orderBy: BalancerSnapshot_orderBy
-    $orderDirection: OrderDirection
-    $where: BalancerSnapshot_filter
-    $block: Block_height
-  ) {
-    balancerSnapshots(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...BalancerSnapshot
-    }
-  }
-  ${BalancerSnapshotFragmentDoc}
-`;
-
-/**
- * __useGetBalancerSnapshotsQuery__
- *
- * To run a query within a React component, call `useGetBalancerSnapshotsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetBalancerSnapshotsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetBalancerSnapshotsQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useGetBalancerSnapshotsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetBalancerSnapshotsQuery,
-    GetBalancerSnapshotsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<
-    GetBalancerSnapshotsQuery,
-    GetBalancerSnapshotsQueryVariables
-  >(GetBalancerSnapshotsDocument, options);
-}
-export function useGetBalancerSnapshotsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetBalancerSnapshotsQuery,
-    GetBalancerSnapshotsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetBalancerSnapshotsQuery,
-    GetBalancerSnapshotsQueryVariables
-  >(GetBalancerSnapshotsDocument, options);
-}
-export type GetBalancerSnapshotsQueryHookResult = ReturnType<
-  typeof useGetBalancerSnapshotsQuery
->;
-export type GetBalancerSnapshotsLazyQueryHookResult = ReturnType<
-  typeof useGetBalancerSnapshotsLazyQuery
->;
-export type GetBalancerSnapshotsQueryResult = Apollo.QueryResult<
-  GetBalancerSnapshotsQuery,
-  GetBalancerSnapshotsQueryVariables
->;
-export const GetLatestPricesDocument = gql`
-  query GetLatestPrices(
-    $skip: Int
-    $first: Int
-    $orderBy: LatestPrice_orderBy
-    $orderDirection: OrderDirection
-    $where: LatestPrice_filter
-    $block: Block_height
-  ) {
-    latestPrices(
-      skip: $skip
-      first: $first
-      orderBy: $orderBy
-      orderDirection: $orderDirection
-      where: $where
-      block: $block
-    ) {
-      ...LatestPrice
-    }
-  }
-  ${LatestPriceFragmentDoc}
-`;
-
-/**
- * __useGetLatestPricesQuery__
- *
- * To run a query within a React component, call `useGetLatestPricesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLatestPricesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLatestPricesQuery({
- *   variables: {
- *      skip: // value for 'skip'
- *      first: // value for 'first'
- *      orderBy: // value for 'orderBy'
- *      orderDirection: // value for 'orderDirection'
- *      where: // value for 'where'
- *      block: // value for 'block'
- *   },
- * });
- */
-export function useGetLatestPricesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetLatestPricesQuery,
-    GetLatestPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetLatestPricesQuery, GetLatestPricesQueryVariables>(
-    GetLatestPricesDocument,
-    options
-  );
-}
-export function useGetLatestPricesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetLatestPricesQuery,
-    GetLatestPricesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetLatestPricesQuery,
-    GetLatestPricesQueryVariables
-  >(GetLatestPricesDocument, options);
-}
-export type GetLatestPricesQueryHookResult = ReturnType<
-  typeof useGetLatestPricesQuery
->;
-export type GetLatestPricesLazyQueryHookResult = ReturnType<
-  typeof useGetLatestPricesLazyQuery
->;
-export type GetLatestPricesQueryResult = Apollo.QueryResult<
-  GetLatestPricesQuery,
-  GetLatestPricesQueryVariables
 >;
 export const GetLatestBlockDocument = gql`
   query GetLatestBlock {
@@ -20546,7 +18786,10 @@ const result: PossibleTypesResultData = {
       "GqlPoolFx",
       "GqlPoolGyro",
       "GqlPoolLiquidityBootstrapping",
+      "GqlPoolLiquidityBootstrappingV3",
       "GqlPoolMetaStable",
+      "GqlPoolQuantAmmWeighted",
+      "GqlPoolReClamm",
       "GqlPoolStable",
       "GqlPoolWeighted",
     ],
@@ -20569,7 +18812,10 @@ const result: PossibleTypesResultData = {
       "GqlPoolFx",
       "GqlPoolGyro",
       "GqlPoolLiquidityBootstrapping",
+      "GqlPoolLiquidityBootstrappingV3",
       "GqlPoolMetaStable",
+      "GqlPoolQuantAmmWeighted",
+      "GqlPoolReClamm",
       "GqlPoolStable",
       "GqlPoolWeighted",
     ],
