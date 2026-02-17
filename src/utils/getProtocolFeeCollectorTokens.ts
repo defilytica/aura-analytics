@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { TokenData } from "../data/balancer/balancerTypes";
 import { ethers } from "ethers";
 import ERC20_INTERFACE from "../constants/abis/erc20";
+import {DRPC_ETHEREUM_URL} from "../data/balancer/constants";
 
 const collectorAddress = '0xce88686553686da562ce7cea497ce749da109f9f';
-const mainnetProvider = new ethers.providers.InfuraProvider("homestead" ,'bd237506d816456797b7bede8375e021');
+const mainnetProvider = new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL);
 
 export function GetProtocolFeeTokenSet (formattedTokens: TokenData[]) {
         const [tokenData, setTokenData] = useState("");

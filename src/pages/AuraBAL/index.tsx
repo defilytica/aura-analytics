@@ -34,6 +34,7 @@ import AuraBALMultiAreaChart from "../../components/Echarts/auraBAL/AuraBALMulti
 import {ArbitrumNetworkInfo, EthereumNetworkInfo, PolygonNetworkInfo} from "../../constants/networks";
 import React from "react";
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 import {isMobile} from "react-device-detect";
 
 
@@ -72,7 +73,7 @@ export default function AuraBAL() {
         startTimeStamp = 1690495200
     }
     //const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
-    const coinData = useGetSimpleTokenPrices([auraBALMainnet], '1');
+    const coinData = useGetSimpleTokenPrices([auraBALMainnet], "MAINNET" as GqlChain);
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
     const auraBalBannerLight = require('../../assets/png/aurabal-light.png');

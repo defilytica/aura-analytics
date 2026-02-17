@@ -252,6 +252,25 @@ export const AvalancheNetworkInfo: NetworkInfo = {
   blurb: 'Beta'
 }
 
+/**
+ * Maps a NetworkInfo's chainId to the corresponding GqlChain string
+ * used by the Balancer V3 API. Falls back to the v3NetworkID field.
+ */
+const CHAIN_ID_TO_GQL_CHAIN: Record<string, string> = {
+  '1': 'MAINNET',
+  '42161': 'ARBITRUM',
+  '137': 'POLYGON',
+  '100': 'GNOSIS',
+  '1101': 'POLYGONZKEVM',
+  '10': 'OPTIMISM',
+  '8453': 'BASE',
+  '43114': 'AVALANCHE',
+};
+
+export function chainIdToGqlChain(chainId: string): string {
+  return CHAIN_ID_TO_GQL_CHAIN[chainId] ?? 'MAINNET';
+}
+
 export const SUPPORTED_NETWORK_VERSIONS: NetworkInfo[] = [
   EthereumNetworkInfo,
   ArbitrumNetworkInfo,

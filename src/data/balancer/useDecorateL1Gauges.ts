@@ -6,6 +6,7 @@ import rootGaugeL2 from "../../constants/abis/rootGaugeL2.json";
 import {useEffect, useState} from "react";
 import {Multicall} from 'ethereum-multicall';
 import {EthereumNetworkInfo} from "../../constants/networks";
+import {DRPC_ETHEREUM_URL} from "./constants";
 import {useAccount} from 'wagmi';
 
 const useDecorateL1Gauges = (stakingGaugeData: BalancerStakingGauges[] | undefined): BalancerStakingGauges[] => {
@@ -19,14 +20,13 @@ const useDecorateL1Gauges = (stakingGaugeData: BalancerStakingGauges[] | undefin
         if (gaugeData && gaugeData.length > 0) {
             const multicalls = [];
 
-            const providerUrl = 'https://eth.llamarpc.com';
             const multicall = new Multicall({
-                ethersProvider: new ethers.providers.JsonRpcProvider(providerUrl),
+                ethersProvider: new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL),
                 tryAggregate: true
             });
 
             const multicallRoots = new Multicall({
-                ethersProvider: new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com'),
+                ethersProvider: new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL),
                 tryAggregate: true
             });
             //Obtain mainnet gauge working and total supplies

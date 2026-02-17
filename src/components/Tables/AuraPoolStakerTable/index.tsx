@@ -24,6 +24,7 @@ import { deepPurple } from '@mui/material/colors';
 import { generateIdenticon } from '../../../utils/generateIdenticon';
 import {useContractRead, useEnsName} from "wagmi";
 import {ethers} from "ethers";
+import {DRPC_ETHEREUM_URL} from "../../../data/balancer/constants";
 import isDev from "../../../constants";
 import StyledTableCell from "../StyledTableCell";
 
@@ -186,7 +187,7 @@ export default function AuraPoolStakerTable({ leaderboardInfo, pricePerBPT }: { 
 
     React.useEffect(() => {
         if (leaderboardInfo && leaderboardInfo.leaderboard.length > 0) {
-            const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
+            const provider = new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL);
 
             const updateENSMap = async () => {
                 const ensLocalMap = { ...localEnsMap };

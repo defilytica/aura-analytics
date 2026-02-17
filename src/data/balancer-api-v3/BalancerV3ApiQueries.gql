@@ -21,15 +21,7 @@ query VeBalGetVotingGauges {
     }
 }
 
-query GetTokenPrice($address: String!, $chain: GqlChain!){
-    tokenGetPriceChartData(address: $address, chain: $chain, range: NINETY_DAY)
-    {
-        price
-        timestamp
-    }
-}
-
-query TokenGetCurrentPrices($chains: [GqlChain!]) {
+query TokenGetCurrentPrices($chains: [GqlChain!]!) {
     tokenGetCurrentPrices(chains: $chains) {
         address
         chain
@@ -37,8 +29,8 @@ query TokenGetCurrentPrices($chains: [GqlChain!]) {
     }
 }
 
-query GetDynamicTokenPrices($addresses: [String!]!) {
-    tokenGetTokensDynamicData(addresses: $addresses) {
+query GetDynamicTokenPrices($addresses: [String!]!, $chain: GqlChain!) {
+    tokenGetTokensDynamicData(addresses: $addresses, chain: $chain) {
         price
         tokenAddress
         priceChange24h

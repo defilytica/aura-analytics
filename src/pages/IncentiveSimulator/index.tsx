@@ -43,6 +43,8 @@ import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 import {AddShoppingCart, ShoppingCartCheckout} from "@mui/icons-material";
 import {unixToDate} from "../../utils/date";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
+import {chainIdToGqlChain} from "../../constants/networks";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import {useTheme} from "@mui/material/styles";
@@ -124,7 +126,7 @@ export default function BribeSimulator() {
 
     //BAL and AURA Stats
     //const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
-    const coinData = useGetSimpleTokenPrices([balAddress, auraAddress], activeNetwork.chainId);
+    const coinData = useGetSimpleTokenPrices([balAddress, auraAddress], chainIdToGqlChain(activeNetwork.chainId) as GqlChain);
     const now = Math.round(new Date().getTime() / 1000);
     const weeklyEmissions = balEmissions.weekly(now);
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;

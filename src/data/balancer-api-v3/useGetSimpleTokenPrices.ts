@@ -2,18 +2,15 @@
 import { balancerV3APIClient } from "../../apollo/client";
 import {TokenPrices} from "../balancer/balancerTypes";
 import {useGetDynamicTokenPricesQuery} from "../../apollo/generated/graphql-balancer-v3-codegen-generated";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 
-export default function useGetSimpleTokenPrices(addresses: string[], chainId: string) {
+export default function useGetSimpleTokenPrices(addresses: string[], chain: GqlChain) {
     const { data, loading, error } = useGetDynamicTokenPricesQuery({
         client: balancerV3APIClient,
         variables: {
-            addresses: addresses
+            addresses: addresses,
+            chain: chain,
         },
-        context: {
-            headers: {
-                chainId: chainId
-            }
-        }
     });
 
     // Transform the array of token data into an object indexed by tokenAddress
@@ -27,10 +24,9 @@ export default function useGetSimpleTokenPrices(addresses: string[], chainId: st
         return acc;
     }, {} as TokenPrices) ?? {};
 
-    //console.log("tokenData", tokenPrices);
     return {
         loading,
         error,
-        data: tokenPrices, // Return the mapped data
+        data: tokenPrices,
     };
 }

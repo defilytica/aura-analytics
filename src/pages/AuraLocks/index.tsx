@@ -23,6 +23,7 @@ import CustomLinearProgress from "../../components/Progress/CustomLinearProgress
 import AuraDailyUnlocksChart from "../../components/Echarts/AuraDailyUnlocksChart";
 import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 import {isMobile} from "react-device-detect";
 
 
@@ -33,7 +34,7 @@ export default function AuraLocks() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
     //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
-    const coinData = useGetSimpleTokenPrices([auraAddress], '1');
+    const coinData = useGetSimpleTokenPrices([auraAddress], "MAINNET" as GqlChain);
     const auraGlobalStats = useAuraGlobalStats();
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []

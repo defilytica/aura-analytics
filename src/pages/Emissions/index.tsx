@@ -27,6 +27,8 @@ import { formatPercentageAmount } from '../../utils/numbers';
 import { getBalTokenAddress } from '../../data/balancer/useLatestPrices';
 import { EthereumNetworkInfo } from '../../constants/networks';
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
+import {chainIdToGqlChain} from "../../constants/networks";
 
 export default function Emissions() {
 
@@ -55,7 +57,7 @@ export default function Emissions() {
     const balAddress = getBalTokenAddress(activeNetwork.id);
     //Data
     //const coinData = useCoinGeckoSimpleTokenPrices([balAddress]);
-    const coinData = useGetSimpleTokenPrices([balAddress], activeNetwork.chainId);
+    const coinData = useGetSimpleTokenPrices([balAddress], chainIdToGqlChain(activeNetwork.chainId) as GqlChain);
 
     const balPrice = coinData && coinData.data[balAddress] ? coinData.data[balAddress].price : 0;
 

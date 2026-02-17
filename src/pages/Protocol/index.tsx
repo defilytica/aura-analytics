@@ -20,6 +20,7 @@ import {CapturedTVL} from "../../data/aura/auraTypes";
 import {ProtocolMultiLineChart} from '../../components/Echarts/ProtocolCharts/ProtocolMultiLineChart';
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 import {BalancerChartDataItem, TokenPrices} from "../../data/balancer/balancerTypes";
+import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 
 
 type Network = 'eth' | 'arb' | 'opt' | 'poly' | 'gnosis' | 'base' | 'zkevm' | 'avalanche';
@@ -64,7 +65,7 @@ export default function Protocol() {
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
 
     // Hooks to fetch data
-    const coinData = useGetSimpleTokenPrices([auraAddress], '1');
+    const coinData = useGetSimpleTokenPrices([auraAddress], "MAINNET" as GqlChain);
     const auraGlobalStats = useAuraGlobalStats();
 
     const poolTransactions = {
