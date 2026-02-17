@@ -21,6 +21,7 @@ import {formatDollarAmount, formatNumber} from "../../../utils/numbers";
 import {generateIdenticon} from "../../../utils/generateIdenticon";
 import {deepPurple} from "@mui/material/colors";
 import {ethers} from "ethers";
+import {DRPC_ETHEREUM_URL} from "../../../data/balancer/constants";
 import isDev from "../../../constants";
 import StyledTableCell from "../StyledTableCell";
 
@@ -218,7 +219,7 @@ export default function LockerTable({
 
     React.useEffect(() => {
         if (lockerAccounts && lockerAccounts.length > 0) {
-            const provider = new ethers.providers.JsonRpcProvider('https://eth.llamarpc.com');
+            const provider = new ethers.providers.JsonRpcProvider(DRPC_ETHEREUM_URL);
 
             const updateENSMap = async () => {
                 const ensLocalMap = { ...localEnsMap };

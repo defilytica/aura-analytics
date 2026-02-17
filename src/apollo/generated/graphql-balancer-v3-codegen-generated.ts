@@ -15856,7 +15856,7 @@ export type GetTokenPriceQuery = {
 };
 
 export type TokenGetCurrentPricesQueryVariables = Exact<{
-  chains?: InputMaybe<Array<GqlChain> | GqlChain>;
+  chains: Array<GqlChain> | GqlChain;
 }>;
 
 export type TokenGetCurrentPricesQuery = {
@@ -15871,6 +15871,7 @@ export type TokenGetCurrentPricesQuery = {
 
 export type GetDynamicTokenPricesQueryVariables = Exact<{
   addresses: Array<Scalars["String"]["input"]> | Scalars["String"]["input"];
+  chain: GqlChain;
 }>;
 
 export type GetDynamicTokenPricesQuery = {
@@ -17588,7 +17589,7 @@ export type GetTokenPriceQueryResult = Apollo.QueryResult<
   GetTokenPriceQueryVariables
 >;
 export const TokenGetCurrentPricesDocument = gql`
-  query TokenGetCurrentPrices($chains: [GqlChain!]) {
+  query TokenGetCurrentPrices($chains: [GqlChain!]!) {
     tokenGetCurrentPrices(chains: $chains) {
       address
       chain
@@ -17648,8 +17649,8 @@ export type TokenGetCurrentPricesQueryResult = Apollo.QueryResult<
   TokenGetCurrentPricesQueryVariables
 >;
 export const GetDynamicTokenPricesDocument = gql`
-  query GetDynamicTokenPrices($addresses: [String!]!) {
-    tokenGetTokensDynamicData(addresses: $addresses) {
+  query GetDynamicTokenPrices($addresses: [String!]!, $chain: GqlChain!) {
+    tokenGetTokensDynamicData(addresses: $addresses, chain: $chain) {
       price
       tokenAddress
       priceChange24h
