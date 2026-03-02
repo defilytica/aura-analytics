@@ -115,10 +115,8 @@
     "cookie": "^0.7.0",
     "rollup": "^2.80.0",
     "basic-ftp": "^5.2.0",
-    "minimatch": "^10.2.3",
     "jsonpath": "^1.2.0",
-    "webpack-dev-server": "^5.2.1",
-    "ajv": "^8.18.0",
+    "webpack-dev-server": "^4.15.2",
     "bn.js": "^5.2.3"
   },
   "scripts": {
