@@ -21,13 +21,13 @@ const config: CodegenConfig = {
     theGraphSchema(blocksSubgraph),
     theGraphSchema(balancerV2Subgraph),
     "https://api.subgraph.ormilabs.com/api/public/396b336b-4ed7-469f-a8f4-468e1e26e9a8/subgraphs/aura-finance-mainnet/v0.0.1/",
-    "https://backend-v3.beets-ftm-node.com/",
     "https://api-v3.balancer.fi/",
   ],
   documents: [
     "src/data/blocks/*.gql",
     "src/data/balancer/*.gql",
     "src/data/aura/*.gql",
+    "src/data/balancer-api-v3/*.gql",
     "src/data/tokens/*gql",
   ],
   hooks: {
@@ -65,7 +65,7 @@ const config: CodegenConfig = {
 
     // Generates query and mutation documents and types for balancer v3 API
     "src/apollo/generated/graphql-balancer-v3-codegen-generated.ts": {
-      schema: ["https://backend-v3.beets-ftm-node.com/"],
+      schema: ["https://api-v3.balancer.fi/"],
       documents: ["src/data/balancer-api-v3/*.gql"],
       plugins: [
         { add: { content: "/* tslint:disable */" } },

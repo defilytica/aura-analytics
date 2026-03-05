@@ -5,7 +5,6 @@ import LockerTable from "../../components/Tables/LockerTable";
 import TopLockerCard from "../../components/Cards/TopLockerCard";
 import {BalancerChartDataItem} from "../../data/balancer/balancerTypes";
 import {shortenAddress} from "../../utils";
-import {useCoinGeckoSimpleTokenPrices} from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
 import * as React from "react";
 import {ethers} from "ethers"
 import GenericBarChart from "../../components/Echarts/GenericBarChart";
@@ -33,8 +32,7 @@ export default function AuraLocks() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const lockers = useGetLeadingLockers();
-    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress]);
-    const coinData = useGetSimpleTokenPrices([auraAddress], "MAINNET" as GqlChain);
+    const coinData = useGetSimpleTokenPrices([auraAddress], GqlChain.Mainnet);
     const auraGlobalStats = useAuraGlobalStats();
     let unlockAmounts: BalancerChartDataItem[] = [];
     let filteredChartData: ChartDataItem[] = []

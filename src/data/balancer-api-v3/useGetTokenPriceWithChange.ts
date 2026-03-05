@@ -10,7 +10,7 @@ export interface TokenPriceWithChange {
 
 export default function useGetTokenPriceWithChange(
     address: string,
-    chain: GqlChain = "MAINNET" as GqlChain,
+    chain: GqlChain = GqlChain.Mainnet,
 ): TokenPriceWithChange | undefined {
     const { data: currentPrices } = useGetCurrentTokenPrices([chain]);
     const { data: dynamicData } = useGetDynamicTokenPricesQuery({

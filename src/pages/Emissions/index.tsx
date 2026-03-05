@@ -20,7 +20,6 @@ import useDecoratePools from '../../data/balancer-sdk/useDecoratePools';
 import MetricsCard from '../../components/Cards/MetricsCard';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import EmissionsTable from '../../components/Tables/EmissionsTable';
-import { useCoinGeckoSimpleTokenPrices } from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
 import CoinCard from '../../components/Cards/CoinCard';
 import { DAO_FEE_FACTOR } from '../../data/balancer/constants';
 import { formatPercentageAmount } from '../../utils/numbers';
@@ -56,7 +55,6 @@ export default function Emissions() {
     //TODO: obtain form contants
     const balAddress = getBalTokenAddress(activeNetwork.id);
     //Data
-    //const coinData = useCoinGeckoSimpleTokenPrices([balAddress]);
     const coinData = useGetSimpleTokenPrices([balAddress], chainIdToGqlChain(activeNetwork.chainId) as GqlChain);
 
     const balPrice = coinData && coinData.data[balAddress] ? coinData.data[balAddress].price : 0;

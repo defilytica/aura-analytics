@@ -9,11 +9,9 @@ import {useGetHiddenHandVotingIncentives} from "../hidden-hand/useGetHiddenHandV
 import {useGetVoteMarketIncentives} from "../votemarket/useGetVoteMarketIncentives";
 import {ethers} from "ethers";
 import {AURA_TOKEN_MAINNET, BALANCER_TOKEN_MAINNET} from "../aura/auraConstants";
-import {useActiveNetworkVersion} from "../../state/application/hooks";
 import useGetSimpleTokenPrices from "../balancer-api-v3/useGetSimpleTokenPrices";
 import useGetHistoricalTokenPrice from "../balancer-api-v3/useGetHistoricalTokenPrice";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
-import {chainIdToGqlChain} from "../../constants/networks";
 import {unixToDate} from "../../utils/date";
 
 const auraAddress = AURA_TOKEN_MAINNET;
@@ -22,13 +20,10 @@ export const useGetEmissionPerVote = (timestampCurrentRound: number) => {
     const timestamps = AURA_TIMESTAMPS;
     const indexOfCurrent = timestamps.indexOf(timestampCurrentRound);
     const timestampPreviousRound = timestamps[indexOfCurrent - 1]
-    const [activeNetwork] = useActiveNetworkVersion()
-    // If a round is currently active we need to set the appropriate pattern
 
     const [emissionValuePerVote, setEmissionValuePerVote] = useState(0);
     const [emissionsPerDollarSpent, setEmissionsPerDollarSpent] = useState(0)
-    //const coinData = useCoinGeckoSimpleTokenPrices([auraAddress, balAddress]);
-    const coinData = useGetSimpleTokenPrices([auraAddress, balAddress], chainIdToGqlChain(activeNetwork.chainId) as GqlChain);
+    const coinData = useGetSimpleTokenPrices([auraAddress, balAddress], GqlChain.Mainnet);
     const { data: auraCompletePrice } = useAuraPrice();
     const { data: historicalBALCoinData } = useGetHistoricalTokenPrice(balAddress, GqlChain.Mainnet)
     const auraGlobalStats = useAuraGlobalStats();
