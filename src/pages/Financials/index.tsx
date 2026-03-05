@@ -18,7 +18,6 @@ import GenericPieChart from "../../components/Echarts/GenericPieChart";
 import {AURA_TOKEN_MAINNET} from "../../data/aura/auraConstants";
 import {Handshake, HandshakeOutlined} from "@mui/icons-material";
 import {USDC} from "../../constants";
-import {useCoinGeckoSimpleTokenPrices} from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
 import useGetSimpleTokenPrices from "../../data/balancer-api-v3/useGetSimpleTokenPrices";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
 
@@ -35,8 +34,7 @@ export default function Financials() {
     const txnHistoryTreasury: TransactionHistory | null = useGetAddressTransactionsHistorically(TREASURY_CONFIG.treasury)
     const txnHistoryAef: TransactionHistory | null = useGetAddressTransactionsHistorically(AEF)
 
-    //const coinData = useCoinGeckoSimpleTokenPrices([AURA_TOKEN_MAINNET]);
-    const coinData = useGetSimpleTokenPrices([AURA_TOKEN_MAINNET], "MAINNET" as GqlChain);
+    const coinData = useGetSimpleTokenPrices([AURA_TOKEN_MAINNET], GqlChain.Mainnet);
 
     const {totalBalances : totalBalancesTreasury} = useGetTotalBalances(TREASURY_CONFIG.treasury);
     const {totalBalances : totalBalancesAef} = useGetTotalBalances(AEF);

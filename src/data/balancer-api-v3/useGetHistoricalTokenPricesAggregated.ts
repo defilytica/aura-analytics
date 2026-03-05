@@ -25,7 +25,7 @@ export const useGetHistoricalTokenPricesAggregated = (
         client: balancerV3APIClient,
         variables: {
             addresses: normalizedAddresses,
-            chain: "MAINNET" as GqlChain,
+            chain: GqlChain.Mainnet,
         },
         skip: !normalizedAddresses.length,
     });

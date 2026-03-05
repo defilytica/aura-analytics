@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import {Grid, CircularProgress, Typography, Card} from '@mui/material';
-import {useCoinGeckoSimpleTokenPrices} from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
 import CoinCard from '../../components/Cards/CoinCard';
 import MetricsCard from "../../components/Cards/MetricsCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -65,7 +64,7 @@ export default function Protocol() {
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
 
     // Hooks to fetch data
-    const coinData = useGetSimpleTokenPrices([auraAddress], "MAINNET" as GqlChain);
+    const coinData = useGetSimpleTokenPrices([auraAddress], GqlChain.Mainnet);
     const auraGlobalStats = useAuraGlobalStats();
 
     const poolTransactions = {

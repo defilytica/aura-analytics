@@ -1,5 +1,5 @@
-query GetTokenList{
-        tokenGetTokens {
+query GetTokenList($chains: [GqlChain!]!){
+        tokenGetTokens(chains: $chains) {
             address
             name
             logoURI

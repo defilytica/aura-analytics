@@ -7,7 +7,6 @@ import {useAuraBalTransactions} from '../../data/aura/useAuraBalTransactions';
 import {useAuraGlobalStats} from '../../data/aura/useAuraGlobalStats';
 import {BalancerChartDataItem} from '../../data/balancer/balancerTypes';
 import GenericBarChart from '../../components/Echarts/GenericBarChart';
-import {useCoinGeckoSimpleTokenPrices} from '../../data/coingecko/useCoinGeckoSimpleTokenPrices';
 import CoinCard from '../../components/Cards/CoinCard';
 import {useAuraPoolLeaderboardInfo} from '../../data/aura/useAuraPoolLeaderboard';
 import {AuraVaultDepositWithdrawTransactionInfo, AuraVaultHarvestTransactionInfo} from '../../data/aura/auraTypes';
@@ -72,8 +71,7 @@ export default function AuraBAL() {
         auraBALVaultAddress = '0x4ea9317d90b61fc28c418c247ad0ca8939bbb0e9'
         startTimeStamp = 1690495200
     }
-    //const coinData = useCoinGeckoSimpleTokenPrices([auraBALMainnet], true);
-    const coinData = useGetSimpleTokenPrices([auraBALMainnet], "MAINNET" as GqlChain);
+    const coinData = useGetSimpleTokenPrices([auraBALMainnet], GqlChain.Mainnet);
     //Image banner resources
     const auraBalBannerDark = require('../../assets/png/aurabal-dark.png');
     const auraBalBannerLight = require('../../assets/png/aurabal-light.png');

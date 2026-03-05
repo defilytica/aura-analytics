@@ -1,9 +1,9 @@
 {
   "possibleTypes": {
-    "GqlPoolAprValue": ["GqlPoolAprRange", "GqlPoolAprTotal"],
     "GqlPoolBase": [
       "GqlPoolComposableStable",
       "GqlPoolElement",
+      "GqlPoolFixedPriceLBP",
       "GqlPoolFx",
       "GqlPoolGyro",
       "GqlPoolLiquidityBootstrapping",
@@ -19,17 +19,10 @@
       "GqlPoolSwapEventCowAmm",
       "GqlPoolSwapEventV3"
     ],
-    "GqlPoolFeaturedPoolGroupItem": [
-      "GqlFeaturePoolGroupItemExternalLink",
-      "GqlPoolMinimal"
-    ],
-    "GqlPoolNestedUnion": ["GqlPoolComposableStableNested"],
-    "GqlPoolTokenBase": ["GqlPoolToken", "GqlPoolTokenComposableStable"],
-    "GqlPoolTokenComposableStableNestedUnion": ["GqlPoolToken"],
-    "GqlPoolTokenUnion": ["GqlPoolToken", "GqlPoolTokenComposableStable"],
     "GqlPoolUnion": [
       "GqlPoolComposableStable",
       "GqlPoolElement",
+      "GqlPoolFixedPriceLBP",
       "GqlPoolFx",
       "GqlPoolGyro",
       "GqlPoolLiquidityBootstrapping",

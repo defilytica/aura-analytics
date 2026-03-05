@@ -14,13 +14,10 @@ import {
     TableRow,
     TableCell, Divider,
 } from '@mui/material';
-import {BalancerSDK, balEmissions} from "@balancer-labs/sdk";
-import {useActiveNetworkVersion} from "../../state/application/hooks";
+import {balEmissions} from "@balancer-labs/sdk";
 import MetricsCard from "../../components/Cards/MetricsCard";
 import {useBalancerPools} from "../../data/balancer/usePools";
 import {useEffect, useState} from "react";
-import {useGetHiddenHandVotingIncentives} from "../../data/hidden-hand/useGetHiddenHandVotingIncentives";
-import { useCoinGeckoSimpleTokenPrices } from "../../data/coingecko/useCoinGeckoSimpleTokenPrices";
 import { useGetVoteMarketIncentives } from "../../data/votemarket/useGetVoteMarketIncentives";
 import CoinCard from "../../components/Cards/CoinCard";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -28,8 +25,7 @@ import PoolComposition from "../../components/PoolComposition";
 import {formatDollarAmount, formatNumber} from "../../utils/numbers";
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import useGetBalancerStakingGauges from "../../data/balancer/useGetBalancerStakingGauges";
-import { HiddenHandIncentives } from "../../data/hidden-hand/hiddenHandTypes";
-import {calculateAPR, calculateAPRforAura, calculateBribeValue, calculateBribeValueForAura} from "./bribeHelpers";
+import {calculateAPRforAura, calculateBribeValueForAura} from "./bribeHelpers";
 import useGetGaugeRelativeWeights from "../../data/balancer/useGetGaugeEmissions";
 import useDecorateL1Gauges from "../../data/balancer/useDecorateL1Gauges";
 import useDecorateL2Gauges from "../../data/balancer/useDeocrateL2Gauges";
@@ -39,12 +35,9 @@ import {useAuraGlobalStats} from "../../data/aura/useAuraGlobalStats";
 import SelfImprovementIcon from "@mui/icons-material/SelfImprovement";
 import AuraIcon from "../../assets/png/AURA_ISO_colors.png";
 import TokenIcon from "@mui/icons-material/Token";
-import {AURA_TIMESTAMPS} from "../../data/hidden-hand/constants";
 import {useGetEmissionPerVote} from "../../data/VotingIncentives/useGetEmissionPerVote";
 import {AddShoppingCart, ShoppingCartCheckout} from "@mui/icons-material";
-import {unixToDate} from "../../utils/date";
 import {GqlChain} from "../../apollo/generated/graphql-codegen-generated";
-import {chainIdToGqlChain} from "../../constants/networks";
 import TableContainer from "@mui/material/TableContainer";
 import Paper from "@mui/material/Paper";
 import {useTheme} from "@mui/material/styles";
@@ -54,42 +47,6 @@ interface TableData {
     parameter: string;
     value: string;
 }
-
-// TODO: put somewhere else
-//  Helper functions to parse data types to Llama model
-const extractPoolRewards = (data: HiddenHandIncentives | null): PoolReward[] => {
-    const poolRewards: PoolReward[] = [];
-
-    if (data) {
-        data.data.forEach((item) => {
-            const {title, bribes} = item;
-
-            if (bribes.length > 0) {
-                const poolReward: PoolReward = {pool: title};
-
-                bribes.forEach((bribe) => {
-                    const {symbol, value} = bribe;
-                    const tokenKey = `${symbol.toUpperCase()}`;
-
-                    if (!poolReward[tokenKey]) {
-                        poolReward[tokenKey] = value;
-                    } else {
-                        const existingValue = poolReward[tokenKey];
-                        poolReward[tokenKey] = typeof existingValue === 'number' ? existingValue + value : value;
-                    }
-                });
-
-                poolRewards.push(poolReward);
-            }
-        });
-    }
-    return poolRewards;
-};
-
-export type PoolReward = {
-    pool: string;
-    [token: string]: string | number; // this represents any number of token properties with their corresponding `amountDollars` value
-};
 
 type Pool = {
     name: string;
@@ -101,7 +58,6 @@ type Pool = {
 
 export default function BribeSimulator() {
     // Fetch relevant data
-    const [activeNetwork] = useActiveNetworkVersion();
     const theme = useTheme();
     const balAddress = "0xba100000625a3754423978a60c9317c58a424e3d";
     const auraAddress = '0xc0c293ce456ff0ed870add98a0828dd4d2903dbf';
@@ -124,36 +80,26 @@ export default function BribeSimulator() {
     //Protocol owned liquidity
     const [isPOL, setIsPOL] = useState<boolean>(false);
 
-    //BAL and AURA Stats
-    //const coinData = useCoinGeckoSimpleTokenPrices([balAddress, auraAddress], true);
-    const coinData = useGetSimpleTokenPrices([balAddress, auraAddress], chainIdToGqlChain(activeNetwork.chainId) as GqlChain);
+    const coinData = useGetSimpleTokenPrices([balAddress, auraAddress], GqlChain.Mainnet);
     const now = Math.round(new Date().getTime() / 1000);
     const weeklyEmissions = balEmissions.weekly(now);
     const totalLockedAmount = auraGlobalStats?.auraTotalLockedAmount;
 
-    //Emission stats
-    const timestamps = AURA_TIMESTAMPS;
-    const [currentRoundNew, setCurrentRoundNew] = useState<number>(timestamps[timestamps.length - 2]); // Default timestamp
     // Vote Market data (primary source for current round) - uses vlaura endpoint directly
     const {
         data: voteMarketData,
         loading: voteMarketLoading,
-        totalRewardsUSD: vmTotalRewards,
         dollarPerVote: vmDollarPerVote,
-        votingEfficiency: vmVotingEfficiency // Emissions per $1 spent - directly from vlaura data
+        votingEfficiency: vmVotingEfficiency
     } = useGetVoteMarketIncentives();
-    // Hidden Hand data (legacy/fallback)
-    const hhIncentives = useGetHiddenHandVotingIncentives(currentRoundNew.toString());
-    // Use 0 for current round to get Vote Market data in emission calculation (kept for historical rounds)
-    const {emissionValuePerVote, emissionsPerDollarSpent} = useGetEmissionPerVote(0);
+    // Use 0 for current round to get Vote Market data in emission calculation
+    const {emissionValuePerVote} = useGetEmissionPerVote(0);
 
     //States
     const [selectedPoolId, setSelectedPoolId] = useState<string>("");
     const [targetAPR, setTargetAPR] = useState<number>(0);
     const [allocatedVotes, setAllocatedVotes] = useState<number>(0);
     const [incentivePerVote, setIncentivePerVote] = useState<number>(0);
-    const [emissionPerVote, setEmissionPerVote] = useState<number>(0);
-    const [roundIncentives, setRoundIncentives] = useState<number>(0);
     const [bribeValue, setBribeValue] = useState<number>(0);
     const [gaugeRelativeWeight, setGaugeRelativeWeight] = useState<number>(0);
     const [pricePerBPT, setPricePerBPT] = useState<number>(0);
@@ -176,20 +122,6 @@ export default function BribeSimulator() {
 
 
 
-    // Handler for entering the target APR in the input field
-    const handleTargetAPRChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setTargetAPR(parseFloat(event.target.value));
-        let bribeValue = calculateBribeValue(
-            Number(event.target.value),
-            customPoolValue,
-            emissionPerVote,
-            incentivePerVote
-        );
-        setBribeValue(Number(bribeValue));
-    };
-
     const handleAuraTargetAPRChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -201,20 +133,6 @@ export default function BribeSimulator() {
             customPoolValue,
         );
         setBribeValue(Number(bribeValue));
-    };
-
-    // Handler for when a project wants to experiment with the amount of their bribe
-    const handleBribeValueChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        setBribeValue(parseFloat(event.target.value));
-        let newTargetAPR = calculateAPR(
-            Number(event.target.value),
-            customPoolValue,
-            emissionPerVote,
-            incentivePerVote
-        );
-        setTargetAPR(Number(newTargetAPR));
     };
 
     const handleAuraBribeValuechange = (
@@ -271,7 +189,7 @@ export default function BribeSimulator() {
             if (selectedGauge) {
                 setGaugeRelativeWeight(selectedGauge.gaugeRelativeWeight);
                 setAllocatedVotes(parseFloat(selectedGauge.gaugeVotes.toFixed(2)));
-                const balPrice = coinData ? coinData.data[balAddress].price : 0;
+                const balPrice = coinData?.data?.[balAddress]?.price ?? 0;
                 // TODO: what metric do we need here? emission per 1$ spent? gauge weight and aura emissions? Need Aura boost??
                 setTargetAPR(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * balPrice * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)));
             }
@@ -296,62 +214,11 @@ export default function BribeSimulator() {
             }
         }
 
-        // PRIMARY: Use Votemarket data for current round metrics (from vlaura endpoint)
+        // Use Votemarket data for current round metrics (from vlaura endpoint)
         if (voteMarketData && !voteMarketLoading) {
-            // Use values directly from the vlaura hook - already Aura-specific
             setIncentivePerVote(vmDollarPerVote);
-            setEmissionPerVote(vmDollarPerVote); // For backward compatibility
-            setRoundIncentives(vmTotalRewards);
-
-            console.log("Votemarket metrics - dollarPerVote:", vmDollarPerVote, "totalRewards:", vmTotalRewards, "votingEfficiency:", vmVotingEfficiency);
         }
-        // FALLBACK: Use Hidden Hand data if Vote Market data not available
-        else if (hhIncentives.incentives && hhIncentives.incentives.data.length > 1) {
-            // Calculate incentives and emission per vote Metrics for a given round
-            let totalVotes = 0;
-            let totalValue = 0;
-
-            hhIncentives.incentives.data.forEach((item) => {
-                totalValue += item.totalValue;
-                totalVotes += item.voteCount;
-            });
-
-            let emissionVotes = 0;
-            let emissionValue = 0;
-
-            hhIncentives.incentives.data.forEach((item) => {
-                totalValue += item.totalValue;
-                totalVotes += item.voteCount;
-                if (item.totalValue > 0) {
-                    emissionValue += item.totalValue;
-                    emissionVotes += item.voteCount;
-                }
-            });
-
-            const incentiveEfficency = totalValue / totalVotes;
-            const emissionEff = emissionValue / emissionVotes;
-
-            setIncentivePerVote(incentiveEfficency);
-            console.log("HH incentiveEfficiency", incentiveEfficency)
-            console.log("HH totalValue", totalValue)
-            console.log("HH totalVotes", totalVotes)
-            setEmissionPerVote(emissionEff);
-            setRoundIncentives(totalValue);
-        }
-    // Use stable dependencies to avoid infinite loops
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        gaugeData.length,
-        hhIncentives.loading,
-        JSON.stringify(hhIncentives.incentives?.data?.length),
-        voteMarketLoading,
-        vmTotalRewards,
-        vmDollarPerVote,
-        useNewPoolValue,
-        customPoolValue,
-        selectedPoolId,
-        pools.length
-    ]);
+    }, [voteMarketData, voteMarketLoading, vmDollarPerVote, useNewPoolValue, selectedPoolId, pools]);
 
     const selectedPool = pools.find((pool) => pool.address === selectedPoolId);
     const val = selectedPoolId.toLowerCase();
@@ -361,7 +228,7 @@ export default function BribeSimulator() {
 
     // Display Table POC
     const votingIncentiveRows: TableData[] = [
-        { parameter: 'Incentive Budget (bi-weekly)', value: bribeValue.toString() },
+        { parameter: 'Incentive Budget (bi-weekly)', value: formatDollarAmount(bribeValue) },
         { parameter: 'Pool size ($)', value: useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool? selectedPool.tvlUSD : 0 )  },
         { parameter: 'Voting incentive cost per vlAURA', value: '$' + formatNumber(incentivePerVote, 3) },
         { parameter: 'vlAURA votes', value: formatNumber(bribeValue / incentivePerVote) },
@@ -387,8 +254,8 @@ export default function BribeSimulator() {
         { parameter: 'Annual return', value: formatDollarAmount(customLPValue * targetAPR / 100) },
         { parameter: 'LP size to breakeven (pool %)', value: formatNumber(bribeValue / (emissionValuePerVote * bribeValue / incentivePerVote) * 100) + '%'},
         { parameter: 'Incentives True Cost (bi-weekly)', value: formatDollarAmount(bribeValue - (customLPValue * targetAPR / 100 / 26))},
-        { parameter: 'Incentives True Cost (yearly)', value: formatDollarAmount(bribeValue - (customLPValue * targetAPR / 100))},
-        { parameter: 'Cost reduction, current LP (%)', value: formatNumber((1- (bribeValue - (customLPValue * targetAPR / 100))) / (bribeValue * 26) * 100) + '%'},
+        { parameter: 'Incentives True Cost (yearly)', value: formatDollarAmount(bribeValue * 26 - (customLPValue * targetAPR / 100))},
+        { parameter: 'Cost reduction, current LP (%)', value: formatNumber((1 - (bribeValue * 26 - (customLPValue * targetAPR / 100)) / (bribeValue * 26)) * 100) + '%'},
     ];
 
     return (
@@ -419,7 +286,7 @@ export default function BribeSimulator() {
                             alignContent: "center",
                         }}
                     >
-                        {coinData && coinData.data[auraAddress] && coinData.data[auraAddress].price ? (
+                        {coinData?.data?.[auraAddress]?.price ? (
                             <Box m={{xs: 0, sm: 1}}>
                                 <CoinCard
                                     tokenAddress={auraAddress}
@@ -451,22 +318,6 @@ export default function BribeSimulator() {
                                 />
                                 : <CircularProgress/>}
                         </Box>
-
-                        {/* <Box ml={1}>
-                {hhIncentives ? (
-                    <MetricsCard
-                        mainMetric={
-                            1 + (emissionPerVote - incentivePerVote) / emissionPerVote
-                        }
-                        metricName={"HH Emissions per $1"}
-                        mainMetricInUSD={true}
-                        metricDecimals={4}
-                        MetricIcon={Handshake}
-                    />
-                ) : (
-                    <CircularProgress />
-                )}
-              </Box> */}
                     </Grid>
                 </Grid>
                 <Grid item xs={11} md={9}>
@@ -578,7 +429,7 @@ export default function BribeSimulator() {
                                             }
                                             <TableCell>{useNewPoolValue ? formatDollarAmount(customPoolValue) : formatDollarAmount(selectedPool.tvlUSD)}</TableCell>
                                             <TableCell>{formatNumber(allocatedVotes)}</TableCell>
-                                            <TableCell>{formatNumber(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * (coinData ? coinData.data[auraAddress].price : 0) * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)))}</TableCell>
+                                            <TableCell>{formatNumber(parseFloat(((selectedGauge.gaugeRelativeWeight * weeklyEmissions * (coinData?.data?.[balAddress]?.price ?? 0) * 52) / pricePerBPT / (Number(selectedGauge.workingSupply) / 1e18) * 0.4).toFixed(2)))}</TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
